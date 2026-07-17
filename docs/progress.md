@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-07-17 (Asia/Shanghai)
+Last updated: 2026-07-18 (Asia/Shanghai)
 
 ## Completed
 
@@ -15,6 +15,7 @@ Last updated: 2026-07-17 (Asia/Shanghai)
 - Completed Milestone 1D: wrote one strictly aligned CSV state row for each saved image frame using Webots Supervisor ground truth.
 - Completed Milestone 2: implemented State-only and Command-conditioned trajectory predictors, evaluated them on a dedicated Webots validation episode, and estimated first empirical uncertainty corridors.
 - Completed Milestone 2R: preserved the original in-place rotation validation, added a forward-arc validation episode, improved stable/transition window labeling, and regenerated arc-only evaluation figures.
+- Accepted Milestone 2R and the cleanup fix after GUI review; prepared `feature/m3-world-risk` for the next milestone without adding Milestone 3 code.
 
 ## Native Windows environment results
 
@@ -527,6 +528,28 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - `episode_0004` passed the existing arc evaluation script with unchanged metrics from episode_0002.
 - Note: the automated Webots process remains open after controller completion and was stopped after trace/CSV checks. The redirected command-line logs did not expose a literal GUI Console line saying `controller exited with status: 0`; the controller returned normally without Python exception after the invalid cleanup call was removed.
 
+### Milestone 2R formal acceptance and branch handoff
+
+- Date: 2026-07-18 (Asia/Shanghai).
+- Milestone 2R and the cleanup fix are formally accepted based on:
+  - no `Traceback`, `AttributeError`, or `status: 1` after removing the invalid cleanup call;
+  - complete trace with all four arc phases and `m2_arc_trajectory_validation: complete`;
+  - successful 500-row CSV generation for the post-fix validation episode;
+  - successful arc evaluation script output with unchanged metrics;
+  - 30 unit tests passing.
+- A literal GUI Console line saying `controller exited with status: 0` is not required as an acceptance item for this milestone because the concrete failure mode was the Python `AttributeError` and status 1, and the post-fix evidence shows normal controller return without traceback/status 1.
+- Repository cleanup before merge:
+  - `simulator/worlds/minimal_epuck_camera.wbt` had only Webots GUI/default-field changes: Viewpoint changed, `basicTimeStep 32`, robot `translation 0 0 0`, `rotation 0 0 1 0`, and `name "e-puck"` were omitted as defaults.
+  - The minimal world robot model, obstacle, controller, camera settings, and experiment scene were not meaningfully changed.
+  - `simulator/worlds/.minimal_epuck_camera.jpg` was a Webots-generated tracked thumbnail updated by opening/saving the world.
+  - Both unrelated files were restored to HEAD; no extra commit was created for them.
+- Merge result:
+  - `main` was fast-forward merged from `feature/m2-trajectory-models`.
+  - `main` now contains `5536897 fix: remove invalid Webots supervisor cleanup`, `a282935 fix: validate forward arc trajectories`, `9663cc3 feat: add trajectory models and uncertainty corridor`, and `ddf5b92 feat: establish aligned Webots data pipeline`.
+  - `feature/m2-trajectory-models` was retained.
+  - New branch `feature/m3-world-risk` was created from the updated `main`.
+- No Milestone 3 risk model, obstacle risk, TTC, image risk map, compression, or navigation code was added during this handoff.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -581,4 +604,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Manually review the Milestone 2R arc figures and validation CSV, then proceed to Milestone 3 risk-map formulation only after accepting the trajectory model, transition guard, and empirical corridor definitions.
+Begin Milestone 3 world-risk formulation on `feature/m3-world-risk` by defining obstacle/world risk data structures and acceptance criteria before writing risk-map implementation code.
