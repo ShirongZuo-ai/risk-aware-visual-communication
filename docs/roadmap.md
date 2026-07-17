@@ -23,7 +23,14 @@ Do not implement risk maps, ROI compression, object detection, closed-loop navig
 
 ## Milestone 2 — Geometry and trajectory ground truth
 
-Planned: define coordinate frames, generate the 1–2 second predicted trajectory, inflate it by robot width, and validate projections/metadata on scenarios 1–3.
+- [x] Define planned command, State-only prediction, Command-conditioned prediction, and actual future trajectory.
+- [x] Implement State-only constant-twist prediction.
+- [x] Implement Command-conditioned differential-drive prediction from explicit future command segments.
+- [x] Generate a dedicated Webots validation episode with stable and transition windows.
+- [x] Evaluate ADE, FDE, yaw MAE, valid windows, and compute time for 0.5, 1.0, and 2.0 second horizons.
+- [x] Estimate first empirical residual uncertainty corridors.
+
+Acceptance: trajectory definitions are documented; predictors are unit-tested; a dedicated validation episode is actually run; stable and transition windows are reported separately; figures and progress record real results.
 
 ## Milestone 3 — Interpretable collision-risk map
 

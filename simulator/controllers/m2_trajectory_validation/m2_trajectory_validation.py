@@ -1,0 +1,176 @@
+"""Milestone 2 validation controller for trajectory prediction evaluation."""
+
+import csv
+import math
+import os
+from pathlib import Path
+
+from controller import Supervisor
+
+
+LEFT_WHEEL = "left wheel motor"
+RIGHT_WHEEL = "right wheel motor"
+
+STRAIGHT_UNTIL = 4.0
+LEFT_TURN_UNTIL = 8.0
+RIGHT_TURN_UNTIL = 12.0
+STOP_UNTIL = 16.0
+
+STRAIGHT_SPEED = 2.0
+TURN_SPEED = 1.5
+
+CSV_FIELDS = [
+    "episode_id",
+    "sim_time_s",
+    "sim_time_ms",
+    "motion_phase",
+    "robot_x",
+    "robot_y",
+    "robot_z",
+    "yaw_rad",
+    "linear_velocity_m_s",
+    "angular_velocity_rad_s",
+    "left_wheel_command_rad_s",
+    "right_wheel_command_rad_s",
+]
+
+
+def normalize_angle(angle):
+    return math.atan2(math.sin(angle), math.cos(angle))
+
+
+def yaw_from_orientation(orientation):
+    return normalize_angle(math.atan2(orientation[3], orientation[0]))
+
+
+def command_for_time(elapsed_seconds):
+    if elapsed_seconds < STRAIGHT_UNTIL:
+        return "stable_straight", STRAIGHT_SPEED, STRAIGHT_SPEED
+    if elapsed_seconds < LEFT_TURN_UNTIL:
+        return "stable_left_turn", -TURN_SPEED, TURN_SPEED
+    if elapsed_seconds < RIGHT_TURN_UNTIL:
+        return "stable_right_turn", TURN_SPEED, -TURN_SPEED
+    return "stable_stop", 0.0, 0.0
+
+
+class Trace:
+    def __init__(self):
+        trace_path = os.environ.get("M2_VALIDATION_TRACE")
+        self.path = Path(trace_path) if trace_path else None
+        if self.path:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            self.path.write_text("", encoding="utf-8")
+
+    def write(self, message):
+        print(message, flush=True)
+        if self.path:
+            with self.path.open("a", encoding="utf-8") as handle:
+                handle.write(f"{message}\n")
+
+
+class EpisodeLog:
+    def __init__(self, controller_path):
+        self.project_root = controller_path.resolve().parents[3]
+        self.logs_root = self.project_root / "data" / "logs" / "m2"
+        self.logs_root.mkdir(parents=True, exist_ok=True)
+        self.episode_id = self._next_episode_id()
+        self.csv_path = self.logs_root / f"trajectory_validation_{self.episode_id}.csv"
+        self.file = self.csv_path.open("w", newline="", encoding="utf-8")
+        self.writer = csv.DictWriter(self.file, fieldnames=CSV_FIELDS)
+        self.writer.writeheader()
+        self.file.flush()
+        self.rows = 0
+
+    def _next_episode_id(self):
+        indices = []
+        for path in self.logs_root.glob("trajectory_validation_episode_*.csv"):
+            suffix = path.stem.removeprefix("trajectory_validation_episode_")
+            try:
+                indices.append(int(suffix))
+            except ValueError:
+                pass
+        return f"episode_{max(indices, default=0) + 1:04d}"
+
+    def write_row(self, elapsed, phase, position, yaw, velocity, left_speed, right_speed):
+        self.writer.writerow(
+            {
+                "episode_id": self.episode_id,
+                "sim_time_s": f"{elapsed:.6f}",
+                "sim_time_ms": int(round(elapsed * 1000.0)),
+                "motion_phase": phase,
+                "robot_x": f"{position[0]:.9f}",
+                "robot_y": f"{position[1]:.9f}",
+                "robot_z": f"{position[2]:.9f}",
+                "yaw_rad": f"{yaw:.9f}",
+                "linear_velocity_m_s": f"{math.hypot(velocity[0], velocity[1]):.9f}",
+                "angular_velocity_rad_s": f"{velocity[5]:.9f}",
+                "left_wheel_command_rad_s": f"{left_speed:.6f}",
+                "right_wheel_command_rad_s": f"{right_speed:.6f}",
+            }
+        )
+        self.rows += 1
+        self.file.flush()
+
+    def close(self):
+        self.file.flush()
+        self.file.close()
+
+
+def main():
+    trace = Trace()
+    robot = Supervisor()
+    timestep = int(robot.getBasicTimeStep())
+    self_node = robot.getSelf()
+    log = EpisodeLog(Path(__file__))
+
+    left_motor = robot.getDevice(LEFT_WHEEL)
+    right_motor = robot.getDevice(RIGHT_WHEEL)
+    left_motor.setPosition(float("inf"))
+    right_motor.setPosition(float("inf"))
+    left_motor.setVelocity(0.0)
+    right_motor.setVelocity(0.0)
+
+    trace.write("m2_trajectory_validation: start")
+    trace.write(f"episode_id={log.episode_id} csv={log.csv_path} timestep_ms={timestep}")
+
+    previous_phase = None
+    try:
+        while robot.step(timestep) != -1:
+            elapsed = robot.getTime()
+            phase, left_speed, right_speed = command_for_time(elapsed)
+            if phase != previous_phase:
+                trace.write(
+                    f"phase={phase} t={elapsed:.3f}s "
+                    f"left={left_speed:.2f} right={right_speed:.2f}"
+                )
+                previous_phase = phase
+
+            left_motor.setVelocity(left_speed)
+            right_motor.setVelocity(right_speed)
+
+            position = self_node.getPosition()
+            orientation = self_node.getOrientation()
+            velocity = self_node.getVelocity()
+            log.write_row(
+                elapsed,
+                phase,
+                position,
+                yaw_from_orientation(orientation),
+                velocity,
+                left_speed,
+                right_speed,
+            )
+
+            if elapsed >= STOP_UNTIL:
+                left_motor.setVelocity(0.0)
+                right_motor.setVelocity(0.0)
+                trace.write(f"csv_rows={log.rows}")
+                trace.write("m2_trajectory_validation: complete")
+                break
+    finally:
+        log.close()
+    robot.cleanup()
+
+
+if __name__ == "__main__":
+    main()

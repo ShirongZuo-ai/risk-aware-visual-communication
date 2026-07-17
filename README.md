@@ -80,6 +80,35 @@ Validate the latest or specified Milestone 1D episode:
 .\.venv\Scripts\python.exe .\scripts\validate_m1d_dataset.py .\data\logs\m1d\episode_0001.csv
 ```
 
+## Milestone 2 trajectory evaluation
+
+Run the dedicated Webots validation episode:
+
+```powershell
+$webots = Join-Path $env:ProgramFiles "Webots\msys64\mingw64\bin\webots.exe"
+& $webots ".\simulator\worlds\m2_trajectory_validation.wbt"
+```
+
+Run the unit tests:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest tests.test_trajectory_prediction tests.test_trajectory_uncertainty
+```
+
+Evaluate the latest or specified Milestone 2 trajectory CSV:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py
+.\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py .\data\logs\m2\trajectory_validation_episode_0001.csv
+```
+
+Milestone 2 outputs:
+
+```text
+data/logs/m2/trajectory_validation_episode_0001.csv
+results/m2_trajectory/
+```
+
 ## Documentation
 
 - `AGENTS.md`: Codex entry point and working rules
@@ -87,3 +116,5 @@ Validate the latest or specified Milestone 1D episode:
 - `docs/roadmap.md`: milestone order and acceptance criteria
 - `docs/decisions.md`: durable technical/research choices
 - `docs/progress.md`: verified current state and next priority
+- `docs/trajectory_prediction_design.md`: Milestone 2 trajectory source definitions and uncertainty design
+- `docs/system_overview.md`: current end-to-end pipeline summary

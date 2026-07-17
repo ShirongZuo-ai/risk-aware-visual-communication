@@ -13,6 +13,7 @@ Last updated: 2026-07-17 (Asia/Shanghai)
 - Completed Milestone 1B: created and Webots-verified a minimal fixed-sequence Python motion controller for straight, left-turn, right-turn, and stop.
 - Completed Milestone 1C: captured and validated at least 100 PNG frames from the existing e-puck forward RGB camera during Webots runtime.
 - Completed Milestone 1D: wrote one strictly aligned CSV state row for each saved image frame using Webots Supervisor ground truth.
+- Completed Milestone 2: implemented State-only and Command-conditioned trajectory predictors, evaluated them on a dedicated Webots validation episode, and estimated first empirical uncertainty corridors.
 
 ## Native Windows environment results
 
@@ -303,6 +304,126 @@ OK: validation passed
 - Git identity is still not configured, so no local commit was made.
 - Generated data under `data/frames/m1d/` and `data/logs/m1d/` is intentionally ignored by Git.
 
+## Milestone 2: trajectory prediction and empirical corridor
+
+- Stage: Milestone 2 complete on local branch `feature/m2-trajectory-models`.
+- Baseline before branch: `ddf5b92 feat: establish aligned Webots data pipeline`.
+- New core modules:
+  - `navigation/trajectory_prediction.py`
+  - `navigation/trajectory_uncertainty.py`
+- New Webots validation assets:
+  - `simulator/worlds/m2_trajectory_validation.wbt`
+  - `simulator/controllers/m2_trajectory_validation/m2_trajectory_validation.py`
+- New scripts:
+  - `scripts/evaluate_m2_trajectory.py`
+- New tests:
+  - `tests/test_trajectory_prediction.py`
+  - `tests/test_trajectory_uncertainty.py`
+- New docs:
+  - `docs/trajectory_prediction_design.md`
+  - `docs/system_overview.md`
+
+### Milestone 2 definitions
+
+- Planned command trajectory: the controller/planner's future command schedule.
+- State-only predicted trajectory: constant-twist extrapolation from current actual state only.
+- Command-conditioned nominal trajectory: differential-drive integration from current actual state plus explicit future command segments.
+- Actual future trajectory: Webots ground truth used only for offline evaluation, never as online prediction input.
+
+### Official e-puck geometry used
+
+- Source: installed Webots R2025a official e-puck controller, `C:\Program Files\Webots\projects\robots\gctronic\e-puck\controllers\e-puck\e-puck.c`.
+- Wheel radius: `0.02 m` from `#define WHEEL_RADIUS 0.02`.
+- Axle length: `0.052 m` from `#define AXLE_LENGTH 0.052`.
+- Conversion:
+  - `v = r/2 * (omega_right + omega_left)`
+  - `angular_velocity = r/L * (omega_right - omega_left)`
+
+### Milestone 2 validation episode
+
+- Episode CSV: `data/logs/m2/trajectory_validation_episode_0001.csv`.
+- Row count: `500` data rows plus header.
+- World: 4 m x 4 m `RectangleArena` with e-puck only; no obstacles.
+- Controller sequence:
+  - `0-4 s`: straight, left/right `2.00 rad/s`
+  - `4-8 s`: left turn, left `-1.50 rad/s`, right `1.50 rad/s`
+  - `8-12 s`: right turn, left `1.50 rad/s`, right `-1.50 rad/s`
+  - `12-16 s`: stop, both `0.00 rad/s`
+- Webots trace: `results/webots_m2_validation_trace.log`, ignored by Git.
+
+### Milestone 2 actual commands run
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest tests.test_trajectory_prediction tests.test_trajectory_uncertainty
+$env:M2_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2_validation_trace.log'
+& "$env:ProgramFiles\Webots\msys64\mingw64\bin\webots.exe" --batch --mode=fast --minimize --stdout --stderr --port=1240 ".\simulator\worlds\m2_trajectory_validation.wbt"
+.\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py .\data\logs\m2\trajectory_validation_episode_0001.csv
+```
+
+The Webots command timed out at the shell tool level because Webots remains open after controller completion. The validation process was stopped after the trace and CSV were checked.
+
+### Milestone 2 test and evaluation results
+
+- Unit tests: `25` tests passed.
+- Python compile checks passed for trajectory modules, tests, M2 controller, and evaluation script.
+- Matplotlib was missing and installed only into the project `.venv` with:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install "matplotlib>=3.8,<4"
+```
+
+- Installed matplotlib version: `3.11.0`. Pip also installed matplotlib runtime dependencies in `.venv`, including `numpy 2.4.6` and `pillow 12.3.0`.
+
+### Milestone 2 summary metrics
+
+Stable and transition windows were reported separately.
+
+| Method | Horizon | Category | Windows | ADE mean (m) | FDE mean (m) | yaw MAE mean (rad) |
+|---|---:|---|---:|---:|---:|---:|
+| State-only | 0.5 | all_stable | 439 | 0.000120561 | 0.000221264 | 0.002978459 |
+| State-only | 0.5 | all_transition | 45 | 0.001220771 | 0.003285312 | 0.126981111 |
+| State-only | 1.0 | all_stable | 375 | 0.000266159 | 0.000499997 | 0.006807695 |
+| State-only | 1.0 | all_transition | 93 | 0.002367312 | 0.006551143 | 0.247685009 |
+| State-only | 2.0 | all_stable | 251 | 0.000715992 | 0.001359725 | 0.017649484 |
+| State-only | 2.0 | all_transition | 186 | 0.004612635 | 0.013322370 | 0.472876701 |
+| Command-conditioned | 0.5 | all_stable | 439 | 0.000006398 | 0.000009305 | 0.013294641 |
+| Command-conditioned | 0.5 | all_transition | 45 | 0.000008479 | 0.000015076 | 0.014727521 |
+| Command-conditioned | 1.0 | all_stable | 375 | 0.000009568 | 0.000015435 | 0.025871473 |
+| Command-conditioned | 1.0 | all_transition | 93 | 0.000012501 | 0.000019017 | 0.028601180 |
+| Command-conditioned | 2.0 | all_stable | 251 | 0.000013655 | 0.000023841 | 0.050328531 |
+| Command-conditioned | 2.0 | all_transition | 186 | 0.000021410 | 0.000034267 | 0.055576200 |
+
+Observed result: Command-conditioned prediction was much better on ADE/FDE for both stable and transition windows. State-only was reasonable in stable windows but degraded strongly near command transitions, especially at 1 s and 2 s horizons. For yaw MAE in stable windows, State-only was lower than Command-conditioned in this validation run, but Command-conditioned remained far better in transition yaw error.
+
+### Milestone 2 empirical corridor
+
+The first corridor uses `robot_half_width + 90% position-error quantile + 0.01 m safety_margin`. Robot half-width is `0.026 m`.
+
+| Method | Horizon | Samples | p50 (m) | p90 (m) | p95 (m) | corridor radius (m) |
+|---|---:|---:|---:|---:|---:|---:|
+| State-only | 0.5 | 7744 | 0.000019340 | 0.000080234 | 0.000288875 | 0.036080234 |
+| State-only | 1.0 | 14976 | 0.000038498 | 0.000168068 | 0.001897709 | 0.036168068 |
+| State-only | 2.0 | 27531 | 0.000083230 | 0.001592257 | 0.016633342 | 0.037592257 |
+| Command-conditioned | 0.5 | 7744 | 0.000001409 | 0.000020462 | 0.000028943 | 0.036020462 |
+| Command-conditioned | 1.0 | 14976 | 0.000003261 | 0.000032317 | 0.000043861 | 0.036032317 |
+| Command-conditioned | 2.0 | 27531 | 0.000009357 | 0.000048970 | 0.000055403 | 0.036048970 |
+
+This is an empirical residual corridor from limited simulation data, not a calibrated confidence interval. It does not model sudden slip.
+
+### Milestone 2 generated figures
+
+- `results/m2_trajectory/state_only_straight_1s.png`
+- `results/m2_trajectory/command_conditioned_transition_2s.png`
+- `results/m2_trajectory/method_comparison_ade.png`
+- `results/m2_trajectory/uncertainty_corridor_example.png`
+
+### Milestone 2 warnings and issues
+
+- Webots GUI Console red-error status was not visually inspected in the automated run. No Python exception or CSV write failure appeared in the trace/output.
+- Generated CSV/results/figures are ignored by Git.
+- This validation episode has no obstacles and no slip-specific perturbation, so uncertainty estimates are narrow and scenario-limited.
+- Git identity is still not configured, so no local commit was made despite validation passing.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -353,8 +474,9 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.
 5. Git `user.name` and `user.email` are not configured, so the initial commit requested for Milestone 1A was skipped.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
-7. Milestone 1D Webots GUI Console red-error status still needs user visual confirmation if a GUI-level console check is required.
+7. Milestone 2 Webots GUI Console red-error status still needs user visual confirmation if a GUI-level console check is required.
+8. Git `user.name` and `user.email` remain unset, so the requested local commit was not created.
 
 ## Next priority
 
-Review the Milestone 1D dataset manually in Webots/CSV if desired, then proceed to the next Milestone 1 task only after confirming the captured images and aligned CSV are acceptable.
+Manually review the Milestone 2 figures and validation CSV, then proceed to Milestone 3 risk-map formulation only after accepting the trajectory model and empirical corridor definitions.

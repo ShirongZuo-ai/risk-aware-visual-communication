@@ -51,3 +51,13 @@
 - **Yaw definition:** The e-puck forward direction is local `+x`; yaw is computed from the row-major orientation matrix as `atan2(orientation[3], orientation[0])` and normalized to `[-pi, pi]`.
 - **Velocity definition:** `linear_velocity_m_s` is the magnitude of the actual world-frame ground-plane velocity, `sqrt(vx^2 + vy^2)`, using the first two components of `Node.getVelocity()`. `angular_velocity_rad_s` is the actual world-frame angular velocity around vertical `+z`, using the sixth component of `Node.getVelocity()`.
 - **Synchronization policy:** One CSV row is written immediately after each successful `camera.saveImage()` call in the same controller loop and at the same Webots simulation time. If image saving fails, no CSV row is written for that frame.
+
+## 2026-07-17 — Milestone 2 trajectory sources
+
+- **Decision:** Implement State-only as the lowest-information baseline and Command-conditioned as the first main trajectory source.
+- **Reason:** State-only tests how far current state extrapolation can go, while Command-conditioned uses the controller's explicit future command plan without reading future ground truth.
+- **Actual future trajectory policy:** Actual Webots future trajectory is used only for offline evaluation of prediction error and never as online predictor input.
+- **e-puck geometry:** Use official Webots R2025a e-puck values from `projects/robots/gctronic/e-puck/controllers/e-puck/e-puck.c`: wheel radius `0.02 m`, axle length `0.052 m`. The official controller computes orientation change as `(dr - dl) / AXLE_LENGTH`, matching `angular_velocity = r / L * (omega_right - omega_left)`.
+- **Uncertainty corridor:** Use empirical residual quantiles from finite simulation data for the first corridor. The default corridor radius is `robot_half_width + 90% position-error quantile + 0.01 m safety margin`.
+- **Rejected for now:** Machine learning trajectory prediction, LSTM/Transformer models, slip-specific modeling, and treating planned commands as guaranteed actual motion.
+- **Future direction:** Machine learning may later be used for physics residual correction and slip uncertainty estimation, not as a replacement before interpretable baselines are measured.
