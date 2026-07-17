@@ -599,6 +599,64 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - risk is not a probability;
   - no machine learning.
 
+## Milestone 3B: world-risk geometry core implementation
+
+- Stage: Milestone 3B complete on local branch `feature/m3-world-risk`.
+- Starting design commit: `676f7ba docs: freeze world risk formulation`.
+- Implemented ordinary-Python package:
+  - `risk_map/models.py`
+  - `risk_map/geometry.py`
+  - `risk_map/risk_formulation.py`
+  - `risk_map/trajectory_obstacle_risk.py`
+  - `risk_map/__init__.py`
+- Added focused unit tests:
+  - `tests/test_risk_models.py`
+  - `tests/test_risk_geometry.py`
+  - `tests/test_risk_formulation.py`
+  - `tests/test_trajectory_obstacle_risk.py`
+- Implemented interfaces:
+  - `TrajectorySource` constrained to `planned` and `state`;
+  - `ObstacleFootprint` with derived `min_x`, `max_x`, `min_y`, and `max_y`;
+  - `RiskParameters`;
+  - `TrajectoryConflictResult`;
+  - `DualTrajectoryRiskResult`.
+- Implemented geometry:
+  - point-to-segment distance with zero-length segment handling;
+  - point-to-AABB distance;
+  - segment-to-AABB distance using obstacle boundaries, not obstacle centers;
+  - segment/AABB corridor interval calculation with inflated AABB;
+  - polyline closest distance and interpolated closest time;
+  - first corridor entry time and total overlap duration over merged time intervals;
+  - tangent and near-boundary handling through `geometry_tolerance_m`.
+- Implemented risk formulation:
+  - `spatial_score = exp(-max(clearance_m, 0) / sigma_distance_m)`;
+  - `temporal_score = exp(-relevant_time_s / tau_time_s)`;
+  - `risk_score = spatial_score * temporal_score`;
+  - `combined_risk = max(planned_risk, state_risk)`.
+- Implemented trajectory-obstacle APIs:
+  - `analyze_trajectory_obstacle(...)`;
+  - `analyze_dual_trajectory_obstacle(...)`;
+  - `compute_trajectory_disagreement(...)` with time interpolation instead of index-only matching.
+- Validation performed:
+  - `.\.venv\Scripts\python.exe -m py_compile risk_map\__init__.py risk_map\models.py risk_map\geometry.py risk_map\trajectory_obstacle_risk.py risk_map\risk_formulation.py`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `Select-String -Path risk_map\*.py -Pattern "webots|controller|numpy|scipy|shapely|cv2|sklearn|torch|tensorflow|PIL" -CaseSensitive:$false`
+- Test result: 62 tests passed, including the previous 30 baseline tests and 32 new Milestone 3B tests.
+- Dependency audit result: no prohibited Webots, camera, NumPy, SciPy, Shapely, OpenCV, ROS, or ML imports were found in `risk_map`.
+- Explicitly not created in Milestone 3B:
+  - no M3 Webots world;
+  - no M3 Webots controller;
+  - no CSV data;
+  - no result figures;
+  - no image-space risk map;
+  - no ROI compression;
+  - no navigation or obstacle-avoidance code.
+- Current limitations remain:
+  - static AABB obstacles only;
+  - world-coordinate geometry only;
+  - risk score is an interpretable heuristic proxy, not a probability;
+  - no camera projection or pixel-space risk allocation.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -653,4 +711,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Begin Milestone 3B on `feature/m3-world-risk` by implementing ordinary-Python geometry and risk core modules from `docs/risk_formulation_design.md`, starting with unit-tested data models and AABB geometry.
+Begin Milestone 3C on `feature/m3-world-risk` by creating the Webots world-risk validation scenario and converting simulator obstacle ground truth into the frozen `ObstacleFootprint` interface.

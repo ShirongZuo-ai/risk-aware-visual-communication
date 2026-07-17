@@ -46,7 +46,13 @@ Acceptance: `docs/risk_formulation_design.md` documents the risk model, data str
 
 ### Milestone 3B - Geometry and risk core implementation
 
-Planned: implement the frozen ordinary-Python geometry, risk data models, trajectory-obstacle conflict analysis, and unit tests.
+- [x] Implement frozen ordinary-Python risk data models.
+- [x] Implement boundary-based AABB geometry and trajectory corridor intervals.
+- [x] Implement trajectory-obstacle conflict analysis.
+- [x] Implement interpretable spatial, temporal, and combined planned/state risk scores.
+- [x] Add unit tests for geometry, data validation, risk formulation, and dual-trajectory analysis.
+
+Acceptance: `risk_map` contains ordinary-Python modules only, core modules do not depend on Webots or camera APIs, geometry uses obstacle boundaries, risk formulas match `docs/risk_formulation_design.md`, and the full test suite passes.
 
 ### Milestone 3C - Webots world-risk validation
 

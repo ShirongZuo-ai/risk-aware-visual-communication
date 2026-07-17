@@ -33,6 +33,14 @@ Milestone 3A freezes the world-risk design:
 4. Time-to-Conflict (`TTCf`) and interpretable spatial/temporal risk scores.
 5. Independent planned/state risk outputs combined by max-union.
 
+Milestone 3B implements the Webots-decoupled world-risk core:
+
+1. Ordinary-Python data models for obstacles, risk parameters, and conflict results.
+2. Boundary-based AABB geometry for trajectory polylines and safety-inflated corridors.
+3. First corridor entry time and overlap duration from inflated segment/AABB intervals.
+4. Interpretable spatial, temporal, and combined planned/state risk scores.
+5. Unit-tested APIs with no Webots, camera, ROS, NumPy, Shapely, OpenCV, or ML dependency.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -75,7 +83,7 @@ Outputs:
 - Diagnostic trajectory figures
 - Stable and transition windows separated by profile-specific phase labels
 
-## Milestone 3A Inputs and Outputs
+## Milestone 3 Inputs and Outputs
 
 Inputs:
 
@@ -92,13 +100,14 @@ Outputs:
 - Clearance, closest time, Time-to-Conflict, overlap duration, spatial score, temporal score, and risk score
 - Trajectory disagreement between planned and state trajectories
 - Combined risk score defined as `max(planned_risk, state_risk)`
+- Ordinary-Python API calls in `risk_map/` for the world-coordinate risk core
 
 ## Downstream Use
 
 The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin, and should be interpreted as a band along the predicted path.
 
-Milestone 3A keeps this in world coordinates. Camera projection, image-space risk maps, and compression allocation remain downstream work.
+Milestone 3B keeps this in world coordinates. Camera projection, image-space risk maps, and compression allocation remain downstream work.
 
 ## Explicitly Not Implemented
 
-The project still does not implement obstacle risk scoring code, Webots M3 risk worlds, camera projection, image risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement Webots M3 risk worlds, camera projection, image risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

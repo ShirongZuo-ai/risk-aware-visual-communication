@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, and Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation. Risk maps, compression, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, and Milestone 3A/3B have frozen and implemented the ordinary-Python world-coordinate risk geometry core. Webots M3 risk worlds, image risk maps, compression, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -119,6 +119,22 @@ results/m2_trajectory/
 results/m2_trajectory_arc/
 ```
 
+## Milestone 3 world-risk core
+
+Run the ordinary-Python risk core tests:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests
+```
+
+The risk core lives in:
+
+```text
+risk_map/
+```
+
+It is intentionally decoupled from Webots and only consumes world-coordinate trajectory points plus static AABB obstacle footprints. See `docs/risk_formulation_design.md` for the frozen formulas and API responsibilities.
+
 ## Documentation
 
 - `AGENTS.md`: Codex entry point and working rules
@@ -127,4 +143,5 @@ results/m2_trajectory_arc/
 - `docs/decisions.md`: durable technical/research choices
 - `docs/progress.md`: verified current state and next priority
 - `docs/trajectory_prediction_design.md`: Milestone 2 trajectory source definitions and uncertainty design
+- `docs/risk_formulation_design.md`: Milestone 3 world-coordinate risk definitions and implemented core API notes
 - `docs/system_overview.md`: current end-to-end pipeline summary

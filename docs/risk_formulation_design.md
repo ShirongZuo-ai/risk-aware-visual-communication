@@ -4,7 +4,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 
 ## Scope
 
-Milestone 3A freezes the design, data structures, module boundaries, and acceptance criteria for world-coordinate trajectory-to-obstacle risk. It does not implement risk algorithms, create Webots worlds, create controllers, generate CSV data, generate figures, implement camera projection, implement ROI compression, or add machine learning.
+Milestone 3A freezes the design, data structures, module boundaries, and acceptance criteria for world-coordinate trajectory-to-obstacle risk. Milestone 3B implements the ordinary-Python risk core from this design. Neither milestone creates Webots worlds, creates controllers, generates CSV data, generates figures, implements camera projection, implements ROI compression, or adds machine learning.
 
 The design is intentionally limited to static, axis-aligned rectangular obstacle footprints in Webots world coordinates. All distances are meters, times are seconds, and angles are radians.
 
@@ -305,7 +305,7 @@ No fields may be `None`.
 
 ## Frozen Module Boundaries
 
-The following files are planned for Milestone 3B and later. They are not created in Milestone 3A.
+The following files are the implemented Milestone 3B module boundaries.
 
 ### risk_map/models.py
 
@@ -352,6 +352,47 @@ Responsibilities:
 - parameter validation.
 
 It must not implement geometric distance details.
+
+## Milestone 3B Implementation Notes
+
+The implementation is Webots-decoupled and uses only the Python standard library plus the existing `navigation.trajectory_prediction.TrajectoryPoint` dataclass.
+
+Implemented public APIs:
+
+```text
+risk_map.models.TrajectorySource
+risk_map.models.ObstacleFootprint
+risk_map.models.RiskParameters
+risk_map.models.TrajectoryConflictResult
+risk_map.models.DualTrajectoryRiskResult
+risk_map.geometry.point_to_segment_distance(...)
+risk_map.geometry.point_to_aabb_distance(...)
+risk_map.geometry.segment_to_aabb_distance(...)
+risk_map.geometry.polyline_to_aabb_closest(...)
+risk_map.geometry.corridor_intervals_for_trajectory(...)
+risk_map.geometry.summarize_corridor_intervals(...)
+risk_map.risk_formulation.spatial_score(...)
+risk_map.risk_formulation.temporal_score(...)
+risk_map.risk_formulation.compute_risk_score(...)
+risk_map.risk_formulation.combine_risk_scores(...)
+risk_map.trajectory_obstacle_risk.analyze_trajectory_obstacle(...)
+risk_map.trajectory_obstacle_risk.analyze_dual_trajectory_obstacle(...)
+risk_map.trajectory_obstacle_risk.compute_trajectory_disagreement(...)
+```
+
+Geometry approximation choices:
+
+- sampled trajectories are treated as polylines;
+- closest time is linearly interpolated within the closest segment;
+- corridor entry is computed by intersecting each segment against the obstacle AABB inflated by `corridor_radius_m`;
+- multiple corridor intervals are merged before overlap duration is summed;
+- tangent and near-boundary cases use `RiskParameters.geometry_tolerance_m`;
+- zero-length trajectory segments are valid and are handled as point-to-AABB checks;
+- trajectory disagreement is computed at the union of available planned/state sample times within the common time range, using linear interpolation.
+
+Dependency rule:
+
+- `risk_map` must not import Webots, controller APIs, camera APIs, NumPy, SciPy, Shapely, OpenCV, ROS, or machine-learning libraries.
 
 ## Milestone 3 Validation Scenario Roles
 
