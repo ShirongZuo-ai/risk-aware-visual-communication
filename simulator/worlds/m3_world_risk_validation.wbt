@@ -1,0 +1,143 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+
+WorldInfo {
+  basicTimeStep 32
+  title "Milestone 3C world risk validation"
+}
+Viewpoint {
+  orientation -0.402736 0.176513 0.898074 1.66209
+  position -0.285 0.117 2.65
+  follow "e-puck"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 4 4
+  wallHeight 0.04
+}
+DEF ROBOT E-puck {
+  translation 0 0 0
+  rotation 0 0 1 0
+  name "e-puck"
+  controller "m3_world_risk_validation"
+  window "<none>"
+  supervisor TRUE
+  version "2"
+  camera_width 160
+  camera_height 120
+}
+DEF M3_EARLY_CONFLICT Solid {
+  translation 0.297106 0.065676 0.025
+  rotation 0 0 1 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.95 0.25 0.20
+        roughness 0.6
+        metalness 0
+      }
+      geometry Box {
+        size 0.025 0.025 0.05
+      }
+    }
+  ]
+  name "EARLY_CONFLICT"
+  locked TRUE
+}
+DEF M3_LATE_CONFLICT Solid {
+  translation 0.241455 0.162030 0.025
+  rotation 0 0 1 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.95 0.65 0.15
+        roughness 0.6
+        metalness 0
+      }
+      geometry Box {
+        size 0.025 0.025 0.05
+      }
+    }
+  ]
+  name "LATE_CONFLICT"
+  locked TRUE
+}
+DEF M3_ON_PLANNED_PATH Solid {
+  translation 0.298331 0.106364 0.025
+  rotation 0 0 1 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.15 0.35 0.95
+        roughness 0.6
+        metalness 0
+      }
+      geometry Box {
+        size 0.025 0.025 0.05
+      }
+    }
+  ]
+  name "ON_PLANNED_PATH"
+  locked TRUE
+}
+DEF M3_ON_STATE_PATH Solid {
+  translation 0.203578 0.123618 0.025
+  rotation 0 0 1 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.25 0.75 0.35
+        roughness 0.6
+        metalness 0
+      }
+      geometry Box {
+        size 0.025 0.025 0.05
+      }
+    }
+  ]
+  name "ON_STATE_PATH"
+  locked TRUE
+}
+DEF M3_NEAR_BOUNDARY Solid {
+  translation 0.187397 0.095750 0.025
+  rotation 0 0 1 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.80 0.20 0.85
+        roughness 0.6
+        metalness 0
+      }
+      geometry Box {
+        size 0.025 0.025 0.05
+      }
+    }
+  ]
+  name "NEAR_BOUNDARY"
+  locked TRUE
+}
+DEF M3_OUTSIDE_BOTH Solid {
+  translation 0.330000 0.185000 0.025
+  rotation 0 0 1 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.40 0.40 0.40
+        roughness 0.6
+        metalness 0
+      }
+      geometry Box {
+        size 0.025 0.025 0.05
+      }
+    }
+  ]
+  name "OUTSIDE_BOTH"
+  locked TRUE
+}

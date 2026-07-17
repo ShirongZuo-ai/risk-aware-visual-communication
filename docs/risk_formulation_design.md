@@ -4,7 +4,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 
 ## Scope
 
-Milestone 3A freezes the design, data structures, module boundaries, and acceptance criteria for world-coordinate trajectory-to-obstacle risk. Milestone 3B implements the ordinary-Python risk core from this design. Neither milestone creates Webots worlds, creates controllers, generates CSV data, generates figures, implements camera projection, implements ROI compression, or adds machine learning.
+Milestone 3A freezes the design, data structures, module boundaries, and acceptance criteria for world-coordinate trajectory-to-obstacle risk. Milestone 3B implements the ordinary-Python risk core from this design. Milestone 3C connects that core to a Webots validation world through an adapter layer and writes a world-coordinate risk CSV. These milestones do not create camera projection, image risk maps, ROI compression, navigation, or machine learning.
 
 The design is intentionally limited to static, axis-aligned rectangular obstacle footprints in Webots world coordinates. All distances are meters, times are seconds, and angles are radians.
 
@@ -393,6 +393,38 @@ Geometry approximation choices:
 Dependency rule:
 
 - `risk_map` must not import Webots, controller APIs, camera APIs, NumPy, SciPy, Shapely, OpenCV, ROS, or machine-learning libraries.
+
+Milestone 3C consistency note:
+
+- `enters_corridor` is defined by the Euclidean clearance sign: `minimum_clearance_m <= geometry_tolerance_m`.
+- Segment/AABB interval estimation is used to estimate `first_corridor_entry_time_s` and `corridor_overlap_duration_s` after the clearance test establishes corridor entry.
+- This avoids treating the square inflated-AABB approximation as a substitute for the frozen Euclidean clearance definition.
+
+## Milestone 3C Webots Adapter
+
+The Webots adapter lives outside `risk_map` in `simulator/adapters/webots_obstacle_adapter.py`.
+
+Mapping:
+
+- `Supervisor.getFromDef(def_name)` locates each fixed obstacle.
+- `Solid.translation[0]` and `[1]` map to `ObstacleFootprint.center_x` and `center_y`.
+- `Shape.geometry Box.size[0]` and `[1]` map to `size_x` and `size_y`.
+- `Solid.rotation` must have zero planar rotation.
+- Appearance, color, and label text are ignored.
+
+The first adapter is deliberately limited to the fixed M3C world structure: one `Shape` child with `Box` geometry under each static `Solid`.
+
+Milestone 3C validation parameters:
+
+```text
+analysis_time_s = 7.968
+prediction_horizon_s = 2.0
+prediction_step_s = 0.032
+corridor_radius_m = 0.037592257
+sigma_distance_m = 0.05
+tau_time_s = 1.0
+geometry_tolerance_m = 0.000001
+```
 
 ## Milestone 3 Validation Scenario Roles
 

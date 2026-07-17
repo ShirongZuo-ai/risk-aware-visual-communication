@@ -52,7 +52,7 @@ def analyze_trajectory_obstacle(
         parameters.geometry_tolerance_m,
     )
     interval_summary = summarize_corridor_intervals(intervals)
-    enters = clearance <= parameters.geometry_tolerance_m or interval_summary.first_entry_time_s is not None
+    enters = clearance <= parameters.geometry_tolerance_m
     first_entry_time = interval_summary.first_entry_time_s if enters else None
     overlap_duration = interval_summary.overlap_duration_s if enters else 0.0
     if enters and first_entry_time is None:

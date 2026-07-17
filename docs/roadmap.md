@@ -56,7 +56,13 @@ Acceptance: `risk_map` contains ordinary-Python modules only, core modules do no
 
 ### Milestone 3C - Webots world-risk validation
 
-Planned: create a Webots validation world and convert simulator ground-truth obstacles into the frozen `ObstacleFootprint` interface.
+- [x] Create a Webots validation world with six fixed static AABB Box obstacles.
+- [x] Convert simulator ground-truth obstacles into the frozen `ObstacleFootprint` interface.
+- [x] Generate planned and State-only trajectories at a command-switch analysis snapshot.
+- [x] Write a 6-row world-risk CSV.
+- [x] Validate CSV structure, geometry consistency, role relationships, data leakage constraints, and ignored output paths.
+
+Acceptance: Webots runs the M3C world, the controller writes one risk row per obstacle, the validator exits 0, `risk_map` remains Webots-decoupled, and no camera projection, image risk map, ROI compression, dynamic obstacles, or navigation code is added.
 
 ### Milestone 3D - Visualization and evaluation
 

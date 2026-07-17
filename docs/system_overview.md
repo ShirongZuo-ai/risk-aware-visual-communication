@@ -41,6 +41,14 @@ Milestone 3B implements the Webots-decoupled world-risk core:
 4. Interpretable spatial, temporal, and combined planned/state risk scores.
 5. Unit-tested APIs with no Webots, camera, ROS, NumPy, Shapely, OpenCV, or ML dependency.
 
+Milestone 3C connects the world-risk core to Webots for static AABB validation:
+
+1. A Webots world with e-puck and six fixed, unrotated Box obstacles.
+2. A controller that runs to a 7.968 s analysis snapshot and then stops.
+3. A Webots adapter that converts DEF Box nodes to `ObstacleFootprint`.
+4. Planned and State-only 2 s trajectories generated from current state and known command schedule.
+5. A 6-row CSV validated by an ordinary-Python acceptance script.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -53,6 +61,7 @@ Milestone 3B implements the Webots-decoupled world-risk core:
 - Milestone 1D CSV: `data/logs/m1d/episode_0001.csv`
 - Milestone 2 in-place validation CSV: `data/logs/m2/trajectory_validation_episode_0001.csv`
 - Milestone 2R forward-arc validation CSV: `data/logs/m2/trajectory_validation_episode_0002.csv`
+- Milestone 3C accepted risk validation CSV: `data/logs/m3/risk_validation_episode_0002.csv`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -107,7 +116,8 @@ Outputs:
 The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin, and should be interpreted as a band along the predicted path.
 
 Milestone 3B keeps this in world coordinates. Camera projection, image-space risk maps, and compression allocation remain downstream work.
+Milestone 3C still keeps risk in world coordinates. The Webots adapter provides obstacle ground truth only; it does not project into camera pixels.
 
 ## Explicitly Not Implemented
 
-The project still does not implement Webots M3 risk worlds, camera projection, image risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement camera projection, image risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

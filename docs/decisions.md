@@ -87,3 +87,13 @@
 - **Reason:** This keeps Milestone 3B geometry testable without Webots, camera projection, dynamic obstacle prediction, or learned models.
 - **Rejected for now:** Dynamic obstacle prediction, camera projection, image risk maps, TTC as rigid-body collision time, non-AABB obstacles, machine learning, and unvalidated weighted risk terms.
 - **Impact:** Milestone 3B must implement the frozen interfaces and acceptance criteria from `docs/risk_formulation_design.md` before Webots validation or visualization work.
+
+## 2026-07-18 - Milestone 3C Webots validation snapshot
+
+- **Decision:** Use a single Webots analysis snapshot at `analysis_time_s = 7.968 s`, one 32 ms step before the 8.000 s command switch from forward-left arc to forward-right arc.
+- **Reason:** At that instant, State-only continues the measured forward-left arc, while Command-conditioned uses the known future command schedule and turns right within the 2 s horizon. This produces a clear planned/state trajectory disagreement without reading future actual motion.
+- **Decision:** Use fixed unrotated Webots `Solid` + `Shape` + `Box` obstacles and convert them to `ObstacleFootprint` through a simulator adapter outside `risk_map`.
+- **Reason:** This validates the frozen world-coordinate risk interface against simulator ground truth while keeping `risk_map` independent of Webots.
+- **Decision:** Use one shared validation parameter set for all six obstacles and both trajectories: `corridor_radius_m = 0.037592257`, `sigma_distance_m = 0.05`, `tau_time_s = 1.0`, `maximum_horizon_s = 2.0`, and `geometry_tolerance_m = 0.000001`.
+- **Rejected for now:** Dynamic obstacles, camera projection, image risk heatmaps, ROI compression, formal Milestone 3D plots, and per-obstacle risk-parameter tuning.
+- **Impact:** Milestone 3C produces a 6-row world-coordinate CSV and automatic validator only. Later Milestone 3D should use this accepted CSV for diagnostics before any image-space risk work.

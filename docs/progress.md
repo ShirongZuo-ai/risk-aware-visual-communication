@@ -17,6 +17,8 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 2R: preserved the original in-place rotation validation, added a forward-arc validation episode, improved stable/transition window labeling, and regenerated arc-only evaluation figures.
 - Accepted Milestone 2R and the cleanup fix after GUI review; prepared `feature/m3-world-risk` for the next milestone without adding Milestone 3 code.
 - Completed Milestone 3A: froze the world-coordinate trajectory-to-obstacle risk formulation, data structures, module boundaries, validation scenario roles, and acceptance criteria without implementing risk algorithms.
+- Completed Milestone 3B: implemented and unit-tested the Webots-decoupled world-coordinate risk geometry core.
+- Completed Milestone 3C: connected the risk core to a Webots multi-obstacle validation scene and generated an automatically validated 6-row world-risk CSV.
 
 ## Native Windows environment results
 
@@ -657,6 +659,122 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - risk score is an interpretable heuristic proxy, not a probability;
   - no camera projection or pixel-space risk allocation.
 
+## Milestone 3C: Webots world-risk validation
+
+- Stage: Milestone 3C complete on local branch `feature/m3-world-risk`.
+- Starting core implementation commit: `ced0dc7 feat: implement world risk geometry core`.
+- Created Webots validation world:
+  - `simulator/worlds/m3_world_risk_validation.wbt`
+- Created controller:
+  - `simulator/controllers/m3_world_risk_validation/m3_world_risk_validation.py`
+- Created Webots obstacle adapter:
+  - `simulator/adapters/webots_obstacle_adapter.py`
+  - `simulator/adapters/__init__.py`
+- Created shared M3C config:
+  - `simulator/m3c_config.py`
+- Created validation/calibration scripts:
+  - `scripts/validate_m3c_risk_dataset.py`
+  - `scripts/calibrate_m3c_obstacle_layout.py`
+- Created tests:
+  - `tests/test_webots_obstacle_adapter_helpers.py`
+- Risk core consistency fix:
+  - `risk_map/trajectory_obstacle_risk.py` now derives `enters_corridor` from `minimum_clearance_m <= geometry_tolerance_m`.
+  - This fixes a real inconsistency where square inflated-AABB interval estimation could mark entry while Euclidean clearance was positive. Risk formulas were not changed.
+- Analysis snapshot:
+  - `analysis_time_s = 7.968`, exactly aligned to the 32 ms Webots basic time step.
+  - The snapshot is one step before the 8.000 s command switch, so State-only continues the measured forward-left arc while Command-conditioned knows the upcoming right-arc command.
+  - Prediction horizon: `2.0 s`.
+  - Prediction step: `0.032 s`.
+- Webots episode used as final evidence:
+  - `data/logs/m3/risk_validation_episode_0002.csv`
+  - `data/logs/m3/risk_validation_episode_0002_trace.txt`
+  - CSV data rows: `6`.
+  - Episode `0001` is retained as an ignored calibration/debug artifact and is not used as final success evidence because the first nominal obstacle layout did not satisfy all role relationships under the actual Webots analysis state.
+- Actual analysis state from Webots episode `0002`:
+  - `current_robot_x = 0.242882516`
+  - `current_robot_y = 0.070315357`
+  - `current_robot_yaw_rad = 1.393201041`
+  - `current_linear_velocity_m_s = 0.029944488`
+  - `current_angular_velocity_rad_s = 0.350989561`
+  - `trajectory_disagreement_m = 0.040803441`
+- Risk parameters:
+  - `corridor_radius_m = 0.037592257`
+  - `sigma_distance_m = 0.05`
+  - `tau_time_s = 1.0`
+  - `maximum_horizon_s = 2.0`
+  - `geometry_tolerance_m = 0.000001`
+- Fixed Webots Box obstacles, all size `0.025 m x 0.025 m x 0.05 m`, no planar rotation:
+
+| obstacle_id | DEF | center_x | center_y |
+|---|---|---:|---:|
+| EARLY_CONFLICT | M3_EARLY_CONFLICT | 0.297106 | 0.065676 |
+| LATE_CONFLICT | M3_LATE_CONFLICT | 0.241455 | 0.162030 |
+| ON_PLANNED_PATH | M3_ON_PLANNED_PATH | 0.298331 | 0.106364 |
+| ON_STATE_PATH | M3_ON_STATE_PATH | 0.203578 | 0.123618 |
+| NEAR_BOUNDARY | M3_NEAR_BOUNDARY | 0.187397 | 0.095750 |
+| OUTSIDE_BOTH | M3_OUTSIDE_BOTH | 0.330000 | 0.185000 |
+
+- Episode `0002` obstacle risk summary:
+
+| obstacle_id | planned clearance | planned TTCf | planned risk | state clearance | state TTCf | state risk | combined risk |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| EARLY_CONFLICT | -0.000109235 | 0.540991177 | 0.582170932 | 0.002997031 | none | 0.666415720 | 0.666415720 |
+| LATE_CONFLICT | -0.003019928 | 1.567852200 | 0.208492502 | -0.016164765 | 1.407580468 | 0.244734711 | 0.244734711 |
+| ON_PLANNED_PATH | -0.024513607 | 0.650445002 | 0.521813517 | 0.004297946 | none | 0.455725349 | 0.521813517 |
+| ON_STATE_PATH | 0.000910321 | none | 0.430045704 | -0.020909343 | 0.108539760 | 0.897143223 | 0.897143223 |
+| NEAR_BOUNDARY | 0.007032912 | none | 0.764404461 | 0.000788975 | none | 0.138486732 | 0.764404461 |
+| OUTSIDE_BOTH | 0.030868868 | none | 0.072994049 | 0.058035029 | none | 0.045094095 | 0.072994049 |
+
+- Automatic role checks passed:
+  - EARLY_CONFLICT and LATE_CONFLICT enter planned corridor.
+  - EARLY_CONFLICT planned TTCf is earlier than LATE_CONFLICT.
+  - EARLY_CONFLICT planned risk is greater than LATE_CONFLICT.
+  - ON_PLANNED_PATH has planned risk greater than state risk and smaller planned clearance.
+  - ON_STATE_PATH has state risk greater than planned risk and smaller state clearance.
+  - OUTSIDE_BOTH enters neither corridor and has clearly positive planned/state clearance.
+  - NEAR_BOUNDARY has a small positive state clearance within `0 < clearance <= 0.01 m`.
+  - All rows share the same positive trajectory disagreement.
+- Webots-to-`ObstacleFootprint` mapping:
+  - `Supervisor.getFromDef(def_name)`;
+  - `Solid.translation` maps to `center_x`, `center_y`;
+  - `Shape.geometry Box.size` maps to `size_x`, `size_y`;
+  - `Solid.rotation` must have no planar rotation;
+  - appearance/color is ignored.
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m py_compile ...`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - Webots R2025a batch/fast run of `simulator/worlds/m3_world_risk_validation.wbt`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3c_risk_dataset.py .\data\logs\m3\risk_validation_episode_0002.csv`
+  - `Select-String -Path risk_map\*.py -Pattern "webots|controller|numpy|scipy|shapely|cv2|sklearn|torch|tensorflow|PIL" -CaseSensitive:$false`
+- Validation results:
+  - `py_compile`: passed.
+  - Unit tests: `65` tests passed.
+  - Webots trace: `csv_rows=6` and `m3_world_risk_validation: complete`.
+  - M3C CSV validator: exit code 0.
+  - Redirected Webots stdout/stderr for the final run contained no text.
+  - `risk_map` dependency audit still found no prohibited imports.
+  - Generated `data/logs/m3` and `results/webots_m3c_*` files are ignored by Git.
+- Data-leakage audit:
+  - State-only prediction uses only current Webots state at analysis time.
+  - Command-conditioned prediction uses the same current state plus explicit future command schedule.
+  - Future actual position, yaw, velocity, or future CSV rows are not read by the controller.
+- GUI/manual validation still needed:
+  - confirm the six obstacles are visible in Webots with reasonable role positions;
+  - confirm the robot does not collide before analysis time;
+  - confirm Console has no red Traceback;
+  - confirm the scene semantics match EARLY/LATE/ON_PLANNED/ON_STATE/NEAR/OUTSIDE.
+- Explicitly not implemented in Milestone 3C:
+  - no camera projection;
+  - no image-space risk map or heatmap;
+  - no ROI compression;
+  - no JPEG/H.264/H.265 encoding;
+  - no target detection;
+  - no closed-loop obstacle avoidance;
+  - no dynamic obstacles;
+  - no ROS 2;
+  - no machine learning;
+  - no formal Milestone 3D figures.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -711,4 +829,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Begin Milestone 3C on `feature/m3-world-risk` by creating the Webots world-risk validation scenario and converting simulator obstacle ground truth into the frozen `ObstacleFootprint` interface.
+Begin Milestone 3D on `feature/m3-world-risk` by producing world-coordinate risk diagnostics and validation reporting from the accepted M3C CSV, without camera projection or image-space risk maps unless the milestone scope is explicitly changed.
