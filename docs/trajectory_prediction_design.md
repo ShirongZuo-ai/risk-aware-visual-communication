@@ -100,3 +100,47 @@ corridor_radius = robot_half_width + prediction_error_quantile + safety_margin
 This is based on limited simulation data. It is not a rigorously calibrated confidence interval and does not specifically model sudden slip. Its purpose is to prevent downstream risk code from treating a nominal predicted trajectory as an exact line.
 
 Future machine learning may be useful for residual correction or slip uncertainty estimation, but Milestone 2 intentionally uses interpretable physics-based models first.
+
+## Validation Episodes
+
+`data/logs/m2/trajectory_validation_episode_0001.csv` is the original in-place rotation validation episode. It keeps the Milestone 2 straight, left in-place turn, right in-place turn, and stop phases and remains useful for yaw-transition stress testing.
+
+`data/logs/m2/trajectory_validation_episode_0002.csv` is the Milestone 2R forward-arc validation episode:
+
+- `0-4 s`: straight, left/right `2.0 rad/s`
+- `4-8 s`: forward-left arc, left `1.0 rad/s`, right `2.0 rad/s`
+- `8-12 s`: forward-right arc, left `2.0 rad/s`, right `1.0 rad/s`
+- `12-16 s`: stop, left/right `0.0 rad/s`
+
+Using the official e-puck geometry, the nominal arc phases have positive linear velocity because both wheel commands remain positive. The left and right arc angular velocities have opposite signs because `omega_right - omega_left` changes sign.
+
+## Stable and Transition Windows
+
+Milestone 2R centralizes transition labeling in `scripts/evaluate_m2_trajectory.py`:
+
+```text
+TRANSITION_GUARD_START_S = 0.10
+TRANSITION_GUARD_END_S = 0.20
+```
+
+For every command switch, prediction windows intersecting `[switch_time + 0.10 s, switch_time + 0.20 s]` are labeled `transition_*`. Stable windows must start after `switch_time + 0.20 s` and fit fully inside one command phase. This excludes command-switch transients from stable metrics and avoids marking frames as stable before the actual robot state has had time to respond.
+
+## Corridor Geometry
+
+The empirical corridor radius is still derived from residual quantiles:
+
+```text
+corridor_radius = robot_half_width + prediction_error_quantile + safety_margin
+```
+
+For visualization and later risk-map use, Milestone 2R represents the corridor as a union of equal-radius disks centered along the predicted trajectory points. This forms a band around the path. It is implemented in `navigation/trajectory_uncertainty.py` and is independent of Webots and plotting libraries.
+
+## Data Leakage Audit
+
+- State-only prediction uses only the current actual `x`, `y`, `yaw_rad`, actual ground-plane linear velocity, and actual angular velocity from the current CSV row.
+- State-only prediction does not read future commands, future positions, future velocities, or future yaw.
+- Command-conditioned prediction starts from the same current actual state and additionally receives only the future wheel-command plan that is known by the controller schedule before execution.
+- Command-conditioned prediction does not read future actual position, velocity, or yaw.
+- Future actual Webots rows are accessed only by the offline evaluator to compute ADE, FDE, yaw MAE, and valid window counts.
+
+Audit conclusion for Milestone 2R: no prediction data leakage was found in the evaluated State-only or Command-conditioned pipelines.

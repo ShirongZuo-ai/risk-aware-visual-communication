@@ -18,6 +18,13 @@ Milestone 2 adds trajectory prediction and empirical uncertainty estimation:
 3. Offline comparison against actual future Webots trajectories.
 4. First empirical residual corridor parameters.
 
+Milestone 2R adds forward-arc validation without replacing the original in-place rotation validation:
+
+1. `trajectory_validation_episode_0001` remains the in-place rotation validation episode.
+2. `trajectory_validation_episode_0002` validates straight, forward-left arc, forward-right arc, and stop.
+3. Stable metrics exclude command-switch transients using a documented 0.10-0.20 s transition guard.
+4. Arc uncertainty is visualized as a band along the predicted path using a union of disks.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -28,8 +35,10 @@ Milestone 2 adds trajectory prediction and empirical uncertainty estimation:
 ## Current Data Sources
 
 - Milestone 1D CSV: `data/logs/m1d/episode_0001.csv`
-- Milestone 2 validation CSV: `data/logs/m2/trajectory_validation_episode_0001.csv`
+- Milestone 2 in-place validation CSV: `data/logs/m2/trajectory_validation_episode_0001.csv`
+- Milestone 2R forward-arc validation CSV: `data/logs/m2/trajectory_validation_episode_0002.csv`
 - Milestone 2 results: `results/m2_trajectory/`
+- Milestone 2R arc results: `results/m2_trajectory_arc/`
 
 Generated data and results are ignored by Git.
 
@@ -56,10 +65,11 @@ Outputs:
 - ADE, FDE, yaw MAE, valid window counts, and compute time
 - Empirical residual corridor radii
 - Diagnostic trajectory figures
+- Stable and transition windows separated by profile-specific phase labels
 
 ## Downstream Use
 
-The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin.
+The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin, and should be interpreted as a band along the predicted path.
 
 ## Explicitly Not Implemented
 

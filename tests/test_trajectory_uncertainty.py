@@ -7,6 +7,7 @@ from navigation.trajectory_uncertainty import (
     position_error,
     quantile,
     summarize_corridors,
+    trajectory_corridor_disks,
 )
 
 
@@ -44,6 +45,26 @@ class TrajectoryUncertaintyTests(unittest.TestCase):
         self.assertEqual(summary.status, "ok")
         self.assertAlmostEqual(summary.position_error_p50_m, 0.03)
         self.assertAlmostEqual(summary.corridor_radius_m, EPUCK_ROBOT_HALF_WIDTH_M + 0.046 + 0.01)
+
+    def test_trajectory_corridor_is_disk_union_along_path(self):
+        class Point:
+            def __init__(self, x, y):
+                self.x = x
+                self.y = y
+
+        points = [Point(0.0, 0.0), Point(0.1, 0.02), Point(0.2, 0.08)]
+        disks = trajectory_corridor_disks(points, 0.04)
+        self.assertEqual(len(disks), len(points))
+        self.assertEqual([(disk.center_x, disk.center_y) for disk in disks], [(0.0, 0.0), (0.1, 0.02), (0.2, 0.08)])
+        self.assertTrue(all(disk.radius_m == 0.04 for disk in disks))
+
+    def test_trajectory_corridor_rejects_invalid_geometry(self):
+        with self.assertRaises(ValueError):
+            trajectory_corridor_disks([], 0.04)
+        with self.assertRaises(ValueError):
+            trajectory_corridor_disks([object()], 0.04)
+        with self.assertRaises(ValueError):
+            trajectory_corridor_disks([type("Point", (), {"x": 0.0, "y": 0.0})()], 0.0)
 
 
 if __name__ == "__main__":

@@ -36,6 +36,13 @@ class CorridorStats:
     status: str
 
 
+@dataclass(frozen=True)
+class CorridorDisk:
+    center_x: float
+    center_y: float
+    radius_m: float
+
+
 def _require_finite(name: str, value: float) -> None:
     if not math.isfinite(value):
         raise ValueError(f"{name} must be finite")
@@ -112,6 +119,26 @@ def corridor_radius(
     if safety_margin_m < 0:
         raise ValueError("safety_margin_m must be non-negative")
     return robot_half_width_m + prediction_error_quantile_m + safety_margin_m
+
+
+def trajectory_corridor_disks(points: Iterable[object], radius_m: float) -> List[CorridorDisk]:
+    """Represent a trajectory corridor as the union of equal-radius disks."""
+    _require_finite("radius_m", radius_m)
+    if radius_m <= 0:
+        raise ValueError("radius_m must be positive")
+    disks: List[CorridorDisk] = []
+    for index, point in enumerate(points):
+        try:
+            x = float(point.x)
+            y = float(point.y)
+        except AttributeError as exc:
+            raise ValueError(f"point {index} must expose x and y attributes") from exc
+        _require_finite(f"point {index} x", x)
+        _require_finite(f"point {index} y", y)
+        disks.append(CorridorDisk(x, y, radius_m))
+    if not disks:
+        raise ValueError("at least one trajectory point is required")
+    return disks
 
 
 def summarize_corridors(

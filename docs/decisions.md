@@ -61,3 +61,14 @@
 - **Uncertainty corridor:** Use empirical residual quantiles from finite simulation data for the first corridor. The default corridor radius is `robot_half_width + 90% position-error quantile + 0.01 m safety margin`.
 - **Rejected for now:** Machine learning trajectory prediction, LSTM/Transformer models, slip-specific modeling, and treating planned commands as guaranteed actual motion.
 - **Future direction:** Machine learning may later be used for physics residual correction and slip uncertainty estimation, not as a replacement before interpretable baselines are measured.
+
+## 2026-07-17 - Milestone 2R transition guard and arc validation
+
+- **Decision:** Preserve `trajectory_validation_episode_0001` as the in-place rotation validation episode and add a separate forward-arc validation episode, `trajectory_validation_episode_0002`.
+- **Reason:** The original episode is useful for command-transition yaw stress testing, but it does not validate forward curved motion because its turn phases rotate in place with near-zero linear velocity.
+- **Decision:** Mark prediction windows intersecting `[command_switch + 0.10 s, command_switch + 0.20 s]` as transition, and allow stable labels only after `command_switch + 0.20 s`.
+- **Reason:** This prevents frames immediately after a command switch, before actuator/state response has settled, from being counted as stable.
+- **Decision:** Render the empirical uncertainty corridor as a union of disks along the predicted trajectory.
+- **Reason:** Downstream risk modules need a band around the path, not a single uncertainty circle at the starting pose.
+- **Rejected for now:** Merging the in-place and arc episodes into one CSV, overwriting original Milestone 2 figures, adding obstacle risk/TTC/risk maps, or introducing learned trajectory models.
+- **Impact:** Milestone 2 evaluation now supports named profiles (`in_place` and `arc`), with arc-only outputs under `results/m2_trajectory_arc/`.

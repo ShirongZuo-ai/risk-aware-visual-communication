@@ -14,6 +14,7 @@ Last updated: 2026-07-17 (Asia/Shanghai)
 - Completed Milestone 1C: captured and validated at least 100 PNG frames from the existing e-puck forward RGB camera during Webots runtime.
 - Completed Milestone 1D: wrote one strictly aligned CSV state row for each saved image frame using Webots Supervisor ground truth.
 - Completed Milestone 2: implemented State-only and Command-conditioned trajectory predictors, evaluated them on a dedicated Webots validation episode, and estimated first empirical uncertainty corridors.
+- Completed Milestone 2R: preserved the original in-place rotation validation, added a forward-arc validation episode, improved stable/transition window labeling, and regenerated arc-only evaluation figures.
 
 ## Native Windows environment results
 
@@ -342,6 +343,7 @@ OK: validation passed
 ### Milestone 2 validation episode
 
 - Episode CSV: `data/logs/m2/trajectory_validation_episode_0001.csv`.
+- Episode role: in-place rotation validation.
 - Row count: `500` data rows plus header.
 - World: 4 m x 4 m `RectangleArena` with e-puck only; no obstacles.
 - Controller sequence:
@@ -424,6 +426,84 @@ This is an empirical residual corridor from limited simulation data, not a calib
 - This validation episode has no obstacles and no slip-specific perturbation, so uncertainty estimates are narrow and scenario-limited.
 - Git identity is still not configured, so no local commit was made despite validation passing.
 
+## Milestone 2R: forward arc validation and transition guard
+
+- Stage: Milestone 2R complete on local branch `feature/m2-trajectory-models`.
+- Starting commit: `9663cc3 feat: add trajectory models and uncertainty corridor`.
+- Original Milestone 2 assets were preserved:
+  - `data/logs/m2/trajectory_validation_episode_0001.csv` remains the in-place rotation validation episode.
+  - Existing figures under `results/m2_trajectory/` were not regenerated during 2R.
+- New Webots validation assets:
+  - `simulator/worlds/m2_arc_trajectory_validation.wbt`
+  - `simulator/controllers/m2_arc_trajectory_validation/m2_arc_trajectory_validation.py`
+- New generated episode:
+  - `data/logs/m2/trajectory_validation_episode_0002.csv`
+  - Episode role: forward arc validation.
+  - Row count: `500` data rows plus header.
+  - World: 4 m x 4 m `RectangleArena` with e-puck only; no obstacles.
+- Episode sequence:
+  - `0-4 s`: straight, left/right `2.00 rad/s`
+  - `4-8 s`: forward-left arc, left `1.00 rad/s`, right `2.00 rad/s`
+  - `8-12 s`: forward-right arc, left `2.00 rad/s`, right `1.00 rad/s`
+  - `12-16 s`: stop, both `0.00 rad/s`
+- Transition guard:
+  - Central constants in `scripts/evaluate_m2_trajectory.py`: `TRANSITION_GUARD_START_S = 0.10`, `TRANSITION_GUARD_END_S = 0.20`.
+  - Every prediction window intersecting `[command_switch + 0.10 s, command_switch + 0.20 s]` is labeled transition.
+  - Stable windows start only after `command_switch + 0.20 s`, excluding actuator switching transients.
+- Actual Webots arc validation:
+  - Straight: mean actual linear velocity `0.039683774 m/s`, mean omega `-0.000000048 rad/s`, `dx=0.157439958 m`, `dy=0.000000013 m`.
+  - Forward-left arc: mean actual linear velocity `0.030087395 m/s`, mean omega `0.348303969 rad/s`, `dx=0.084162558 m`, `dy=0.070315344 m`.
+  - Forward-right arc: mean actual linear velocity `0.030009900 m/s`, mean omega `-0.345576797 rad/s`, `dx=0.083280314 m`, `dy=0.071326220 m`.
+  - Stop: mean actual linear velocity `0.000585555 m/s`, mean omega `-0.002700135 rad/s`.
+  - Full run bounds: `x=0.000000..0.327288 m`, `y=-0.000001..0.142593 m`, safely within the 4 m x 4 m arena.
+- Arc evaluation output directory: `results/m2_trajectory_arc/`.
+- New generated arc figures:
+  - `results/m2_trajectory_arc/forward_left_arc_1s.png`
+  - `results/m2_trajectory_arc/forward_right_arc_1s.png`
+  - `results/m2_trajectory_arc/arc_transition_2s.png`
+  - `results/m2_trajectory_arc/arc_uncertainty_corridor.png`
+  - `results/m2_trajectory_arc/method_comparison_log_scale.png`
+
+### Milestone 2R aggregate metrics
+
+| Method | Horizon | Category | Windows | ADE mean (m) | FDE mean (m) | yaw MAE mean (rad) |
+|---|---:|---|---:|---:|---:|---:|
+| State-only | 0.5 | all_stable | 412 | 0.000034571 | 0.000063502 | 0.000009111 |
+| State-only | 0.5 | all_transition | 57 | 0.001357671 | 0.003357978 | 0.039602718 |
+| State-only | 1.0 | all_stable | 348 | 0.000071489 | 0.000135392 | 0.000027119 |
+| State-only | 1.0 | all_transition | 105 | 0.002768084 | 0.007596697 | 0.079800137 |
+| State-only | 2.0 | all_stable | 224 | 0.000166138 | 0.000324253 | 0.000092061 |
+| State-only | 2.0 | all_transition | 198 | 0.006054908 | 0.018486356 | 0.157453182 |
+| Command-conditioned | 0.5 | all_stable | 412 | 0.000026305 | 0.000066676 | 0.004550552 |
+| Command-conditioned | 0.5 | all_transition | 57 | 0.000033524 | 0.000071485 | 0.005181834 |
+| Command-conditioned | 1.0 | all_stable | 348 | 0.000096211 | 0.000259123 | 0.008848160 |
+| Command-conditioned | 1.0 | all_transition | 105 | 0.000099031 | 0.000235729 | 0.009951645 |
+| Command-conditioned | 2.0 | all_stable | 224 | 0.000354789 | 0.001009160 | 0.017183483 |
+| Command-conditioned | 2.0 | all_transition | 198 | 0.000350929 | 0.000888623 | 0.019225080 |
+
+### Milestone 2R verification actually run
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile .\navigation\trajectory_prediction.py .\navigation\trajectory_uncertainty.py .\scripts\evaluate_m2_trajectory.py .\simulator\controllers\m2_arc_trajectory_validation\m2_arc_trajectory_validation.py .\simulator\controllers\m2_trajectory_validation\m2_trajectory_validation.py
+.\.venv\Scripts\python.exe -m unittest discover -s tests
+$env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_trace_<timestamp>.log'
+& "$env:ProgramFiles\Webots\msys64\mingw64\bin\webots.exe" --batch --mode=fast --minimize --stdout --stderr --port=1242 ".\simulator\worlds\m2_arc_trajectory_validation.wbt"
+.\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py .\data\logs\m2\trajectory_validation_episode_0002.csv --profile arc
+```
+
+- `py_compile`: passed.
+- Unit tests: `30` tests passed.
+- Webots R2025a ran the arc world and controller; trace recorded `m2_arc_trajectory_validation: complete` and `csv_rows=500`.
+- The Webots command timed out at the shell tool level because Webots remains open after controller completion. The new validation Webots process was stopped after trace/CSV checks; the user's pre-existing GUI Webots process was left running.
+- Data validation confirmed episode ID `episode_0002`, 500 rows, no `Downloads` path, positive arc linear velocities, opposite arc angular-velocity signs, changing `robot_x` and `robot_y`, and arena bounds safely within 4 m x 4 m.
+- New arc uncertainty corridor figure uses a union of disks along the predicted command-conditioned trajectory, not one circle around the start.
+
+### Milestone 2R warnings and issues
+
+- Webots GUI Console red-error status was not visually inspected for the automated arc run. No Python exception, CSV write failure, or evaluation failure appeared in the trace/output.
+- Generated CSV/results/figures remain ignored by Git.
+- The arc validation still has no obstacles, TTC, risk map, compression, perception, closed-loop navigation, ROS 2, WSL, or machine learning.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -468,15 +548,14 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Current issues
 
-1. Project dependencies in `requirements.txt` are not installed in `.venv`.
-2. The repository has no initial commit and its files remain untracked.
+1. Project dependencies in `requirements.txt` are not fully installed as a controlled dependency pass; matplotlib and its runtime dependencies were installed into `.venv` for Milestone 2 plotting.
+2. The repository now has local commits on `feature/m2-trajectory-models`; generated data/results remain untracked and ignored.
 3. The copied `.venv` remains based on a Python executable inside an application-specific Conda installation; it currently works and excludes that environment's site packages, but a dedicated base interpreter would reduce coupling if instability appears.
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.
-5. Git `user.name` and `user.email` are not configured, so the initial commit requested for Milestone 1A was skipped.
+5. Git `user.name` and `user.email` are now configured locally/globally for this environment as `ShirongZuo-ai <3095325284@qq.com>`.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
-7. Milestone 2 Webots GUI Console red-error status still needs user visual confirmation if a GUI-level console check is required.
-8. Git `user.name` and `user.email` remain unset, so the requested local commit was not created.
+7. Milestone 2 and 2R Webots GUI Console red-error status still needs user visual confirmation if a GUI-level console check is required.
 
 ## Next priority
 
-Manually review the Milestone 2 figures and validation CSV, then proceed to Milestone 3 risk-map formulation only after accepting the trajectory model and empirical corridor definitions.
+Manually review the Milestone 2R arc figures and validation CSV, then proceed to Milestone 3 risk-map formulation only after accepting the trajectory model, transition guard, and empirical corridor definitions.

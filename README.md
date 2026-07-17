@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the local Git repository uses the `main` branch, the official Webots R2025a stable release is installed and verified, and Milestone 1A/1B/1C/1D have created a minimal e-puck camera world, a fixed-sequence motion controller, camera frame capture, and aligned per-frame CSV state logging. Risk maps, compression, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, and Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation. Risk maps, compression, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -89,10 +89,17 @@ $webots = Join-Path $env:ProgramFiles "Webots\msys64\mingw64\bin\webots.exe"
 & $webots ".\simulator\worlds\m2_trajectory_validation.wbt"
 ```
 
+Run the Milestone 2R forward-arc validation episode:
+
+```powershell
+$webots = Join-Path $env:ProgramFiles "Webots\msys64\mingw64\bin\webots.exe"
+& $webots ".\simulator\worlds\m2_arc_trajectory_validation.wbt"
+```
+
 Run the unit tests:
 
 ```powershell
-.\.venv\Scripts\python.exe -m unittest tests.test_trajectory_prediction tests.test_trajectory_uncertainty
+.\.venv\Scripts\python.exe -m unittest discover -s tests
 ```
 
 Evaluate the latest or specified Milestone 2 trajectory CSV:
@@ -100,13 +107,16 @@ Evaluate the latest or specified Milestone 2 trajectory CSV:
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py
 .\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py .\data\logs\m2\trajectory_validation_episode_0001.csv
+.\.venv\Scripts\python.exe .\scripts\evaluate_m2_trajectory.py .\data\logs\m2\trajectory_validation_episode_0002.csv --profile arc
 ```
 
 Milestone 2 outputs:
 
 ```text
 data/logs/m2/trajectory_validation_episode_0001.csv
+data/logs/m2/trajectory_validation_episode_0002.csv
 results/m2_trajectory/
+results/m2_trajectory_arc/
 ```
 
 ## Documentation
