@@ -1,6 +1,6 @@
 # System Overview
 
-Last updated: 2026-07-17 (Asia/Shanghai)
+Last updated: 2026-07-18 (Asia/Shanghai)
 
 ## Completed Pipeline
 
@@ -24,6 +24,14 @@ Milestone 2R adds forward-arc validation without replacing the original in-place
 2. `trajectory_validation_episode_0002` validates straight, forward-left arc, forward-right arc, and stop.
 3. Stable metrics exclude command-switch transients using a documented 0.10-0.20 s transition guard.
 4. Arc uncertainty is visualized as a band along the predicted path using a union of disks.
+
+Milestone 3A freezes the world-risk design:
+
+1. Static axis-aligned rectangular obstacle footprints in world coordinates.
+2. Trajectory Occupancy Corridors around planned and state trajectories.
+3. Obstacle boundary-to-trajectory geometry and clearance definitions.
+4. Time-to-Conflict (`TTCf`) and interpretable spatial/temporal risk scores.
+5. Independent planned/state risk outputs combined by max-union.
 
 ## Trajectory Types
 
@@ -67,10 +75,30 @@ Outputs:
 - Diagnostic trajectory figures
 - Stable and transition windows separated by profile-specific phase labels
 
+## Milestone 3A Inputs and Outputs
+
+Inputs:
+
+- Planned command-conditioned trajectory in world coordinates
+- State-only trajectory in world coordinates
+- Trajectory Occupancy Corridor radius
+- Static AABB obstacle footprints in world coordinates
+- Risk parameters: `sigma_distance_m`, `tau_time_s`, and `maximum_horizon_s`
+
+Outputs:
+
+- Per-obstacle planned trajectory conflict result
+- Per-obstacle state trajectory conflict result
+- Clearance, closest time, Time-to-Conflict, overlap duration, spatial score, temporal score, and risk score
+- Trajectory disagreement between planned and state trajectories
+- Combined risk score defined as `max(planned_risk, state_risk)`
+
 ## Downstream Use
 
 The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin, and should be interpreted as a band along the predicted path.
 
+Milestone 3A keeps this in world coordinates. Camera projection, image-space risk maps, and compression allocation remain downstream work.
+
 ## Explicitly Not Implemented
 
-The project still does not implement obstacle risk scoring, TTC, camera projection, risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement obstacle risk scoring code, Webots M3 risk worlds, camera projection, image risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

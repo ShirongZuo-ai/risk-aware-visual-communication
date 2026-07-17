@@ -34,13 +34,20 @@ Outputs: predicted trajectory, robot-width-inflated trajectory corridor, obstacl
 
 ## Initial risk formulation
 
-Risk must consider distance to the predicted trajectory, distance to the robot, linear speed, turning direction, time-to-collision (TTC), and trajectory-corridor intersection.
+Milestone 3A freezes the first world-coordinate risk formulation in `docs/risk_formulation_design.md`.
 
-Initial interpretable form:
+The first version uses static axis-aligned rectangular obstacle footprints, Trajectory Occupancy Corridors, obstacle-boundary-to-trajectory clearance, and Time-to-Conflict (`TTCf`) rather than broad Time-to-Collision wording. `TTCf` is the first future time when an obstacle footprint enters a Trajectory Occupancy Corridor; it is a geometric conflict proxy, not a true rigid-body collision time.
 
-`risk_i = trajectory_relevance_i × inverse_ttc_i × collision_cost_i`
+The first interpretable risk proxy is:
 
-The precise normalization, clipping, zero-velocity behavior, and risk aggregation remain to be specified before risk-map implementation.
+```text
+spatial_score = exp(-max(clearance_m, 0) / sigma_distance_m)
+temporal_score = exp(-relevant_time_s / tau_time_s)
+risk_score = spatial_score * temporal_score
+combined_risk = max(planned_risk, state_risk)
+```
+
+Risk scores are heuristic values in `[0, 1]`, not probabilities. Camera projection, image risk maps, compression allocation, dynamic obstacles, and learned risk models remain out of scope until the world-coordinate risk core is implemented and validated.
 
 ## Comparators
 
@@ -72,4 +79,3 @@ Conclusions must not rely on PSNR or SSIM alone.
 5. Constant-speed dynamic obstacle crossing the trajectory.
 
 Phase 1 begins with scenarios 1–3.
-

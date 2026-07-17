@@ -72,3 +72,18 @@
 - **Reason:** Downstream risk modules need a band around the path, not a single uncertainty circle at the starting pose.
 - **Rejected for now:** Merging the in-place and arc episodes into one CSV, overwriting original Milestone 2 figures, adding obstacle risk/TTC/risk maps, or introducing learned trajectory models.
 - **Impact:** Milestone 2 evaluation now supports named profiles (`in_place` and `arc`), with arc-only outputs under `results/m2_trajectory_arc/`.
+
+## 2026-07-18 - Milestone 3A world-risk formulation
+
+- **Decision:** Use Time-to-Conflict (`TTCf`) for the first obstacle-risk timing term instead of broad Time-to-Collision wording.
+- **Reason:** The current model detects geometric entry into a safety-inflated trajectory corridor, not a true rigid-body collision event.
+- **Decision:** Measure obstacle risk from the obstacle footprint boundary/interior to the trajectory centerline, not from obstacle center alone.
+- **Reason:** Large obstacles can intersect a trajectory corridor even when their center remains outside.
+- **Decision:** Compute planned and state trajectory risks independently, then combine the first version with `max(planned_risk, state_risk)`.
+- **Reason:** Planned and state trajectories represent different evidence sources; max-union preserves conflicts that appear in either source without hiding them by averaging.
+- **Decision:** Treat risk as an interpretable heuristic proxy in `[0, 1]`, not as a probability.
+- **Reason:** The first version is not calibrated against collision statistics and uses transparent distance/time decay terms.
+- **Decision:** Limit the first world-risk version to static, axis-aligned rectangular obstacle footprints in world coordinates.
+- **Reason:** This keeps Milestone 3B geometry testable without Webots, camera projection, dynamic obstacle prediction, or learned models.
+- **Rejected for now:** Dynamic obstacle prediction, camera projection, image risk maps, TTC as rigid-body collision time, non-AABB obstacles, machine learning, and unvalidated weighted risk terms.
+- **Impact:** Milestone 3B must implement the frozen interfaces and acceptance criteria from `docs/risk_formulation_design.md` before Webots validation or visualization work.

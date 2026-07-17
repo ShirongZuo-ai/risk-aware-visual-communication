@@ -16,6 +16,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 2: implemented State-only and Command-conditioned trajectory predictors, evaluated them on a dedicated Webots validation episode, and estimated first empirical uncertainty corridors.
 - Completed Milestone 2R: preserved the original in-place rotation validation, added a forward-arc validation episode, improved stable/transition window labeling, and regenerated arc-only evaluation figures.
 - Accepted Milestone 2R and the cleanup fix after GUI review; prepared `feature/m3-world-risk` for the next milestone without adding Milestone 3 code.
+- Completed Milestone 3A: froze the world-coordinate trajectory-to-obstacle risk formulation, data structures, module boundaries, validation scenario roles, and acceptance criteria without implementing risk algorithms.
 
 ## Native Windows environment results
 
@@ -550,6 +551,54 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - New branch `feature/m3-world-risk` was created from the updated `main`.
 - No Milestone 3 risk model, obstacle risk, TTC, image risk map, compression, or navigation code was added during this handoff.
 
+## Milestone 3A: world-risk formulation and interface freeze
+
+- Stage: Milestone 3A complete on local branch `feature/m3-world-risk`.
+- Starting commit: `d4d9b24 docs: close trajectory validation milestone`.
+- New design document:
+  - `docs/risk_formulation_design.md`
+- Updated documents:
+  - `docs/progress.md`
+  - `docs/roadmap.md`
+  - `docs/decisions.md`
+  - `docs/research_protocol.md`
+  - `docs/system_overview.md`
+- Scope completed:
+  - Defined planned trajectory as the Command-conditioned trajectory.
+  - Defined state trajectory as the State-only trajectory.
+  - Reaffirmed that actual future trajectory is offline evaluation ground truth only.
+  - Defined the Trajectory Occupancy Corridor as robot half width plus empirical prediction residual plus safety margin.
+  - Defined static AABB `ObstacleFootprint` fields and validation rules.
+  - Defined `minimum_centerline_distance_m`, `minimum_clearance_m`, `closest_time_s`, `first_corridor_entry_time_s`, and `corridor_overlap_duration_s`.
+  - Replaced broad TTC wording with `Time-to-Conflict (TTCf)` for first corridor entry time.
+  - Froze first-version interpretable risk scores:
+    - `spatial_score = exp(-max(clearance_m, 0) / sigma_distance_m)`
+    - `temporal_score = exp(-relevant_time_s / tau_time_s)`
+    - `risk_score = spatial_score * temporal_score`
+  - Froze planned/state independent outputs and first combined rule `combined_risk = max(planned_risk, state_risk)`.
+  - Defined future module responsibilities for `risk_map/models.py`, `risk_map/geometry.py`, `risk_map/trajectory_obstacle_risk.py`, and `risk_map/risk_formulation.py`.
+  - Defined M3 validation scenario roles: `EARLY_CONFLICT`, `LATE_CONFLICT`, `ON_PLANNED_PATH`, `ON_STATE_PATH`, `NEAR_BOUNDARY`, and `OUTSIDE_BOTH`.
+  - Wrote acceptance criteria and a 20-item unit test plan for Milestone 3B.
+- Explicitly not created in Milestone 3A:
+  - no `risk_map` Python package or algorithm files;
+  - no M3 Webots world or controller;
+  - no CSV data;
+  - no figures;
+  - no actual risk result computation;
+  - no camera projection;
+  - no ROI compression;
+  - no machine learning.
+- Current limitations frozen for the first world-risk version:
+  - static obstacles only;
+  - axis-aligned rectangular obstacle footprints only;
+  - world-coordinate ground truth only;
+  - no dynamic target prediction;
+  - no camera projection;
+  - no real collision dynamics;
+  - no slip-specific model;
+  - risk is not a probability;
+  - no machine learning.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -604,4 +653,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Begin Milestone 3 world-risk formulation on `feature/m3-world-risk` by defining obstacle/world risk data structures and acceptance criteria before writing risk-map implementation code.
+Begin Milestone 3B on `feature/m3-world-risk` by implementing ordinary-Python geometry and risk core modules from `docs/risk_formulation_design.md`, starting with unit-tested data models and AABB geometry.

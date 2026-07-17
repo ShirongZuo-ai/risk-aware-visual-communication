@@ -32,9 +32,29 @@ Do not implement risk maps, ROI compression, object detection, closed-loop navig
 
 Acceptance: trajectory definitions are documented; predictors are unit-tested; a dedicated validation episode is actually run; stable and transition windows are reported separately; figures and progress record real results.
 
-## Milestone 3 — Interpretable collision-risk map
+## Milestone 3 - Interpretable collision-risk map
 
-Planned: specify TTC edge cases and risk normalization, implement obstacle-level and block-level risk, and add unit/visual tests.
+### Milestone 3A - Risk formulation and interface freeze
+
+- [x] Freeze world-coordinate trajectory-to-obstacle risk terminology.
+- [x] Define Trajectory Occupancy Corridor semantics.
+- [x] Define static AABB obstacle footprint data structures.
+- [x] Define clearance, Time-to-Conflict, risk score, and dual-trajectory combination rules.
+- [x] Freeze planned module boundaries and acceptance criteria.
+
+Acceptance: `docs/risk_formulation_design.md` documents the risk model, data structures, module boundaries, validation scenario roles, and test plan. No risk algorithm code, Webots world, controller, CSV, figure, camera projection, ROI compression, or machine-learning component is created.
+
+### Milestone 3B - Geometry and risk core implementation
+
+Planned: implement the frozen ordinary-Python geometry, risk data models, trajectory-obstacle conflict analysis, and unit tests.
+
+### Milestone 3C - Webots world-risk validation
+
+Planned: create a Webots validation world and convert simulator ground-truth obstacles into the frozen `ObstacleFootprint` interface.
+
+### Milestone 3D - Visualization and evaluation
+
+Planned: generate world-coordinate risk diagnostics and report validation results before any camera projection or image risk map.
 
 ## Milestone 4 — Budget-matched compression comparison
 
