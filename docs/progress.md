@@ -19,6 +19,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 3A: froze the world-coordinate trajectory-to-obstacle risk formulation, data structures, module boundaries, validation scenario roles, and acceptance criteria without implementing risk algorithms.
 - Completed Milestone 3B: implemented and unit-tested the Webots-decoupled world-coordinate risk geometry core.
 - Completed Milestone 3C: connected the risk core to a Webots multi-obstacle validation scene and generated an automatically validated 6-row world-risk CSV.
+- Completed Milestone 3D automated diagnostics: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002. GUI acceptance remains pending user confirmation.
 
 ## Native Windows environment results
 
@@ -775,6 +776,83 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no machine learning;
   - no formal Milestone 3D figures.
 
+## Milestone 3D: world-risk diagnostics and validation report
+
+- Stage: Milestone 3D automated diagnostics complete on local branch `feature/m3-world-risk`.
+- Input episode:
+  - `data/logs/m3/risk_validation_episode_0002.csv`
+  - `data/logs/m3/risk_validation_episode_0002_trace.txt`
+- Explicitly not used:
+  - `data/logs/m3/risk_validation_episode_0001.csv`, retained only as ignored calibration/debug output.
+- Created scripts:
+  - `scripts/m3d_world_risk_common.py`
+  - `scripts/evaluate_m3d_world_risk.py`
+  - `scripts/plot_m3d_world_risk.py`
+  - `scripts/validate_m3d_report.py`
+- Created tests:
+  - `tests/test_m3d_evaluation_helpers.py`
+- Created report:
+  - `docs/m3_world_risk_validation_report.md`
+- Generated ignored data/results:
+  - `data/logs/m3/risk_validation_episode_0002_trajectories.csv`
+  - `results/m3_world_risk/m3d_risk_summary.csv`
+  - `results/m3_world_risk/m3d_risk_summary.json`
+  - `results/m3_world_risk/parameter_sensitivity.csv`
+  - `results/m3_world_risk/world_risk_overview.png`
+  - `results/m3_world_risk/planned_vs_state_risk.png`
+  - `results/m3_world_risk/risk_decomposition_planned.png`
+  - `results/m3_world_risk/risk_decomposition_state.png`
+  - `results/m3_world_risk/early_vs_late_conflict.png`
+  - `results/m3_world_risk/clearance_risk_curve.png`
+  - `results/m3_world_risk/trajectory_disagreement_over_time.png`
+  - `results/m3_world_risk/parameter_sensitivity.png`
+- Rebuilt trajectories:
+  - planned points: `63`
+  - state points: `63`
+  - maximum planned/state disagreement: `0.040803441 m`
+- Formula checks:
+  - spatial, temporal, risk, combined max, clearance, entry-time None semantics, and shared disagreement all recalculated successfully from episode_0002.
+- Role acceptance:
+  - `M3_ROLE_ACCEPTANCE=PASS`
+  - EARLY planned risk is greater than LATE planned risk.
+  - ON_PLANNED_PATH is planned-dominant.
+  - ON_STATE_PATH is state-dominant.
+  - NEAR_BOUNDARY remains outside with small positive clearance.
+  - OUTSIDE_BOTH remains outside both corridors.
+- Parameter sensitivity:
+  - Tested `sigma_distance_m` in `{0.025, 0.05, 0.10}` and `tau_time_s` in `{0.5, 1.0, 2.0}`.
+  - All 9 combinations preserve the key ordering checks.
+  - This is a limited local sensitivity check, not a complete robustness proof.
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m py_compile scripts\m3d_world_risk_common.py scripts\evaluate_m3d_world_risk.py scripts\plot_m3d_world_risk.py scripts\validate_m3d_report.py tests\test_m3d_evaluation_helpers.py`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3c_risk_dataset.py .\data\logs\m3\risk_validation_episode_0002.csv`
+  - `.\.venv\Scripts\python.exe .\scripts\evaluate_m3d_world_risk.py`
+  - `.\.venv\Scripts\python.exe .\scripts\plot_m3d_world_risk.py`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3d_report.py`
+- Validation results:
+  - `py_compile`: passed.
+  - Unit tests: `74` tests passed.
+  - M3C validator on episode_0002: exit code 0.
+  - M3D evaluation: exit code 0.
+  - M3D plot generation: exit code 0.
+  - M3D report validator: exit code 0.
+- Data-leakage audit:
+  - M3D rebuilds trajectories only from current episode_0002 snapshot state and known command schedule.
+  - No future actual pose, yaw, velocity, or later Webots state is read.
+- GUI validation:
+  - pending user confirmation.
+- Explicitly not implemented in Milestone 3D:
+  - no camera projection;
+  - no image-space risk map or heatmap;
+  - no ROI compression;
+  - no image/video codec;
+  - no target detection;
+  - no closed-loop navigation;
+  - no dynamic obstacles;
+  - no ROS 2;
+  - no machine learning.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -829,4 +907,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Begin Milestone 3D on `feature/m3-world-risk` by producing world-coordinate risk diagnostics and validation reporting from the accepted M3C CSV, without camera projection or image-space risk maps unless the milestone scope is explicitly changed.
+Complete the pending GUI human acceptance checklist for Milestone 3, then begin camera projection planning only if the GUI check confirms the world-coordinate validation scene is visually correct.

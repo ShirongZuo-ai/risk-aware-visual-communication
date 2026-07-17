@@ -66,7 +66,15 @@ Acceptance: Webots runs the M3C world, the controller writes one risk row per ob
 
 ### Milestone 3D - Visualization and evaluation
 
-Planned: generate world-coordinate risk diagnostics and report validation results before any camera projection or image risk map.
+- [x] Rebuild planned and State-only trajectories from the accepted M3C analysis snapshot.
+- [x] Generate world-coordinate trajectory, corridor, obstacle, risk, decomposition, and disagreement diagnostics.
+- [x] Recalculate risk formulas from CSV values.
+- [x] Generate summary CSV/JSON and parameter sensitivity diagnostics.
+- [x] Create Milestone 3 validation report.
+- [x] Validate generated artifacts and report.
+- [ ] Complete GUI human acceptance.
+
+Acceptance: M3D diagnostics are generated from `risk_validation_episode_0002.csv`, role acceptance and formulas pass automatically, parameter sensitivity over 9 combinations is reported, the validation report is complete, generated data/results remain ignored, and GUI acceptance remains pending until the user confirms it.
 
 ## Milestone 4 — Budget-matched compression comparison
 

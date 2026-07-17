@@ -49,6 +49,14 @@ Milestone 3C connects the world-risk core to Webots for static AABB validation:
 4. Planned and State-only 2 s trajectories generated from current state and known command schedule.
 5. A 6-row CSV validated by an ordinary-Python acceptance script.
 
+Milestone 3D adds world-coordinate diagnostics and reporting:
+
+1. Planned/state trajectories are rebuilt from the accepted M3C snapshot.
+2. World-coordinate corridors, AABB obstacles, entry points, and risk scores are visualized.
+3. Risk formulas are recalculated from CSV values.
+4. Parameter sensitivity is checked for 9 sigma/tau combinations.
+5. `docs/m3_world_risk_validation_report.md` records Milestone 3 validation and remaining GUI acceptance status.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -62,6 +70,8 @@ Milestone 3C connects the world-risk core to Webots for static AABB validation:
 - Milestone 2 in-place validation CSV: `data/logs/m2/trajectory_validation_episode_0001.csv`
 - Milestone 2R forward-arc validation CSV: `data/logs/m2/trajectory_validation_episode_0002.csv`
 - Milestone 3C accepted risk validation CSV: `data/logs/m3/risk_validation_episode_0002.csv`
+- Milestone 3D generated trajectories: `data/logs/m3/risk_validation_episode_0002_trajectories.csv`
+- Milestone 3D diagnostics: `results/m3_world_risk/`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -116,7 +126,7 @@ Outputs:
 The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin, and should be interpreted as a band along the predicted path.
 
 Milestone 3B keeps this in world coordinates. Camera projection, image-space risk maps, and compression allocation remain downstream work.
-Milestone 3C still keeps risk in world coordinates. The Webots adapter provides obstacle ground truth only; it does not project into camera pixels.
+Milestone 3D still keeps risk in world coordinates. The Webots adapter provides obstacle ground truth only; it does not project into camera pixels.
 
 ## Explicitly Not Implemented
 

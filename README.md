@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, and Milestone 3A/3B/3C have frozen, implemented, and Webots-validated the world-coordinate risk core. Image risk maps, compression, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, and Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and diagnosed the world-coordinate risk core. Image risk maps, compression, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -158,6 +158,27 @@ data/logs/m3/risk_validation_episode_0002_trace.txt
 
 Generated M3C data remains ignored by Git.
 
+Run the Milestone 3D world-risk diagnostics:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\evaluate_m3d_world_risk.py
+.\.venv\Scripts\python.exe .\scripts\plot_m3d_world_risk.py
+.\.venv\Scripts\python.exe .\scripts\validate_m3d_report.py
+```
+
+Milestone 3D generated outputs:
+
+```text
+data/logs/m3/risk_validation_episode_0002_trajectories.csv
+results/m3_world_risk/
+```
+
+Milestone 3 report:
+
+```text
+docs/m3_world_risk_validation_report.md
+```
+
 ## Documentation
 
 - `AGENTS.md`: Codex entry point and working rules
@@ -167,4 +188,5 @@ Generated M3C data remains ignored by Git.
 - `docs/progress.md`: verified current state and next priority
 - `docs/trajectory_prediction_design.md`: Milestone 2 trajectory source definitions and uncertainty design
 - `docs/risk_formulation_design.md`: Milestone 3 world-coordinate risk definitions and implemented core API notes
+- `docs/m3_world_risk_validation_report.md`: Milestone 3D validation report and generated figure paths
 - `docs/system_overview.md`: current end-to-end pipeline summary

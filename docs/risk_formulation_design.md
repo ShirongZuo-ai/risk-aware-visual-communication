@@ -426,6 +426,20 @@ tau_time_s = 1.0
 geometry_tolerance_m = 0.000001
 ```
 
+## Milestone 3D Diagnostics
+
+Milestone 3D uses the accepted `risk_validation_episode_0002.csv` only. It rebuilds planned and State-only trajectories from the analysis snapshot and known command schedule, then regenerates:
+
+- world-coordinate overview with full trajectory occupancy corridors;
+- planned/state/combined risk comparison;
+- planned and state risk decomposition;
+- EARLY vs LATE timing comparison;
+- clearance-to-spatial-score curve;
+- planned/state disagreement over time;
+- 9-combination sensitivity check over `sigma_distance_m` and `tau_time_s`.
+
+The diagnostics do not change formal risk parameters, obstacle positions, or risk formulas. They do not perform camera projection, image-space risk mapping, ROI compression, or navigation.
+
 ## Milestone 3 Validation Scenario Roles
 
 These roles define future validation requirements. Milestone 3A does not assign fixed world coordinates. Coordinates must be chosen later after visualizing the actual M3 trajectories.

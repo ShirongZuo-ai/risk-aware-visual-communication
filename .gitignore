@@ -34,4 +34,4 @@ results/*
 # Local Webots/generated files
 *.wbproj
 *.wbt.bak
-
+simulator/worlds/.*.jpg
