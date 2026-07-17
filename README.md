@@ -166,6 +166,14 @@ Run the Milestone 3D world-risk diagnostics:
 .\.venv\Scripts\python.exe .\scripts\validate_m3d_report.py
 ```
 
+The diagnostics include split EARLY/LATE figures so TTCf seconds are not plotted on the same axis as unitless risk scores:
+
+```text
+results/m3_world_risk/early_vs_late_ttcf.png
+results/m3_world_risk/early_vs_late_risk_decomposition.png
+results/m3_world_risk/parameter_sensitivity_margins.png
+```
+
 Milestone 3D generated outputs:
 
 ```text

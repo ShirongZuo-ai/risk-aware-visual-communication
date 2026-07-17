@@ -19,7 +19,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 3A: froze the world-coordinate trajectory-to-obstacle risk formulation, data structures, module boundaries, validation scenario roles, and acceptance criteria without implementing risk algorithms.
 - Completed Milestone 3B: implemented and unit-tested the Webots-decoupled world-coordinate risk geometry core.
 - Completed Milestone 3C: connected the risk core to a Webots multi-obstacle validation scene and generated an automatically validated 6-row world-risk CSV.
-- Completed Milestone 3D automated diagnostics: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002. GUI acceptance remains pending user confirmation.
+- Completed Milestone 3D automated diagnostics and Milestone 3D-R figure-readability corrections: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002. GUI acceptance remains pending user confirmation.
 
 ## Native Windows environment results
 
@@ -802,10 +802,12 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - `results/m3_world_risk/planned_vs_state_risk.png`
   - `results/m3_world_risk/risk_decomposition_planned.png`
   - `results/m3_world_risk/risk_decomposition_state.png`
-  - `results/m3_world_risk/early_vs_late_conflict.png`
+  - `results/m3_world_risk/early_vs_late_ttcf.png`
+  - `results/m3_world_risk/early_vs_late_risk_decomposition.png`
   - `results/m3_world_risk/clearance_risk_curve.png`
   - `results/m3_world_risk/trajectory_disagreement_over_time.png`
   - `results/m3_world_risk/parameter_sensitivity.png`
+  - `results/m3_world_risk/parameter_sensitivity_margins.png`
 - Rebuilt trajectories:
   - planned points: `63`
   - state points: `63`
@@ -852,6 +854,48 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no dynamic obstacles;
   - no ROS 2;
   - no machine learning.
+
+## Milestone 3D-R: diagnostic figure expression and readability
+
+- Stage: Milestone 3D-R completed on local branch `feature/m3-world-risk`.
+- Scope:
+  - corrected scientific expression and readability of existing world-coordinate risk diagnostics only;
+  - did not change risk algorithms, obstacle coordinates, formal parameters, or accepted CSV data;
+  - did not add camera projection, image risk maps, ROI compression, or Milestone 4 code.
+- Figure changes:
+  - stopped generating the mixed-unit `results/m3_world_risk/early_vs_late_conflict.png` figure;
+  - added `results/m3_world_risk/early_vs_late_ttcf.png` for TTCf values on a seconds axis;
+  - added `results/m3_world_risk/early_vs_late_risk_decomposition.png` for spatial, temporal, and risk scores on a `[0, 1]` score axis;
+  - improved `results/m3_world_risk/world_risk_overview.png` with lighter corridor fills, clearer planned/state centerlines, obstacle AABB legend, first-entry marker legend, P/S/C score explanation, and safer OUTSIDE_BOTH label placement;
+  - improved `results/m3_world_risk/clearance_risk_curve.png` with planned/state marker legends, representative NEAR_BOUNDARY and OUTSIDE_BOTH annotations, sigma note, and heuristic-score wording;
+  - kept `results/m3_world_risk/parameter_sensitivity.png` as the PASS summary;
+  - added `results/m3_world_risk/parameter_sensitivity_margins.png` for the three positive ordering margins across all 9 sigma/tau parameter pairs.
+- Updated files:
+  - `scripts/plot_m3d_world_risk.py`
+  - `scripts/validate_m3d_report.py`
+  - `tests/test_m3d_evaluation_helpers.py`
+  - `docs/m3_world_risk_validation_report.md`
+  - `docs/progress.md`
+  - `README.md`
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m py_compile scripts\plot_m3d_world_risk.py scripts\validate_m3d_report.py tests\test_m3d_evaluation_helpers.py`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3c_risk_dataset.py .\data\logs\m3\risk_validation_episode_0002.csv`
+  - `.\.venv\Scripts\python.exe .\scripts\evaluate_m3d_world_risk.py`
+  - `.\.venv\Scripts\python.exe .\scripts\plot_m3d_world_risk.py`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3d_report.py`
+- Validation results:
+  - `py_compile`: passed.
+  - Unit tests: `75` tests passed.
+  - M3C validator on episode_0002: exit code 0.
+  - M3D evaluation: exit code 0.
+  - M3D plot generation: exit code 0.
+  - M3D report validator: exit code 0.
+  - New figure files generated successfully.
+  - `docs/m3_world_risk_validation_report.md` no longer references the mixed-unit `early_vs_late_conflict.png`.
+  - Minimum positive parameter margin: `0.036022059` for `ON_PLANNED_PATH planned risk - state risk` at `sigma_distance_m=0.100`, `tau_time_s=0.500`.
+- GUI validation:
+  - pending user visual confirmation of the regenerated figure readability.
 
 ## Commands actually run in the formal project
 

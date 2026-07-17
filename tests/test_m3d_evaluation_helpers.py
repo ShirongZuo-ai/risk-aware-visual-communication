@@ -57,6 +57,15 @@ class M3DEvaluationHelperTests(unittest.TestCase):
         self.assertEqual({row["sigma_distance_m"] for row in rows}, {0.025, 0.05, 0.10})
         self.assertEqual({row["tau_time_s"] for row in rows}, {0.5, 1.0, 2.0})
 
+    def test_parameter_sensitivity_margins_are_positive(self):
+        rows = sensitivity_rows(self.rows)
+        margins = []
+        for row in rows:
+            margins.append(row["early_planned_risk"] - row["late_planned_risk"])
+            margins.append(row["on_planned_planned_risk"] - row["on_planned_state_risk"])
+            margins.append(row["on_state_state_risk"] - row["on_state_planned_risk"])
+        self.assertGreater(min(margins), 0.0)
+
     def test_trajectory_rebuild_and_disagreement_consistency(self):
         trajectories = rebuild_trajectories(self.rows)
         csv_disagreement = float(self.rows[0]["trajectory_disagreement_m"])

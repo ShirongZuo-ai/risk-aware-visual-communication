@@ -142,11 +142,14 @@ LATE temporal score = 0.208492502
 EARLY planned risk > LATE planned risk
 ```
 
-Diagnostic figure:
+Diagnostic figures:
 
 ```text
-results/m3_world_risk/early_vs_late_conflict.png
+results/m3_world_risk/early_vs_late_ttcf.png
+results/m3_world_risk/early_vs_late_risk_decomposition.png
 ```
+
+The TTCf comparison is kept on a seconds axis. The spatial, temporal, and risk scores are shown separately on a `[0, 1]` score axis so the figure does not mix physical time with unitless scores.
 
 ## 12. Planned and State Dominance
 
@@ -216,7 +219,10 @@ Sensitivity outputs:
 ```text
 results/m3_world_risk/parameter_sensitivity.csv
 results/m3_world_risk/parameter_sensitivity.png
+results/m3_world_risk/parameter_sensitivity_margins.png
 ```
+
+The margin figure shows three positive ordering margins for each parameter pair: `EARLY planned risk - LATE planned risk`, `ON_PLANNED_PATH planned risk - state risk`, and `ON_STATE_PATH state risk - planned risk`. Positive margin means the required ordering passes.
 
 This is a limited local sensitivity check, not a complete robustness proof.
 
@@ -275,10 +281,12 @@ results/m3_world_risk/world_risk_overview.png
 results/m3_world_risk/planned_vs_state_risk.png
 results/m3_world_risk/risk_decomposition_planned.png
 results/m3_world_risk/risk_decomposition_state.png
-results/m3_world_risk/early_vs_late_conflict.png
+results/m3_world_risk/early_vs_late_ttcf.png
+results/m3_world_risk/early_vs_late_risk_decomposition.png
 results/m3_world_risk/clearance_risk_curve.png
 results/m3_world_risk/trajectory_disagreement_over_time.png
 results/m3_world_risk/parameter_sensitivity.png
+results/m3_world_risk/parameter_sensitivity_margins.png
 ```
 
 These files are generated artifacts under `results/` and are not committed.

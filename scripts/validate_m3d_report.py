@@ -28,10 +28,12 @@ FIGURES = (
     "planned_vs_state_risk.png",
     "risk_decomposition_planned.png",
     "risk_decomposition_state.png",
-    "early_vs_late_conflict.png",
+    "early_vs_late_ttcf.png",
+    "early_vs_late_risk_decomposition.png",
     "clearance_risk_curve.png",
     "trajectory_disagreement_over_time.png",
     "parameter_sensitivity.png",
+    "parameter_sensitivity_margins.png",
 )
 REQUIRED_REPORT_HEADINGS = (
     "## 1. Research Purpose",
@@ -111,6 +113,13 @@ def validate_sensitivity() -> None:
         fail("parameter sensitivity must contain 9 rows")
     if not all(row["all_key_checks_pass"] == "True" for row in rows):
         fail("not all parameter sensitivity checks pass")
+    margins = []
+    for row in rows:
+        margins.append(float(row["early_planned_risk"]) - float(row["late_planned_risk"]))
+        margins.append(float(row["on_planned_planned_risk"]) - float(row["on_planned_state_risk"]))
+        margins.append(float(row["on_state_state_risk"]) - float(row["on_state_planned_risk"]))
+    if min(margins) <= 0:
+        fail("parameter sensitivity contains a non-positive ordering margin")
 
 
 def validate_report_text() -> None:
@@ -129,6 +138,10 @@ def validate_report_text() -> None:
         fail("report does not explain rejected episode_0001")
     if "GUI validation: pending user confirmation" not in text:
         fail("report must keep GUI validation pending")
+    if "early_vs_late_conflict.png" in text:
+        fail("report still references mixed-unit early_vs_late_conflict.png")
+    if "early_vs_late_ttcf.png" not in text or "early_vs_late_risk_decomposition.png" not in text:
+        fail("report does not reference split EARLY/LATE figures")
 
 
 def validate_no_forbidden_scope() -> None:
