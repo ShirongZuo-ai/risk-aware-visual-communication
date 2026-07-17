@@ -72,9 +72,9 @@ Acceptance: Webots runs the M3C world, the controller writes one risk row per ob
 - [x] Generate summary CSV/JSON and parameter sensitivity diagnostics.
 - [x] Create Milestone 3 validation report.
 - [x] Validate generated artifacts and report.
-- [ ] Complete GUI human acceptance.
+- [x] Complete GUI human acceptance.
 
-Acceptance: M3D diagnostics are generated from `risk_validation_episode_0002.csv`, role acceptance and formulas pass automatically, parameter sensitivity over 9 combinations is reported, the validation report is complete, generated data/results remain ignored, and GUI acceptance remains pending until the user confirms it.
+Acceptance: M3D diagnostics are generated from `risk_validation_episode_0002.csv`, role acceptance and formulas pass automatically, parameter sensitivity over the tested 9 combinations is reported, the validation report is complete, generated data/results remain ignored, and GUI human acceptance has passed. `risk_validation_episode_0002` remains the official evidence data; `risk_validation_episode_0005` is GUI reproduction evidence only.
 
 ## Milestone 4 — Budget-matched compression comparison
 

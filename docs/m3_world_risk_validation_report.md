@@ -15,7 +15,9 @@ data/logs/m3/risk_validation_episode_0002.csv
 data/logs/m3/risk_validation_episode_0002_trace.txt
 ```
 
-The episode contains one analysis snapshot and six obstacle rows. `scripts/validate_m3c_risk_dataset.py` exits 0 for this CSV.
+The episode contains one analysis snapshot and six obstacle rows. `scripts/validate_m3c_risk_dataset.py` exits 0 for this CSV. This remains the official evidence data for the M3D report, figures, and automated validation.
+
+`risk_validation_episode_0005` was generated during the final GUI reproduction run. It is accepted only as GUI reproduction and human-acceptance evidence; it is not used for formal M3D report values, figures, sensitivity checks, or automatic validation outputs.
 
 ## 3. Rejected Calibration Episode
 
@@ -224,7 +226,7 @@ results/m3_world_risk/parameter_sensitivity_margins.png
 
 The margin figure shows three positive ordering margins for each parameter pair: `EARLY planned risk - LATE planned risk`, `ON_PLANNED_PATH planned risk - state risk`, and `ON_STATE_PATH state risk - planned risk`. Positive margin means the required ordering passes.
 
-This is a limited local sensitivity check, not a complete robustness proof.
+This is a limited local sensitivity check over only the 9 parameter combinations listed above, not a complete robustness proof.
 
 ## 17. Milestone 3 Acceptance
 
@@ -239,29 +241,28 @@ This is a limited local sensitivity check, not a complete robustness proof.
 | M3D role acceptance | PASS |
 | M3D figures generated | PASS |
 | parameter sensitivity completed | PASS |
-| GUI human acceptance | PENDING USER CONFIRMATION |
+| GUI human acceptance | PASS |
 
 ## 18. GUI Human Acceptance
 
-GUI validation: pending user confirmation.
+GUI validation: passed by user review on 2026-07-18.
 
-Manual checklist:
+Manual evidence:
 
-1. six obstacles are visible;
-2. obstacles do not overlap;
-3. robot start does not overlap obstacles;
-4. no actual collision before `7.968 s`;
-5. EARLY is near the earlier future path;
-6. LATE is near the later future path;
-7. ON_PLANNED and ON_STATE lie in their intended dominant regions;
-8. NEAR is close to a corridor boundary;
-9. OUTSIDE is outside both corridors;
-10. Console has no red Traceback.
+1. Scene Tree contains all six expected DEF nodes: `M3_EARLY_CONFLICT`, `M3_LATE_CONFLICT`, `M3_ON_PLANNED_PATH`, `M3_ON_STATE_PATH`, `M3_NEAR_BOUNDARY`, and `M3_OUTSIDE_BOTH`.
+2. All six obstacles are visible and no obstacle-to-obstacle overlap was observed.
+3. The robot did not visibly overlap obstacles, flip, or get stuck.
+4. The GUI controller run reported `analysis_time_s=7.968`, `planned_points=63`, `state_points=63`, `trajectory_disagreement=0.040803441`, `csv_rows=6`, `m3_world_risk_validation: complete`, and successful controller exit.
+5. The Console had no `Traceback`, `AttributeError`, or `status:1`.
+6. A non-blocking environment warning reported that ports `1234` and `1235` were already in use; Webots automatically used port `1236`. This did not affect controller completion and is not treated as an experiment failure.
+7. The GUI reproduction run generated `episode_0005`, which is retained only as human-acceptance evidence. Formal report values remain based on `episode_0002`.
+8. The regenerated M3D-R figures passed user visual review: `world_risk_overview`, `clearance_risk_curve`, `early_vs_late_ttcf`, `early_vs_late_risk_decomposition`, `planned_vs_state_risk`, planned/state decomposition, trajectory disagreement, parameter sensitivity, and parameter sensitivity margins.
 
 ## 19. Known Limitations
 
 - Static AABB obstacles only.
 - World-coordinate risk only.
+- Risk scores are heuristic proxy scores, not probabilities of collision.
 - No dynamic obstacle prediction.
 - No camera projection.
 - No image-space risk map.

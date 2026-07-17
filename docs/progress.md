@@ -19,7 +19,8 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 3A: froze the world-coordinate trajectory-to-obstacle risk formulation, data structures, module boundaries, validation scenario roles, and acceptance criteria without implementing risk algorithms.
 - Completed Milestone 3B: implemented and unit-tested the Webots-decoupled world-coordinate risk geometry core.
 - Completed Milestone 3C: connected the risk core to a Webots multi-obstacle validation scene and generated an automatically validated 6-row world-risk CSV.
-- Completed Milestone 3D automated diagnostics and Milestone 3D-R figure-readability corrections: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002. GUI acceptance remains pending user confirmation.
+- Completed Milestone 3D automated diagnostics and Milestone 3D-R figure-readability corrections: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002.
+- Accepted Milestone 3 after user GUI and figure review. `episode_0002` remains the official evidence data; `episode_0005` is GUI reproduction evidence only.
 
 ## Native Windows environment results
 
@@ -759,11 +760,15 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - State-only prediction uses only current Webots state at analysis time.
   - Command-conditioned prediction uses the same current state plus explicit future command schedule.
   - Future actual position, yaw, velocity, or future CSV rows are not read by the controller.
-- GUI/manual validation still needed:
-  - confirm the six obstacles are visible in Webots with reasonable role positions;
-  - confirm the robot does not collide before analysis time;
-  - confirm Console has no red Traceback;
-  - confirm the scene semantics match EARLY/LATE/ON_PLANNED/ON_STATE/NEAR/OUTSIDE.
+- GUI/manual validation:
+  - passed by user review during final Milestone 3 acceptance.
+  - Scene Tree contained all six expected DEF nodes: `M3_EARLY_CONFLICT`, `M3_LATE_CONFLICT`, `M3_ON_PLANNED_PATH`, `M3_ON_STATE_PATH`, `M3_NEAR_BOUNDARY`, and `M3_OUTSIDE_BOTH`.
+  - Six obstacles were visible, with no observed obstacle-to-obstacle overlap.
+  - The robot did not visibly overlap obstacles, flip, or get stuck.
+  - GUI run reported `analysis_time_s=7.968`, `planned_points=63`, `state_points=63`, `trajectory_disagreement=0.040803441`, `csv_rows=6`, `m3_world_risk_validation: complete`, and successful controller exit.
+  - Console showed no `Traceback`, `AttributeError`, or `status:1`.
+  - Non-blocking environment warning: ports `1234` and `1235` were already in use, and Webots automatically used `1236`; this did not affect controller completion and is not treated as an experiment failure.
+  - GUI reproduction run generated `episode_0005`; it is retained only as GUI reproduction evidence. Formal M3D report values, figures, and automatic validation remain based on `episode_0002`.
 - Explicitly not implemented in Milestone 3C:
   - no camera projection;
   - no image-space risk map or heatmap;
@@ -824,7 +829,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Parameter sensitivity:
   - Tested `sigma_distance_m` in `{0.025, 0.05, 0.10}` and `tau_time_s` in `{0.5, 1.0, 2.0}`.
   - All 9 combinations preserve the key ordering checks.
-  - This is a limited local sensitivity check, not a complete robustness proof.
+  - This is a limited local sensitivity check over only the tested 9 parameter combinations, not a complete robustness proof.
 - Validation actually run:
   - `.\.venv\Scripts\python.exe -m py_compile scripts\m3d_world_risk_common.py scripts\evaluate_m3d_world_risk.py scripts\plot_m3d_world_risk.py scripts\validate_m3d_report.py tests\test_m3d_evaluation_helpers.py`
   - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
@@ -843,7 +848,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - M3D rebuilds trajectories only from current episode_0002 snapshot state and known command schedule.
   - No future actual pose, yaw, velocity, or later Webots state is read.
 - GUI validation:
-  - pending user confirmation.
+  - passed by user review.
 - Explicitly not implemented in Milestone 3D:
   - no camera projection;
   - no image-space risk map or heatmap;
@@ -895,7 +900,46 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - `docs/m3_world_risk_validation_report.md` no longer references the mixed-unit `early_vs_late_conflict.png`.
   - Minimum positive parameter margin: `0.036022059` for `ON_PLANNED_PATH planned risk - state risk` at `sigma_distance_m=0.100`, `tau_time_s=0.500`.
 - GUI validation:
-  - pending user visual confirmation of the regenerated figure readability.
+  - regenerated M3D-R figures passed user visual review: `world_risk_overview`, `clearance_risk_curve`, `early_vs_late_ttcf`, `early_vs_late_risk_decomposition`, `planned_vs_state_risk`, planned/state decomposition, trajectory disagreement, parameter sensitivity, and parameter sensitivity margins.
+
+## Milestone 3 acceptance closure
+
+- Stage: Milestone 3 formally accepted on local branch `feature/m3-world-risk`.
+- Official evidence data:
+  - `data/logs/m3/risk_validation_episode_0002.csv`
+  - `data/logs/m3/risk_validation_episode_0002_trace.txt`
+- GUI reproduction evidence:
+  - `episode_0005`, generated during the final GUI review.
+  - This episode is not used for official M3D report values, figures, sensitivity checks, or automatic validation.
+- Human acceptance:
+  - Scene Tree contained all six M3 DEF obstacle nodes.
+  - Six obstacles were visible and did not appear mutually overlapped.
+  - The robot did not visibly overlap obstacles, flip, or get stuck.
+  - GUI controller run completed with `analysis_time_s=7.968`, `planned_points=63`, `state_points=63`, `trajectory_disagreement=0.040803441`, `csv_rows=6`, `m3_world_risk_validation: complete`, and successful controller exit.
+  - Console had no `Traceback`, `AttributeError`, or `status:1`.
+  - Non-blocking environment warning: ports `1234` and `1235` were already in use, so Webots automatically used port `1236`. This is recorded as an environment warning and not an experiment failure.
+  - Latest M3D-R figures passed visual review.
+- Scope guard:
+  - No risk algorithm, formula, parameter, obstacle coordinate, obstacle size, Webots world, controller, CSV, plotting code, generated data, or generated result file was changed during acceptance closure.
+  - Risk scores remain heuristic proxy scores, not probabilities of collision.
+  - Parameter-stability conclusions are limited to the tested 9 sigma/tau combinations.
+- Updated files:
+  - `docs/progress.md`
+  - `docs/roadmap.md`
+  - `docs/m3_world_risk_validation_report.md`
+  - `scripts/validate_m3d_report.py`
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m py_compile scripts\m3d_world_risk_common.py scripts\evaluate_m3d_world_risk.py scripts\plot_m3d_world_risk.py scripts\validate_m3d_report.py scripts\validate_m3c_risk_dataset.py tests\test_m3d_evaluation_helpers.py`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3c_risk_dataset.py .\data\logs\m3\risk_validation_episode_0002.csv`
+  - `.\.venv\Scripts\python.exe .\scripts\evaluate_m3d_world_risk.py`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m3d_report.py`
+- Validation results:
+  - `py_compile`: passed.
+  - Unit tests: `75` tests passed.
+  - M3C validator on episode_0002: exit code 0.
+  - M3D evaluation: exit code 0.
+  - M3D report validator: exit code 0.
 
 ## Commands actually run in the formal project
 
@@ -951,4 +995,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Complete the pending GUI human acceptance checklist for Milestone 3, then begin camera projection planning only if the GUI check confirms the world-coordinate validation scene is visually correct.
+Milestone 3 is formally accepted. The next priority is to plan Milestone 4 camera projection and image-space work without changing the accepted Milestone 3 evidence.

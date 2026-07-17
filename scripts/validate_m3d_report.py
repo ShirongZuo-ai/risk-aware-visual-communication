@@ -136,8 +136,10 @@ def validate_report_text() -> None:
         fail("report does not cite accepted episode_0002")
     if "risk_validation_episode_0001.csv" not in text:
         fail("report does not explain rejected episode_0001")
-    if "GUI validation: pending user confirmation" not in text:
-        fail("report must keep GUI validation pending")
+    if "GUI validation: passed by user review" not in text:
+        fail("report must record passed GUI validation")
+    if "risk_validation_episode_0005" not in text:
+        fail("report must record episode_0005 as GUI reproduction evidence")
     if "early_vs_late_conflict.png" in text:
         fail("report still references mixed-unit early_vs_late_conflict.png")
     if "early_vs_late_ttcf.png" not in text or "early_vs_late_risk_decomposition.png" not in text:
