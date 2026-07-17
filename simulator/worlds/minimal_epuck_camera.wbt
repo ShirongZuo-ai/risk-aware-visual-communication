@@ -1,0 +1,42 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/WoodenBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+
+WorldInfo {
+  basicTimeStep 32
+  title "Minimal e-puck camera scene"
+}
+Viewpoint {
+  orientation -0.433973994660133 -0.775659982475915 0.457994994835522 4.17771
+  position -0.42 0.72 0.55
+  follow "e-puck"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 1.5 1.5
+  wallHeight 0.04
+}
+DEF FRONT_OBSTACLE WoodenBox {
+  translation 0.35 0 0.05
+  name "front obstacle"
+  size 0.08 0.08 0.1
+  locked TRUE
+}
+DEF ROBOT E-puck {
+  translation 0 0 0
+  rotation 0 0 1 0
+  name "e-puck"
+  controller "minimal_epuck_motion"
+  window "<none>"
+  supervisor TRUE
+  version "2"
+  camera_width 160
+  camera_height 120
+}

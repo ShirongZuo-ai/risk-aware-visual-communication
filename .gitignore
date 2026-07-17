@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated data and experiment outputs
+data/frames/*
+data/logs/*
+data/metadata/*
+results/*
+*.mp4
+*.avi
+*.mov
+*.bag
+*.pt
+*.pth
+*.onnx
+
+# Preserve empty directories
+!data/frames/.gitkeep
+!data/logs/.gitkeep
+!data/metadata/.gitkeep
+!results/.gitkeep
+
+# Local Webots/generated files
+*.wbproj
+*.wbt.bak
+
