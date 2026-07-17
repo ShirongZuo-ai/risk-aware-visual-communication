@@ -54,15 +54,27 @@ class Trace:
     def __init__(self):
         trace_path = os.environ.get("M2_ARC_VALIDATION_TRACE")
         self.path = Path(trace_path) if trace_path else None
+        self.file = None
         if self.path:
             self.path.parent.mkdir(parents=True, exist_ok=True)
-            self.path.write_text("", encoding="utf-8")
+            self.file = self.path.open("w", encoding="utf-8")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
 
     def write(self, message):
         print(message, flush=True)
-        if self.path:
-            with self.path.open("a", encoding="utf-8") as handle:
-                handle.write(f"{message}\n")
+        if self.file:
+            self.file.write(f"{message}\n")
+            self.file.flush()
+
+    def close(self):
+        if self.file and not self.file.closed:
+            self.file.flush()
+            self.file.close()
 
 
 class EpisodeLog:
@@ -77,6 +89,12 @@ class EpisodeLog:
         self.writer.writeheader()
         self.file.flush()
         self.rows = 0
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
 
     def _next_episode_id(self):
         indices = []
@@ -114,11 +132,9 @@ class EpisodeLog:
 
 
 def main():
-    trace = Trace()
     robot = Supervisor()
     timestep = int(robot.getBasicTimeStep())
     self_node = robot.getSelf()
-    log = EpisodeLog(Path(__file__))
 
     left_motor = robot.getDevice(LEFT_WHEEL)
     right_motor = robot.getDevice(RIGHT_WHEEL)
@@ -127,16 +143,16 @@ def main():
     left_motor.setVelocity(0.0)
     right_motor.setVelocity(0.0)
 
-    trace.write("m2_arc_trajectory_validation: start")
-    trace.write(f"episode_id={log.episode_id} csv={log.csv_path} timestep_ms={timestep}")
-    trace.write(
-        "sequence: 0-4s straight left=2 right=2; "
-        "4-8s forward-left-arc left=1 right=2; "
-        "8-12s forward-right-arc left=2 right=1; 12-16s stop"
-    )
+    with Trace() as trace, EpisodeLog(Path(__file__)) as log:
+        trace.write("m2_arc_trajectory_validation: start")
+        trace.write(f"episode_id={log.episode_id} csv={log.csv_path} timestep_ms={timestep}")
+        trace.write(
+            "sequence: 0-4s straight left=2 right=2; "
+            "4-8s forward-left-arc left=1 right=2; "
+            "8-12s forward-right-arc left=2 right=1; 12-16s stop"
+        )
 
-    previous_phase = None
-    try:
+        previous_phase = None
         while robot.step(timestep) != -1:
             elapsed = robot.getTime()
             phase, left_speed, right_speed = command_for_time(elapsed)
@@ -169,9 +185,6 @@ def main():
                 trace.write(f"csv_rows={log.rows}")
                 trace.write("m2_arc_trajectory_validation: complete")
                 break
-    finally:
-        log.close()
-    robot.cleanup()
 
 
 if __name__ == "__main__":

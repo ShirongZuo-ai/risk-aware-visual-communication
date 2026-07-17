@@ -504,6 +504,29 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Generated CSV/results/figures remain ignored by Git.
 - The arc validation still has no obstacles, TTC, risk map, compression, perception, closed-loop navigation, ROS 2, WSL, or machine learning.
 
+### Milestone 2R cleanup fix
+
+- Date: 2026-07-18 (Asia/Shanghai).
+- User GUI review found a real controller exit error in `simulator/controllers/m2_arc_trajectory_validation/m2_arc_trajectory_validation.py`: `AttributeError: 'Supervisor' object has no attribute 'cleanup'`.
+- The failing run had already written `csv_rows=500` and `m2_arc_trajectory_validation: complete`, but Webots reported `controller exited with status: 1`.
+- `data/logs/m2/trajectory_validation_episode_0003.csv` is retained as an ignored debugging artifact and is not used as final success evidence.
+- Checked local Webots R2025a Python API files under `C:\Program Files\Webots\lib\controller\python\controller`:
+  - `supervisor.py` defines `class Supervisor(Robot)` and no public `cleanup()` method.
+  - `robot.py` calls `wb_robot_cleanup()` internally from `Robot.__del__`; it does not expose a `robot.cleanup()` instance method.
+- Fix applied:
+  - Removed the invalid `robot.cleanup()` call from the arc validation controller.
+  - Converted the optional trace file and CSV episode log to context managers so files are flushed and closed through `with Trace() as trace, EpisodeLog(...) as log`.
+  - Normal completion now returns from `main()` after the loop, and `robot.step()` returning `-1` exits the loop while the context managers still close files.
+- Verification after fix:
+  - `py_compile` passed for the arc controller and related evaluation modules.
+  - Unit tests: `30` tests passed.
+  - Webots R2025a ran `simulator/worlds/m2_arc_trajectory_validation.wbt` and generated `data/logs/m2/trajectory_validation_episode_0004.csv`.
+  - `episode_0004` row count: `500`.
+  - Trace `results/webots_m2r_cleanup_fix_trace_20260718_001807.log` contains the full phase sequence, `csv_rows=500`, and `m2_arc_trajectory_validation: complete`.
+  - Redirected Webots stdout/stderr for the fix run contained no `Traceback`, `AttributeError`, or `status: 1` text.
+  - `episode_0004` passed the existing arc evaluation script with unchanged metrics from episode_0002.
+- Note: the automated Webots process remains open after controller completion and was stopped after trace/CSV checks. The redirected command-line logs did not expose a literal GUI Console line saying `controller exited with status: 0`; the controller returned normally without Python exception after the invalid cleanup call was removed.
+
 ## Commands actually run in the formal project
 
 ```text
