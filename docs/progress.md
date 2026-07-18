@@ -30,6 +30,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 5C: implemented and validated deterministic Center/Object/Risk scoring and fair spatial allocation on the accepted development frame.
 - Completed Milestone 5D: evaluated the 16 fixed single-frame allocations with full, continuous risk-weighted, and regional image-quality metrics; this remains development evidence only.
 - Completed Milestone 5E-A: froze the multi-scene split, scenario, snapshot, common-budget, metric, episode-statistics, scientific-interpretation, and failure/replacement protocol without generating M5E data or modifying implementation code.
+- Completed Milestone 5E-B automated acceptance: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, and reproduced frames/masks/configs/metadata exactly. GUI manual acceptance remains pending.
 
 ## Native Windows environment results
 
@@ -1694,6 +1695,52 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - Git diff was restricted to `README.md` and `docs/`.
 - Next priority: Milestone 5E-B parameterized static-AABB scenario and dataset generator with snapshot and scenario validators. Do not run calibration or generate formal quality results in M5E-B.
 
+## Milestone 5E-B - Parameterized static-AABB dataset generator
+
+- Status: automated acceptance completed on `feature/m5-risk-roi-compression`; GUI manual acceptance is pending.
+- Safety checkpoint: created and reapplied `stash@{0}` named `backup: M5E-B S1-S4 validated checkpoint`; the stash record was retained during implementation and final validation.
+- Implemented:
+  - immutable seeded `ScenarioConfig` generation for S1-S8 and disjoint smoke/calibration/formal seed namespaces;
+  - one parameterized Webots world/controller for static unrotated AABB Box obstacles;
+  - fixed snapshot crossings at reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`;
+  - aligned RGB frame, planned/state/combined float-mask, metadata, episode summary, dataset manifest, and episode manifest output;
+  - default no-overwrite, explicit overwrite/resume, bounded replacement pools, dry-run, timeout, and retained failure records;
+  - independent scenario/data validator, deterministic-run comparator, rich scenario diagnostics, and smoke plots.
+- S5 correction:
+  - root cause was insufficient/late trajectory separation plus obstacle visibility/depth geometry that made one candidate dominate both channels; the first validator also used index 1 instead of the frozen third snapshot at `p=0.70`;
+  - a bounded deterministic offline geometry sweep used only planned/state trajectory and Camera geometry, not compression or quality metrics;
+  - selected schedule is left arc `1.0/2.0 rad/s` through `4.25 s`, then right arc `2.0/1.0 rad/s` through `6.0 s`;
+  - at `p=0.704`, planned argmax is `M5E_S5_PLANNED_BRANCH` with margin `0.17591532330398388`; state argmax is `M5E_S5_STATE_BRANCH` with margin `0.1725670221363893`; trajectory disagreement is `0.03721414398972764 m`;
+  - both branch targets are eligible, have nonempty clipped polygons and mask contributions, and planned/state masks differ.
+- Other frozen-role evidence at `p=0.704`:
+  - S6 small-high: `938 px`, combined risk `0.3593353909604333`; large-low: `3652 px`, risk `0.0011643852196083705`; projected-area ratio `3.893390191897655`, with a shared tile and nonzero contributions;
+  - S7 partial target: `partially_visible`, `1154` candidate/written pixels, combined risk `0.03360701169399`, truncation `0.5862820200055942`, and projected polygon crossing the left boundary;
+  - S8 has one eligible visible obstacle in every snapshot; max combined risks are `1.3235533551247435e-05`, `4.4110649896514015e-05`, `0.00014998117730962427`, and `0.0004900511667976293`, with positive mask sums and empty high-risk regions handled as valid.
+- Smoke evidence:
+  - generated 8 primary episodes using seeds `9001..9008`, 4 snapshots each, 32 manifest rows, and no replacements;
+  - all 32 identities, frame hashes, float-mask hashes, configs, paths, and summaries are complete and unique as required;
+  - maximum snapshot progress error is `0.0040000000000000036`, within tolerance `0.006`;
+  - second full run under `data/m5e_repeat` compared exactly for all 32 frame bytes/hashes, masks, configs, and normalized metadata;
+  - calibration seed indices 0/1 and formal boundary indices 0/7 passed config-level checks only; no calibration/formal Webots run, manifest, frame, or mask was generated.
+- Generated ignored evidence:
+  - `data/logs/m5/m5e_dataset_manifest.csv` and `data/metadata/m5e/m5e_episode_manifest.json`;
+  - 32 frames/masks/snapshot metadata records under the protocol paths;
+  - `results/m5_compression/m5e_smoke/m5e_scenario_diagnostics.png` and `m5e_snapshot_progress.png`.
+- Scientific boundary: no risk formula/parameter, trajectory model, Camera model, snapshot target, M5E-A threshold, M5 codec/allocation, or quality metric was changed. Risk remains a heuristic proxy, not collision probability. M5E-B provides dataset-generation evidence only.
+- GUI pending: inspect generated S1-S8 Box nodes, robot contact/stability, representative Camera/frame alignment, and Webots Console for red errors/Traceback/`status: 1`. These checks are not recorded as passed.
+- Final automated validation:
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q compression evaluation navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 236 tests passed, including 23 new M5E-B tests over the previous 213-test baseline;
+  - smoke dry-run: passed against an isolated output root and wrote no episode artifacts;
+  - M5E independent validator: passed for 8 episodes / 32 snapshots before and after plotting;
+  - repeat-output validator and deterministic comparator: passed; all 32 frames, masks, configs, and normalized metadata are identical;
+  - S1-S8 smoke plus calibration indices 0/1 and formal boundary indices 0/7: 40 config-level sanity checks passed without writing calibration/formal artifacts;
+  - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
+  - dependency scan found only shared immutable mask/polygon/tile-grid helpers; no codec encode, matcher, allocator, PSNR, SSIM, or quality-result dependency exists in generation or scenario selection;
+  - future-actual scan found only the explicit false provenance field and validator assertion; no future actual position, velocity, or yaw is read.
+- Next priority: Milestone 5E-C calibration data generation and common-budget freeze. Do not begin formal encoding or compression comparison first.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -1734,18 +1781,19 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 - Local branch state: `main` verified; no `master` branch rename was needed during this verification pass because the branch was already `main`.
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
-- Camera frame capture: implemented and verified in Milestone 1C. Robot-state CSV logging, risk maps, ROI compression, object detection, and closed-loop navigation: not implemented and not tested.
+- M5E-B smoke generator: 8 episodes and 32 snapshots independently validated and deterministically repeated; GUI manual acceptance remains pending.
+- Calibration/formal M5E data, common budgets, object detection, networking, and closed-loop navigation: not implemented or tested.
 
 ## Current issues
 
 1. Project dependencies in `requirements.txt` are not fully installed as a controlled dependency pass; matplotlib and its runtime dependencies were installed into `.venv` for Milestone 2 plotting.
-2. The repository now has local commits on `feature/m2-trajectory-models`; generated data/results remain untracked and ignored.
+2. The repository is on `feature/m5-risk-roi-compression`; generated data/results remain ignored and are not staged.
 3. The copied `.venv` remains based on a Python executable inside an application-specific Conda installation; it currently works and excludes that environment's site packages, but a dedicated base interpreter would reduce coupling if instability appears.
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.
 5. Git `user.name` and `user.email` are now configured locally/globally for this environment as `ShirongZuo-ai <3095325284@qq.com>`.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
-7. Milestone 2 and 2R Webots GUI Console red-error status still needs user visual confirmation if a GUI-level console check is required.
+7. Milestone 5E-B Webots GUI manual acceptance is pending; automated artifact validation does not substitute for the requested Scene Tree, robot-contact, frame-view, and Console checks.
 
 ## Next priority
 
-Milestone 5E-B: implement the parameterized static-AABB scenario and dataset generator plus deterministic snapshot/scenario validators. Do not start calibration-budget selection, formal encoding, perception, networking, navigation, or machine-learning work first.
+Milestone 5E-C: generate the frozen calibration split, determine the common feasible byte interval, and freeze the four shared budgets. Do not start formal encoding, perception, networking, navigation, or machine-learning work first.

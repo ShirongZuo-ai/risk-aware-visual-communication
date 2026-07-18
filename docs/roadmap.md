@@ -174,9 +174,14 @@ Acceptance: `docs/m5e_multiscene_offline_evaluation_protocol.md` is internally c
 
 ### Milestone 5E-B - Parameterized scenario and dataset generator
 
-Planned: implement deterministic static-AABB scenario generation, split-safe seed handling, four snapshot triggers, manifests, and machine validators. Do not run the common-budget pilot or formal encoding.
+[x] Implement deterministic static-AABB scenario generation and split-safe seeds.
+[x] Implement the parameterized Webots world/controller and four fixed-progress snapshot triggers.
+[x] Save RGB frames, floating-point masks, metadata, episode summaries, and stable manifests.
+[x] Independently validate all S1-S8 scenario roles, hashes, max-union, and no-future-actual provenance.
+[x] Generate and exactly repeat the 32-frame smoke dataset and diagnostics.
+[ ] Complete GUI manual acceptance.
 
-Acceptance: every scenario family can be generated and independently validated from configuration and seed, with complete failure records and no future-actual leakage.
+Acceptance: automated M5E-B acceptance has passed for all eight smoke scenarios, with four snapshots each, complete failure/replacement records, deterministic repeat, and no future-actual leakage. GUI manual acceptance remains pending. No calibration/formal data, common budget, or compression evaluation was generated.
 
 ### Milestone 5E-C - Calibration pilot and common budget freeze
 

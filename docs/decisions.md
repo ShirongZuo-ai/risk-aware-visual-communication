@@ -189,3 +189,15 @@
 - **Decision:** Use episode-level paired differences and a 10,000-replicate, seed-`20260718`, scenario-stratified bootstrap. Equal-weight the eight scenario means in overall estimates.
 - **Reason:** Four snapshots in one episode are correlated and must not be treated as independent samples. Stratification prevents a single scenario from dominating the overall estimate.
 - **Impact:** Center/Object/Risk scoring, M5C allocation, `HIGH_RISK_THRESHOLD=0.20`, M5D metrics, JPEG/container settings, and risk/projection definitions are frozen. Engineering acceptance is independent of Risk ROI performance. The next task is M5E-B generator implementation; no M5E data exist yet.
+
+## 2026-07-18 - Milestone 5E-B deterministic dataset generator
+
+- **Decision:** Use one parameterized Webots world/controller that imports static, unrotated AABB Box nodes from an immutable per-episode `ScenarioConfig`.
+- **Reason:** A shared generator reduces scene drift while retaining exact scenario IDs, roles, seeds, geometry, command schedules, and hashes in saved evidence.
+- **Decision:** Capture the first Webots step at or after reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`, and validate against tolerance `0.006`.
+- **Reason:** This implements the frozen M5E-A result-independent snapshot rule without selecting frames from risk or image-quality outcomes.
+- **Decision:** Calibrate S5 with a bounded deterministic geometry sweep using only snapshot-time planned/state trajectories and Camera geometry, then write the selected schedule and AABBs back into the static scenario definition.
+- **Reason:** The original S5 geometry and turn timing did not create stable opposite risk rankings at the frozen third snapshot. The selected configuration gives visible, mask-contributing branch objects with positive planned/state margins without reading compression or quality results.
+- **Decision:** Use a fixed departure arc after the validation approach in S1, S2, S6, and S7.
+- **Reason:** It preserves the required high-risk approach at `p=0.70` while avoiding physical collision before all four deterministic snapshots are captured.
+- **Impact:** M5E-B can generate and independently validate a deterministic 32-frame smoke dataset. Risk formulas/parameters, Camera projection, trajectory definitions, snapshot targets, tile/compression policies, and M5E-A acceptance thresholds remain unchanged. Calibration generation and common-budget selection remain Milestone 5E-C work.

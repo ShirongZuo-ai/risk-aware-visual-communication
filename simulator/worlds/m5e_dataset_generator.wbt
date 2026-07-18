@@ -1,0 +1,40 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+
+WorldInfo {
+  basicTimeStep 32
+  title "Milestone 5E parameterized static-AABB dataset generator"
+}
+Viewpoint {
+  orientation -0.402736 0.176513 0.898074 1.66209
+  position -0.285 0.117 2.65
+  follow "e-puck"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 4 4
+  wallHeight 0.04
+}
+DEF ROBOT E-puck {
+  translation 0 0 0
+  rotation 0 0 1 0
+  name "e-puck"
+  controller "m5e_dataset_generator"
+  window "<none>"
+  supervisor TRUE
+  version "2"
+  camera_width 160
+  camera_height 120
+  camera_fieldOfView 0.84
+}
+DEF M5E_OBSTACLES Group {
+  children [
+  ]
+}

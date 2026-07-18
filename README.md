@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A has frozen the multi-scene offline protocol. No M5E dataset, perception evaluation, networking, or navigation evaluation exists yet.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A froze the multi-scene protocol, and M5E-B now provides a parameterized static-AABB Webots generator plus an independently validated 32-frame smoke dataset. GUI acceptance remains pending. No calibration/formal M5E dataset, common budget, perception evaluation, networking, or navigation evaluation exists yet.
 
 ## Scope
 
@@ -303,7 +303,15 @@ Milestone 5E-A freezes the later multi-scene experiment before data generation:
 docs/m5e_multiscene_offline_evaluation_protocol.md
 ```
 
-The accepted M4D/M5D frame remains development-only and cannot enter M5E calibration or formal statistics. M5E-A creates no frames, manifests, quality results, decoded images, or figures. The next implementation step is M5E-B, the parameterized static-AABB scenario and dataset generator.
+The accepted M4D/M5D frame remains development-only and cannot enter M5E calibration or formal statistics. M5E-A created no frames or results. M5E-B runs the frozen scenario/snapshot protocol without compression evaluation:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\run_m5e_dataset_smoke.py --output-root data --timeout-s 90
+.\.venv\Scripts\python.exe .\scripts\validate_m5e_dataset.py --output-root data --split smoke
+.\.venv\Scripts\python.exe .\scripts\plot_m5e_dataset_diagnostics.py --output-root data
+```
+
+The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B does not generate calibration/formal data or select common budgets.
 
 ## Documentation
 
@@ -323,4 +331,5 @@ The accepted M4D/M5D frame remains development-only and cannot enter M5E calibra
 - `docs/m5c_spatial_allocation_validation_report.md`: Milestone 5C score/allocation validation report
 - `docs/m5d_single_frame_evaluation_report.md`: Milestone 5D matched-budget single-frame quality report
 - `docs/m5e_multiscene_offline_evaluation_protocol.md`: Milestone 5E split, scenario, snapshot, budget, metric, statistics, and failure protocol
+- `docs/m5e_dataset_generator_validation_report.md`: Milestone 5E-B smoke generator, scenario validation, reproducibility, and GUI checklist
 - `docs/system_overview.md`: current end-to-end pipeline summary

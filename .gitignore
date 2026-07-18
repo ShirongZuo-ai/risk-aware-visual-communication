@@ -19,6 +19,7 @@ data/metadata/*
 data/masks/*
 data/compression/*
 data/decoded/*
+data/m5e_*/
 results/*
 *.mp4
 *.avi
