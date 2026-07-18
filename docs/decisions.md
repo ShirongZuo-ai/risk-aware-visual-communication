@@ -225,3 +225,12 @@
 - **Reason:** This preserves method-identical byte fairness and includes header, tile index, and JPEG payload in every budget. The 1,024 calibration allocation matrix passed without an over-budget result.
 - **Rejected:** Selecting different budgets per method, using M5B/M5D development targets, tuning a target from PSNR/SSIM/RW-PSNR, or choosing budgets to favor Risk ROI.
 - **Impact:** M5E-D/E, if explicitly started, must use these values unchanged. Calibration establishes only byte feasibility; it does not establish Risk ROI, perception, collision, or navigation benefit.
+
+## 2026-07-19 - M5E-D formal metric table
+
+- **Decision:** Generate the full formal split and metric table with the M5E-C frozen budgets unchanged: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes.
+- **Reason:** The protocol requires formal evidence to be independent of budget selection. M5E-D therefore may encode, reconstruct, and compute frozen metrics, but may not tune budgets or interpret method performance.
+- **Decision:** Treat M5E-D as a deterministic engineering evidence milestone: 256 formal frames, 4,096 complete-container reconstructions, and frozen M5D metrics with independent recomputation.
+- **Reason:** This creates the fixed formal evidence table needed by M5E-E while preserving paired frame-method-budget identity, actual-byte fairness, and no-future-actual provenance.
+- **Rejected:** Running episode-level statistics, bootstrapping, method ranking, formal superiority claims, perception evaluation, learned training, or closed-loop navigation inside M5E-D.
+- **Impact:** M5E-E must use the M5E-D metric table as frozen input for pre-registered episode statistics and diagnostics. Engineering completeness remains separate from scientific support or nonsupport.

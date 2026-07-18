@@ -194,12 +194,12 @@ Acceptance: passed. The calibration-only common interval is `[31240, 35779]` byt
 
 ### Milestone 5E-D - Formal encoding and metric evaluation
 
-- [ ] Generate the 8-scenario, 8-formal-episode, 4-snapshot split without changing M5E-C budgets.
-- [ ] Produce all 4096 method-budget reconstructions using the frozen allocation, codec, and metric definitions.
+- [x] Generate the 8-scenario, 8-formal-episode, 4-snapshot split without changing M5E-C budgets.
+- [x] Produce all 4096 method-budget reconstructions using the frozen allocation, codec, and metric definitions.
 
-Planned: generate 256 formal frames and 4096 matched-budget reconstructions, then compute frozen M5D metrics without changing protocol parameters.
+Completed: generated 256 formal frames and 4096 matched-budget reconstructions, then computed frozen M5D metrics without changing protocol parameters.
 
-Acceptance: the formal matrix is complete, paired, byte-fair, deterministic, and independently recomputable.
+Acceptance: passed. The formal matrix is complete, paired, byte-fair, deterministic, and independently recomputable. No M5E-E statistics or method-performance conclusion is included.
 
 ### Milestone 5E-E - Episode statistics and diagnostics
 
@@ -227,4 +227,4 @@ Acceptance: the report states what compression and image-risk-region claims are 
 
 ## Milestone 6 — Simple closed-loop navigation
 
-Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-D.
+Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-E.

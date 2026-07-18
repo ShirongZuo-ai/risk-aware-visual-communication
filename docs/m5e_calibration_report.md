@@ -4,7 +4,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 
 ## Status
 
-M5E-C calibration and common-budget freeze completed on `feature/m5-risk-roi-compression`. This report covers byte feasibility only. Formal evaluation has not started, no formal frames were generated, and no comparison of method quality or Risk ROI superiority was performed.
+M5E-C calibration and common-budget freeze completed on `feature/m5-risk-roi-compression`. This report covers byte feasibility only. At M5E-C closeout, formal evaluation had not started, no formal frames had been generated, and no comparison of method quality or Risk ROI superiority had been performed. Current status after M5E-D: formal frames and frozen metrics exist, but M5E-E statistics and method-performance conclusions remain unstarted.
 
 ## Calibration Dataset
 
@@ -70,4 +70,4 @@ The bitrate column is a protocol conversion only, not a network model or observe
 
 No PSNR, SSIM, risk-weighted quality, regional quality, method ranking, statistical test, bootstrap, perception, communication simulation, or navigation result was calculated or used to choose a budget. Risk remains a heuristic proxy, not collision probability. M5E-C freezes a fair common-byte input for later work; it does not support a multi-scene Risk ROI performance claim.
 
-The next formal work, if explicitly started, must use these four targets unchanged. It is not started by this calibration task.
+The next formal work after M5E-C had to use these four targets unchanged. M5E-D later did so for formal encoding and metric generation. M5E-E statistics must also retain these targets unchanged.

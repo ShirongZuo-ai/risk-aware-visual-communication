@@ -2,11 +2,11 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A froze the multi-scene protocol, M5E-B accepted the parameterized static-AABB Webots generator, and M5E-C froze calibration-only common complete-container-byte budgets from an independently validated 64-frame split. No formal M5E evaluation, method-performance conclusion, perception evaluation, networking, or navigation evaluation exists yet.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A froze the multi-scene protocol, M5E-B accepted the parameterized static-AABB Webots generator, M5E-C froze calibration-only common complete-container-byte budgets from an independently validated 64-frame split, and M5E-D generated the formal 256-frame split plus 4096 matched-budget reconstructions and frozen M5D metrics. M5E-E statistics, method-performance conclusions, perception evaluation, networking, and navigation evaluation do not exist yet.
 
 ## M5E Calibration Budget Freeze
 
-M5E-C generated ignored deterministic calibration data under `data/m5e_calibration/` and froze shared complete-container-byte targets for all four existing methods: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes. The targets are calibration-only and must be used unchanged by a later formal M5E run. No formal quality comparison or Risk ROI performance conclusion has been produced.
+M5E-C generated ignored deterministic calibration data under `data/m5e_calibration/` and froze shared complete-container-byte targets for all four existing methods: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes. M5E-D used those targets unchanged for the formal encoding and metric table. No M5E-E statistical comparison or Risk ROI performance conclusion has been produced.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_m5e_calibration_dataset.py --output-root data\m5e_calibration
@@ -321,7 +321,7 @@ The accepted M4D/M5D frame remains development-only and cannot enter M5E calibra
 .\.venv\Scripts\python.exe .\scripts\plot_m5e_dataset_diagnostics.py --output-root data
 ```
 
-The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B is accepted for deterministic dataset generation and frozen risk-scenario validation; targeted GUI manual checks covered S2, S3, S5, and S7. M5E-B did not generate calibration/formal data, select common budgets, or establish that Risk ROI is superior across multiple scenes. M5E-C later generated the calibration split and froze common budgets; formal M5E-D/E/F evaluation remains not started.
+The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B is accepted for deterministic dataset generation and frozen risk-scenario validation; targeted GUI manual checks covered S2, S3, S5, and S7. M5E-B did not generate calibration/formal data, select common budgets, or establish that Risk ROI is superior across multiple scenes. M5E-C later generated the calibration split and froze common budgets. M5E-D later generated the formal split and metric table; M5E-E/F remain not started.
 
 ## Documentation
 
@@ -344,4 +344,5 @@ The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `d
 - `docs/m5e_dataset_generator_validation_report.md`: Milestone 5E-B smoke generator, scenario validation, reproducibility, and GUI checklist
 - `docs/m5e_calibration_protocol.md`: Milestone 5E-C calibration-only byte-feasibility and common-budget freeze protocol
 - `docs/m5e_calibration_report.md`: Milestone 5E-C calibration results, frozen common budgets, and validation baseline
+- `docs/m5e_formal_evaluation_report.md`: Milestone 5E-D formal split, 4096 reconstructions, frozen metrics, and validation baseline
 - `docs/system_overview.md`: current end-to-end pipeline summary

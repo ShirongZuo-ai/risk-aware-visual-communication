@@ -276,7 +276,7 @@ def validate_dataset(output_root: Path, split: str = "smoke", require_manifest: 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", default="data")
-    parser.add_argument("--split", default="smoke", choices=("smoke", "calibration"))
+    parser.add_argument("--split", default="smoke", choices=("smoke", "calibration", "formal"))
     parser.add_argument("--skip-manifest", action="store_true")
     parser.add_argument("--allow-partial", action="store_true")
     args = parser.parse_args()

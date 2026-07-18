@@ -32,6 +32,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 - Completed Milestone 5E-A: froze the multi-scene split, scenario, snapshot, common-budget, metric, episode-statistics, scientific-interpretation, and failure/replacement protocol without generating M5E data or modifying implementation code.
 - Completed and accepted Milestone 5E-B: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, reproduced frames/masks/configs/metadata exactly, and recorded targeted S2/S3/S5/S7 GUI manual acceptance.
 - Completed Milestone 5E-C: generated and independently validated the isolated 64-frame calibration split, exhaustively measured the legal complete-container-byte range for all frame-method pairs, and froze four common actual-byte budgets without running a formal quality evaluation.
+- Completed Milestone 5E-D: generated and validated the isolated 256-frame formal split, produced all 4,096 method-budget reconstructions with the frozen M5E-C budgets, computed frozen M5D metrics, and independently recomputed the formal metric table. No M5E-E statistics or method-performance conclusion has been produced.
 
 ## Native Windows environment results
 
@@ -1828,7 +1829,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
 - M5E-B smoke generator: final 8-episode / 32-snapshot smoke passed independently with no replacements; deterministic repeat evidence and targeted S2/S3/S5/S7 GUI acceptance are recorded above.
-- M5E calibration data and common budgets: completed in M5E-C. Formal M5E-D/E/F evaluation, object detection, networking, and closed-loop navigation remain not implemented or tested.
+- M5E calibration data and common budgets: completed in M5E-C. Formal encoding and metric generation completed in M5E-D. Formal M5E-E/F statistics/acceptance, object detection, networking, and closed-loop navigation remain not implemented or tested.
 
 ## Current issues
 
@@ -1842,7 +1843,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5E-D/E formal encoding, metric evaluation, and episode statistics remain not started. They must use the frozen M5E-C common budgets unchanged; do not start formal generation without an explicit request.
+Milestone 5E-D formal encoding and metric evaluation is complete. The next priority is Milestone 5E-E episode statistics and diagnostics using the frozen M5E-D metric table; do not change the M5E-C budgets from formal outcomes.
 
 ## Milestone 5E-C - Calibration and common-budget freeze
 
@@ -1857,3 +1858,30 @@ Milestone 5E-D/E formal encoding, metric evaluation, and episode statistics rema
 - Verification actually run: `pip check`, repository `compileall`, and 263 unit tests passed. Official M3C episode_0002, M3D evaluation/report, M4C episode_0003, M4D episode_0001, M5B, M5C, M5D, M5E-B final eight-scenario smoke, and M5E-C calibration validators all passed.
 - Generated calibration frames, masks, metadata, logs, containers, and repeat data remain ignored by `.gitignore`; no data/results/cache/virtual environment artifact was added to Git.
 - Documentation: `docs/m5e_calibration_protocol.md` and `docs/m5e_calibration_report.md` define and report this freeze. Calibration does not compare PSNR/SSIM/RW-PSNR or support a Risk ROI superiority, perception, collision-probability, or navigation claim.
+
+## Milestone 5E-D - Formal encoding and metric evaluation
+
+- Status: completed on `feature/m5-risk-roi-compression` as formal encoding and metric-generation work. M5E-E episode statistics, method-performance conclusions, perception evaluation, networking, machine learning, and closed-loop navigation remain not started.
+- Formal dataset: 64 accepted primary episodes and 256 frames (`S1-S8 x 8 formal seeds x 4 first-crossing snapshots`) under `data/m5e_formal/`. Formal seeds follow `200000 + 100 * scenario_index + seed_index`, `seed_index=0..7`; all used replacement index `0`.
+- Frozen budgets used unchanged: severe `31466`, low `32374`, medium `33509`, high `34871` bytes from the M5E-C common interval `[31240, 35779]`.
+- Reconstruction matrix: 4 methods x 4 budgets x 256 frames = 4,096 complete-container reconstructions and 4,096 metric rows. All rows are at or below target; utilization is `[0.991568925468154, 1.0]`.
+- Formal metrics: frozen M5D full-image MSE/PSNR/SSIM, continuous risk-weighted MSE/PSNR, and eligible-object, risk-support, high-risk, and background regional quality. Empty high-risk regions are recorded as `undefined`, not as failures.
+- Independent validation: the formal dataset validator passed for 64 episodes / 256 snapshots. The formal evaluation validator recomputed all 4,096 allocation and metric rows from source frames, masks, metadata, frozen budgets, and codec/allocation definitions.
+- Deterministic repeat subset: `data/m5e_formal_repeat_subset/` regenerated seed-index `0` for all eight scenarios, producing 8 episodes, 32 frames, and 512 reconstructions. The subset validator recomputed all metrics, and `scripts/compare_m5e_formal_determinism.py` matched all 512 shared rows exactly against the full formal run.
+- Generated ignored evidence:
+  - `data/m5e_formal/` formal frames, masks, metadata, manifests, allocation table, metric table, containers, decoded images, run metadata, and validation summary;
+  - `data/m5e_formal_repeat_subset/` repeat-subset data and metrics;
+  - `results/m5_compression/m5e_formal/m5e_d_*.png` descriptive diagnostics.
+- Verification actually run:
+  - `.\.venv\Scripts\python.exe -m pip check`: no broken requirements found;
+  - `.\.venv\Scripts\python.exe -m compileall -q compression evaluation navigation perception risk_map scripts simulator tests`: passed;
+  - full unit suite in the project `.venv`: 268 tests passed;
+  - M5E-D formal dataset generation: passed, 64 episodes / 256 frames;
+  - M5E formal dataset validator: passed;
+  - M5E-D formal evaluation: passed, 4,096 reconstructions, 0 over budget;
+  - M5E-D formal evaluation validator with recomputation: passed;
+  - repeat-subset generation/evaluation/validator: passed, 512 reconstructions;
+  - formal determinism comparator: passed, 512 shared rows;
+  - diagnostic plotting: passed;
+  - new helper unit tests: 5 passed.
+- Documentation: `docs/m5e_formal_evaluation_report.md` records the formal evidence, validation, determinism, and interpretation boundary. M5E-D does not establish Risk ROI superiority; that requires M5E-E statistics and remains unstarted.
