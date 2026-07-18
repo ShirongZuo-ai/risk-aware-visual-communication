@@ -4,9 +4,9 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 
 ## Status
 
-Milestone 4C automated Webots camera-projection validation is complete on `feature/m4-image-risk-projection`.
+Milestone 4C Webots camera-projection validation is formally accepted on `feature/m4-image-risk-projection`.
 
-GUI human review is pending. This report does not mark GUI acceptance as passed.
+GUI human review passed by user review after the automated validation.
 
 ## Scope
 
@@ -23,12 +23,18 @@ data/metadata/m4/projection_validation_episode_0003.json
 results/m4_projection/projection_overlay.png
 ```
 
+GUI reproduction and human acceptance episode:
+
+```text
+projection_validation_episode_0004
+```
+
 Debug calibration episodes:
 
 - `episode_0001`: showed that the Milestone 4A initial `diag(1,-1,-1)` Webots-device mapping was inconsistent with actual e-puck camera rendering.
 - `episode_0002`: validated the corrected axis mapping, but still treated the depth-overlap front Box as a full color-mask target.
 
-The accepted automatic evidence is `episode_0003`.
+The accepted automatic image-alignment, IoU, and validator evidence is `episode_0003`. `episode_0004` is GUI reproduction and human acceptance evidence only; it does not replace the official automatic metrics or generated report artifacts.
 
 ## Camera Parameters
 
@@ -123,31 +129,31 @@ Other automatic checks passed:
 - M4C validator: exit code 0.
 - Overlay plot: exit code 0.
 - Re-run M4C validator after overlay generation: exit code 0.
+- GUI manual acceptance: passed by user review.
 
 The Webots command-line process remained open after the controller returned, matching previous project behavior. The process was stopped after outputs were verified.
 
-## GUI Review Checklist
+## GUI Human Acceptance
 
-Pending user review:
+User-confirmed GUI evidence:
 
-1. CENTER appears near the image center.
-2. LEFT appears on the image left.
-3. RIGHT appears on the image right.
-4. LEFT/RIGHT are not mirrored.
-5. Overlay is not vertically inverted.
-6. Projected outlines cover the corresponding Boxes.
-7. PARTIAL is clipped only at the expected edge.
-8. OUTSIDE is not visible in the image.
-9. BEHIND is not visible in the image.
-10. NEAR_PLANE does not create abnormal or infinite projection behavior.
-11. DEPTH_OVERLAP matches the intended front/back depth relationship.
-12. Console has no `Traceback` or `status:1`.
-13. Controller reports 9 CSV rows and complete.
-14. Controller exits successfully.
+1. Scene Tree contained all 9 validation Box DEF nodes.
+2. `LEFT_VISIBLE` appeared on the image left and `RIGHT_VISIBLE` appeared on the image right.
+3. LEFT/RIGHT were not mirrored.
+4. Overlay was not vertically inverted.
+5. CENTER was near the image center and the principal point was near image center.
+6. CENTER, LEFT, and RIGHT projected outlines covered the corresponding Boxes.
+7. `PARTIAL_IMAGE_EDGE` was clipped only at the expected right image boundary.
+8. `OUTSIDE_FRUSTUM` and `BEHIND_CAMERA` had no valid image region.
+9. `DEPTH_OVERLAP_FRONT` and `DEPTH_OVERLAP_BACK` projected regions overlapped.
+10. Real visual occlusion of the back Box is not treated as a Milestone 4C geometric-projection failure.
+11. `NEAR_PLANE_INTERSECTION` had `intersects_near_plane`, finite projection, no NaN or Inf, and safe clipping to image bounds. Its broad orange outline is expected diagnostic geometry, not an image risk mask or normal ROI experiment.
+12. GUI episode `episode_0004` reported camera `160x120`, FOV `0.84`, near `0.0055`, snapshot time `0.320`, `obstacle_rows=9`, saved frame/CSV outputs, `m4_camera_projection_validation: complete`, and successful controller exit.
+13. Console had no `Traceback`, `AttributeError`, or `status: 1`.
 
 ## Limitations
 
 - The dataset is projection-only. It contains no planned, state, or combined risk fields; Milestone 4D will add image-risk mask fields.
 - RGB color masks validate alignment for selected roles only.
 - True rendered inter-object occlusion is not modeled by the projection core.
-- GUI acceptance is still pending.
+- No planned/state/combined image risk masks have been generated yet.

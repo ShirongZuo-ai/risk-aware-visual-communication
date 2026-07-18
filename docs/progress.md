@@ -23,7 +23,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Accepted Milestone 3 after user GUI and figure review. `episode_0002` remains the official evidence data; `episode_0005` is GUI reproduction evidence only.
 - Completed Milestone 4A: froze world-risk-to-camera-image projection design, interfaces, terminology, validation roles, and acceptance criteria without creating projection code or M4 data.
 - Completed Milestone 4B: implemented and unit-tested the Webots-decoupled pure-Python camera projection core.
-- Completed the automated portion of Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, and passed automatic image-alignment validation. GUI human review remains pending.
+- Completed and accepted Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, passed automatic image-alignment validation, and passed GUI human review.
 
 ## Native Windows environment results
 
@@ -1091,7 +1091,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 
 ## Milestone 4C: Webots camera projection validation
 
-- Stage: Milestone 4C automated validation complete on local branch `feature/m4-image-risk-projection`; GUI human review pending.
+- Stage: Milestone 4C formally accepted on local branch `feature/m4-image-risk-projection`.
 - Starting commit: `af956e5 feat: implement camera projection core`.
 - Created implementation files:
   - `simulator/m4c_config.py`
@@ -1135,6 +1135,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - The Webots R2025a e-puck Camera adapter now uses `x_optical=-y_device`, `y_optical=-z_device`, `z_optical=x_device`, i.e. `[[0,-1,0],[0,0,-1],[1,0,0]]`.
   - This is recorded as a Webots adapter calibration decision; the pure projection core remains generic and Webots-decoupled.
 - Official automated evidence episode: `projection_validation_episode_0003`.
+- GUI reproduction and human acceptance episode: `projection_validation_episode_0004`.
 - Output files:
   - `data/frames/m4/projection_validation_episode_0003.png`
   - `data/logs/m4/projection_validation_episode_0003.csv`
@@ -1143,6 +1144,9 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Debug artifacts:
   - `episode_0001` is a failed axis-calibration run and is not success evidence.
   - `episode_0002` is a calibration run before depth-overlap color-mask policy was corrected and is not the accepted automatic evidence.
+- Evidence usage:
+  - `episode_0003` remains the official automatic image-alignment, IoU metric, and validator evidence.
+  - `episode_0004` is GUI reproduction and human acceptance evidence only; it does not replace `episode_0003` formal outputs.
 - Projection CSV:
   - 9 rows, one per validation Box.
   - Projection-only fields; no planned, state, or combined image-risk fields are present.
@@ -1190,7 +1194,12 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Webots command-line behavior:
   - As in earlier milestones, Webots remained open after the controller returned, so the shell tool timed out. The validation process was stopped after output files and validator results were confirmed.
 - GUI validation:
-  - pending user review. Required checks are listed in `docs/m4_camera_projection_validation_report.md`.
+  - passed by user review.
+  - Scene Tree contained all 9 validation Boxes: `M4_CENTER_VISIBLE`, `M4_LEFT_VISIBLE`, `M4_RIGHT_VISIBLE`, `M4_PARTIAL_IMAGE_EDGE`, `M4_OUTSIDE_FRUSTUM`, `M4_BEHIND_CAMERA`, `M4_NEAR_PLANE_INTERSECTION`, `M4_DEPTH_OVERLAP_FRONT`, and `M4_DEPTH_OVERLAP_BACK`.
+  - LEFT/RIGHT appeared on the correct image sides with no mirroring, overlay was not vertically inverted, CENTER and principal point were near image center, CENTER/LEFT/RIGHT outlines covered their Boxes, PARTIAL clipped only at the expected right boundary, OUTSIDE and BEHIND had no valid image region, and DEPTH_OVERLAP regions overlapped.
+  - `NEAR_PLANE_INTERSECTION` was `intersects_near_plane`, finite, without NaN/Inf, and safely clipped to the image boundary. Its broad outline is expected near-plane diagnostic geometry, not an image risk mask or normal ROI experiment.
+  - GUI episode `episode_0004` reported `camera width=160`, `camera height=120`, `fov=0.84`, `near=0.0055`, `snapshot_time_s=0.320`, `obstacle_rows=9`, saved frame/CSV outputs, `m4_camera_projection_validation: complete`, and successful controller exit.
+  - Console had no `Traceback`, `AttributeError`, or `status: 1`.
 - Explicitly not implemented in Milestone 4C:
   - no image-risk masks;
   - no planned/state/combined risk mask fields;
@@ -1253,4 +1262,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-User GUI review of Milestone 4C world and overlay is the next priority. Do not enter Milestone 4D until GUI review passes.
+Milestone 4D is the next priority: generate planned, state, and combined image-risk masks from the accepted Milestone 4C projection outputs. Do not implement compression, networking, or navigation as part of Milestone 4D unless explicitly requested.

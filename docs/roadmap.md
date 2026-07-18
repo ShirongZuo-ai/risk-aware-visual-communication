@@ -103,7 +103,7 @@ Acceptance: core projection logic is unit-tested and remains decoupled from Webo
 - [x] Save RGB frame and snapshot metadata for repeatable projection validation.
 - [x] Validate overlay direction, Box coverage, clipping, and numeric error metrics.
 
-Acceptance: Webots validation runs on a dedicated M4 scene; automatic metrics are recorded; GUI review is recorded separately and does not replace numeric validation.
+Acceptance: Webots validation runs on a dedicated M4 scene; automatic metrics are recorded; GUI review is recorded separately and does not replace numeric validation. Milestone 4C has passed both automatic validation and GUI human acceptance; `projection_validation_episode_0003` is the automatic evidence and `projection_validation_episode_0004` is GUI reproduction evidence.
 
 ### Milestone 4D - Image-space risk masks and diagnostics
 
