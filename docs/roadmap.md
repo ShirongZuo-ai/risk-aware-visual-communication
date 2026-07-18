@@ -117,7 +117,50 @@ Acceptance: image-space risk masks are generated from validated projections and 
 
 ## Milestone 5 — Offline task evaluation
 
-Planned: evaluate communication, image-quality, and safety-critical perception metrics across scenarios and budgets.
+Planned: evaluate communication, image-quality, and safety-critical perception metrics across scenarios and budgets. The first Milestone 5 substeps are split below.
+
+### Milestone 5A - Compression and fair-bitrate protocol freeze
+
+- [x] Freeze the first tiled-JPEG spatial allocation prototype terminology.
+- [x] Freeze the `160x120` frame, `20x20` tile grid, 8 columns, 6 rows, and 48 row-major tiles.
+- [x] Define deterministic container byte accounting and actual transmitted byte matching.
+- [x] Define Uniform, Center ROI, Object ROI, and Risk ROI baselines.
+- [x] Define shared score-to-quality allocation and under-budget selection rules.
+- [x] Define the budget-selection pilot process instead of hard-coding budget values.
+- [x] Define communication, whole-image, risk-weighted, and regional quality metrics.
+- [x] Define fairness and leakage checks.
+
+Acceptance: `docs/m5_compression_and_bitrate_protocol.md` freezes the protocol and scope. No compression algorithm, JPEG container, compressed image, experiment CSV, risk algorithm change, Camera projection change, image-risk-mask change, network, perception, navigation, or machine-learning code is created.
+
+### Milestone 5B - Tiled-JPEG codec and budget pilot
+
+Planned: implement the deterministic tiled-JPEG container, decoder, byte accounting, uniform-pilot budget measurement, and budget matcher.
+
+Acceptance: all methods can later share one encode/container/decode backend, target budgets are selected from measured Uniform pilot data, and generated compression data remains ignored by Git.
+
+### Milestone 5C - Baseline allocation implementation
+
+Planned: implement Uniform, Center ROI, Object ROI, and Risk ROI tile scoring and shared score-to-quality allocation using the Milestone 5B codec backend.
+
+Acceptance: all baselines use identical byte matching, tile grid, JPEG settings, and container accounting; Risk ROI receives no extra budget or future actual information.
+
+### Milestone 5D - First single-frame compression validation
+
+Planned: run the first matched-budget evaluation on accepted `image_risk_validation_episode_0001`.
+
+Acceptance: communication metrics, whole-image quality, risk-weighted quality, regional quality, and fairness checks are reported for the accepted single-frame M4D evidence.
+
+### Milestone 5E - Multi-frame and multi-scene offline evaluation
+
+Planned: expand from one validation snapshot to a broader offline dataset with multiple snapshots, layouts, and risk supports.
+
+Acceptance: conclusions are based on multiple scenarios and report budget utilization, quality tradeoffs, and limitations.
+
+### Milestone 5F - Compression validation report and next-step decision
+
+Planned: write the Milestone 5 report and decide whether remote perception or closed-loop navigation evaluation is justified.
+
+Acceptance: the report states what compression and image-risk-region claims are supported, what remains unproven, and the single next priority.
 
 ## Milestone 6 — Simple closed-loop navigation
 

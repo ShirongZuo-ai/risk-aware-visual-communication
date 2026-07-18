@@ -9,10 +9,10 @@
 
 ## 2026-07-17 — Communication comparison policy
 
-- **Decision:** Compare policies at matched or closely matched actual byte budgets of 5, 10, 20, and 40 KB/frame.
-- **Reason:** Resource allocation cannot be credited for gains obtained by sending more data.
+- **Decision:** Initial rough candidate budgets were 5, 10, 20, and 40 KB/frame. This early choice is superseded by the Milestone 5A budget-selection protocol.
+- **Reason:** Resource allocation cannot be credited for gains obtained by sending more data, and the actual feasible budget range must be measured from the tiled-JPEG container and source frames.
 - **Rejected:** Comparing methods only at nominal quality settings or unequal byte counts.
-- **Impact:** Every later evaluation must log actual bytes and budget mismatch.
+- **Impact:** Every later evaluation must log actual bytes and budget mismatch. Milestone 5B must run a Uniform JPEG pilot before selecting final budgets.
 
 ## 2026-07-17 — Terminology
 
@@ -125,3 +125,21 @@
 - **Reason:** Actual M4C Webots RGB validation showed that Boxes in front of the e-puck camera are seen when they lie along local `+x_device`, LEFT/RIGHT are correctly separated by the sign of local `y_device`, and vertical image direction matches local `z_device`. The earlier Milestone 4A initial assumption `diag(1,-1,-1)` made all front Boxes project outside the frustum in `episode_0001`.
 - **Rejected:** Keeping the initial `diag(1,-1,-1)` e-puck adapter mapping despite failed Webots evidence, or changing the generic pure-Python projection core to hard-code Webots-specific axes.
 - **Impact:** `perception` remains Webots-decoupled and accepts explicit extrinsics. The Webots adapter supplies the calibrated `R_device_to_optical` matrix for the R2025a e-puck Camera. M4C accepted automatic evidence starts from `projection_validation_episode_0003`; earlier M4C episodes are calibration/debug artifacts.
+
+## 2026-07-18 - Milestone 5A compression and fair-bitrate protocol
+
+- **Decision:** Use a tiled-JPEG spatial allocation prototype for the first compression experiment.
+- **Reason:** It is simple, auditable, deterministic, and sufficient to test whether spatial resource allocation favors risk-relevant image regions under equal transmitted bytes.
+- **Rejected for now:** Standards-compatible JPEG ROI coding, H.264/H.265/VVC/AV1 QP maps, neural codecs, temporal video coding, network simulation, remote perception, and closed-loop navigation.
+- **Decision:** Use a `160x120` frame split into `20x20` tiles, giving 8 columns, 6 rows, and 48 row-major tiles.
+- **Reason:** This exactly covers the accepted e-puck Camera frame without overlap or gaps and keeps per-tile accounting inspectable.
+- **Decision:** Compare Uniform, Center ROI, Object ROI, and Risk ROI using the same encoder, deterministic container, decoder, tile grid, JPEG settings, and budget matcher.
+- **Reason:** Fair comparison requires that Risk ROI can only differ in tile scoring, not in byte accounting or codec machinery.
+- **Decision:** Match methods by actual total transmitted bytes, including container overhead and all transmitted metadata, and never select over-budget candidates.
+- **Reason:** Nominal quality settings are not a fair communication budget because JPEG payloads vary by image content and ROI selection.
+- **Decision:** Select numeric budgets only after a Milestone 5B Uniform JPEG pilot; the old 5/10/20/40 KB values are not frozen defaults.
+- **Reason:** The feasible range depends on tiled payload sizes, container overhead, and actual source-frame complexity.
+- **Decision:** Risk ROI tile scores use `max` combined image risk inside each tile for the first version.
+- **Reason:** A maximum preserves small high-risk objects that would be diluted by mean risk over a `20x20` tile.
+- **Decision:** Treat risk-weighted quality as an image-quality diagnostic over the accepted heuristic combined mask, not as collision probability, perception accuracy, or navigation safety.
+- **Impact:** Milestone 5B may implement the shared codec backend and pilot, but no compression implementation belongs in Milestone 5A. Later claims remain limited until separately validated.

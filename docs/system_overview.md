@@ -82,13 +82,21 @@ Milestone 4C connects projection to Webots for calibration and validation:
 5. Webots e-puck Camera axis calibration: `x_optical=-y_device`, `y_optical=-z_device`, `z_optical=x_device`.
 6. GUI human review passed.
 
-Milestone 4D-1 and 4D-2 implement and automatically validate image-space risk masks:
+Milestone 4D-1 and 4D-2 implement and validate image-space risk masks:
 
 1. A Webots-decoupled pure-Python mask core fills planned, state, and combined channels over projected clipped obstacle polygons.
 2. A dedicated M4D Webots scene samples one 7.968 s snapshot and computes world risk, Camera projection, and image masks from that same snapshot.
 3. Numeric masks are saved as row-major floating-point arrays; PNG masks are visualization-only quantized copies.
 4. Automatic validation recomputes trajectories, world risks, projections, and masks from metadata and checks exact ID binding, max-union overlap, invisible-obstacle skipping, exclusive-pixel risk binding, and RGB geometry alignment.
-5. GUI human acceptance for M4D remains pending.
+5. GUI human acceptance for M4D passed, and Milestone 4 is formally accepted.
+
+Milestone 5A freezes the compression and fair-bitrate protocol without implementation:
+
+1. The first prototype is a tiled-JPEG spatial allocation experiment, not a standards-compatible ROI video codec.
+2. All methods share the same `160x120` frame, `20x20` tile grid, deterministic container, encoder, decoder, and budget matcher.
+3. Uniform, Center ROI, Object ROI, and Risk ROI are the frozen first baselines.
+4. Risk ROI uses the accepted combined image-risk mask and must not use future actual trajectories or downstream evaluation results.
+5. Budgets are selected after a Uniform JPEG pilot in Milestone 5B, not hard-coded during 5A.
 
 ## Trajectory Types
 
@@ -113,6 +121,7 @@ Milestone 4D-1 and 4D-2 implement and automatically validate image-space risk ma
 - Milestone 4D float masks: `data/masks/m4/image_risk_validation_episode_0001_masks.json`
 - Milestone 4D RGB frame: `data/frames/m4/image_risk_validation_episode_0001.png`
 - Milestone 4D diagnostics: `results/m4_image_risk/`
+- Milestone 5A compression protocol: `docs/m5_compression_and_bitrate_protocol.md`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -170,6 +179,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
+Milestone 5A defines how later compression experiments will consume those accepted image-risk masks. It freezes fair actual-byte accounting and baseline definitions only. No compression module, JPEG container, compressed image, compression CSV, network model, remote perception, or navigation code exists yet.
+
 ## Explicitly Not Implemented
 
-The project still does not implement ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement ROI compression, tiled-JPEG encoding, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

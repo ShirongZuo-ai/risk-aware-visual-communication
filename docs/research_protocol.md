@@ -60,7 +60,9 @@ Possible later additions: semantic ROI, learned spatial mask, no-TTC ablation, a
 
 ## Fair comparison
 
-Target budgets: 5, 10, 20, and 40 KB/frame. Record actual bytes and budget mismatch. The proposed method must not receive a systematically larger budget. Phase 1 must be described as a **block-wise spatial compression prototype**, not a standards-compatible ROI video encoder.
+Milestone 5A freezes the detailed compression and fair-bitrate protocol in `docs/m5_compression_and_bitrate_protocol.md`.
+
+The first compression experiment is a tiled-JPEG spatial allocation prototype, not a standards-compatible ROI video encoder. Numeric budgets are not hard-coded at protocol time; Milestone 5B must run a Uniform JPEG pilot and then select at least four feasible target budgets. Every comparison must match actual transmitted bytes, including container overhead, and the proposed Risk ROI method must not receive a systematically larger budget.
 
 ## Metrics
 

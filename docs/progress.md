@@ -25,6 +25,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 4B: implemented and unit-tested the Webots-decoupled pure-Python camera projection core.
 - Completed and accepted Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, passed automatic image-alignment validation, and passed GUI human review.
 - Completed and accepted Milestone 4D and Milestone 4 overall: connected same-snapshot world-coordinate risk, Camera projection, and pure-Python image-risk masks; passed automatic validation and GUI human review on `image_risk_validation_episode_0001`.
+- Completed Milestone 5A: froze the tiled-JPEG spatial allocation prototype, fair actual-byte matching rules, first baselines, metrics, output schema, and acceptance criteria without implementing compression code.
 
 ## Native Windows environment results
 
@@ -1380,8 +1381,75 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no machine learning;
   - no dynamic obstacles;
   - no true rendered occlusion model.
+- Follow-up:
+  - Milestone 5A compression and fair-bitrate design freeze was completed next, without implementing compression code.
+
+## Milestone 5A - Compression and fair-bitrate protocol freeze
+
+- Status: completed as a design freeze only.
+- Branch and baseline:
+  - working branch: `feature/m5-risk-roi-compression`;
+  - starting commit: `96cb3e2 docs: accept image-space risk milestone`;
+  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - working tree was clean before the documentation edits.
+- M4 baseline:
+  - Milestone 4D GUI manual acceptance has passed;
+  - Milestone 4 overall is formally accepted;
+  - official M4D evidence remains `image_risk_validation_episode_0001`;
+  - no M4 frame, CSV, metadata, mask, projection, adapter, world, controller, or risk code was modified.
+- New design document:
+  - `docs/m5_compression_and_bitrate_protocol.md`.
+- Frozen scientific question:
+  - under equal actual transmitted bytes, test whether trajectory-conditioned collision-risk visual allocation preserves risk-relevant image information better than Uniform, Center ROI, Object ROI, and Risk ROI alternatives;
+  - first claims are limited to image quality and risk-region quality, not detection, navigation, collision, or network benefit.
+- Frozen prototype:
+  - tiled-JPEG spatial allocation prototype;
+  - not standards-compatible JPEG ROI, H.264/H.265/VVC/AV1 ROI/QP maps, a neural codec, or a video codec.
+- Frozen tile grid:
+  - source frame `160x120` RGB;
+  - tile size `20x20`;
+  - 8 columns, 6 rows, 48 row-major tiles;
+  - non-overlapping full-frame coverage.
+- Frozen baselines:
+  - Uniform: all tiles share one JPEG quality, matched by budget search;
+  - Center ROI: fixed scene-independent Gaussian tile score around the principal point;
+  - Object ROI: visible obstacle polygon/tile coverage, with no risk values;
+  - Risk ROI: `max` combined image-risk value inside each tile.
+- Frozen fairness rule:
+  - compare by actual total transmitted bytes, including container overhead and any transmitted metadata;
+  - `actual_total_bytes <= target_bytes` is mandatory;
+  - choose the largest legal under-budget payload;
+  - record target bytes, actual bytes, unused budget, utilization, quality config, per-tile bytes, and overhead.
+- Budget selection:
+  - Milestone 5A does not freeze numeric budgets;
+  - Milestone 5B must first run a Uniform JPEG pilot and then select at least four feasible budgets across severe, low, medium, and high regimes;
+  - earlier `5/10/20/40 KB/frame` values are only historical rough candidates, not current defaults.
+- Metrics frozen:
+  - communication metrics: target/actual bytes, bits/frame, utilization, compression ratio, overhead, tile bytes, encode/decode time;
+  - whole-image metrics: MSE, PSNR, optional SSIM;
+  - risk-weighted metrics over the accepted combined float mask, including `weighted_MSE` and `risk_weighted_PSNR`;
+  - regional metrics: visible-object-region PSNR, risk-region PSNR, background PSNR, high-risk tile quality, and low-risk tile quality.
+- Dependency check:
+  - `requirements.txt` currently lists NumPy, OpenCV, pandas, and matplotlib, but not Pillow;
+  - the current `.venv` can import Pillow `12.3.0`;
+  - no dependency file was changed in Milestone 5A. Milestone 5B must decide whether to add an explicit Pillow version range before encoding JPEG tiles.
+- Validation actually run for Milestone 5A:
+  - Git branch/top-level checks confirmed `feature/m5-risk-roi-compression` at `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - HEAD contains `96cb3e2 docs: accept image-space risk milestone`;
+  - dependency check confirmed Pillow import status;
+  - terminology/fairness text checks confirmed the protocol names actual-byte matching, same encoder/container/decoder, the four baselines, tiled-JPEG prototype scope, and no future actual trajectory for Risk ROI;
+  - `python -m compileall -q navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 148 tests passed;
+  - Git diff/status review showed only README and `docs/` files changed, with no risk, projection, image-mask, Webots, compression, data, results, cache, or virtual-environment files added.
+- Explicitly not implemented in Milestone 5A:
+  - no compression module;
+  - no JPEG container or encoder/decoder;
+  - no compressed image outputs;
+  - no compression CSV;
+  - no budget pilot;
+  - no risk, projection, image-mask, Webots, M4 evidence, network, perception, navigation, ROS 2, WSL, or machine-learning code changes.
 - Next priority:
-  - Milestone 5A compression and fair-bitrate design freeze. Do not implement compression code before the design freeze is requested.
+  - Milestone 5B tiled-JPEG codec, deterministic container, uniform-pilot budget measurement, and fair byte matcher.
 
 ## Commands actually run in the formal project
 
@@ -1437,4 +1505,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5A is the next priority: freeze compression and fair-bitrate comparison design. Do not implement compression, networking, or navigation code before that design-freeze task is explicitly requested.
+Milestone 5B is the next priority: implement the deterministic tiled-JPEG codec/container, run the Uniform JPEG budget pilot, and build the fair actual-byte matcher. Do not implement perception, networking, navigation, or machine-learning evaluation before that codec and budget foundation is validated.
