@@ -45,6 +45,19 @@ class M5EScenarioTests(unittest.TestCase):
         self.assertIn("planned_branch_obstacle", roles)
         self.assertIn("state_branch_obstacle", roles)
 
+    def test_s5_branch_obstacles_use_physics_clearance_positions(self) -> None:
+        config = generate_scenario("S5", "smoke", 9005)
+        by_role = {item.role: item for item in config.obstacle_specs}
+        self.assertAlmostEqual(by_role["planned_branch_obstacle"].center_world[1], 0.18049479359700758)
+        self.assertAlmostEqual(by_role["state_branch_obstacle"].center_world[1], 0.18549479359700757)
+
+    def test_s7_stops_only_after_the_last_snapshot_crossing(self) -> None:
+        config = generate_scenario("S7", "smoke", 9007)
+        self.assertEqual(config.command_schedule[-1].name, "post_capture_stop")
+        self.assertEqual(config.command_schedule[-1].start_s, 5.5)
+        self.assertEqual((config.command_schedule[-1].left_rad_s, config.command_schedule[-1].right_rad_s), (0.0, 0.0))
+        self.assertGreater(config.command_schedule[-1].start_s, config.duration_seconds * config.snapshot_progress_targets[-1])
+
     def test_primary_seed_namespaces_are_disjoint(self) -> None:
         calibration = {primary_seed("calibration", index, seed_index) for index in range(1, 9) for seed_index in (0, 1)}
         formal = {primary_seed("formal", index, seed_index) for index in range(1, 9) for seed_index in range(8)}

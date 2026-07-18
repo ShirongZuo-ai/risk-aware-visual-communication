@@ -105,6 +105,14 @@ def _approach_turn_schedule() -> tuple[WheelCommandPhase, ...]:
     )
 
 
+def _partial_visibility_schedule() -> tuple[WheelCommandPhase, ...]:
+    return (
+        WheelCommandPhase("straight", 0.0, 4.5, 2.0, 2.0),
+        WheelCommandPhase("departure_arc", 4.5, 5.5, 1.0, 2.0),
+        WheelCommandPhase("post_capture_stop", 5.5, 6.0, 0.0, 0.0),
+    )
+
+
 def _turn_schedule(direction: str) -> tuple[WheelCommandPhase, ...]:
     if direction == "left":
         turn = (1.0, 2.0)
@@ -160,8 +168,8 @@ def generate_scenario(scenario_id: str, split: str, seed: int) -> ScenarioConfig
         tags = ("turn", direction, "mirror_pair")
     elif scenario_id == "S5":
         obstacles = (
-            _obstacle("S5", "PLANNED_BRANCH", "planned_branch_obstacle", 0.120 + dx, 0.150 + dy, (0.015, 0.015, 0.050), (0.9, 0.2, 0.2), risk="planned"),
-            _obstacle("S5", "STATE_BRANCH", "state_branch_obstacle", 0.060 + dx, 0.155 + dy, (0.020, 0.020, 0.050), (0.15, 0.8, 0.25), risk="state"),
+            _obstacle("S5", "PLANNED_BRANCH", "planned_branch_obstacle", 0.120 + dx, 0.180 + dy, (0.015, 0.015, 0.050), (0.9, 0.2, 0.2), risk="planned"),
+            _obstacle("S5", "STATE_BRANCH", "state_branch_obstacle", 0.060 + dx, 0.185 + dy, (0.020, 0.020, 0.050), (0.15, 0.8, 0.25), risk="state"),
             _obstacle("S5", "MID_SUPPORT", "mid_support", 0.030 + dx, -0.400 + dy, medium, (0.45, 0.45, 0.45), risk="low"),
             _obstacle("S5", "LATE_SUPPORT", "late_support", 0.400 + dx, dy, large, (0.35, 0.35, 0.35), risk="low"),
         )
@@ -179,7 +187,7 @@ def generate_scenario(scenario_id: str, split: str, seed: int) -> ScenarioConfig
             _obstacle("S7", "RISK", "center_high_risk", 0.270 + dx, dy, (0.030, 0.030, 0.050), (0.9, 0.2, 0.2), risk="high"),
             _obstacle("S7", "PARTIAL", "partial_risk", 0.350 + dx, 0.070 + dy, small, (0.8, 0.2, 0.85), "partially_visible", "low"),
         )
-        schedule = _approach_turn_schedule()
+        schedule = _partial_visibility_schedule()
         tags = ("partial_visibility", "clipping")
     else:  # S8
         obstacles = (_obstacle("S8", "LOW", "visible_low_risk", 0.650 + dx, 0.060 + dy, medium, (0.85, 0.7, 0.15), risk="low"),)
