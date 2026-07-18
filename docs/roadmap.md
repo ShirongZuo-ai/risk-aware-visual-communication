@@ -109,8 +109,9 @@ Acceptance: Webots validation runs on a dedicated M4 scene; automatic metrics ar
 
 - [x] Implement the Webots-decoupled pure-Python image-risk mask core.
 - [x] Unit-test mask value range, channel separation, overlap max-union, invisible-obstacle handling, and rasterization invariants.
-- [ ] Generate planned, state, and combined image-risk masks from accepted Webots projection evidence.
-- [ ] Generate diagnostic overlays and summaries.
+- [x] Generate planned, state, and combined image-risk masks from one same-snapshot Webots validation episode.
+- [x] Generate diagnostic overlays and summaries.
+- [ ] Complete GUI human acceptance and Milestone 4D closeout.
 
 Acceptance: image-space risk masks are generated from validated projections and documented. Compression policy, bitrate allocation, JPEG/H.264 integration, and task evaluation remain out of scope until the next compression milestone.
 

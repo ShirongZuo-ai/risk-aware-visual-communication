@@ -1252,6 +1252,131 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no true occlusion handling;
   - no ROI compression, codec, network, machine learning, or navigation.
 
+## Milestone 4D-2 - Same-snapshot image-risk mask validation
+
+- Status: automatic end-to-end validation completed; GUI manual acceptance remains pending.
+- Branch and baseline:
+  - working branch: `feature/m4-image-risk-projection`;
+  - baseline commits present: `8034a9d docs: accept Webots camera projection alignment` and `e88d37f feat: implement image risk mask core`;
+  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+- Created implementation files:
+  - `simulator/m4d_config.py`;
+  - `simulator/worlds/m4d_image_risk_validation.wbt`;
+  - `simulator/controllers/m4d_image_risk_validation/m4d_image_risk_validation.py`;
+  - `scripts/m4d_image_risk_common.py`;
+  - `scripts/validate_m4d_image_risk_dataset.py`;
+  - `scripts/plot_m4d_image_risk.py`;
+  - `tests/test_m4d_evaluation_helpers.py`;
+  - `docs/m4_image_risk_validation_report.md`;
+  - `data/masks/.gitkeep`.
+- Updated:
+  - `.gitignore` now ignores generated `data/masks/*` while preserving `data/masks/.gitkeep`;
+  - `README.md`;
+  - `docs/roadmap.md`;
+  - `docs/system_overview.md`;
+  - `docs/progress.md`.
+- Dedicated world and controller:
+  - world: `simulator/worlds/m4d_image_risk_validation.wbt`;
+  - controller: `simulator/controllers/m4d_image_risk_validation/m4d_image_risk_validation.py`;
+  - no M3 or M4C accepted world/controller was modified.
+- Same-snapshot evidence:
+  - successful M4D automatic episode: `image_risk_validation_episode_0001`;
+  - snapshot time: `7.968 s`;
+  - planned trajectory source: command-conditioned rollout from the pre-existing future wheel-command schedule;
+  - state trajectory source: state-only constant-twist rollout from current Webots snapshot state;
+  - actual future trajectory: explicitly not used.
+- Runtime robot state:
+  - `x=0.242882516`;
+  - `y=0.070315357`;
+  - `yaw=1.393201041`;
+  - `linear_velocity=0.029944488 m/s`;
+  - `angular_velocity=0.350989561 rad/s`.
+- Runtime Camera parameters:
+  - width `160 px`;
+  - height `120 px`;
+  - horizontal FOV `0.84 rad`;
+  - near clip `0.0055 m`;
+  - `fx=fy=179.142225973 px`;
+  - `cx=79.5 px`, `cy=59.5 px`;
+  - camera world position `(0.248188668, 0.099863469, 0.027919930) m`;
+  - axis mapping remains `x_optical=-y_device`, `y_optical=-z_device`, `z_optical=x_device`.
+- Trajectory summary:
+  - planned points: `63`;
+  - state points: `63`;
+  - trajectory disagreement: `0.040803441 m`.
+- Role risk and visibility:
+  - `PLANNED_DOMINANT_VISIBLE`: planned `0.469831075`, state `0.189292428`, combined `0.469831075`, `partially_visible`;
+  - `STATE_DOMINANT_VISIBLE`: planned `0.136077497`, state `0.226684741`, combined `0.226684741`, `partially_visible`;
+  - `SHARED_RISK_VISIBLE`: planned `0.074374604`, state `0.083360084`, combined `0.083360084`, `fully_visible`;
+  - `LOW_RISK_VISIBLE`: planned `0.005629554`, state `0.006903238`, combined `0.006903238`, `fully_visible`;
+  - `PARTIAL_VISIBLE`: planned `0.005545375`, state `0.003763963`, combined `0.005545375`, `partially_visible`;
+  - `OUTSIDE_VIEW`: planned `0.002909857`, state `0.001360382`, combined `0.002909857`, `outside_frustum`, no mask pixels;
+  - `BEHIND_CAMERA`: planned `0.360274930`, state `0.360288054`, combined `0.360288054`, `behind_camera`, no mask pixels;
+  - `OVERLAP_BACK`: planned `0.050168861`, state `0.055912865`, combined `0.055912865`, `fully_visible`;
+  - `OVERLAP_FRONT`: planned `0.069507491`, state `0.078850731`, combined `0.078850731`, `fully_visible`.
+- Contribution pixel counts:
+  - `PLANNED_DOMINANT_VISIBLE`: candidate/written `480 / 480,480,480`;
+  - `STATE_DOMINANT_VISIBLE`: candidate/written `3813 / 3813,3813,3813`;
+  - `SHARED_RISK_VISIBLE`: candidate/written `6118 / 6118,6118,6118`;
+  - `LOW_RISK_VISIBLE`: candidate/written `597 / 259,259,259`;
+  - `PARTIAL_VISIBLE`: candidate/written `150 / 48,48,48`;
+  - `OUTSIDE_VIEW`: candidate/written `0 / 0,0,0`;
+  - `BEHIND_CAMERA`: candidate/written `0 / 0,0,0`;
+  - `OVERLAP_BACK`: candidate/written `4218 / 0,0,0`;
+  - `OVERLAP_FRONT`: candidate/written `4532 / 347,347,347`.
+- Mask results:
+  - planned nonzero pixels: `11065`;
+  - state nonzero pixels: `11065`;
+  - combined nonzero pixels: `11065`;
+  - combined mask was validated pixelwise as `max(planned, state)`;
+  - overlap pixels validated as max-union over all covering obstacles;
+  - exclusive-pixel risk binding validated for planned-dominant, state-dominant, shared, low-risk, and partial roles.
+- Output files:
+  - `data/frames/m4/image_risk_validation_episode_0001.png`;
+  - `data/logs/m4/image_risk_validation_episode_0001.csv`;
+  - `data/metadata/m4/image_risk_validation_episode_0001.json`;
+  - `data/masks/m4/image_risk_validation_episode_0001_masks.json`;
+  - `results/m4_image_risk/planned_mask.png`;
+  - `results/m4_image_risk/state_mask.png`;
+  - `results/m4_image_risk/combined_mask.png`;
+  - `results/m4_image_risk/planned_overlay.png`;
+  - `results/m4_image_risk/state_overlay.png`;
+  - `results/m4_image_risk/combined_overlay.png`;
+  - `results/m4_image_risk/world_to_image_risk_summary.png`.
+- RGB alignment auxiliary metrics:
+  - `PLANNED_DOMINANT_VISIBLE`: bbox IoU `0.885`, polygon IoU `0.889`, center error `0.261 px`;
+  - `STATE_DOMINANT_VISIBLE`: bbox IoU `0.980`, polygon IoU `0.967`, center error `0.322 px`;
+  - `SHARED_RISK_VISIBLE`: bbox IoU `0.960`, polygon IoU `0.967`, center error `0.216 px`;
+  - `LOW_RISK_VISIBLE`: bbox IoU `0.399`, polygon IoU `0.414`, center error `6.621 px`;
+  - `PARTIAL_VISIBLE`: bbox IoU `0.287`, polygon IoU `0.316`, center error `2.225 px`.
+- M4D-specific RGB threshold note:
+  - LOW_RISK and PARTIAL are small or edge-clipped diagnostic objects with few color pixels; their RGB checks use documented M4D-specific relaxed auxiliary thresholds after diagnosis.
+  - Numeric projection, risk, and mask validation are still based on core recomputation, not RGB color.
+- Validation actually run:
+  - `python -m py_compile simulator\m4d_config.py scripts\m4d_image_risk_common.py simulator\controllers\m4d_image_risk_validation\m4d_image_risk_validation.py scripts\validate_m4d_image_risk_dataset.py scripts\plot_m4d_image_risk.py tests\test_m4d_evaluation_helpers.py`: passed;
+  - `python -m unittest discover -s tests`: `148` tests passed;
+  - Webots R2025a command-line run of `simulator/worlds/m4d_image_risk_validation.wbt`: generated the M4D episode outputs;
+  - `python scripts\validate_m4d_image_risk_dataset.py data\logs\m4\image_risk_validation_episode_0001.csv`: passed;
+  - `python scripts\plot_m4d_image_risk.py data\logs\m4\image_risk_validation_episode_0001.csv`: passed;
+  - M4D validator re-run after plots: passed;
+  - `python scripts\validate_m4c_projection_dataset.py data\logs\m4\projection_validation_episode_0003.csv`: passed;
+  - `python scripts\validate_m3c_risk_dataset.py data\logs\m3\risk_validation_episode_0002.csv`: passed;
+  - `python scripts\evaluate_m3d_world_risk.py`: passed;
+  - `python scripts\validate_m3d_report.py`: passed.
+- Webots command-line behavior:
+  - Webots again remained open at the shell level after the controller completed. The process was stopped after output files were confirmed.
+- Explicitly not implemented in Milestone 4D-2:
+  - no JPEG/H.264/H.265/URVC;
+  - no ROI resource allocation or bytes/frame matching;
+  - no network simulation;
+  - no object detector or remote perception;
+  - no closed-loop navigation;
+  - no machine learning;
+  - no dynamic obstacles;
+  - no true rendered occlusion model.
+- Next priority:
+  - GUI manual acceptance for Milestone 4D outputs, then Milestone 4D closeout. Do not enter Milestone 5 before GUI acceptance and closeout.
+
 ## Commands actually run in the formal project
 
 ```text

@@ -16,6 +16,7 @@ Thumbs.db
 data/frames/*
 data/logs/*
 data/metadata/*
+data/masks/*
 results/*
 *.mp4
 *.avi
@@ -29,6 +30,7 @@ results/*
 !data/frames/.gitkeep
 !data/logs/.gitkeep
 !data/metadata/.gitkeep
+!data/masks/.gitkeep
 !results/.gitkeep
 
 # Local Webots/generated files
