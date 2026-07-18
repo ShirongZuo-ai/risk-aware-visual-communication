@@ -118,6 +118,7 @@ def _write_physics_diagnostic(
     phase: WheelCommandPhase,
     crossing,
     obstacle_node_ids: dict[str, int],
+    robot_part_node_ids: dict[str, int],
 ) -> None:
     position = self_node.getPosition()
     orientation = self_node.getOrientation()
@@ -125,6 +126,7 @@ def _write_physics_diagnostic(
     roll, pitch, yaw = roll_pitch_yaw(orientation)
     contacts = self_node.getContactPoints(True)
     contact_node_ids = {int(contact.node_id) for contact in contacts}
+    part_by_node_id = {node_id: part for part, node_id in robot_part_node_ids.items()}
     obstacles = {
         spec.obstacle_id: robot_obstacle_relation(position[0], position[1], position[2], spec.center_world, spec.size_xyz)
         for spec in config.obstacle_specs
@@ -149,12 +151,20 @@ def _write_physics_diagnostic(
             "angular_rad_s": float(velocity[5]),
         },
         "contact_points": [
-            {"point": [float(value) for value in contact.point], "other_node_id": int(contact.node_id)}
+            {
+                "point": [float(value) for value in contact.point],
+                "node_id": int(contact.node_id),
+                "robot_part": part_by_node_id.get(int(contact.node_id), "unknown"),
+            }
             for contact in contacts
         ],
+        "robot_part_node_ids": robot_part_node_ids,
         "obstacle_node_ids": obstacle_node_ids,
         "contacting_obstacle_ids": sorted(
             obstacle_id for obstacle_id, node_id in obstacle_node_ids.items() if node_id in contact_node_ids
+        ),
+        "body_overlapping_obstacle_ids": sorted(
+            obstacle_id for obstacle_id, relation in obstacles.items() if relation["cylinder_box_overlap"]
         ),
         "obstacles": obstacles,
     }
@@ -343,6 +353,7 @@ def main() -> None:
     self_node.resetPhysics()
     _import_obstacles(robot, config.obstacle_specs)
     obstacle_node_ids = {spec.obstacle_id: int(robot.getFromDef(spec.obstacle_id).getId()) for spec in config.obstacle_specs}
+    robot_part_node_ids = {"body": int(self_node.getId())}
     left = robot.getDevice(LEFT_WHEEL_DEVICE_NAME)
     right = robot.getDevice(RIGHT_WHEEL_DEVICE_NAME)
     camera = robot.getDevice(CAMERA_DEVICE_NAME)
@@ -374,6 +385,7 @@ def main() -> None:
                     phase,
                     crossing,
                     obstacle_node_ids,
+                    robot_part_node_ids,
                 )
             if crossing is not None:
                 snapshots.append(_capture(robot, config, job, crossing, self_node, camera, step_count))

@@ -14,6 +14,12 @@ from simulator.m5e_physics_diagnostics import (
 
 
 class M5EPhysicsDiagnosticsTests(unittest.TestCase):
+    def test_controller_does_not_query_internal_proto_node_ids(self) -> None:
+        controller = Path(__file__).resolve().parents[1] / "simulator" / "controllers" / "m5e_dataset_generator" / "m5e_dataset_generator.py"
+        source = controller.read_text(encoding="utf-8")
+        self.assertNotIn("getFromProtoDef(", source)
+        self.assertIn('robot_part_node_ids = {"body": int(self_node.getId())}', source)
+
     def test_identity_orientation_has_zero_roll_pitch_yaw(self) -> None:
         self.assertEqual(roll_pitch_yaw((1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)), (0.0, -0.0, 0.0))
 
