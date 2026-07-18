@@ -156,9 +156,13 @@ Acceptance: all baselines use identical byte matching, tile grid, JPEG settings,
 
 ### Milestone 5D - First single-frame compression validation
 
-Planned: run the first matched-budget evaluation on accepted `image_risk_validation_episode_0001`.
+- [x] Reconstruct the existing 16 M5C selected tiled-JPEG containers without rerunning allocation or matching.
+- [x] Measure full-image MSE, PSNR, and frozen-parameter SSIM on uint8 RGB reconstructions.
+- [x] Measure continuous-mask risk-weighted and eligible-object, high-risk, and background regional quality.
+- [x] Validate exact actual-byte matching, fixed M5C quality maps, decoding, no-future-actual provenance, and deterministic reruns.
+- [x] Generate metric, quality-allocation, and per-budget reconstruction diagnostics.
 
-Acceptance: communication metrics, whole-image quality, risk-weighted quality, regional quality, and fairness checks are reported for the accepted single-frame M4D evidence.
+Acceptance: communication metrics, whole-image quality, risk-weighted quality, regional quality, and fairness checks are reported for the accepted single-frame M4D evidence. M5D is complete as a single-frame descriptive evaluation only; M5E must establish whether any observation persists across multiple snapshots and layouts.
 
 ### Milestone 5E - Multi-frame and multi-scene offline evaluation
 

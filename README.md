@@ -265,7 +265,7 @@ docs/m5_compression_and_bitrate_protocol.md
 
 It defines the tiled-JPEG spatial allocation prototype, actual-byte matching, Uniform/Center ROI/Object ROI/Risk ROI baselines, budget-pilot process, and image-quality metrics.
 
-Milestone 5B implements the shared Uniform tiled-JPEG codec/container and budget pilot. Milestone 5C adds deterministic Center/Object/Risk tile scoring and shared actual-byte allocation, without image-quality ranking:
+Milestone 5B implements the shared Uniform tiled-JPEG codec/container and budget pilot. Milestone 5C adds deterministic Center/Object/Risk tile scoring and shared actual-byte allocation. Milestone 5D evaluates those fixed 16 allocations on the one accepted M4D frame without rerunning allocation:
 
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\run_m5b_uniform_pilot.py
@@ -273,6 +273,9 @@ Milestone 5B implements the shared Uniform tiled-JPEG codec/container and budget
 .\.venv\Scripts\python.exe .\scripts\run_m5c_allocation_validation.py
 .\.venv\Scripts\python.exe .\scripts\validate_m5c_allocation_validation.py
 .\.venv\Scripts\python.exe .\scripts\plot_m5c_allocation_maps.py
+.\.venv\Scripts\python.exe .\scripts\run_m5d_single_frame_evaluation.py
+.\.venv\Scripts\python.exe .\scripts\validate_m5d_single_frame_evaluation.py
+.\.venv\Scripts\python.exe .\scripts\plot_m5d_single_frame_results.py
 ```
 
 M5B generated outputs:
@@ -286,9 +289,13 @@ data/metadata/m5/m5c_allocation_validation.json
 results/m5_compression/m5c_score_maps.png
 results/m5_compression/m5c_quality_maps.png
 results/m5_compression/m5c_budget_utilization.png
+data/logs/m5/m5d_single_frame_quality.csv
+data/metadata/m5/m5d_single_frame_evaluation.json
+data/decoded/m5/m5d/
+results/m5_compression/m5d_*.png
 ```
 
-These are development outputs from `data/frames/m4/image_risk_validation_episode_0001.png` and are ignored by Git. M5C does not calculate PSNR/SSIM, select a best method, or evaluate perception or navigation.
+These are development outputs from `data/frames/m4/image_risk_validation_episode_0001.png` and are ignored by Git. M5D adds only a single-frame descriptive quality evaluation; it does not establish general method superiority, perception benefit, communication benefit, or navigation benefit. See `docs/m5d_single_frame_evaluation_report.md`.
 
 ## Documentation
 
@@ -306,4 +313,5 @@ These are development outputs from `data/frames/m4/image_risk_validation_episode
 - `docs/m5_compression_and_bitrate_protocol.md`: Milestone 5A tiled-JPEG spatial allocation, fair byte matching, baseline, and metric protocol
 - `docs/m5b_tiled_jpeg_validation_report.md`: Milestone 5B codec/container, Uniform pilot, and matcher validation report
 - `docs/m5c_spatial_allocation_validation_report.md`: Milestone 5C score/allocation validation report
+- `docs/m5d_single_frame_evaluation_report.md`: Milestone 5D matched-budget single-frame quality report
 - `docs/system_overview.md`: current end-to-end pipeline summary

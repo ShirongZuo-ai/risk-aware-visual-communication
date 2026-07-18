@@ -114,6 +114,13 @@ Milestone 5C implements spatial scoring and allocation while keeping the M5B tra
 4. All non-Uniform methods share one pre-encoded tile cache and exhaustive actual-byte candidate search; Uniform continues to use its accepted M5B matcher.
 5. The resulting 16 method-budget allocation rows validate byte accounting and no-future-actual inputs only, not image quality or task benefit.
 
+Milestone 5D evaluates those already fixed 16 allocations without invoking a matcher or changing the selected quality maps:
+
+1. Each saved M5C quality tuple is deterministically re-encoded, serialized, decoded, and checked against its original actual container bytes.
+2. The evaluator measures full RGB MSE/PSNR/SSIM, continuous combined-mask risk-weighted MSE/PSNR, and pixel-center eligible-object, high-risk (`combined >= 0.20`), and background regional MSE/PSNR.
+3. Generated CSV, metadata, decoded PNGs, and diagnostics are ignored development evidence for one `160x120` M4D snapshot.
+4. This is not a perception, communication, collision-probability, navigation, or multi-frame generalization result; M5E is the next priority for broader offline evidence.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -145,6 +152,9 @@ Milestone 5C implements spatial scoring and allocation while keeping the M5B tra
 - Milestone 5C allocation CSV: `data/logs/m5/m5c_allocation_validation.csv`
 - Milestone 5C allocation metadata: `data/metadata/m5/m5c_allocation_validation.json`
 - Milestone 5C allocation diagnostics: `results/m5_compression/`
+- Milestone 5D quality CSV: `data/logs/m5/m5d_single_frame_quality.csv`
+- Milestone 5D quality metadata and decoded frames: `data/metadata/m5/m5d_single_frame_evaluation.json`, `data/decoded/m5/m5d/`
+- Milestone 5D diagnostics and report: `results/m5_compression/m5d_*.png`, `docs/m5d_single_frame_evaluation_report.md`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -202,7 +212,7 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
-Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. It does not yet evaluate image quality, select a best method, add a network model, remote perception, or navigation code.
+Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. It does not select a generally best method, add a network model, remote perception, or navigation code.
 
 ## Explicitly Not Implemented
 

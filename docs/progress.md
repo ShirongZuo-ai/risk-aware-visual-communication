@@ -1620,6 +1620,44 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no Milestone 5D quality evaluation, multi-frame evaluation, network, perception, navigation, ML/neural codec, H.264/H.265, Webots world/controller, or M1-M4 evidence modification.
 - Next priority: Milestone 5D, first single-frame matched-budget quality and fairness evaluation. No perception or navigation work should begin first.
 
+## Milestone 5D - Single-frame matched-budget quality evaluation
+
+- Status: completed on `feature/m5-risk-roi-compression`. M5D evaluates the accepted M4D frame only and does not rerun the M5C allocator or matcher.
+- New implementation:
+  - `evaluation/image_quality.py` provides uint8 RGB full, continuous-risk-weighted, and masked-region MSE/PSNR plus frozen-parameter SSIM.
+  - `evaluation/region_masks.py` reconstructs the pixel-center eligible-object union from accepted M4D clipped polygons and creates risk-support, high-risk, and background diagnostic masks.
+  - `evaluation/matched_budget_evaluation.py` reconstructs only the saved M5C quality tuples, verifies their tile payloads and container bytes, decodes them, and reports metrics and tile diagnostics.
+  - `scripts/run_m5d_single_frame_evaluation.py`, `scripts/validate_m5d_single_frame_evaluation.py`, and `scripts/plot_m5d_single_frame_results.py` produce and independently validate the 16-row evidence and diagnostics.
+  - `tests/test_image_quality.py`, `tests/test_region_masks.py`, `tests/test_matched_budget_evaluation.py`, and `tests/test_m5d_evaluation_helpers.py` add 16 focused tests.
+- Fixed evidence and fairness:
+  - source: `data/frames/m4/image_risk_validation_episode_0001.png`, `160x120` RGB, SHA-256 `2b9e6b0b992d022a0e52fe6861b177c98841a1210a45688907d99c016f8bfa91`;
+  - M5C source commit: `1788688`; four methods and four fixed actual-byte targets produce exactly 16 rows;
+  - severe `31348`, low `32105`, medium `32729`, and high `33959` bytes/frame each have zero unused bytes and utilization `1.000` for all methods;
+  - container overhead remains `311` bytes; M5D checks the original selected quality map and tile JPEG payload sizes instead of selecting an alternative allocation;
+  - provenance remains `actual_future_trajectory_used=false`.
+- Metrics and diagnostic regions:
+  - full RGB MSE/PSNR/SSIM use uint8 RGB; SSIM uses `scikit-image==0.26.0` with `data_range=255`, `channel_axis=-1`, Gaussian weights, `sigma=1.5`, population covariance, and `win_size=11`;
+  - risk-weighted metrics use the continuous combined float mask, not a rendered PNG or tile score;
+  - eligible-object union and risk support each contain `11065` pixels; high risk is fixed before result interpretation as `combined >= 0.20` and contains `4293` pixels; background contains `8135` pixels;
+  - the threshold decision and evaluation-only dependencies are recorded in `docs/decisions.md`.
+- Generated, ignored evidence:
+  - `data/logs/m5/m5d_single_frame_quality.csv`;
+  - `data/metadata/m5/m5d_single_frame_evaluation.json`;
+  - `data/decoded/m5/m5d/<budget>/<method>.png`;
+  - eleven plots under `results/m5_compression/m5d_*.png`;
+  - full metric definitions, unrounded CSV provenance, the 16-result table, diagnostics, and limitations are in `docs/m5d_single_frame_evaluation_report.md`.
+- Descriptive result boundary:
+  - the figures and table document the quality trade-offs of one source frame, the frozen M5C tile scores, and discrete JPEG payload behavior;
+  - no quality metric feeds allocation; M5D does not claim a generally best method, collision probability, statistical significance, perception benefit, communication benefit, or navigation benefit.
+- Validation actually run:
+  - `python -m pip check`: passed;
+  - `python -m compileall -q compression navigation perception risk_map scripts simulator tests evaluation`: passed;
+  - `python -m unittest discover -s tests`: 213 tests passed, including 16 new M5D tests;
+  - M5B validator, M5C run and validator, M5D run and validator, M5D plot, repeated M5D validator, second M5D run and validator: all exited `0`;
+  - M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
+  - compression/allocation import scans confirm they do not import the M5D evaluator, NumPy, scikit-image, or quality metrics, and the M5D runner never imports a matcher or allocator.
+- Next priority: Milestone 5E multi-frame and multi-scene offline evaluation using the same frozen fairness, region, and no-future-actual rules. Do not begin perception, networking, navigation, or machine-learning work first.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -1674,4 +1712,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5D: run the first single-frame matched-budget image-quality and fairness evaluation from the accepted M4D evidence and M5C allocation outputs. Do not add perception, networking, navigation, or machine-learning evaluation first.
+Milestone 5E: expand the frozen matched-budget evaluation to multiple frames and scenes before drawing any broader image-quality conclusion. Do not add perception, networking, navigation, or machine-learning evaluation first.
