@@ -89,12 +89,12 @@ Acceptance: `docs/image_risk_projection_design.md` documents the projection mode
 
 ### Milestone 4B - Pure-Python projection core
 
-- [ ] Implement frozen camera models and validation.
-- [ ] Implement world/device/optical/image transforms.
-- [ ] Implement pinhole projection, near-plane clipping, image-boundary clipping, and 3D Box projected polygons.
-- [ ] Implement initial mask-generation rules only after projection geometry tests pass.
+- [x] Implement frozen camera models and validation.
+- [x] Implement world/device/optical/image transforms.
+- [x] Implement pinhole projection, near-plane clipping, image-boundary clipping, and 3D Box projected polygons.
+- [x] Unit-test projection roles, helper geometry, visibility classification, and invariants.
 
-Acceptance: core projection and mask logic are unit-tested and remain decoupled from Webots, OpenCV, ROS, and machine learning unless a later dependency decision changes this.
+Acceptance: core projection logic is unit-tested and remains decoupled from Webots, OpenCV, ROS, and machine learning unless a later dependency decision changes this. Image-risk mask generation remains out of scope until Milestone 4D.
 
 ### Milestone 4C - Webots calibration and projection validation
 

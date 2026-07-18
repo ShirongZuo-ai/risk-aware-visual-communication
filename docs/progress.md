@@ -22,6 +22,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 3D automated diagnostics and Milestone 3D-R figure-readability corrections: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002.
 - Accepted Milestone 3 after user GUI and figure review. `episode_0002` remains the official evidence data; `episode_0005` is GUI reproduction evidence only.
 - Completed Milestone 4A: froze world-risk-to-camera-image projection design, interfaces, terminology, validation roles, and acceptance criteria without creating projection code or M4 data.
+- Completed Milestone 4B: implemented and unit-tested the Webots-decoupled pure-Python camera projection core.
 
 ## Native Windows environment results
 
@@ -1018,6 +1019,75 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - README and roadmap both state that M4A is design-only and that projection code, masks, scenes, and compression are not implemented.
   - Git diff contains only documentation changes; ignored `data/`, `results/`, cache, and Webots GUI files remain untracked/ignored.
 
+## Milestone 4B: pure-Python camera projection core
+
+- Stage: Milestone 4B complete on local branch `feature/m4-image-risk-projection`.
+- Starting design commit: `f7a752b docs: freeze image risk projection design`.
+- Created modules:
+  - `perception/camera_models.py`
+  - `perception/camera_projection.py`
+- Created tests:
+  - `tests/test_camera_models.py`
+  - `tests/test_camera_projection.py`
+- Public data structures:
+  - `VisibilityStatus`
+  - `CameraIntrinsics`
+  - `CameraExtrinsics`
+  - `ObstacleBox3D`
+  - `ProjectedPoint`
+  - `ProjectedObstacle`
+- Core projection capabilities implemented:
+  - finite vector/matrix validation;
+  - 3x3 matrix-vector and matrix-matrix multiplication;
+  - vector add/subtract and dot product;
+  - 3x3 determinant and transpose;
+  - identity and pose-derived camera extrinsics;
+  - world -> camera device -> project optical transforms;
+  - camera device -> world round-trip helper;
+  - pinhole optical point projection;
+  - 3D near-plane edge clipping for Box corners and edges;
+  - deterministic 2D monotonic-chain convex hull;
+  - Sutherland-Hodgman image-rectangle clipping;
+  - polygon area and bounding box;
+  - `project_obstacle_box(...)` as the main 3D Box projection interface.
+- Visibility priority implemented:
+  1. `behind_camera`
+  2. `outside_frustum`
+  3. `degenerate_projection`
+  4. `intersects_near_plane`
+  5. `partially_visible`
+  6. `fully_visible`
+- Tests cover:
+  - current e-puck 160x120 intrinsics derived from horizontal FOV `0.84 rad` and near `0.0055 m`;
+  - invalid intrinsics, extrinsics, and 3D Box inputs;
+  - identity, translation, yaw, pitch, roll, device-to-optical transform, and round-trip behavior;
+  - principal point, right/down image directions, depth scaling, FOV boundaries, near plane, behind point, and non-finite point rejection;
+  - convex hull duplicates/collinearity, rectangle clipping, full outside, boundary touch, large polygon, area, and bbox;
+  - pure-math projection roles: `CENTER_VISIBLE`, `LEFT_VISIBLE`, `RIGHT_VISIBLE`, `PARTIAL_IMAGE_EDGE`, `OUTSIDE_FRUSTUM`, `BEHIND_CAMERA`, `NEAR_PLANE_INTERSECTION`, and two `DEPTH_OVERLAP` Boxes.
+- Explicitly not implemented in Milestone 4B:
+  - no Webots adapter or Webots runtime integration;
+  - no M4 world/controller;
+  - no RGB frame, CSV, mask, figure, or generated data;
+  - no `risk_map/image_risk_map.py`;
+  - no image-risk mask generation;
+  - no true occlusion handling;
+  - no JPEG, ROI compression, network simulation, closed-loop navigation, or machine learning;
+  - no M1-M3 algorithm, scene, risk parameter, CSV, plot, or accepted evidence changes.
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m py_compile perception\camera_models.py perception\camera_projection.py tests\test_camera_models.py tests\test_camera_projection.py`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `Select-String -Path perception\camera_models.py,perception\camera_projection.py -Pattern '^\s*(import|from)\s+(numpy|NumPy|cv2|PIL|webots|controller|shapely|scipy|torch|tensorflow)\b' -CaseSensitive:$false`
+  - checks for absent `risk_map/image_risk_map.py`, `simulator/adapters/webots_camera_adapter.py`, M4 worlds, and M4 controllers
+  - `C:\Program Files\Git\cmd\git.exe status --short --ignored`
+  - `C:\Program Files\Git\cmd\git.exe diff --stat`
+- Validation results:
+  - `py_compile`: passed.
+  - Unit tests: `101` tests passed, including the previous 75-test baseline and 26 new M4B tests.
+  - Prohibited dependency import scan: no forbidden imports in `perception/camera_models.py` or `perception/camera_projection.py`.
+  - Confirmed absent: `risk_map/image_risk_map.py`, `simulator/adapters/webots_camera_adapter.py`, M4 worlds, and M4 controllers.
+  - Git diff scope contains only M4B projection core modules, M4B tests, and roadmap/progress documentation.
+  - Ignored `data/`, `results/`, caches, and Webots GUI files remain untracked/ignored.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -1072,4 +1142,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 4B is the next priority: implement and unit-test the pure-Python projection core from `docs/image_risk_projection_design.md` without Webots dependencies.
+Milestone 4C is the next priority: connect the projection core to Webots through an adapter and a separate projection-validation scene without modifying accepted M3 evidence.
