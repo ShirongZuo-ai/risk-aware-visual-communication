@@ -208,3 +208,11 @@
 - **Reason:** Per-step Webots evidence with the canonical single-instance world found the original e-puck body-cylinder/Box contact beginning at step `140` (`4.480 s`) during the left arc. Two corrected batch runs and one corrected GUI run retained the frozen S3 risk/yaw/centroid criteria while maintaining at least `0.003971330 m` estimated body clearance and zero obstacle contacts.
 - **Rejected:** Hiding the Console warning, changing the global `basicTimeStep`, weakening S3 validator thresholds, changing risk/trajectory/Camera/mask logic, changing wheel speed or turn semantics, or altering S1/S2/S4-S8.
 - **Impact:** S3 remains a forward-left-arc, high-risk visual scenario under the frozen M5E-A protocol, but its validation target is no longer a physical collider on the executed path. Generated data remain deterministic, and no compression or quality metric informed the correction.
+
+## 2026-07-19 - S5/S7 Webots contact clearance and diagnostic identity
+
+- **Decision:** Move both S5 branch Boxes `0.030 m` in `+y`, retaining their dimensions and command schedule; retain all S7 geometry and switch only to a stop phase at `5.5 s`, after its final frozen snapshot.
+- **Reason:** GUI and step diagnostics found post-snapshot e-puck body contact with `M5E_S5_PLANNED_BRANCH` and `M5E_S7_RISK`. The corrected configurations retain every frozen S5/S7 validator condition while producing positive full-episode clearance.
+- **Decision:** Optional M5E contact diagnostics may record only the top-level e-puck body node ID. Do not call `getId()` on internal e-puck PROTO nodes.
+- **Reason:** Internal wheel DEF nodes produced Webots Console errors and their IDs were diagnostic-only. Obstacle identity is already stable through top-level DEF nodes and immutable `ScenarioConfig.obstacle_id` strings.
+- **Impact:** No risk, trajectory, Camera, projection, mask, snapshot, codec, or evaluation definition changed. M5E-B can be closed as data-generation/risk-scenario validation evidence only; it does not support a multi-scene Risk ROI superiority claim.

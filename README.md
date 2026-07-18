@@ -311,7 +311,7 @@ The accepted M4D/M5D frame remains development-only and cannot enter M5E calibra
 .\.venv\Scripts\python.exe .\scripts\plot_m5e_dataset_diagnostics.py --output-root data
 ```
 
-The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B does not generate calibration/formal data or select common budgets.
+The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B is accepted for deterministic dataset generation and frozen risk-scenario validation; targeted GUI manual checks covered S2, S3, S5, and S7. It does not generate calibration/formal data, select common budgets, or establish that Risk ROI is superior across multiple scenes.
 
 ## Documentation
 

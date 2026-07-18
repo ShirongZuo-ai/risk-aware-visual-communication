@@ -1,6 +1,6 @@
 # Milestone 5E-B Dataset Generator Validation Report
 
-Last updated: 2026-07-18 (Asia/Shanghai)
+Last updated: 2026-07-19 (Asia/Shanghai)
 
 ## Scope
 
@@ -28,15 +28,15 @@ The initial S5 failure was not a risk-model defect. The original command timing 
 
 A bounded deterministic offline geometry sweep used only snapshot-time planned/state trajectories and Camera geometry. It did not read compression allocations or image-quality metrics. The frozen selection rule required both branch obstacles to be visible and mask-contributing, opposite planned/state argmax identities, positive margins, different masks, and then maximized the smaller margin with deterministic tie-breaks.
 
-The selected static S5 configuration uses:
+The final static S5 configuration uses:
 
 - `0.0-4.25 s`: left `1.0 rad/s`, right `2.0 rad/s`
 - `4.25-6.0 s`: left `2.0 rad/s`, right `1.0 rad/s`
-- planned branch nominal center `(0.120, 0.150) m`, size `(0.015, 0.015, 0.050) m`
-- state branch nominal center `(0.060, 0.155) m`, size `(0.020, 0.020, 0.050) m`
+- planned branch nominal center `(0.120, 0.180) m`, size `(0.015, 0.015, 0.050) m`
+- state branch nominal center `(0.060, 0.185) m`, size `(0.020, 0.020, 0.050) m`
 - deterministic per-seed position jitter bounded by `+/-0.002 m`
 
-At the accepted `p=0.704` snapshot, trajectory disagreement is `0.03721414398972764 m`. Planned risk ranks `M5E_S5_PLANNED_BRANCH` first with margin `0.17591532330398388`; state risk ranks `M5E_S5_STATE_BRANCH` first with margin `0.1725670221363893`. Both are partially visible, eligible, and contribute nonzero mask pixels. No risk parameter, risk formula, trajectory model, Camera parameter, snapshot target, or validator threshold was changed.
+At the accepted `p=0.704` snapshot, trajectory disagreement is `0.03721414398972764 m`. Planned risk ranks `M5E_S5_PLANNED_BRANCH` first with margin `0.029617547559283128`; state risk ranks `M5E_S5_STATE_BRANCH` first with margin `0.03668397334636701`. Both are partially visible, eligible, and contribute nonzero mask pixels. No risk parameter, risk formula, trajectory model, Camera parameter, snapshot target, or validator threshold was changed.
 
 ## Scenario checks
 
@@ -52,9 +52,9 @@ The validator independently recomputes trajectories, obstacle risks, projections
 
 ## Reproducibility and validation
 
-The full smoke run was repeated under `data/m5e_repeat`. Comparison of all 32 frame bytes/hashes, floating-point masks, configs, and normalized metadata was exact. Webots subprocess output did not propagate into the redirected shell log files on this machine; success is established by complete artifacts and independent validation, while GUI Console status remains a separate manual check.
+The full smoke run was repeated under `data/m5e_repeat`. Comparison of all 32 frame bytes/hashes, floating-point masks, configs, and normalized metadata was exact. A final independent smoke run under `data/m5e_final_acceptance_smoke` passed all 8 episodes / 32 snapshots with no replacements. Webots subprocess output did not propagate into the redirected shell log files on this machine; GUI Console status is therefore recorded only from explicit manual observations.
 
-Automated acceptance passed for the 32-frame smoke dataset and deterministic repeat. Unit, compile, dependency, leakage, and M3-M5 regression results are recorded in `docs/progress.md`.
+Automated acceptance passed for the 32-frame smoke dataset and deterministic repeat. The final validation set included `pip check`, compileall, 257 unit tests, the independent M5E validator, and M3, M4C, M4D, M5B, M5C, and M5D validators. Results are recorded in `docs/progress.md`.
 
 ## S3 physics-warning diagnosis and correction
 
@@ -66,19 +66,29 @@ Two independent fixed S3 batch runs and one isolated GUI run each produced four 
 
 The optional project-relative `M5E_PHYSICS_DIAGNOSTICS_PATH` output records each Webots step, simulation time, command segment, wheel command, robot pose/roll/pitch/yaw/height, measured velocity, snapshot crossing, contact points, obstacle-node IDs, and robot/obstacle geometry. It is disabled by default and does not enter frame, mask, metadata, risk, compression, or quality calculations. The controller also refuses to import parameterized obstacles into a nonempty runtime group, preventing duplicate colliders if a generated GUI world is accidentally reused.
 
-The isolated GUI lifecycle generated and validated four snapshots, paused, remained open for inspection, and returned normally after manual close. Automated diagnostics establish zero obstacle contact. The user then explicitly confirmed zero Webots physics warnings and no visible contact, jitter, or tilt. The corrected S3 GUI check is accepted; this does not substitute for any still-unrecorded GUI checks for the other scenarios.
+The isolated GUI lifecycle generated and validated four snapshots, paused, remained open for inspection, and returned normally after manual close. Automated diagnostics establish zero obstacle contact. The user then explicitly confirmed zero Webots physics warnings and no visible contact, jitter, or tilt.
 
-## GUI checklist
+## S5/S7 post-snapshot contact corrections
 
-The corrected S3 run passed the robot-stability and Console-warning checks. Complete any remaining scenario checks using only:
+The prior S5 GUI run contacted `M5E_S5_PLANNED_BRANCH` at step `170` / `5.440 s`, after the final snapshot at `5.408 s`. Its minimum estimated body clearance was `-0.000590270 m`. Both S5 branch targets were moved only `0.030 m` in `+y`; their sizes and motion schedule are unchanged. The correction retains opposite planned/state maxima, positive margins, distinct masks, and all validator conditions. Corrected diagnostics found zero body overlap and minimum clearance `0.010794580 m`, and the user manually confirmed no collision while the planned/state disagreement remained visible.
 
-1. Each S1-S8 generated world instance contains the configured static Box DEF nodes and no unintended overlap.
-2. The e-puck remains upright and does not become stuck or collide during the complete episode.
-3. Representative saved frames agree with the visible Camera view and expected partial clipping.
-4. Webots Console has no physics-step warning, red controller error, Traceback, or `status: 1`.
+The prior S7 GUI run contacted `M5E_S7_RISK` at step `185` / `5.920 s`, also after the final snapshot. Its minimum estimated body clearance was `-0.000386838 m`. S7 geometry, including the partial target, is unchanged. Its command schedule now switches to stop at `5.5 s`, after the final `5.408 s` snapshot, preventing only the post-capture collision. Corrected diagnostics found zero body overlap and minimum clearance `0.010996237 m`; the partial target remains `partially_visible`, has `1154` written pixels, positive risk, and crosses the expected image boundary.
+
+During the first corrected S7 GUI run, two Console errors reported `wb_supervisor_node_get_id() called for an internal PROTO node`. The controller had attempted to obtain IDs for e-puck wheel DEFs inside the official PROTO solely to annotate optional diagnostic contact records. This data was not used for metadata, obstacle identity, Camera location, physics configuration, risk, masks, or validation. The controller now records only the top-level e-puck body ID; static obstacles retain top-level DEF IDs and immutable `ScenarioConfig.obstacle_id` strings. A unit test forbids `getFromProtoDef()` in this controller. The final S7 GUI run had no internal-PROTO error, no physics warning, no collision, and normal partial visibility according to user manual review.
+
+## GUI acceptance evidence
+
+The following are explicit user GUI observations, not automatic claims:
+
+1. S2: normal GUI lifecycle, four snapshots, and no robot collision.
+2. S3: prior real contact corrected; no physics warning, collision, jitter, or visible tilt.
+3. S5: corrected GUI run completed with four snapshots, no collision, and preserved planned/state disagreement.
+4. S7: four snapshots, independent validator pass, zero body overlap, minimum clearance `10.996 mm`, no internal-PROTO error or physics warning, no collision, and normal partial visibility.
+
+The complete automatic S1-S8 smoke validator remains the evidence for all eight frozen scenario conditions. GUI observations are physical and Console acceptance evidence for the reviewed scenarios.
 
 ## Interpretation boundary
 
 Risk values remain heuristic proxies, not collision probabilities. M5E-B establishes deterministic multi-scene input generation only. It provides no compression, communication, perception, or navigation benefit claim.
 
-Next priority: complete and record any remaining Milestone 5E-B GUI acceptance checks. Do not begin Milestone 5E-C first.
+Next priority: Milestone 5E-C calibration pilot and common-budget freeze, only when explicitly started. M5E-B has not generated calibration data, selected common budgets, run a multi-scene ROI quality experiment, or established Risk ROI superiority.

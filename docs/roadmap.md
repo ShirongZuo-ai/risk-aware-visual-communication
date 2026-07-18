@@ -179,9 +179,9 @@ Acceptance: `docs/m5e_multiscene_offline_evaluation_protocol.md` is internally c
 [x] Save RGB frames, floating-point masks, metadata, episode summaries, and stable manifests.
 [x] Independently validate all S1-S8 scenario roles, hashes, max-union, and no-future-actual provenance.
 [x] Generate and exactly repeat the 32-frame smoke dataset and diagnostics.
-[ ] Complete GUI manual acceptance.
+[x] Complete targeted GUI manual acceptance for S2, S3, S5, and S7, including collision/Console checks and S7 partial visibility.
 
-Acceptance: automated M5E-B acceptance has passed for all eight smoke scenarios, with four snapshots each, complete failure/replacement records, deterministic repeat, and no future-actual leakage. GUI manual acceptance remains pending. No calibration/formal data, common budget, or compression evaluation was generated.
+Acceptance: M5E-B is accepted for deterministic multi-scene dataset generation and risk-scenario validation. All eight smoke scenarios passed with four snapshots each, no replacements, deterministic repeat evidence, and no future-actual leakage. Targeted GUI manual evidence passed for S2/S3/S5/S7; it complements rather than replaces automatic validation. No calibration/formal data, common budget, or compression evaluation was generated.
 
 ### Milestone 5E-C - Calibration pilot and common budget freeze
 

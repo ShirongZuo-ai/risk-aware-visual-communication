@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-07-18 (Asia/Shanghai)
+Last updated: 2026-07-19 (Asia/Shanghai)
 
 ## Completed
 
@@ -30,7 +30,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 5C: implemented and validated deterministic Center/Object/Risk scoring and fair spatial allocation on the accepted development frame.
 - Completed Milestone 5D: evaluated the 16 fixed single-frame allocations with full, continuous risk-weighted, and regional image-quality metrics; this remains development evidence only.
 - Completed Milestone 5E-A: froze the multi-scene split, scenario, snapshot, common-budget, metric, episode-statistics, scientific-interpretation, and failure/replacement protocol without generating M5E data or modifying implementation code.
-- Completed Milestone 5E-B automated acceptance: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, and reproduced frames/masks/configs/metadata exactly. GUI manual acceptance remains pending.
+- Completed and accepted Milestone 5E-B: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, reproduced frames/masks/configs/metadata exactly, and recorded targeted S2/S3/S5/S7 GUI manual acceptance.
 
 ## Native Windows environment results
 
@@ -1697,7 +1697,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 
 ## Milestone 5E-B - Parameterized static-AABB dataset generator
 
-- Status: automated acceptance completed on `feature/m5-risk-roi-compression`; GUI manual acceptance is pending.
+- Status: formally accepted on `feature/m5-risk-roi-compression` for deterministic multi-scene dataset generation and risk-scenario validation. Targeted GUI manual acceptance is recorded separately from automatic evidence.
 - Safety checkpoint: created and reapplied `stash@{0}` named `backup: M5E-B S1-S4 validated checkpoint`; the stash record was retained during implementation and final validation.
 - Implemented:
   - immutable seeded `ScenarioConfig` generation for S1-S8 and disjoint smoke/calibration/formal seed namespaces;
@@ -1706,12 +1706,22 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - aligned RGB frame, planned/state/combined float-mask, metadata, episode summary, dataset manifest, and episode manifest output;
   - default no-overwrite, explicit overwrite/resume, bounded replacement pools, dry-run, timeout, and retained failure records;
   - independent scenario/data validator, deterministic-run comparator, rich scenario diagnostics, and smoke plots.
-- S5 correction:
+- S5 original risk-role selection before the later physical-clearance correction:
   - root cause was insufficient/late trajectory separation plus obstacle visibility/depth geometry that made one candidate dominate both channels; the first validator also used index 1 instead of the frozen third snapshot at `p=0.70`;
   - a bounded deterministic offline geometry sweep used only planned/state trajectory and Camera geometry, not compression or quality metrics;
   - selected schedule is left arc `1.0/2.0 rad/s` through `4.25 s`, then right arc `2.0/1.0 rad/s` through `6.0 s`;
   - at `p=0.704`, planned argmax is `M5E_S5_PLANNED_BRANCH` with margin `0.17591532330398388`; state argmax is `M5E_S5_STATE_BRANCH` with margin `0.1725670221363893`; trajectory disagreement is `0.03721414398972764 m`;
   - both branch targets are eligible, have nonempty clipped polygons and mask contributions, and planned/state masks differ.
+- S5 physics correction:
+  - the initial GUI run made real e-puck body contact with `M5E_S5_PLANNED_BRANCH` at step `170` / `5.440 s`, after snapshot 3 at `5.408 s`; the estimated minimum clearance was `-0.000590270 m`;
+  - both branch Boxes were moved only in `+y` by `0.030 m`, retaining their sizes, command schedule, snapshot targets, risk/trajectory/Camera/mask code, and all frozen validator rules;
+  - the corrected snapshot-2 rankings remain planned `M5E_S5_PLANNED_BRANCH` (margin `0.029617548`) and state `M5E_S5_STATE_BRANCH` (margin `0.036683973`), with disagreement `0.037214144 m`, distinct masks, and nonzero contributions;
+  - corrected batch diagnostics show zero body overlap and minimum clearance `0.010794580 m`; user GUI review confirmed four snapshots, no collision, and preserved planned/state disagreement.
+- S7 physics and internal-PROTO correction:
+  - the initial GUI run contacted `M5E_S7_RISK` at step `185` / `5.920 s`, after snapshot 3 at `5.408 s`; the estimated minimum clearance was `-0.000386838 m`;
+  - the S7 obstacle geometry and partial target are unchanged. The schedule now stops at `5.5 s`, after the final frozen snapshot, preventing the post-capture collision; corrected minimum clearance is `0.010996237 m` with zero body overlap;
+  - an optional diagnostic attempt to call `getId()` for internal e-puck wheel PROTO nodes produced two Webots Console errors. Those IDs were diagnostic-only and are now removed: diagnostics use only the top-level e-puck body ID, while obstacles retain stable top-level DEF IDs and `ScenarioConfig.obstacle_id` strings;
+  - the new regression test prohibits `getFromProtoDef()` in this controller. The corrected GUI run had four snapshots, passed the independent validator, had no internal-PROTO error or physics warning, and was manually confirmed collision-free with normal partial visibility.
 - Other frozen-role evidence at `p=0.704`:
   - S6 small-high: `938 px`, combined risk `0.3593353909604333`; large-low: `3652 px`, risk `0.0011643852196083705`; projected-area ratio `3.893390191897655`, with a shared tile and nonzero contributions;
   - S7 partial target: `partially_visible`, `1154` candidate/written pixels, combined risk `0.03360701169399`, truncation `0.5862820200055942`, and projected polygon crossing the left boundary;
@@ -1727,11 +1737,11 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - 32 frames/masks/snapshot metadata records under the protocol paths;
   - `results/m5_compression/m5e_smoke/m5e_scenario_diagnostics.png` and `m5e_snapshot_progress.png`.
 - Scientific boundary: no risk formula/parameter, trajectory model, Camera model, snapshot target, M5E-A threshold, M5 codec/allocation, or quality metric was changed. Risk remains a heuristic proxy, not collision probability. M5E-B provides dataset-generation evidence only.
-- GUI status: the corrected S3 physics/robot-stability/Console check is passed; any remaining S1, S2, and S4-S8 checks must still be recorded separately before full M5E-B GUI acceptance.
+- GUI status: targeted human acceptance passed for S2 (four snapshots, no collision), S3 (no physics warning, collision, jitter, or visible tilt), S5 (four snapshots, no collision, planned/state disagreement retained), and S7 (four snapshots, no internal-PROTO error, physics warning, collision, jitter, or visible tilt, and normal partial visibility). These are manual GUI observations, not automatic proof; all eight scenario families remain independently covered by the complete automated smoke validator.
 - Final automated validation:
   - `python -m pip check`: no broken requirements;
   - `python -m compileall -q compression evaluation navigation perception risk_map scripts simulator tests`: passed;
-  - `python -m unittest discover -s tests`: 236 tests passed, including 23 new M5E-B tests over the previous 213-test baseline;
+  - final `python -m unittest discover -s tests`: 257 tests passed;
   - smoke dry-run: passed against an isolated output root and wrote no episode artifacts;
   - M5E independent validator: passed for 8 episodes / 32 snapshots before and after plotting;
   - repeat-output validator and deterministic comparator: passed; all 32 frames, masks, configs, and normalized metadata are identical;
@@ -1739,7 +1749,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
   - dependency scan found only shared immutable mask/polygon/tile-grid helpers; no codec encode, matcher, allocator, PSNR, SSIM, or quality-result dependency exists in generation or scenario selection;
   - future-actual scan found only the explicit false provenance field and validator assertion; no future actual position, velocity, or yaw is read.
-- Next priority: complete and record any remaining Milestone 5E-B GUI checks before Milestone 5E-C.
+- Next priority: Milestone 5E-C calibration pilot and common-budget freeze. Do not generate calibration data, freeze budgets, or start any new quality experiment until that milestone is explicitly started.
 
 ## Milestone 5E-B - GUI runner and S3 physics stabilization
 
@@ -1773,8 +1783,8 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - three isolated S3 output roots independently passed as 1 episode / 4 snapshots;
   - a fresh S1-S8 default smoke run passed with 8 episodes / 32 snapshots, followed by the independent dataset validator;
   - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators all exited `0`.
-- Manual boundary: S3's corrected GUI run is accepted from the user's explicit Console and visual confirmation. This does not automatically accept unreviewed S1, S2, or S4-S8 GUI runs.
-- Next priority: complete and record any remaining Milestone 5E-B GUI acceptance checks. Do not begin Milestone 5E-C first.
+- Manual boundary: S3, S5, and S7 collision corrections and S7 internal-PROTO diagnostics were accepted from explicit user Console and visual confirmation; S2 was also manually confirmed collision-free. These GUI observations complement, but do not replace, the complete S1-S8 automatic validator.
+- Next priority: Milestone 5E-C calibration pilot and common-budget freeze, only after an explicit milestone-start request.
 
 ## Commands actually run in the formal project
 
@@ -1816,7 +1826,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 - Local branch state: `main` verified; no `master` branch rename was needed during this verification pass because the branch was already `main`.
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
-- M5E-B smoke generator: 8 episodes and 32 snapshots independently validated and deterministically repeated; GUI manual acceptance remains pending.
+- M5E-B smoke generator: final 8-episode / 32-snapshot smoke passed independently with no replacements; deterministic repeat evidence and targeted S2/S3/S5/S7 GUI acceptance are recorded above.
 - Calibration/formal M5E data, common budgets, object detection, networking, and closed-loop navigation: not implemented or tested.
 
 ## Current issues
@@ -1827,7 +1837,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.
 5. Git `user.name` and `user.email` are now configured locally/globally for this environment as `ShirongZuo-ai <3095325284@qq.com>`.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
-7. Milestone 5E-B Webots GUI manual acceptance is pending; automated artifact validation does not substitute for the requested Scene Tree, robot-contact, frame-view, and Console checks.
+7. M5E-B GUI evidence is limited to the documented targeted S2/S3/S5/S7 manual checks; it complements the automatic all-scenario validator and is not an automatic Console or visual proof.
 
 ## Next priority
 
