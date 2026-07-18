@@ -143,6 +143,52 @@ def qualities_for_config(score_map: TileScoreMap, config: SpatialAllocationConfi
     return tuple(config.enhancement_quality if tile_id in enhanced else config.background_quality for tile_id in range(score_map.grid.tile_count))
 
 
+def iter_spatial_allocation_candidates(
+    tile_score_map: TileScoreMap,
+    encoded_tile_cache: EncodedTileCache,
+    allocation_search_space: AllocationSearchSpace = DEFAULT_ALLOCATION_SEARCH_SPACE,
+):
+    """Yield every frozen non-Uniform candidate and its complete container bytes.
+
+    This intentionally exposes the exact M5C candidate space for calibration
+    range measurement without changing the matching or tie-breaking rule.
+    """
+
+    if tile_score_map.grid != encoded_tile_cache.grid:
+        raise ValueError("tile score grid must match encoded tile cache grid")
+    qualities = encoded_tile_cache.available_qualities
+    required = set(range(allocation_search_space.background_quality_min, allocation_search_space.enhancement_quality_max + 1))
+    if not required.issubset(qualities):
+        raise ValueError("tile cache does not cover the allocation search space")
+    overhead = container_overhead_bytes(encoded_tile_cache.grid)
+    if tile_score_map.minimum_score == tile_score_map.maximum_score:
+        for quality in range(allocation_search_space.background_quality_min, allocation_search_space.enhancement_quality_max + 1):
+            config = SpatialAllocationConfig(quality, quality, 0)
+            total = overhead + sum(
+                encoded_tile_cache.tile_payload_length(tile_id, quality)
+                for tile_id in range(encoded_tile_cache.grid.tile_count)
+            )
+            yield total, config
+        return
+    ranked = tile_score_map.stable_ranked_tile_ids
+    for background_quality in range(allocation_search_space.background_quality_min, allocation_search_space.background_quality_max + 1):
+        baseline = sum(
+            encoded_tile_cache.tile_payload_length(tile_id, background_quality)
+            for tile_id in range(encoded_tile_cache.grid.tile_count)
+        )
+        for enhancement_quality in range(
+            max(background_quality + 1, allocation_search_space.enhancement_quality_min),
+            allocation_search_space.enhancement_quality_max + 1,
+        ):
+            payload = baseline
+            for top_k, tile_id in enumerate(ranked, start=1):
+                if top_k > allocation_search_space.top_k_max:
+                    break
+                payload += encoded_tile_cache.tile_payload_length(tile_id, enhancement_quality) - encoded_tile_cache.tile_payload_length(tile_id, background_quality)
+                if top_k >= allocation_search_space.top_k_min:
+                    yield overhead + payload, SpatialAllocationConfig(background_quality, enhancement_quality, top_k)
+
+
 def match_spatial_allocation_to_budget(
     tile_score_map: TileScoreMap,
     encoded_tile_cache: EncodedTileCache,

@@ -124,8 +124,8 @@ def manifest_row(summary: dict[str, Any], snapshot: dict[str, Any], scenario_val
         "scenario_validation_passed": str(scenario_validation_passed).lower(),
         "scenario_validation_reasons": "",
         "actual_future_trajectory_used": "false",
-        "valid_for_calibration": "false",
-        "valid_for_formal": "false",
+        "valid_for_calibration": str(summary["split"] == "calibration").lower(),
+        "valid_for_formal": str(summary["split"] == "formal").lower(),
     }
 
 
@@ -143,7 +143,7 @@ def episode_manifest_path(output_root: Path) -> Path:
     return output_root / "metadata" / "m5e" / "m5e_episode_manifest.json"
 
 
-def write_episode_manifest(output_root: Path, summaries: Iterable[dict[str, Any]]) -> Path:
+def write_episode_manifest(output_root: Path, summaries: Iterable[dict[str, Any]], split: str = "smoke") -> Path:
     destination = episode_manifest_path(output_root)
     destination.parent.mkdir(parents=True, exist_ok=True)
     episodes = sorted(
@@ -159,6 +159,6 @@ def write_episode_manifest(output_root: Path, summaries: Iterable[dict[str, Any]
         ),
         key=lambda item: (item["scenario_id"], item["replacement_index"], item["actual_seed"]),
     )
-    payload = {"generator_version": M5E_GENERATOR_VERSION, "split": "smoke", "episode_count": len(episodes), "episodes": episodes}
+    payload = {"generator_version": M5E_GENERATOR_VERSION, "split": split, "episode_count": len(episodes), "episodes": episodes}
     destination.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return destination

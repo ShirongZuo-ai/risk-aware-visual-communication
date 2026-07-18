@@ -20,7 +20,7 @@ from perception.camera_projection import project_obstacle_box
 from risk_map.models import RiskParameters
 from risk_map.image_risk_map import bind_projection_to_risk, build_image_risk_masks
 from risk_map.trajectory_obstacle_risk import analyze_dual_trajectory_obstacle
-from simulator.m5e_config import EXPECTED_CAMERA_HEIGHT_PX, EXPECTED_CAMERA_WIDTH_PX, EXPECTED_HORIZONTAL_FOV_RAD, EXPECTED_NEAR_CLIP_M, SNAPSHOT_PROGRESS_TOLERANCE
+from simulator.m5e_config import EXPECTED_CAMERA_HEIGHT_PX, EXPECTED_CAMERA_WIDTH_PX, EXPECTED_HORIZONTAL_FOV_RAD, EXPECTED_NEAR_CLIP_M, SNAPSHOT_PROGRESS_TOLERANCE, primary_seed, primary_seed_indices
 from simulator.m5e_scenarios import config_hash, generate_scenario
 from simulator.m5e_dataset_schema import MANIFEST_FIELDS
 from simulator.m5e_snapshot_protocol import reference_progress
@@ -231,13 +231,29 @@ def _summary_files(output_root: Path, split: str) -> list[Path]:
     return sorted((output_root / "metadata" / "m5e" / split).glob("*/*/episode_summary.json"))
 
 
+def _validate_split_identity(summaries: list[dict[str, Any]], split: str) -> None:
+    _assert(all(item["split"] == split for item in summaries), "episode split mismatch")
+    expected_per_scenario = len(primary_seed_indices(split))
+    expected = {
+        (scenario_id, primary_seed(split, int(scenario_id[1:]), seed_index))
+        for scenario_id in (f"S{index}" for index in range(1, 9))
+        for seed_index in primary_seed_indices(split)
+    }
+    observed = {(item["scenario_id"], int(item["original_seed"])) for item in summaries}
+    _assert(observed == expected, "accepted episodes do not match frozen primary seed set")
+    _assert(all(int(item["replacement_index"]) >= 0 for item in summaries), "replacement index is invalid")
+    _assert(len(summaries) == 8 * expected_per_scenario, "complete dataset episode count mismatch")
+
+
 def validate_dataset(output_root: Path, split: str = "smoke", require_manifest: bool = True, require_complete: bool = True) -> list[dict[str, Any]]:
-    summaries = [validate_episode(path) for path in _summary_files(output_root, split)]
+    summary_files = _summary_files(output_root, split)
+    raw_summaries = [load_json(path) for path in summary_files]
+    summaries = [validate_episode(path) for path, raw in zip(summary_files, raw_summaries) if raw.get("status") == "captured"]
     _assert(summaries, "no episode summaries found")
     if require_complete:
-        _assert(len(summaries) == 8, "complete smoke dataset must contain eight accepted episodes")
+        _validate_split_identity(summaries, split)
         _assert({item["scenario_id"] for item in summaries} == {f"S{index}" for index in range(1, 9)}, "complete smoke dataset scenario set mismatch")
-        _assert(sum(item["completed_snapshot_count"] for item in summaries) == 32, "complete smoke dataset must contain 32 snapshots")
+        _assert(sum(item["completed_snapshot_count"] for item in summaries) == len(summaries) * 4, "complete dataset snapshot count mismatch")
     if require_manifest:
         rows = read_manifest(output_root)
         _assert(len(rows) == len(summaries) * 4, "manifest row count mismatch")
@@ -245,8 +261,11 @@ def validate_dataset(output_root: Path, split: str = "smoke", require_manifest: 
         identities = {(row["scenario_id"], row["episode_id"], row["snapshot_index"]) for row in rows}
         _assert(len(identities) == len(rows), "manifest contains duplicate snapshots")
         _assert(all(row["scenario_validation_passed"] == "true" for row in rows), "manifest contains failed scenario")
-        _assert(all(row["valid_for_calibration"] == "false" and row["valid_for_formal"] == "false" for row in rows), "smoke manifest marks data as calibration/formal")
+        expected_calibration = str(split == "calibration").lower()
+        expected_formal = str(split == "formal").lower()
+        _assert(all(row["valid_for_calibration"] == expected_calibration and row["valid_for_formal"] == expected_formal for row in rows), "manifest split eligibility flags are incorrect")
         episode_manifest = load_json(episode_manifest_path(output_root))
+        _assert(episode_manifest["split"] == split, "episode manifest split mismatch")
         _assert(episode_manifest["episode_count"] >= len(summaries), "episode manifest omits accepted episodes")
         accepted_ids = {item["episode_id"] for item in summaries}
         recorded_ids = {item["episode_id"] for item in episode_manifest["episodes"] if item["status"] == "captured"}
@@ -257,7 +276,7 @@ def validate_dataset(output_root: Path, split: str = "smoke", require_manifest: 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", default="data")
-    parser.add_argument("--split", default="smoke", choices=("smoke",))
+    parser.add_argument("--split", default="smoke", choices=("smoke", "calibration"))
     parser.add_argument("--skip-manifest", action="store_true")
     parser.add_argument("--allow-partial", action="store_true")
     args = parser.parse_args()
