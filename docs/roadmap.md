@@ -185,9 +185,12 @@ Acceptance: M5E-B is accepted for deterministic multi-scene dataset generation a
 
 ### Milestone 5E-C - Calibration pilot and common budget freeze
 
-Planned: generate the 64-frame calibration split, measure the shared feasible container-byte interval, apply the frozen budget formula and adequacy checks, and freeze severe/low/medium/high targets.
+- [x] Generate the independent 64-frame calibration split (S1-S8, two fixed seeds each, four fixed-progress snapshots).
+- [x] Exhaustively measure actual complete-container byte ranges for Uniform, Center ROI, Object ROI, and Risk ROI.
+- [x] Freeze method-identical severe/low/medium/high targets from the nonempty common interval.
+- [x] Validate 1,024 deterministic under-budget allocations and repeat the complete calibration run.
 
-Acceptance: all four targets are common and feasible, method-identical, calibration-only, and documented before formal generation.
+Acceptance: passed. The calibration-only common interval is `[31240, 35779]` bytes and the frozen targets are `31466`, `32374`, `33509`, and `34871` bytes. No formal image-quality or method-performance result is included.
 
 ### Milestone 5E-D - Formal encoding and metric evaluation
 

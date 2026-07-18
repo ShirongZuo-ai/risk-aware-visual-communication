@@ -2,7 +2,17 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A froze the multi-scene protocol, and M5E-B now provides a parameterized static-AABB Webots generator plus an independently validated 32-frame smoke dataset. GUI acceptance remains pending. No calibration/formal M5E dataset, common budget, perception evaluation, networking, or navigation evaluation exists yet.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A froze the multi-scene protocol, M5E-B accepted the parameterized static-AABB Webots generator, and M5E-C froze calibration-only common complete-container-byte budgets from an independently validated 64-frame split. No formal M5E evaluation, method-performance conclusion, perception evaluation, networking, or navigation evaluation exists yet.
+
+## M5E Calibration Budget Freeze
+
+M5E-C generated ignored deterministic calibration data under `data/m5e_calibration/` and froze shared complete-container-byte targets for all four existing methods: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes. The targets are calibration-only and must be used unchanged by a later formal M5E run. No formal quality comparison or Risk ROI performance conclusion has been produced.
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_m5e_calibration_dataset.py --output-root data\m5e_calibration
+.\.venv\Scripts\python.exe scripts\freeze_m5e_calibration_budgets.py --output-root data\m5e_calibration
+.\.venv\Scripts\python.exe scripts\validate_m5e_calibration.py --output-root data\m5e_calibration
+```
 
 ## Scope
 

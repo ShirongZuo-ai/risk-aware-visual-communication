@@ -216,3 +216,12 @@
 - **Decision:** Optional M5E contact diagnostics may record only the top-level e-puck body node ID. Do not call `getId()` on internal e-puck PROTO nodes.
 - **Reason:** Internal wheel DEF nodes produced Webots Console errors and their IDs were diagnostic-only. Obstacle identity is already stable through top-level DEF nodes and immutable `ScenarioConfig.obstacle_id` strings.
 - **Impact:** No risk, trajectory, Camera, projection, mask, snapshot, codec, or evaluation definition changed. M5E-B can be closed as data-generation/risk-scenario validation evidence only; it does not support a multi-scene Risk ROI superiority claim.
+
+## 2026-07-19 - M5E-C common actual-byte budget freeze
+
+- **Decision:** Freeze M5E formal target budgets from the calibration-only common complete-container-byte interval, not from development evidence, JPEG quality labels, payload-only sizes, or method outcomes.
+- **Reason:** Across the 64 calibration frames and all four frozen methods, exhaustive legal candidate measurement yields a nonempty common interval `[31240, 35779]` bytes. The predeclared floor rule produces strictly increasing common targets: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes.
+- **Decision:** Retain the existing deterministic M5C matching/tie-break and require actual complete container bytes at or below each target for every frame-method combination.
+- **Reason:** This preserves method-identical byte fairness and includes header, tile index, and JPEG payload in every budget. The 1,024 calibration allocation matrix passed without an over-budget result.
+- **Rejected:** Selecting different budgets per method, using M5B/M5D development targets, tuning a target from PSNR/SSIM/RW-PSNR, or choosing budgets to favor Risk ROI.
+- **Impact:** M5E-D/E, if explicitly started, must use these values unchanged. Calibration establishes only byte feasibility; it does not establish Risk ROI, perception, collision, or navigation benefit.

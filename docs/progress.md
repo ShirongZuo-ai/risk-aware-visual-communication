@@ -31,6 +31,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 - Completed Milestone 5D: evaluated the 16 fixed single-frame allocations with full, continuous risk-weighted, and regional image-quality metrics; this remains development evidence only.
 - Completed Milestone 5E-A: froze the multi-scene split, scenario, snapshot, common-budget, metric, episode-statistics, scientific-interpretation, and failure/replacement protocol without generating M5E data or modifying implementation code.
 - Completed and accepted Milestone 5E-B: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, reproduced frames/masks/configs/metadata exactly, and recorded targeted S2/S3/S5/S7 GUI manual acceptance.
+- Completed Milestone 5E-C: generated and independently validated the isolated 64-frame calibration split, exhaustively measured the legal complete-container-byte range for all frame-method pairs, and froze four common actual-byte budgets without running a formal quality evaluation.
 
 ## Native Windows environment results
 
@@ -1841,4 +1842,18 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5E-C: generate the frozen calibration split, determine the common feasible byte interval, and freeze the four shared budgets. Do not start formal encoding, perception, networking, navigation, or machine-learning work first.
+Milestone 5E-D/E formal encoding, metric evaluation, and episode statistics remain not started. They must use the frozen M5E-C common budgets unchanged; do not start formal generation without an explicit request.
+
+## Milestone 5E-C - Calibration and common-budget freeze
+
+- Status: completed on `feature/m5-risk-roi-compression` as calibration-only byte-feasibility work. No formal evaluation, quality metric, method comparison, or scientific conclusion was generated.
+- Calibration data: 16 accepted primary episodes and 64 frames (`S1-S8 x 2 seeds x 4 first-crossing snapshots`) under `data/m5e_calibration/`. Seed pairs are `100100/100101` through `100800/100801`; all used replacement index `0`.
+- Frozen invariants retained: snapshot progress `0.20/0.45/0.70/0.90`, static-AABB scenario conditions, Camera/risk/projection/mask definitions, deterministic tiled-JPEG, M5C score definitions and lexicographic tie-break, and `actual_future_trajectory_used=false`.
+- Actual-byte feasibility: exhaustively measured 256 frame-method range records. Each method's global observed legal range is `31169..40675` bytes; the calibration-wide common interval is `[31240, 35779]` bytes, width `4539`.
+- Common-interval witnesses: lower is `m5e_calibration_s7_seed100700_actual100700_snapshot01` / Uniform; upper is `m5e_calibration_s3_seed100300_actual100300_snapshot02` / Center ROI. Every frame-method range covers the common interval.
+- Frozen calibration-only targets: severe `31466`, low `32374`, medium `33509`, high `34871` bytes, calculated with `floor` at 5%, 25%, 50%, and 80% of the common span. The targets are strictly increasing, method-identical, and cannot be adjusted from later formal outcomes.
+- Allocation validation: all `64 x 4 x 4 = 1024` allocations exist, obey frozen matching/tie-break rules, and are at or below target. Utilization is `[0.992859, 1.000000]`; no over-budget allocation occurred.
+- Independent validation: `scripts/validate_m5e_calibration.py` recomputed the dataset checks, 256 ranges, common interval/witnesses, budgets, and 1,024 allocations. A second complete isolated Webots calibration run exactly matched source RGB hashes, float masks, ScenarioConfig, normalized metadata, ranges, budgets, allocations, and actual bytes.
+- Verification actually run: `pip check`, repository `compileall`, and 263 unit tests passed. Official M3C episode_0002, M3D evaluation/report, M4C episode_0003, M4D episode_0001, M5B, M5C, M5D, M5E-B final eight-scenario smoke, and M5E-C calibration validators all passed.
+- Generated calibration frames, masks, metadata, logs, containers, and repeat data remain ignored by `.gitignore`; no data/results/cache/virtual environment artifact was added to Git.
+- Documentation: `docs/m5e_calibration_protocol.md` and `docs/m5e_calibration_report.md` define and report this freeze. Calibration does not compare PSNR/SSIM/RW-PSNR or support a Risk ROI superiority, perception, collision-probability, or navigation claim.
