@@ -17,6 +17,7 @@ from scripts.m5e_calibration_common import (
     calibration_rows,
     calculate_feasible_ranges,
     common_interval,
+    frame_id,
     frozen_budgets,
     match_all_budgets,
     output_root_from_argument,
@@ -64,7 +65,7 @@ def validate_calibration(output_root: Path) -> dict:
     if any(item["actual_total_bytes"] > item["target_bytes"] for item in allocation_records):
         raise ValueError("allocation exceeds target budget")
     expected_keys = {
-        (row["frame_id"], method, budget_id)
+        (frame_id(row), method, budget_id)
         for row in rows
         for method in METHOD_ORDER
         for budget_id in budgets
