@@ -29,6 +29,7 @@ from simulator.m5e_config import (  # noqa: E402
     M5E_GENERATOR_VERSION, RIGHT_WHEEL_DEVICE_NAME, RISK_PARAMETERS,
 )
 from simulator.m5e_dataset_schema import episode_id, episode_summary, relative_path, sha256_file  # noqa: E402
+from simulator.m5e_gui_acceptance import gui_acceptance_requested, pause_for_gui_acceptance  # noqa: E402
 from simulator.m5e_scenarios import M5EObstacleSpec, ScenarioConfig, WheelCommandPhase, config_hash  # noqa: E402
 from simulator.m5e_snapshot_protocol import build_trajectories, command_phase_at, next_crossing, reference_progress, yaw_change  # noqa: E402
 
@@ -311,6 +312,14 @@ def main() -> None:
         print(f"m5e_dataset_generator: status={status} snapshots={len(snapshots)}", flush=True)
         if status != "captured":
             raise RuntimeError(reason)
+        if gui_acceptance_requested(os.environ):
+            pause_for_gui_acceptance(
+                robot,
+                config.scenario_id,
+                len(snapshots),
+                Supervisor.SIMULATION_MODE_PAUSE,
+                emit=lambda message: print(message, flush=True),
+            )
     except Exception as exc:
         left.setVelocity(0.0); right.setVelocity(0.0)
         _write_summary(job, episode_summary(config, original_seed=job["original_seed"], replacement_index=job["replacement_index"], status="invalid_controller_error", snapshots=snapshots, failure_reason=f"{type(exc).__name__}: {exc}"))

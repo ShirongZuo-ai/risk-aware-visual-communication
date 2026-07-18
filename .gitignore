@@ -21,6 +21,7 @@ data/compression/*
 data/decoded/*
 data/m5e_*/
 results/*
+simulator/worlds/.m5e_gui_acceptance_*.wbt
 *.mp4
 *.avi
 *.mov
