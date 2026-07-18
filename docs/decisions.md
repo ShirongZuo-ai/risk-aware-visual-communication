@@ -159,3 +159,13 @@
 - **Decision:** Development budgets for the accepted M4D frame are selected from actual Uniform container bytes at qualities 5, 25, 50, and 80.
 - **Reason:** These produce four distinct under-budget matched qualities on the accepted development frame while remaining tied to measured payloads rather than intuition.
 - **Impact:** Center/Object/Risk ROI allocation in Milestone 5C must reuse the same tile grid, JPEG settings, container, and budget matcher. Bit-exact payload stability is only claimed within the same Pillow/libjpeg environment; other environments must rerun the pilot and matcher.
+
+## 2026-07-18 - Milestone 5C shared spatial allocation completion
+
+- **Decision:** Resolve the M5A numeric allocation ambiguity with one shared exhaustive candidate space: background quality `1..94`, enhancement quality `2..95` constrained by `enhancement_quality > background_quality`, and top-k enhanced tiles `1..48`. If every score is equal, use a Uniform-quality candidate path rather than assigning an arbitrary ROI.
+- **Reason:** M5A froze the allocation family and fairness rule but intentionally left numeric ranges to the implementation phase. The chosen range covers the full M5B JPEG quality domain while retaining a genuine high-versus-background split. The equal-score behavior preserves stable semantics.
+- **Decision:** Center ROI uses tile-center Gaussian scores around the accepted M4D principal point (`79.5`, `59.5`) with normalized `sigma=0.5`; normalized offsets divide by the frame half-width and half-height.
+- **Reason:** This supplies the protocol's unspecified Center parameter without following obstacles, risk, RGB content, robot turn direction, or later evaluation results, and preserves left/right and top/bottom symmetry on the frozen grid.
+- **Decision:** Object ROI uses the maximum exact clipped-polygon coverage fraction per tile over `fully_visible`, `partially_visible`, and `intersects_near_plane` projections. Risk ROI uses the maximum accepted combined floating-point mask value in each tile.
+- **Reason:** These are the M5A baseline definitions and maintain method isolation: Object does not read risk values; Risk does not read RGB, labels, or future actual trajectory.
+- **Impact:** All non-Uniform methods share cache, JPEG settings, binary container, actual-byte objective, and tie-break: maximum legal actual bytes, then higher enhancement quality, higher background quality, smaller top-k, and lexicographic configuration. M5C proves allocation/fairness mechanics only, not image-quality, perception, navigation, or communication benefit.

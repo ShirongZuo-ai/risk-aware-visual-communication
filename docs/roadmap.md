@@ -146,9 +146,13 @@ Acceptance: all methods can later share one encode/container/decode backend, tar
 
 ### Milestone 5C - Baseline allocation implementation
 
-Planned: implement Uniform, Center ROI, Object ROI, and Risk ROI tile scoring and shared score-to-quality allocation using the Milestone 5B codec backend.
+- [x] Implement immutable row-major tile score maps with deterministic ranking.
+- [x] Implement the frozen Center Gaussian, visible-polygon Object, and combined-float-mask Risk scoring rules.
+- [x] Implement one shared cached tiled-JPEG allocation search and fair actual-byte matcher for all non-Uniform methods.
+- [x] Preserve the M5B Uniform matcher and its four official development-budget results.
+- [x] Generate, independently recompute, and validate the 16-row single-frame allocation matrix and diagnostics.
 
-Acceptance: all baselines use identical byte matching, tile grid, JPEG settings, and container accounting; Risk ROI receives no extra budget or future actual information.
+Acceptance: all baselines use identical byte matching, tile grid, JPEG settings, and container accounting; Risk ROI receives no extra budget or future actual information. M5C is complete as an allocation/fairness implementation milestone only; it does not compare image quality, perception, or navigation outcomes.
 
 ### Milestone 5D - First single-frame compression validation
 

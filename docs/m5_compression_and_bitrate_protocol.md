@@ -189,6 +189,8 @@ The first frozen allocation family:
 
 The candidate ranges are chosen in Milestone 5B after the uniform pilot. They must be identical for Center ROI, Object ROI, and Risk ROI.
 
+M5C resolved the previously unspecified numeric candidate ranges through the durable decision record: background quality `1..94`, enhancement quality `2..95` with `enhancement_quality > background_quality`, and `top_k=1..48`. Every Center, Object, and Risk run exhaustively searches this identical space. If all tile scores are equal, the spatial path reduces to a Uniform-quality search so equal scores do not create an arbitrary ROI.
+
 ## Fair Bitrate Rule
 
 For each source frame, target budget, and method, independently match actual transmitted bytes.

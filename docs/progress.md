@@ -1570,6 +1570,56 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Next priority:
   - Milestone 5C Center/Object/Risk allocation implementation using the shared M5B backend and fair actual-byte matcher.
 
+## Milestone 5C - Spatial ROI allocation and fair actual-byte matching
+
+- Status: completed. This milestone implements allocation mechanics and fairness validation only; it does not make an image-quality, risk-region-quality, perception, navigation, or best-method claim.
+- Branch and baseline: `feature/m5-risk-roi-compression`, with accepted M5A/M5B commits `6168d0c` and `0befd0b` in history; formal project root remains `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+- New implementation:
+  - `compression/tile_scoring.py`: immutable 48-item row-major `TileScoreMap`, M5A Center/Object/Risk scoring, projection and float-mask input validation.
+  - `compression/spatial_allocation.py`: source-tile JPEG cache, shared score-to-quality mapping, exhaustive non-Uniform actual-byte matcher, deterministic container serialization, and tie-break accounting.
+  - `scripts/run_m5c_allocation_validation.py`, `scripts/validate_m5c_allocation_validation.py`, `scripts/plot_m5c_allocation_maps.py`, and shared M4D evidence loader `scripts/m5c_allocation_common.py`.
+  - Tests: `tests/test_tile_scoring.py`, `tests/test_spatial_allocation.py`, and `tests/test_m5c_allocation_helpers.py`.
+  - Report: `docs/m5c_spatial_allocation_validation_report.md`.
+- Inputs and method isolation:
+  - frame, metadata, projection polygons, and float mask are the accepted M4D `image_risk_validation_episode_0001` evidence;
+  - Center uses only tile positions, camera principal point `(79.5, 59.5)`, and normalized Gaussian `sigma=0.5`;
+  - Object uses maximum coverage fraction of eligible M4D clipped polygons and does not read risk values;
+  - Risk uses the combined formal float mask maximum per tile, not a PNG, RGB content, labels, or future actual trajectory;
+  - M4D metadata is required to state `actual_future_trajectory_used=false`.
+- Shared allocation decision required by the M5A numeric ambiguity:
+  - Center/Object/Risk all search background quality `1..94`, enhancement quality `2..95`, strict enhancement greater than background, and `top_k=1..48`;
+  - score ranking is descending score then ascending tile ID;
+  - selection is maximum legal actual bytes, then higher enhancement quality, higher background quality, smaller top-k, and lexicographic configuration;
+  - all-equal scores reduce to a Uniform-quality candidate path;
+  - the decision and reason are recorded in `docs/decisions.md` and the protocol now points to it.
+- Development budgets from the M5B pilot remain unchanged: severe `31348`, low `32105`, medium `32729`, high `33959` bytes/frame. Uniform regression remained exact: q5, q25, q50, q80 respectively.
+- M5C output evidence, all ignored by Git:
+  - `data/logs/m5/m5c_allocation_validation.csv` with 16 unique method-budget rows;
+  - `data/metadata/m5/m5c_allocation_validation.json`;
+  - selected serialized containers and decoded `160x120` RGB frames under `data/compression/m5/m5c_selected_containers/`;
+  - `results/m5_compression/m5c_score_maps.png`, `m5c_quality_maps.png`, and `m5c_budget_utilization.png`.
+- Actual M5C result summary: every one of the 16 combinations selected exactly its target bytes and utilization `1.000` on the accepted single development frame. This exact matching is a discrete payload outcome, not quality evidence.
+  - Center q range / enhanced tiles: severe `2-66 / 5`, low `12-93 / 11`, medium `23-91 / 15`, high `4-95 / 23`.
+  - Object q range / enhanced tiles: severe `3-69 / 9`, low `21-91 / 10`, medium `49-95 / 5`, high `60-91 / 25`.
+  - Risk q range / enhanced tiles: severe `3-90 / 2`, low `22-95 / 2`, medium `24-94 / 5`, high `62-95 / 8`.
+- Validation actually run during implementation:
+  - 24 new M5C tests passed before full-suite validation;
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q compression navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 197 tests passed;
+  - `python scripts/run_m5b_uniform_pilot.py` and `python scripts/validate_m5b_uniform_pilot.py`: exit 0; the original four Uniform matches remained q5/q25/q50/q80;
+  - `python scripts/run_m5c_allocation_validation.py`: exit 0, generated 16 rows;
+  - `python scripts/validate_m5c_allocation_validation.py`: exit 0 before and after plotting;
+  - `python scripts/plot_m5c_allocation_maps.py`: exit 0;
+  - second M5C run and validator: exit 0 with the same selected allocation evidence;
+  - M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exit 0;
+  - forbidden-import and allocation metric-leakage scans found no executable forbidden dependency or quality-metric selection path.
+  - the validator independently recomputes M4D inputs, scores, candidate allocations, selected JPEG payloads, serialized container bytes, Uniform regression, decoded dimensions, score/quality monotonicity, and no-future-actual guard.
+- Explicitly not implemented in Milestone 5C:
+  - no PSNR, SSIM, MSE, risk-weighted image-quality metric, ranking, or best-method declaration;
+  - no Milestone 5D quality evaluation, multi-frame evaluation, network, perception, navigation, ML/neural codec, H.264/H.265, Webots world/controller, or M1-M4 evidence modification.
+- Next priority: Milestone 5D, first single-frame matched-budget quality and fairness evaluation. No perception or navigation work should begin first.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -1624,4 +1674,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5C is the next priority: implement Uniform, Center ROI, Object ROI, and Risk ROI tile scoring/allocation using the shared M5B backend and fair actual-byte matcher. Do not implement perception, networking, navigation, or machine-learning evaluation before the offline allocation comparison is validated.
+Milestone 5D: run the first single-frame matched-budget image-quality and fairness evaluation from the accepted M4D evidence and M5C allocation outputs. Do not add perception, networking, navigation, or machine-learning evaluation first.

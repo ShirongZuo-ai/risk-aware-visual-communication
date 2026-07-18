@@ -106,6 +106,14 @@ Milestone 5B implements the shared Uniform tiled-JPEG codec foundation:
 4. Exhaustive Uniform quality matching over JPEG qualities 1 through 95, with no over-budget candidate selection.
 5. A Uniform pilot on `image_risk_validation_episode_0001.png` that records development budgets only.
 
+Milestone 5C implements spatial scoring and allocation while keeping the M5B transport backend unchanged:
+
+1. Center ROI scores normalized Gaussian distance from the fixed camera principal point.
+2. Object ROI scores maximum clipped-polygon coverage for eligible visible M4D obstacles.
+3. Risk ROI scores the maximum value of the accepted combined floating-point image-risk mask per tile.
+4. All non-Uniform methods share one pre-encoded tile cache and exhaustive actual-byte candidate search; Uniform continues to use its accepted M5B matcher.
+5. The resulting 16 method-budget allocation rows validate byte accounting and no-future-actual inputs only, not image quality or task benefit.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -134,6 +142,9 @@ Milestone 5B implements the shared Uniform tiled-JPEG codec foundation:
 - Milestone 5B generated Uniform pilot CSV: `data/logs/m5/m5b_uniform_quality_sweep.csv`
 - Milestone 5B generated Uniform pilot metadata: `data/metadata/m5/m5b_uniform_pilot.json`
 - Milestone 5B generated payload curve: `results/m5_compression/m5b_uniform_payload_curve.png`
+- Milestone 5C allocation CSV: `data/logs/m5/m5c_allocation_validation.csv`
+- Milestone 5C allocation metadata: `data/metadata/m5/m5c_allocation_validation.json`
+- Milestone 5C allocation diagnostics: `results/m5_compression/`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -191,8 +202,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
-Milestone 5A defines how later compression experiments will consume those accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. It still does not implement Center ROI, Object ROI, Risk ROI, method comparison, network model, remote perception, or navigation code.
+Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. It does not yet evaluate image quality, select a best method, add a network model, remote perception, or navigation code.
 
 ## Explicitly Not Implemented
 
-The project still does not implement Center/Object/Risk ROI allocation, method comparison, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement a quality comparison, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

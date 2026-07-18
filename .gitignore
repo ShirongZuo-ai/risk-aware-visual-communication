@@ -17,6 +17,7 @@ data/frames/*
 data/logs/*
 data/metadata/*
 data/masks/*
+data/compression/*
 results/*
 *.mp4
 *.avi

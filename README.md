@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, Milestone 4A/4B/4C/4D have frozen, implemented, Webots-validated, and accepted the image-space risk projection and mask chain, Milestone 5A has frozen the compression and fair-bitrate protocol, and Milestone 5B has implemented the deterministic Uniform tiled-JPEG codec/container, budget pilot, and actual-byte matcher. Center/Object/Risk ROI allocation, method comparison, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, Milestone 4A/4B/4C/4D have frozen, implemented, Webots-validated, and accepted the image-space risk projection and mask chain, Milestone 5A has frozen the compression protocol, M5B has implemented the tiled-JPEG backend and Uniform pilot, and M5C has implemented fair Center/Object/Risk allocation on the accepted development frame. Image-quality comparison, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -265,11 +265,14 @@ docs/m5_compression_and_bitrate_protocol.md
 
 It defines the tiled-JPEG spatial allocation prototype, actual-byte matching, Uniform/Center ROI/Object ROI/Risk ROI baselines, budget-pilot process, and image-quality metrics.
 
-Milestone 5B implements only the shared Uniform tiled-JPEG codec/container and budget pilot:
+Milestone 5B implements the shared Uniform tiled-JPEG codec/container and budget pilot. Milestone 5C adds deterministic Center/Object/Risk tile scoring and shared actual-byte allocation, without image-quality ranking:
 
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\run_m5b_uniform_pilot.py
 .\.venv\Scripts\python.exe .\scripts\validate_m5b_uniform_pilot.py
+.\.venv\Scripts\python.exe .\scripts\run_m5c_allocation_validation.py
+.\.venv\Scripts\python.exe .\scripts\validate_m5c_allocation_validation.py
+.\.venv\Scripts\python.exe .\scripts\plot_m5c_allocation_maps.py
 ```
 
 M5B generated outputs:
@@ -278,9 +281,14 @@ M5B generated outputs:
 data/logs/m5/m5b_uniform_quality_sweep.csv
 data/metadata/m5/m5b_uniform_pilot.json
 results/m5_compression/m5b_uniform_payload_curve.png
+data/logs/m5/m5c_allocation_validation.csv
+data/metadata/m5/m5c_allocation_validation.json
+results/m5_compression/m5c_score_maps.png
+results/m5_compression/m5c_quality_maps.png
+results/m5_compression/m5c_budget_utilization.png
 ```
 
-These are development outputs from `data/frames/m4/image_risk_validation_episode_0001.png` and are ignored by Git. Center ROI, Object ROI, Risk ROI, and method comparison are not implemented yet.
+These are development outputs from `data/frames/m4/image_risk_validation_episode_0001.png` and are ignored by Git. M5C does not calculate PSNR/SSIM, select a best method, or evaluate perception or navigation.
 
 ## Documentation
 
@@ -297,4 +305,5 @@ These are development outputs from `data/frames/m4/image_risk_validation_episode
 - `docs/m4_image_risk_validation_report.md`: Milestone 4D image-risk mask validation report and GUI checklist
 - `docs/m5_compression_and_bitrate_protocol.md`: Milestone 5A tiled-JPEG spatial allocation, fair byte matching, baseline, and metric protocol
 - `docs/m5b_tiled_jpeg_validation_report.md`: Milestone 5B codec/container, Uniform pilot, and matcher validation report
+- `docs/m5c_spatial_allocation_validation_report.md`: Milestone 5C score/allocation validation report
 - `docs/system_overview.md`: current end-to-end pipeline summary
