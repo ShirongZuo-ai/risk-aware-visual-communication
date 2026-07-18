@@ -26,6 +26,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed and accepted Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, passed automatic image-alignment validation, and passed GUI human review.
 - Completed and accepted Milestone 4D and Milestone 4 overall: connected same-snapshot world-coordinate risk, Camera projection, and pure-Python image-risk masks; passed automatic validation and GUI human review on `image_risk_validation_episode_0001`.
 - Completed Milestone 5A: froze the tiled-JPEG spatial allocation prototype, fair actual-byte matching rules, first baselines, metrics, output schema, and acceptance criteria without implementing compression code.
+- Completed Milestone 5B: implemented the deterministic Uniform tiled-JPEG codec/container, Uniform quality sweep pilot, and fair actual-byte matcher without implementing Center/Object/Risk ROI allocation or method comparison.
 
 ## Native Windows environment results
 
@@ -1448,8 +1449,126 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no compression CSV;
   - no budget pilot;
   - no risk, projection, image-mask, Webots, M4 evidence, network, perception, navigation, ROS 2, WSL, or machine-learning code changes.
+- Follow-up:
+  - Milestone 5B tiled-JPEG codec, deterministic container, uniform-pilot budget measurement, and fair byte matcher was completed next.
+
+## Milestone 5B - Deterministic tiled-JPEG codec and Uniform budget pilot
+
+- Status: completed.
+- Branch and baseline:
+  - working branch: `feature/m5-risk-roi-compression`;
+  - starting commit contained `6168d0c docs: freeze risk-aware compression protocol`;
+  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - working tree was clean before implementation.
+- Dependency:
+  - `requirements.txt` now includes `Pillow==12.3.0`;
+  - runtime Pillow version verified as `12.3.0`;
+  - `pip check` reported no broken requirements;
+  - JPEG payload bit-exactness is claimed only for the same Pillow/libjpeg environment, and budget matching must be rerun across environments.
+- Implemented files:
+  - `compression/__init__.py`;
+  - `compression/tiled_jpeg.py`;
+  - `compression/tile_container.py`;
+  - `compression/budget_matcher.py`;
+  - `scripts/run_m5b_uniform_pilot.py`;
+  - `scripts/validate_m5b_uniform_pilot.py`;
+  - `tests/test_tiled_jpeg.py`;
+  - `tests/test_tile_container.py`;
+  - `tests/test_budget_matcher.py`;
+  - `tests/test_m5b_pilot_helpers.py`;
+  - `docs/m5b_tiled_jpeg_validation_report.md`.
+- Updated documentation:
+  - `README.md`;
+  - `docs/progress.md`;
+  - `docs/roadmap.md`;
+  - `docs/decisions.md`;
+  - `docs/system_overview.md`.
+- Fixed tile grid:
+  - frame `160x120` RGB;
+  - tile `20x20`;
+  - 8 columns, 6 rows, 48 total row-major tiles;
+  - tile ID rule `tile_id = tile_row * columns + tile_column`;
+  - crop bounds are left-closed and right-open.
+- JPEG parameters:
+  - `format="JPEG"`;
+  - `quality=1..95`;
+  - `progressive=False`;
+  - `optimize=False`;
+  - `subsampling=0`.
+- Container format:
+  - magic `RAVCJT1`;
+  - version `1`;
+  - big-endian `struct` encoding;
+  - header bytes `23`;
+  - index entry bytes `6`;
+  - 48 row-major index entries;
+  - overhead bytes `311`;
+  - `total_bytes = 311 + sum(tile_jpeg_payload_bytes)`;
+  - no risk masks, risk scores, method labels, target budget, original image, trajectories, debug metadata, or quality values are transmitted.
+- Uniform pilot:
+  - input frame: `data/frames/m4/image_risk_validation_episode_0001.png`;
+  - frame SHA-256: `2b9e6b0b992d022a0e52fe6861b177c98841a1210a45688907d99c016f8bfa91`;
+  - generated CSV: `data/logs/m5/m5b_uniform_quality_sweep.csv`;
+  - generated metadata: `data/metadata/m5/m5b_uniform_pilot.json`;
+  - generated plot: `results/m5_compression/m5b_uniform_payload_curve.png`;
+  - generated outputs are ignored by Git.
+- Quality sweep results:
+  - qualities `1..95`, 95 rows;
+  - minimum actual total bytes: `31258` at quality `1`;
+  - maximum actual total bytes: `37125` at quality `95`;
+  - key rows:
+    - q1: total `31258`, tile JPEG bytes `30947`, overhead `311`;
+    - q5: total `31348`, tile JPEG bytes `31037`, overhead `311`;
+    - q25: total `32105`, tile JPEG bytes `31794`, overhead `311`;
+    - q50: total `32729`, tile JPEG bytes `32418`, overhead `311`;
+    - q80: total `33959`, tile JPEG bytes `33648`, overhead `311`;
+    - q95: total `37125`, tile JPEG bytes `36814`, overhead `311`.
+- Development budgets from actual Uniform payloads:
+  - severe: target `31348` bytes, `250784` bits/frame, matched q5, utilization `1.000`;
+  - low: target `32105` bytes, `256840` bits/frame, matched q25, utilization `1.000`;
+  - medium: target `32729` bytes, `261832` bits/frame, matched q50, utilization `1.000`;
+  - high: target `33959` bytes, `271672` bits/frame, matched q80, utilization `1.000`;
+  - these are development budgets for the accepted single M4D frame only, not final multi-frame budgets.
+- Matcher:
+  - exhaustive search over all integer qualities 1 through 95;
+  - legal candidates require `actual_total_bytes <= target_bytes`;
+  - selects the maximum legal actual total bytes;
+  - ties choose higher quality;
+  - matcher uses only actual container total bytes, not PSNR, SSIM, risk, object regions, or other evaluation metrics.
+- Determinism and validation:
+  - per-quality repeated encode produced identical container bytes in the same process;
+  - container deserialize round-trip preserved JPEG tile bytes;
+  - decoded frames are `160x120` RGB;
+  - re-running the pilot reproduced the same payload range, development budgets, metadata hash, and plot hash;
+  - CSV hash changed because encode/decode timing fields are measured each run; payload/container determinism is validated separately.
+- Validation actually run:
+  - `python -m pip show Pillow`: version `12.3.0`;
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q compression navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 173 tests passed, including 25 new M5B tests;
+  - `python scripts\run_m5b_uniform_pilot.py`: exit 0;
+  - `python scripts\validate_m5b_uniform_pilot.py`: exit 0;
+  - pilot rerun: exit 0;
+  - validator rerun: exit 0;
+  - `python scripts\validate_m4d_image_risk_dataset.py data\logs\m4\image_risk_validation_episode_0001.csv`: exit 0;
+  - `python scripts\validate_m4c_projection_dataset.py data\logs\m4\projection_validation_episode_0003.csv`: exit 0;
+  - `python scripts\validate_m3c_risk_dataset.py data\logs\m3\risk_validation_episode_0002.csv`: exit 0;
+  - `python scripts\evaluate_m3d_world_risk.py`: exit 0;
+  - `python scripts\validate_m3d_report.py`: exit 0;
+  - forbidden dependency scan over M5B compression modules/scripts found no OpenCV, NumPy, imageio, Shapely, torch, TensorFlow, ffmpeg, Webots/controller, `risk_map`, or `perception` imports.
+- Explicitly not implemented in Milestone 5B:
+  - no Center ROI allocation;
+  - no Object ROI allocation;
+  - no Risk ROI allocation;
+  - no four-method comparison;
+  - no risk-weighted PSNR or SSIM;
+  - no perception model;
+  - no network simulation;
+  - no closed-loop navigation;
+  - no machine learning or neural codec;
+  - no M1-M4 algorithm, world, controller, adapter, formal episode, risk parameter, Camera projection, or image-risk mask change.
 - Next priority:
-  - Milestone 5B tiled-JPEG codec, deterministic container, uniform-pilot budget measurement, and fair byte matcher.
+  - Milestone 5C Center/Object/Risk allocation implementation using the shared M5B backend and fair actual-byte matcher.
 
 ## Commands actually run in the formal project
 
@@ -1505,4 +1624,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5B is the next priority: implement the deterministic tiled-JPEG codec/container, run the Uniform JPEG budget pilot, and build the fair actual-byte matcher. Do not implement perception, networking, navigation, or machine-learning evaluation before that codec and budget foundation is validated.
+Milestone 5C is the next priority: implement Uniform, Center ROI, Object ROI, and Risk ROI tile scoring/allocation using the shared M5B backend and fair actual-byte matcher. Do not implement perception, networking, navigation, or machine-learning evaluation before the offline allocation comparison is validated.

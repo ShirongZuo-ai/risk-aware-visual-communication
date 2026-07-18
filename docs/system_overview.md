@@ -98,6 +98,14 @@ Milestone 5A freezes the compression and fair-bitrate protocol without implement
 4. Risk ROI uses the accepted combined image-risk mask and must not use future actual trajectories or downstream evaluation results.
 5. Budgets are selected after a Uniform JPEG pilot in Milestone 5B, not hard-coded during 5A.
 
+Milestone 5B implements the shared Uniform tiled-JPEG codec foundation:
+
+1. A deterministic Pillow-based tile encoder/decoder for the frozen `160x120`, `20x20`, 48-tile grid.
+2. A strict binary container with a 23-byte header, 48 six-byte index entries, and row-major JPEG payloads.
+3. Actual-byte accounting where `total_bytes = container_overhead_bytes + sum(tile_jpeg_payload_bytes)`.
+4. Exhaustive Uniform quality matching over JPEG qualities 1 through 95, with no over-budget candidate selection.
+5. A Uniform pilot on `image_risk_validation_episode_0001.png` that records development budgets only.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -122,6 +130,10 @@ Milestone 5A freezes the compression and fair-bitrate protocol without implement
 - Milestone 4D RGB frame: `data/frames/m4/image_risk_validation_episode_0001.png`
 - Milestone 4D diagnostics: `results/m4_image_risk/`
 - Milestone 5A compression protocol: `docs/m5_compression_and_bitrate_protocol.md`
+- Milestone 5B validation report: `docs/m5b_tiled_jpeg_validation_report.md`
+- Milestone 5B generated Uniform pilot CSV: `data/logs/m5/m5b_uniform_quality_sweep.csv`
+- Milestone 5B generated Uniform pilot metadata: `data/metadata/m5/m5b_uniform_pilot.json`
+- Milestone 5B generated payload curve: `results/m5_compression/m5b_uniform_payload_curve.png`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -179,8 +191,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
-Milestone 5A defines how later compression experiments will consume those accepted image-risk masks. It freezes fair actual-byte accounting and baseline definitions only. No compression module, JPEG container, compressed image, compression CSV, network model, remote perception, or navigation code exists yet.
+Milestone 5A defines how later compression experiments will consume those accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. It still does not implement Center ROI, Object ROI, Risk ROI, method comparison, network model, remote perception, or navigation code.
 
 ## Explicitly Not Implemented
 
-The project still does not implement ROI compression, tiled-JPEG encoding, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement Center/Object/Risk ROI allocation, method comparison, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

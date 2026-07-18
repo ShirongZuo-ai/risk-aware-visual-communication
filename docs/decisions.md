@@ -143,3 +143,19 @@
 - **Reason:** A maximum preserves small high-risk objects that would be diluted by mean risk over a `20x20` tile.
 - **Decision:** Treat risk-weighted quality as an image-quality diagnostic over the accepted heuristic combined mask, not as collision probability, perception accuracy, or navigation safety.
 - **Impact:** Milestone 5B may implement the shared codec backend and pilot, but no compression implementation belongs in Milestone 5A. Later claims remain limited until separately validated.
+
+## 2026-07-18 - Milestone 5B tiled-JPEG backend
+
+- **Decision:** Add `Pillow==12.3.0` as the explicit JPEG backend dependency for the first tiled-JPEG prototype.
+- **Reason:** The current project environment already validates Pillow `12.3.0`, and using the installed version makes M5B payload and budget evidence reproducible on this machine.
+- **Decision:** Use Pillow JPEG settings `format="JPEG"`, `quality=1..95`, `progressive=False`, `optimize=False`, and `subsampling=0`.
+- **Reason:** Explicit settings avoid hidden Pillow defaults. `subsampling=0` preserves color edges in `20x20` tiles and is shared by every later baseline using this backend.
+- **Decision:** Do not transmit tile quality values in the M5B container.
+- **Reason:** JPEG payloads contain the tables required for decode, and quality values are experiment diagnostics rather than receiver-required payload.
+- **Decision:** Use a strict big-endian binary container with magic `RAVCJT1`, version `1`, a 23-byte header, 48 six-byte tile index entries, and concatenated row-major JPEG payloads.
+- **Reason:** This makes actual-byte accounting deterministic and includes only decode-required information.
+- **Decision:** M5B Uniform budget matching exhaustively enumerates qualities 1 through 95 and chooses the largest legal actual container payload under the target, using higher quality as the tie-break.
+- **Reason:** JPEG payload bytes are content-dependent and need not be strictly monotonic; exhaustive search avoids invalid binary-search assumptions.
+- **Decision:** Development budgets for the accepted M4D frame are selected from actual Uniform container bytes at qualities 5, 25, 50, and 80.
+- **Reason:** These produce four distinct under-budget matched qualities on the accepted development frame while remaining tied to measured payloads rather than intuition.
+- **Impact:** Center/Object/Risk ROI allocation in Milestone 5C must reuse the same tile grid, JPEG settings, container, and budget matcher. Bit-exact payload stability is only claimed within the same Pillow/libjpeg environment; other environments must rerun the pilot and matcher.

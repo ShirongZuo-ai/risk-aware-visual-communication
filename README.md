@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, Milestone 4A/4B/4C/4D have frozen, implemented, Webots-validated, and accepted the image-space risk projection and mask chain, and Milestone 5A has frozen the compression and fair-bitrate protocol. Compression code, compressed outputs, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, Milestone 4A/4B/4C/4D have frozen, implemented, Webots-validated, and accepted the image-space risk projection and mask chain, Milestone 5A has frozen the compression and fair-bitrate protocol, and Milestone 5B has implemented the deterministic Uniform tiled-JPEG codec/container, budget pilot, and actual-byte matcher. Center/Object/Risk ROI allocation, method comparison, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -263,7 +263,24 @@ Milestone 5A is design-only. The frozen compression and fair-bitrate protocol is
 docs/m5_compression_and_bitrate_protocol.md
 ```
 
-It defines the tiled-JPEG spatial allocation prototype, actual-byte matching, Uniform/Center ROI/Object ROI/Risk ROI baselines, budget-pilot process, and image-quality metrics. No compression code or compressed output has been implemented yet.
+It defines the tiled-JPEG spatial allocation prototype, actual-byte matching, Uniform/Center ROI/Object ROI/Risk ROI baselines, budget-pilot process, and image-quality metrics.
+
+Milestone 5B implements only the shared Uniform tiled-JPEG codec/container and budget pilot:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\run_m5b_uniform_pilot.py
+.\.venv\Scripts\python.exe .\scripts\validate_m5b_uniform_pilot.py
+```
+
+M5B generated outputs:
+
+```text
+data/logs/m5/m5b_uniform_quality_sweep.csv
+data/metadata/m5/m5b_uniform_pilot.json
+results/m5_compression/m5b_uniform_payload_curve.png
+```
+
+These are development outputs from `data/frames/m4/image_risk_validation_episode_0001.png` and are ignored by Git. Center ROI, Object ROI, Risk ROI, and method comparison are not implemented yet.
 
 ## Documentation
 
@@ -279,4 +296,5 @@ It defines the tiled-JPEG spatial allocation prototype, actual-byte matching, Un
 - `docs/m4_camera_projection_validation_report.md`: Milestone 4C automated camera-projection validation report and GUI checklist
 - `docs/m4_image_risk_validation_report.md`: Milestone 4D image-risk mask validation report and GUI checklist
 - `docs/m5_compression_and_bitrate_protocol.md`: Milestone 5A tiled-JPEG spatial allocation, fair byte matching, baseline, and metric protocol
+- `docs/m5b_tiled_jpeg_validation_report.md`: Milestone 5B codec/container, Uniform pilot, and matcher validation report
 - `docs/system_overview.md`: current end-to-end pipeline summary

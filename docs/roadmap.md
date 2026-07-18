@@ -134,9 +134,15 @@ Acceptance: `docs/m5_compression_and_bitrate_protocol.md` freezes the protocol a
 
 ### Milestone 5B - Tiled-JPEG codec and budget pilot
 
-Planned: implement the deterministic tiled-JPEG container, decoder, byte accounting, uniform-pilot budget measurement, and budget matcher.
+- [x] Add explicit Pillow dependency for the JPEG backend.
+- [x] Implement the deterministic tiled-JPEG encoder/decoder.
+- [x] Implement the strict binary tiled-frame container and byte accounting.
+- [x] Implement Uniform exhaustive quality-to-budget matching.
+- [x] Run the Uniform JPEG quality sweep on the accepted M4D development frame.
+- [x] Generate development budgets from actual Uniform container bytes.
+- [x] Validate the pilot outputs and rerun determinism checks.
 
-Acceptance: all methods can later share one encode/container/decode backend, target budgets are selected from measured Uniform pilot data, and generated compression data remains ignored by Git.
+Acceptance: all methods can later share one encode/container/decode backend, target budgets are selected from measured Uniform pilot data, and generated compression data remains ignored by Git. Milestone 5B is complete; Center ROI, Object ROI, Risk ROI, method comparison, perception, networking, navigation, and machine learning remain out of scope until later milestones.
 
 ### Milestone 5C - Baseline allocation implementation
 
