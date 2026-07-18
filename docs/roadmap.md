@@ -164,11 +164,43 @@ Acceptance: all baselines use identical byte matching, tile grid, JPEG settings,
 
 Acceptance: communication metrics, whole-image quality, risk-weighted quality, regional quality, and fairness checks are reported for the accepted single-frame M4D evidence. M5D is complete as a single-frame descriptive evaluation only; M5E must establish whether any observation persists across multiple snapshots and layouts.
 
-### Milestone 5E - Multi-frame and multi-scene offline evaluation
+### Milestone 5E-A - Multi-scene protocol freeze
 
-Planned: expand from one validation snapshot to a broader offline dataset with multiple snapshots, layouts, and risk supports.
+- [x] Separate development, calibration, and formal evidence.
+- [x] Freeze eight static-AABB scenario families, deterministic four-snapshot rules, seed namespaces, validation thresholds, and replacement policy.
+- [x] Freeze the calibration-only common-budget rule, metrics, episode-level paired statistics, engineering acceptance, and scientific support criteria.
 
-Acceptance: conclusions are based on multiple scenarios and report budget utilization, quality tradeoffs, and limitations.
+Acceptance: `docs/m5e_multiscene_offline_evaluation_protocol.md` is internally consistent and no M5E world, controller, code, frame, CSV, JSON, decoded image, or figure is created.
+
+### Milestone 5E-B - Parameterized scenario and dataset generator
+
+Planned: implement deterministic static-AABB scenario generation, split-safe seed handling, four snapshot triggers, manifests, and machine validators. Do not run the common-budget pilot or formal encoding.
+
+Acceptance: every scenario family can be generated and independently validated from configuration and seed, with complete failure records and no future-actual leakage.
+
+### Milestone 5E-C - Calibration pilot and common budget freeze
+
+Planned: generate the 64-frame calibration split, measure the shared feasible container-byte interval, apply the frozen budget formula and adequacy checks, and freeze severe/low/medium/high targets.
+
+Acceptance: all four targets are common and feasible, method-identical, calibration-only, and documented before formal generation.
+
+### Milestone 5E-D - Formal encoding and metric evaluation
+
+Planned: generate 256 formal frames and 4096 matched-budget reconstructions, then compute frozen M5D metrics without changing protocol parameters.
+
+Acceptance: the formal matrix is complete, paired, byte-fair, deterministic, and independently recomputable.
+
+### Milestone 5E-E - Episode statistics and diagnostics
+
+Planned: aggregate four snapshots per episode, run the fixed-seed stratified paired bootstrap, and generate overall/per-scenario diagnostics.
+
+Acceptance: statistical outputs use episodes as the resampling unit and report all pre-registered comparisons, failures, utilization, uncertainty, and limitations.
+
+### Milestone 5E-F - Formal validation and acceptance
+
+Planned: independently validate all manifests, inputs, allocations, containers, metrics, statistics, split isolation, and no-future-actual provenance.
+
+Acceptance: engineering acceptance is stated independently of whether the hypotheses receive scientific support; unsupported outcomes are retained and reported.
 
 ### Milestone 5F - Compression validation report and next-step decision
 

@@ -27,6 +27,9 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed and accepted Milestone 4D and Milestone 4 overall: connected same-snapshot world-coordinate risk, Camera projection, and pure-Python image-risk masks; passed automatic validation and GUI human review on `image_risk_validation_episode_0001`.
 - Completed Milestone 5A: froze the tiled-JPEG spatial allocation prototype, fair actual-byte matching rules, first baselines, metrics, output schema, and acceptance criteria without implementing compression code.
 - Completed Milestone 5B: implemented the deterministic Uniform tiled-JPEG codec/container, Uniform quality sweep pilot, and fair actual-byte matcher without implementing Center/Object/Risk ROI allocation or method comparison.
+- Completed Milestone 5C: implemented and validated deterministic Center/Object/Risk scoring and fair spatial allocation on the accepted development frame.
+- Completed Milestone 5D: evaluated the 16 fixed single-frame allocations with full, continuous risk-weighted, and regional image-quality metrics; this remains development evidence only.
+- Completed Milestone 5E-A: froze the multi-scene split, scenario, snapshot, common-budget, metric, episode-statistics, scientific-interpretation, and failure/replacement protocol without generating M5E data or modifying implementation code.
 
 ## Native Windows environment results
 
@@ -1658,6 +1661,39 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - compression/allocation import scans confirm they do not import the M5D evaluator, NumPy, scikit-image, or quality metrics, and the M5D runner never imports a matcher or allocator.
 - Next priority: Milestone 5E multi-frame and multi-scene offline evaluation using the same frozen fairness, region, and no-future-actual rules. Do not begin perception, networking, navigation, or machine-learning work first.
 
+## Milestone 5E-A - Multi-scene offline evaluation protocol freeze
+
+- Status: completed as a design-only task on `feature/m5-risk-roi-compression`; no M5E dataset or implementation was created.
+- Baseline verified before edits:
+  - formal root `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - clean `feature/m5-risk-roi-compression` branch;
+  - required commits `1788688` and `8539f04` in history;
+  - no Git remote;
+  - Python 3.11.14;
+  - 213 unit tests passed.
+- Created `docs/m5e_multiscene_offline_evaluation_protocol.md` and froze:
+  - the question and H1-H3 as hypotheses rather than conclusions;
+  - Uniform, Center ROI, Object ROI, and Risk ROI as the only M5E methods;
+  - strict development/calibration/formal split isolation, with the accepted M4D/M5D frame excluded from M5E statistics;
+  - eight static-AABB primary scenario families and machine-verifiable thresholds;
+  - calibration scale of 64 frames and formal scale of 256 frames / 4096 reconstructions;
+  - disjoint primary and replacement seed namespaces;
+  - four method-independent snapshots at reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`;
+  - required manifest provenance, robot/trajectory/risk/projection fields, and `actual_future_trajectory_used=false`;
+  - calibration-only common feasible byte interval and fixed 5%/25%/50%/80% target formula;
+  - continuous risk-weighted PSNR as primary metric, Risk-versus-three-baseline comparisons, and severe/low as primary budgets;
+  - episode-level paired differences, eight-scenario stratification, 10,000 bootstrap replicates, and seed `20260718`;
+  - independent engineering acceptance and scientific-support criteria;
+  - complete failure statuses, retained logs, whole-episode exclusion, and ascending same-scenario replacement seeds;
+  - M5E-A through M5E-F execution order.
+- Existing definitions remain frozen: Center `sigma=0.5`, Object clipped-polygon coverage, Risk tile maximum, M5C search/tie-break, `HIGH_RISK_THRESHOLD=0.20`, M5D metrics, risk parameters, Camera projection, tiled-JPEG parameters, and `RAVCJT1` container.
+- No Webots world/controller/config, runner, validator, test, frame, CSV, JSON, figure, risk/scoring/allocation code, dependency, or generated evidence was changed or created.
+- Validation actually run:
+  - pre-edit and post-edit `python -m unittest discover -s tests`: 213 tests passed;
+  - protocol consistency audit confirmed disjoint splits, result-independent snapshots, calibration-only budgets, episode-level statistics, separate engineering/scientific criteria, and explicit anomaly/replacement handling;
+  - Git diff was restricted to `README.md` and `docs/`.
+- Next priority: Milestone 5E-B parameterized static-AABB scenario and dataset generator with snapshot and scenario validators. Do not run calibration or generate formal quality results in M5E-B.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -1712,4 +1748,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 5E: expand the frozen matched-budget evaluation to multiple frames and scenes before drawing any broader image-quality conclusion. Do not add perception, networking, navigation, or machine-learning evaluation first.
+Milestone 5E-B: implement the parameterized static-AABB scenario and dataset generator plus deterministic snapshot/scenario validators. Do not start calibration-budget selection, formal encoding, perception, networking, navigation, or machine-learning work first.

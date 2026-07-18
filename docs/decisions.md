@@ -177,3 +177,15 @@
 - **Decision:** Use `scikit-image==0.26.0` only in the M5D evaluator for the frozen RGB SSIM call (`data_range=255`, `channel_axis=-1`, Gaussian weights, `sigma=1.5`, population covariance, `win_size=11`), alongside `numpy==2.4.6` for numeric evaluation.
 - **Reason:** These dependencies provide the protocol-defined, deterministic full-image quality metric without changing the codec, allocation matcher, container, risk model, Webots adapter, or M4 evidence. `imageio` is an indirect wheel dependency of scikit-image in this environment; it is neither imported by project code nor listed as a direct project requirement.
 - **Impact:** M5D reports descriptive quality values for one accepted 160x120 M4D frame and its pre-existing 16 M5C fixed allocations. It does not retune allocation from quality metrics and must not be interpreted as a claim of collision probability, general method superiority, perception benefit, navigation benefit, or statistical significance.
+
+## 2026-07-18 - Milestone 5E-A multi-scene protocol freeze
+
+- **Decision:** Exclude `image_risk_validation_episode_0001` from M5E and separate development, calibration, and formal evidence by split, seed, episode, frame, and path. Use 64 calibration frames and 256 formal frames across eight equally weighted static-AABB scenario families.
+- **Reason:** The accepted frame has already informed M4D-M5D development and cannot provide independent evidence. Balanced, disjoint scenario episodes reduce selection bias while remaining practical on the current machine.
+- **Decision:** Select four M5E budgets only from the calibration-wide common feasible complete-container-byte interval, using fixed 5%, 25%, 50%, and 80% interval positions plus pre-registered adequacy checks. Formal evaluation may not recalibrate budgets.
+- **Reason:** Single-frame M5B targets do not guarantee feasibility across different image content. A common interval and method-identical targets preserve actual-byte fairness without using formal outcomes.
+- **Decision:** Select four snapshots at fixed reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`; invalidate and replace an entire episode when a required snapshot or scenario condition fails.
+- **Reason:** Deterministic, method-independent triggers prevent post-hoc selection. Whole-episode replacement preserves paired comparisons and within-episode correlation.
+- **Decision:** Use episode-level paired differences and a 10,000-replicate, seed-`20260718`, scenario-stratified bootstrap. Equal-weight the eight scenario means in overall estimates.
+- **Reason:** Four snapshots in one episode are correlated and must not be treated as independent samples. Stratification prevents a single scenario from dominating the overall estimate.
+- **Impact:** Center/Object/Risk scoring, M5C allocation, `HIGH_RISK_THRESHOLD=0.20`, M5D metrics, JPEG/container settings, and risk/projection definitions are frozen. Engineering acceptance is independent of Risk ROI performance. The next task is M5E-B generator implementation; no M5E data exist yet.

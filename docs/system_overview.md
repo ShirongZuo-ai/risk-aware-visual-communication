@@ -121,6 +121,15 @@ Milestone 5D evaluates those already fixed 16 allocations without invoking a mat
 3. Generated CSV, metadata, decoded PNGs, and diagnostics are ignored development evidence for one `160x120` M4D snapshot.
 4. This is not a perception, communication, collision-probability, navigation, or multi-frame generalization result; M5E is the next priority for broader offline evidence.
 
+Milestone 5E-A freezes the broader offline experiment without generating data:
+
+1. Development, 64-frame calibration, and 256-frame formal splits are disjoint.
+2. Eight static-AABB scenario families cover straight risk, visual distractors, left/right turns, planned/state disagreement, area-risk disagreement, partial visibility, and low-risk controls.
+3. Four method-independent snapshots per episode use fixed reference-motion progress.
+4. Calibration alone establishes four common feasible actual-byte budgets; formal data cannot alter them.
+5. Formal inference aggregates snapshots within episodes and uses paired, scenario-stratified bootstrap resampling.
+6. Engineering validity is separated from scientific support, and failed or unfavorable episodes cannot be silently removed.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -155,6 +164,7 @@ Milestone 5D evaluates those already fixed 16 allocations without invoking a mat
 - Milestone 5D quality CSV: `data/logs/m5/m5d_single_frame_quality.csv`
 - Milestone 5D quality metadata and decoded frames: `data/metadata/m5/m5d_single_frame_evaluation.json`, `data/decoded/m5/m5d/`
 - Milestone 5D diagnostics and report: `results/m5_compression/m5d_*.png`, `docs/m5d_single_frame_evaluation_report.md`
+- Milestone 5E-A protocol: `docs/m5e_multiscene_offline_evaluation_protocol.md`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -212,8 +222,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
-Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. It does not select a generally best method, add a network model, remote perception, or navigation code.
+Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. Milestone 5E-A freezes the future multi-scene protocol but creates no data or implementation. It does not select a generally best method, add a network model, remote perception, or navigation code.
 
 ## Explicitly Not Implemented
 
-The project still does not implement a quality comparison, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement M5E multi-scene data generation or formal statistics, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, Milestone 4A/4B/4C/4D have frozen, implemented, Webots-validated, and accepted the image-space risk projection and mask chain, Milestone 5A has frozen the compression protocol, M5B has implemented the tiled-JPEG backend and Uniform pilot, and M5C has implemented fair Center/Object/Risk allocation on the accepted development frame. Image-quality comparison, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction and uncertainty-corridor validation, Milestone 3 has accepted the world-coordinate risk core, Milestone 4 has accepted the image-space risk chain, and Milestone 5A-5D have frozen and implemented the tiled-JPEG baselines plus one-frame development quality evaluation. M5E-A has frozen the multi-scene offline protocol. No M5E dataset, perception evaluation, networking, or navigation evaluation exists yet.
 
 ## Scope
 
@@ -297,6 +297,14 @@ results/m5_compression/m5d_*.png
 
 These are development outputs from `data/frames/m4/image_risk_validation_episode_0001.png` and are ignored by Git. M5D adds only a single-frame descriptive quality evaluation; it does not establish general method superiority, perception benefit, communication benefit, or navigation benefit. See `docs/m5d_single_frame_evaluation_report.md`.
 
+Milestone 5E-A freezes the later multi-scene experiment before data generation:
+
+```text
+docs/m5e_multiscene_offline_evaluation_protocol.md
+```
+
+The accepted M4D/M5D frame remains development-only and cannot enter M5E calibration or formal statistics. M5E-A creates no frames, manifests, quality results, decoded images, or figures. The next implementation step is M5E-B, the parameterized static-AABB scenario and dataset generator.
+
 ## Documentation
 
 - `AGENTS.md`: Codex entry point and working rules
@@ -314,4 +322,5 @@ These are development outputs from `data/frames/m4/image_risk_validation_episode
 - `docs/m5b_tiled_jpeg_validation_report.md`: Milestone 5B codec/container, Uniform pilot, and matcher validation report
 - `docs/m5c_spatial_allocation_validation_report.md`: Milestone 5C score/allocation validation report
 - `docs/m5d_single_frame_evaluation_report.md`: Milestone 5D matched-budget single-frame quality report
+- `docs/m5e_multiscene_offline_evaluation_protocol.md`: Milestone 5E split, scenario, snapshot, budget, metric, statistics, and failure protocol
 - `docs/system_overview.md`: current end-to-end pipeline summary
