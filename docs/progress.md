@@ -23,6 +23,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Accepted Milestone 3 after user GUI and figure review. `episode_0002` remains the official evidence data; `episode_0005` is GUI reproduction evidence only.
 - Completed Milestone 4A: froze world-risk-to-camera-image projection design, interfaces, terminology, validation roles, and acceptance criteria without creating projection code or M4 data.
 - Completed Milestone 4B: implemented and unit-tested the Webots-decoupled pure-Python camera projection core.
+- Completed the automated portion of Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, and passed automatic image-alignment validation. GUI human review remains pending.
 
 ## Native Windows environment results
 
@@ -1088,6 +1089,116 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - Git diff scope contains only M4B projection core modules, M4B tests, and roadmap/progress documentation.
   - Ignored `data/`, `results/`, caches, and Webots GUI files remain untracked/ignored.
 
+## Milestone 4C: Webots camera projection validation
+
+- Stage: Milestone 4C automated validation complete on local branch `feature/m4-image-risk-projection`; GUI human review pending.
+- Starting commit: `af956e5 feat: implement camera projection core`.
+- Created implementation files:
+  - `simulator/m4c_config.py`
+  - `simulator/adapters/webots_camera_adapter.py`
+  - `simulator/worlds/m4_camera_projection_validation.wbt`
+  - `simulator/controllers/m4_camera_projection_validation/m4_camera_projection_validation.py`
+  - `scripts/validate_m4c_projection_dataset.py`
+  - `scripts/plot_m4c_projection_overlay.py`
+  - `tests/test_webots_camera_adapter_helpers.py`
+  - `docs/m4_camera_projection_validation_report.md`
+- Updated documentation:
+  - `docs/progress.md`
+  - `docs/roadmap.md`
+  - `docs/decisions.md`
+  - `docs/image_risk_projection_design.md`
+  - `docs/system_overview.md`
+  - `README.md`
+  - `scripts/validate_m3d_report.py`
+- Dedicated world: `simulator/worlds/m4_camera_projection_validation.wbt`.
+- Controller: `simulator/controllers/m4_camera_projection_validation/m4_camera_projection_validation.py`.
+- Webots adapter API facts checked from local R2025a Python controller files:
+  - `Supervisor.getFromDevice(tag)` exists.
+  - `Node.getPose()`, `Node.getPosition()`, and `Node.getOrientation()` exist.
+  - `Camera.getWidth()`, `Camera.getHeight()`, `Camera.getFov()`, `Camera.getNear()`, and `Camera.saveImage()` exist.
+- Camera Node acquisition method: the controller gets the `camera` device, reads its private Webots device tag, and calls `Supervisor.getFromDevice(tag)` to get the Camera node.
+- Camera actual runtime parameters:
+  - width `160 px`;
+  - height `120 px`;
+  - horizontal FOV `0.840000000 rad`;
+  - vertical FOV `0.646372669 rad`;
+  - near clip `0.005500000 m`;
+  - `fx=fy=179.142225973 px`;
+  - `cx=79.5 px`, `cy=59.5 px`;
+  - camera world position at the accepted snapshot: `(0.030000000, -0.000000308, 0.027948551) m`.
+- Camera pose conversion:
+  - Webots Camera pose is parsed as a camera-to-world 4x4 matrix and cross-checked against `Node.getPosition()`.
+  - Adapter computes `R_world_to_camera = R_camera_to_world^T`.
+  - Adapter computes `t_world_to_camera = -R_world_to_camera * C_world`.
+- Webots e-puck Camera axis calibration:
+  - `episode_0001` showed that the initial Milestone 4A assumption `diag(1,-1,-1)` made front-visible Boxes project outside the image while the RGB frame showed them in view.
+  - The Webots R2025a e-puck Camera adapter now uses `x_optical=-y_device`, `y_optical=-z_device`, `z_optical=x_device`, i.e. `[[0,-1,0],[0,0,-1],[1,0,0]]`.
+  - This is recorded as a Webots adapter calibration decision; the pure projection core remains generic and Webots-decoupled.
+- Official automated evidence episode: `projection_validation_episode_0003`.
+- Output files:
+  - `data/frames/m4/projection_validation_episode_0003.png`
+  - `data/logs/m4/projection_validation_episode_0003.csv`
+  - `data/metadata/m4/projection_validation_episode_0003.json`
+  - `results/m4_projection/projection_overlay.png`
+- Debug artifacts:
+  - `episode_0001` is a failed axis-calibration run and is not success evidence.
+  - `episode_0002` is a calibration run before depth-overlap color-mask policy was corrected and is not the accepted automatic evidence.
+- Projection CSV:
+  - 9 rows, one per validation Box.
+  - Projection-only fields; no planned, state, or combined image-risk fields are present.
+  - Frame path is project-relative and contains no `Downloads`.
+- Validation roles and visibility in accepted `episode_0003`:
+  - `CENTER_VISIBLE`: `fully_visible`, bbox `(62.599, 31.073, 96.400, 64.873)`;
+  - `LEFT_VISIBLE`: `fully_visible`, bbox `(2.331, 36.321, 36.506, 63.882)`;
+  - `RIGHT_VISIBLE`: `fully_visible`, bbox `(122.494, 36.320, 156.669, 63.881)`;
+  - `PARTIAL_IMAGE_EDGE`: `partially_visible`, bbox `(155.801, 19.361, 159.000, 70.545)`, truncation `0.959700735`;
+  - `OUTSIDE_FRUSTUM`: `outside_frustum`;
+  - `BEHIND_CAMERA`: `behind_camera`;
+  - `NEAR_PLANE_INTERSECTION`: `intersects_near_plane`, finite clipped projection over the image bounds;
+  - `DEPTH_OVERLAP_FRONT`: `fully_visible`;
+  - `DEPTH_OVERLAP_BACK`: `fully_visible`.
+- Enforced automatic color-alignment metrics:
+  - `CENTER_VISIBLE`: bbox IoU `0.926`, polygon IoU `0.943`, center error `0.027 px`, width error `0.023`, height error `0.052`;
+  - `LEFT_VISIBLE`: bbox IoU `0.914`, polygon IoU `0.889`, center error `0.131 px`, width error `0.033`, height error `0.055`;
+  - `RIGHT_VISIBLE`: bbox IoU `0.887`, polygon IoU `0.862`, center error `0.590 px`, width error `0.062`, height error `0.055`;
+  - `PARTIAL_IMAGE_EDGE`: bbox IoU `0.767`, polygon IoU `0.859`, center error `2.549 px`, width error `0.047`, height error `0.195`.
+- Other automatic checks passed:
+  - 9 unique roles;
+  - camera parameters match expected values;
+  - LEFT center is left of principal point and RIGHT center is right of principal point;
+  - CENTER is near the principal point;
+  - OUTSIDE and BEHIND have no valid clipped polygon and target colors are absent;
+  - NEAR_PLANE has finite valid projection;
+  - DEPTH_OVERLAP projected bboxes overlap.
+- M3 report-validator maintenance:
+  - `scripts/validate_m3d_report.py` now checks forbidden camera/ROI/ML coupling inside M3D scripts instead of scanning the whole repository for post-M3 artifact names.
+  - This keeps M3D validation meaningful after Milestone 4 legitimately creates camera-projection files.
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m py_compile simulator\m4c_config.py simulator\adapters\webots_camera_adapter.py simulator\controllers\m4_camera_projection_validation\m4_camera_projection_validation.py scripts\validate_m4c_projection_dataset.py scripts\plot_m4c_projection_overlay.py tests\test_webots_camera_adapter_helpers.py`
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `& "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe" --batch --mode=fast --minimize --stdout --stderr --port=1242 ".\simulator\worlds\m4_camera_projection_validation.wbt"`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m4c_projection_dataset.py .\data\logs\m4\projection_validation_episode_0003.csv`
+  - `.\.venv\Scripts\python.exe .\scripts\plot_m4c_projection_overlay.py .\data\logs\m4\projection_validation_episode_0003.csv`
+  - `.\.venv\Scripts\python.exe .\scripts\validate_m4c_projection_dataset.py .\data\logs\m4\projection_validation_episode_0003.csv`
+- Validation results:
+  - `py_compile`: passed.
+  - Unit tests: `110` tests passed.
+  - Webots generated the RGB frame, 9-row projection CSV, and metadata JSON.
+  - M4C validator: exit code 0.
+  - Overlay plot: exit code 0.
+  - Re-run M4C validator after overlay generation: exit code 0.
+- Webots command-line behavior:
+  - As in earlier milestones, Webots remained open after the controller returned, so the shell tool timed out. The validation process was stopped after output files and validator results were confirmed.
+- GUI validation:
+  - pending user review. Required checks are listed in `docs/m4_camera_projection_validation_report.md`.
+- Explicitly not implemented in Milestone 4C:
+  - no image-risk masks;
+  - no planned/state/combined risk mask fields;
+  - no `risk_map/image_risk_map.py`;
+  - no true rendered occlusion model;
+  - no camera projection changes to accepted M3 evidence;
+  - no JPEG, ROI compression, network simulation, closed-loop navigation, ROS 2, WSL, or machine learning.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -1142,4 +1253,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 4C is the next priority: connect the projection core to Webots through an adapter and a separate projection-validation scene without modifying accepted M3 evidence.
+User GUI review of Milestone 4C world and overlay is the next priority. Do not enter Milestone 4D until GUI review passes.

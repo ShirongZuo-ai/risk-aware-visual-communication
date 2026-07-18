@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, and Milestone 4A has frozen the image-risk projection design. Camera projection code, image risk masks, compression, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, Milestone 4A has frozen the image-risk projection design, Milestone 4B has implemented the pure-Python projection core, and Milestone 4C has completed automated Webots camera-projection validation. Milestone 4C GUI review is pending. Image risk masks, compression, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -195,7 +195,38 @@ Milestone 4A is design-only. It freezes the world-to-camera-to-image coordinate 
 docs/image_risk_projection_design.md
 ```
 
-No Milestone 4 projection module, Webots world/controller, frame, mask, figure, ROI compression, or codec pipeline has been created yet.
+Milestone 4B implements the Webots-decoupled projection core:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests
+```
+
+Run the Milestone 4C Webots camera-projection validation scene:
+
+```powershell
+$webots = Join-Path $env:ProgramFiles "Webots\msys64\mingw64\bin\webots.exe"
+& $webots ".\simulator\worlds\m4_camera_projection_validation.wbt"
+```
+
+Validate the latest or specified M4C projection CSV and regenerate the overlay:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\validate_m4c_projection_dataset.py
+.\.venv\Scripts\python.exe .\scripts\validate_m4c_projection_dataset.py .\data\logs\m4\projection_validation_episode_0003.csv
+.\.venv\Scripts\python.exe .\scripts\plot_m4c_projection_overlay.py .\data\logs\m4\projection_validation_episode_0003.csv
+```
+
+M4C automated evidence:
+
+```text
+data/frames/m4/projection_validation_episode_0003.png
+data/logs/m4/projection_validation_episode_0003.csv
+data/metadata/m4/projection_validation_episode_0003.json
+results/m4_projection/projection_overlay.png
+docs/m4_camera_projection_validation_report.md
+```
+
+Milestone 4C is projection-only. It does not create image risk masks, ROI compression, JPEG/video outputs, or navigation code.
 
 ## Documentation
 
@@ -208,4 +239,5 @@ No Milestone 4 projection module, Webots world/controller, frame, mask, figure, 
 - `docs/risk_formulation_design.md`: Milestone 3 world-coordinate risk definitions and implemented core API notes
 - `docs/m3_world_risk_validation_report.md`: Milestone 3D validation report and generated figure paths
 - `docs/image_risk_projection_design.md`: Milestone 4A image-risk projection design and acceptance criteria
+- `docs/m4_camera_projection_validation_report.md`: Milestone 4C automated camera-projection validation report and GUI checklist
 - `docs/system_overview.md`: current end-to-end pipeline summary

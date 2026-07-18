@@ -98,10 +98,10 @@ Acceptance: core projection logic is unit-tested and remains decoupled from Webo
 
 ### Milestone 4C - Webots calibration and projection validation
 
-- [ ] Create a separate M4 validation world without modifying accepted M3 worlds.
-- [ ] Read camera intrinsics/extrinsics and 3D Box geometry through a Webots adapter.
-- [ ] Save RGB frame and snapshot metadata for repeatable projection validation.
-- [ ] Validate overlay direction, Box coverage, clipping, and numeric error metrics.
+- [x] Create a separate M4 validation world without modifying accepted M3 worlds.
+- [x] Read camera intrinsics/extrinsics and 3D Box geometry through a Webots adapter.
+- [x] Save RGB frame and snapshot metadata for repeatable projection validation.
+- [x] Validate overlay direction, Box coverage, clipping, and numeric error metrics.
 
 Acceptance: Webots validation runs on a dedicated M4 scene; automatic metrics are recorded; GUI review is recorded separately and does not replace numeric validation.
 

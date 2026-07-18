@@ -118,3 +118,10 @@
 - **Reason:** This preserves M3's auditable ordinary-Python style while avoiding unreliable custom image encoders when image files become necessary.
 - **Rejected for now:** Camera projection implementation in 4A, M4 Webots scenes/controllers, mask artifacts, JPEG/H.264/ROI compression, network simulation, true occlusion claims, Shapely, and machine learning.
 - **Impact:** Milestone 4B should implement the pure projection core from `docs/image_risk_projection_design.md`; Webots API access belongs only in a later adapter layer.
+
+## 2026-07-18 - Milestone 4C Webots e-puck Camera axis calibration
+
+- **Decision:** For the Webots R2025a e-puck Camera adapter, map Camera node/device coordinates to the project optical frame with `x_optical=-y_device`, `y_optical=-z_device`, and `z_optical=x_device`.
+- **Reason:** Actual M4C Webots RGB validation showed that Boxes in front of the e-puck camera are seen when they lie along local `+x_device`, LEFT/RIGHT are correctly separated by the sign of local `y_device`, and vertical image direction matches local `z_device`. The earlier Milestone 4A initial assumption `diag(1,-1,-1)` made all front Boxes project outside the frustum in `episode_0001`.
+- **Rejected:** Keeping the initial `diag(1,-1,-1)` e-puck adapter mapping despite failed Webots evidence, or changing the generic pure-Python projection core to hard-code Webots-specific axes.
+- **Impact:** `perception` remains Webots-decoupled and accepts explicit extrinsics. The Webots adapter supplies the calibrated `R_device_to_optical` matrix for the R2025a e-puck Camera. M4C accepted automatic evidence starts from `projection_validation_episode_0003`; earlier M4C episodes are calibration/debug artifacts.

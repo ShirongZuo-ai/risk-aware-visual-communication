@@ -157,10 +157,10 @@ def validate_no_forbidden_scope() -> None:
         if token in combined:
             fail(f"forbidden future-actual token in M3D scripts: {token}")
     forbidden_names = ["camera_projection", "risk_heatmap", "roi_compression", "dynamic_obstacle", "machine_learning"]
-    tracked_or_untracked = [str(path).lower() for path in PROJECT_ROOT.rglob("*") if ".git" not in path.parts]
+    lowered_sources = combined.lower()
     for name in forbidden_names:
-        if any(name in path for path in tracked_or_untracked):
-            fail(f"forbidden scope artifact found: {name}")
+        if name in lowered_sources:
+            fail(f"forbidden M3D script dependency found: {name}")
 
 
 def main() -> int:

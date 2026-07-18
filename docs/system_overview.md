@@ -66,6 +66,22 @@ Milestone 4A freezes image-risk projection design without implementation:
 5. Planned, state, and combined image-risk masks remain separate and use max-union on overlaps.
 6. True rendered occlusion is explicitly out of scope until depth, segmentation, recognition, or equivalent validation evidence is selected.
 
+Milestone 4B implements the Webots-decoupled camera projection core:
+
+1. Camera intrinsics and extrinsics data structures.
+2. World/device/optical/image transforms.
+3. Pinhole projection, near-plane clipping, image-boundary clipping, and Box projection.
+4. Unit-tested projection helpers with no Webots dependency.
+
+Milestone 4C connects projection to Webots for calibration and validation:
+
+1. A dedicated e-puck camera-projection validation world.
+2. A Webots adapter that reads live Camera intrinsics, Camera node pose, and static 3D Box geometry.
+3. A projection-only RGB frame, 9-row CSV, metadata JSON, and overlay.
+4. Automatic RGB color-mask validation for center/left/right/partial roles.
+5. Webots e-puck Camera axis calibration: `x_optical=-y_device`, `y_optical=-z_device`, `z_optical=x_device`.
+6. GUI human review remains pending.
+
 ## Trajectory Types
 
 - Planned command trajectory: the future wheel-command schedule the controller intends to execute.
@@ -82,6 +98,9 @@ Milestone 4A freezes image-risk projection design without implementation:
 - Milestone 3D generated trajectories: `data/logs/m3/risk_validation_episode_0002_trajectories.csv`
 - Milestone 3D diagnostics: `results/m3_world_risk/`
 - Milestone 4A projection design: `docs/image_risk_projection_design.md`
+- Milestone 4C projection CSV: `data/logs/m4/projection_validation_episode_0003.csv`
+- Milestone 4C RGB frame: `data/frames/m4/projection_validation_episode_0003.png`
+- Milestone 4C overlay: `results/m4_projection/projection_overlay.png`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -137,8 +156,8 @@ The later risk module should consume a trajectory corridor rather than a single 
 
 Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in world coordinates. The Webots adapter provides obstacle ground truth only; it does not project into camera pixels.
 
-Milestone 4A defines the next camera-projection boundary but does not implement it. Future M4 code should project static obstacle 3D Boxes into image polygons, then fill planned/state/combined image-risk masks over those clipped obstacle regions. It should not project empty trajectory corridors as the main Risk ROI.
+Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Future M4D code should fill planned/state/combined image-risk masks over validated clipped obstacle regions. It should not project empty trajectory corridors as the main Risk ROI.
 
 ## Explicitly Not Implemented
 
-The project still does not implement camera projection algorithms, image risk masks, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement image risk masks, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

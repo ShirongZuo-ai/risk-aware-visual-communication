@@ -90,13 +90,17 @@ DEF EPUCK_CAMERA Camera {
 
 The default `camera_fieldOfView` is `0.84 rad`. In the current project, the camera is mounted at robot-local `(0.03, 0, 0.028)` with no additional camera rotation. Therefore, with the current world robot rotation at zero, the camera device origin is 30 mm forward and 28 mm above the robot origin.
 
-Webots Camera documentation defines the Camera `fieldOfView` as the horizontal field of view, with vertical FOV inferred from aspect ratio. The Webots Camera frustum uses the Camera near clipping plane at negative device `z`. The project therefore freezes the first device-frame convention as:
+Webots Camera documentation defines the Camera `fieldOfView` as the horizontal field of view, with vertical FOV inferred from aspect ratio.
 
-- `+x_device`: image/right direction;
-- `+y_device`: image/up direction;
-- `-z_device`: optical forward direction.
+Milestone 4A initially assumed that the e-puck adapter should use `diag(1,-1,-1)` from a generic Webots Camera convention. Milestone 4C tested that assumption against a real Webots R2025a e-puck RGB frame and found it incorrect for the current e-puck Camera node pose: front-visible Boxes projected outside the image while the saved RGB frame showed them in view.
 
-This convention must be verified in Milestone 4B/4C with automatic unit tests and Webots overlay evidence. The projection core must not silently assume OpenCV camera coordinates.
+The calibrated e-puck Camera adapter convention for the current R2025a world is:
+
+- `+x_device`: optical forward direction;
+- `-y_device`: image/right direction;
+- `-z_device`: image/down direction.
+
+This convention was verified in Milestone 4C with automatic RGB color-mask metrics and overlay evidence. The projection core remains generic and must not silently assume Webots or OpenCV camera coordinates.
 
 ### Project Optical Frame
 
@@ -106,21 +110,21 @@ The project optical frame is an internal convention used by pure projection code
 - `+x_optical`: image right;
 - `+y_optical`: image down.
 
-For the Webots Camera device convention above, the fixed device-to-optical transform is:
+For the calibrated Webots R2025a e-puck Camera device convention above, the fixed adapter device-to-optical transform is:
 
 ```text
-x_optical =  x_device
-y_optical = -y_device
-z_optical = -z_device
+x_optical = -y_device
+y_optical = -z_device
+z_optical =  x_device
 ```
 
 Matrix form, multiplying a device-frame column vector:
 
 ```text
 R_device_to_optical =
-[ 1  0  0
-  0 -1  0
-  0  0 -1 ]
+[ 0 -1  0
+  0  0 -1
+  1  0  0 ]
 ```
 
 ### Image Pixel Frame
@@ -590,7 +594,7 @@ Projection CSV fields should include at least:
 - `fy_px`
 - `cx_px`
 - `cy_px`
-- Camera world pose
+  - Camera world pose
 - obstacle ID
 - obstacle 3D center and size
 - visibility status
@@ -601,11 +605,13 @@ Projection CSV fields should include at least:
 - maximum depth
 - projected area
 - truncation fraction
-- planned risk
-- state risk
-- combined risk
+  - planned risk
+  - state risk
+  - combined risk
 
 Bulk data and generated results remain ignored by Git.
+
+Milestone 4C produces a projection-only calibration dataset and intentionally omits planned, state, and combined risk fields. Milestone 4D is responsible for adding image-risk mask and risk-score fields after projection alignment is accepted.
 
 ## Milestone 4B and 4C Acceptance Targets
 
