@@ -12,12 +12,25 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.m5e_calibration_common import calibration_paths, output_root_from_argument
-from scripts.m5e_dataset_common import read_manifest
+from scripts.m5e_dataset_common import load_json, read_manifest
 
 
 def _normalized_manifest(root: Path) -> list[dict[str, str]]:
-    fields = ("scenario_id", "episode_id", "snapshot_index", "frame_sha256", "mask_sha256", "config_hash", "combined_mask_sha256")
-    return [{field: row[field] for field in fields} for row in read_manifest(root)]
+    records = []
+    for row in read_manifest(root):
+        metadata = load_json(PROJECT_ROOT / row["metadata_path"])
+        normalized_metadata = dict(metadata)
+        for field in ("frame_path", "masks_path", "frame_sha256", "masks_sha256"):
+            normalized_metadata.pop(field, None)
+        records.append(
+            {
+                "scenario_id": row["scenario_id"], "episode_id": row["episode_id"], "snapshot_index": row["snapshot_index"],
+                "frame_sha256": row["frame_sha256"], "mask_sha256": row["mask_sha256"],
+                "combined_mask_sha256": row["combined_mask_sha256"], "config_hash": metadata["config_hash"],
+                "normalized_metadata": normalized_metadata,
+            }
+        )
+    return records
 
 
 def _load(path: Path):
@@ -36,9 +49,9 @@ def main() -> int:
             "source_frame_mask_config_metadata": _normalized_manifest(first) == _normalized_manifest(second),
             "feasible_ranges": _load(calibration_paths(first)["ranges"]) == _load(calibration_paths(second)["ranges"]),
             "frozen_budgets": {
-                key: value for key, value in _load(calibration_paths(first)["budget_manifest"]).items() if key not in {"generated_at"}
+                key: value for key, value in _load(calibration_paths(first)["budget_manifest"]).items() if key not in {"generated_at", "git_commit"}
             } == {
-                key: value for key, value in _load(calibration_paths(second)["budget_manifest"]).items() if key not in {"generated_at"}
+                key: value for key, value in _load(calibration_paths(second)["budget_manifest"]).items() if key not in {"generated_at", "git_commit"}
             },
             "allocations": _load(calibration_paths(first)["allocations"]) == _load(calibration_paths(second)["allocations"]),
         }

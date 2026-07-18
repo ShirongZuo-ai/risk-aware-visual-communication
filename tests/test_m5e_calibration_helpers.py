@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+import tempfile
 
 from PIL import Image
 
@@ -11,7 +13,7 @@ from compression.spatial_allocation import (
     match_spatial_allocations_to_budgets,
 )
 from compression.tile_scoring import center_roi_scores
-from scripts.m5e_calibration_common import CandidateEndpoint, FeasibleRange, common_interval, frozen_budgets
+from scripts.m5e_calibration_common import CandidateEndpoint, FeasibleRange, calibration_rows, common_interval, frozen_budgets
 from scripts.run_m5e_calibration_dataset import _planned_configs
 from simulator.m5e_config import primary_seed, primary_seed_indices
 
@@ -53,6 +55,11 @@ class M5ECalibrationHelperTests(unittest.TestCase):
     def test_too_narrow_interval_is_rejected_when_budget_labels_collapse(self) -> None:
         with self.assertRaises(ValueError):
             frozen_budgets(1000, 1001)
+
+    def test_missing_calibration_manifest_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(FileNotFoundError):
+                calibration_rows(Path(directory))
 
     def test_candidate_iterator_uses_the_same_frozen_space_as_matcher(self) -> None:
         image = Image.new("RGB", (160, 120), color=(48, 96, 144))
