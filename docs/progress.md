@@ -1208,6 +1208,50 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no camera projection changes to accepted M3 evidence;
   - no JPEG, ROI compression, network simulation, closed-loop navigation, ROS 2, WSL, or machine learning.
 
+## Milestone 4D-1 - Pure-Python image-risk mask core
+
+- Status: completed as a Webots-decoupled core implementation only.
+- Branch and baseline:
+  - working branch: `feature/m4-image-risk-projection`;
+  - starting commit: `8034a9d docs: accept Webots camera projection alignment`;
+  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+- New core file:
+  - `risk_map/image_risk_map.py`.
+- New tests:
+  - `tests/test_image_risk_map.py`.
+- Implemented data structures and interface:
+  - immutable `Mask2D` with row-major values, integer pixel-center indexing, rows/statistics helpers, dimension checks, finite value checks, and `[0, 1]` validation;
+  - `ProjectedObstacleRisk` binding planned/state/combined heuristic risk scores to a `ProjectedObstacle`;
+  - `ObstacleMaskContribution` diagnostics for eligibility, skip reason, candidate pixels, and per-channel written pixels;
+  - `ImageRiskMasks` containing planned, state, and combined masks with a pixelwise combined-mask invariant;
+  - `build_image_risk_masks(width_px, height_px, obstacles)`;
+  - `bind_projection_to_risk(projection, planned_risk, state_risk, combined_risk)`.
+- Core semantics:
+  - only `ProjectedObstacle.clipped_polygon` is rasterized;
+  - pixel centers are integer coordinates `(u, v)`, not `(u + 0.5, v + 0.5)`;
+  - eligible visibility statuses are `fully_visible`, `partially_visible`, and `intersects_near_plane`;
+  - `outside_frustum`, `behind_camera`, and `degenerate_projection` do not write pixels, even with high risk;
+  - overlaps use pixelwise maximum independently for planned, state, and combined channels;
+  - `combined_risk` must equal `max(planned_risk, state_risk)` within tolerance, and the combined mask must equal the pixelwise max of planned and state masks;
+  - duplicate obstacle IDs are rejected;
+  - contributions preserve input order, while final masks are order-invariant under overlap max-union.
+- Dependency and scope checks:
+  - no Webots controller, world, adapter, camera-parameter, projection-core, M3 risk, compression, network, ROI, machine-learning, or navigation code was modified;
+  - no PNG mask, frame, CSV, metadata, figure, Webots episode, or M4D-2 diagnostic output was generated;
+  - dependency scan of `risk_map/image_risk_map.py` found no forbidden package imports such as NumPy, OpenCV, Pillow, Shapely, SciPy, torch, TensorFlow, or Webots/controller APIs. The module imports the project `perception.camera_models` dataclasses to consume accepted 4B projection outputs.
+- Validation actually run:
+  - `python -m py_compile risk_map\image_risk_map.py tests\test_image_risk_map.py`: passed.
+  - `python -m unittest tests.test_image_risk_map`: 29 tests passed.
+  - `python -m unittest discover -s tests`: 139 tests passed.
+  - `git diff -- perception/camera_models.py perception/camera_projection.py simulator/adapters/webots_camera_adapter.py`: no changes.
+- Explicitly not implemented in Milestone 4D-1:
+  - no Webots risk-mask integration;
+  - no mask PNG or overlay generation;
+  - no mask CSV/metadata;
+  - no planned/state/combined image risk mask generated from `episode_0003`;
+  - no true occlusion handling;
+  - no ROI compression, codec, network, machine learning, or navigation.
+
 ## Commands actually run in the formal project
 
 ```text
