@@ -1,6 +1,6 @@
 # System Overview
 
-Last updated: 2026-07-18 (Asia/Shanghai)
+Last updated: 2026-07-19 (Asia/Shanghai)
 
 ## Completed Pipeline
 
@@ -136,7 +136,17 @@ Milestone 5E-B implements deterministic multi-scene input generation without com
 2. Four snapshots per episode are triggered at fixed reference-motion progress and save aligned RGB, planned/state/combined float masks, and complete metadata.
 3. An independent validator recomputes trajectories, world risks, Camera projections, masks, scenario roles, hashes, and no-future-actual provenance.
 4. The smoke dataset contains 8 episodes and 32 snapshots; a second output run is byte/config/metadata identical.
-5. Calibration/formal generation, common-budget selection, compression encoding, quality metrics, and statistics remain unimplemented.
+5. It does not perform formal encoding, metric evaluation, or statistics.
+
+Milestone 5E-C completes calibration-only byte feasibility and common-budget freezing:
+
+1. The calibration split contains 16 accepted primary episodes and 64 frames.
+2. All calibration episodes used replacement index `0`.
+3. The common complete-container-byte interval is `[31240, 35779]`.
+4. The frozen formal targets are severe `31466`, low `32374`, medium `33509`, and high `34871` bytes.
+5. All 1024 calibration frame-method-budget allocations are feasible under the frozen matcher.
+6. The recorded baseline is 263 unit tests passed plus passing M3/M4/M5 validators.
+7. Calibration is byte-feasibility evidence only; it is not a formal quality comparison or a Risk ROI superiority result.
 
 ## Trajectory Types
 
@@ -176,6 +186,9 @@ Milestone 5E-B implements deterministic multi-scene input generation without com
 - Milestone 5E-B generator report: `docs/m5e_dataset_generator_validation_report.md`
 - Milestone 5E-B smoke manifest: `data/logs/m5/m5e_dataset_manifest.csv`
 - Milestone 5E-B smoke diagnostics: `results/m5_compression/m5e_smoke/`
+- Milestone 5E-C calibration protocol: `docs/m5e_calibration_protocol.md`
+- Milestone 5E-C calibration report: `docs/m5e_calibration_report.md`
+- Milestone 5E-C calibration root: `data/m5e_calibration/`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -233,8 +246,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
-Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. Milestone 5E-A freezes the multi-scene protocol, and M5E-B implements deterministic input generation and validation. It does not select a generally best method, create calibration/formal evidence, choose common budgets, or add a network model, remote perception, or navigation code.
+Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. Milestone 5E-A freezes the multi-scene protocol, M5E-B implements deterministic input generation and validation, and M5E-C freezes calibration-only common budgets. These steps do not select a generally best method, run formal evaluation, add a network model, add remote perception, or add navigation code.
 
 ## Explicitly Not Implemented
 
-The project still does not implement M5E calibration/formal compression evaluation or statistics, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement M5E-D/E/F formal compression evaluation or statistics, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

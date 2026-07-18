@@ -6,7 +6,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 
 - Confirmed that the formal project root is `C:\Users\ROG\Documents\risk-aware-visual-communication` on the native Windows host.
 - Verified that `git rev-parse --show-toplevel` resolves to the formal Documents path. In the current PowerShell session, `git` is not on PATH, so verification used `C:\Program Files\Git\cmd\git.exe`.
-- Confirmed the local no-commit branch is `main`. The requested `master` to `main` rename had already been applied before this verification pass; no remote is configured and nothing was pushed.
+- Historical status at repository setup: confirmed the local no-commit branch was `main`. Current active work is on `feature/m5-risk-roi-compression`.
 - Verified the copied project `.venv`: `.\.venv\Scripts\python.exe` runs Python 3.11.14, 64-bit, with the environment prefix under the formal Documents path.
 - Installed the official Cyberbotics Webots R2025a stable Windows release and verified its command-line runtime and graphics-system detection.
 - Completed Milestone 1A: created and GUI-verified a minimal repeatable Webots e-puck camera world.
@@ -41,7 +41,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 - Project Python: `.\.venv\Scripts\python.exe`, Python 3.11.14, 64-bit. The copied environment executed successfully after the project move.
 - PATH-default Python: 64-bit Anaconda Python 3.12.7 at `D:\Anaconda\python.exe`.
 - Python Launcher: `C:\Windows\py.exe`, launcher file version 3.9.10150.1013; it does not discover the installed Conda interpreters.
-- Git: 2.55.0.windows.3 at `C:\Program Files\Git\cmd\git.exe`. The repository is on the no-commit `main` branch; all project files are untracked and no remote is configured. The bare `git` command is not available on the current PowerShell PATH.
+- Git: 2.55.0.windows.3 at `C:\Program Files\Git\cmd\git.exe`. Historical setup started from a no-commit `main` branch; the current verified branch for M5E work is `feature/m5-risk-roi-compression`. The bare `git` command is not available on the current PowerShell PATH.
 - winget: 1.29.280. No exact `Cyberbotics.Webots` package was present in the configured winget source.
 - GPU: NVIDIA GeForce RTX 4060 Laptop GPU, driver 561.00, 8188 MiB VRAM.
 - WSL: installed but remains out of scope as the development environment.
@@ -65,7 +65,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 - Stage: Milestone 1A, minimal e-puck camera scene only.
 - Project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
 - Git top level: `C:/Users/ROG/Documents/risk-aware-visual-communication`, verified with `C:\Program Files\Git\cmd\git.exe`.
-- Git branch and commit state: `main`, no commits yet. No remote is configured.
+- Historical Milestone 1A branch and commit state: `main`, no commits yet. Later milestones are committed on feature branches; current M5E work is on `feature/m5-risk-roi-compression`.
 - Git identity: `user.name` and `user.email` were both unset, so the requested initial commit was not created and no Git configuration was changed.
 - Created world: `simulator/worlds/minimal_epuck_camera.wbt`.
 - Robot model: official Cyberbotics/GCtronic `E-puck.proto`, `version "2"`, no custom controller.
@@ -1694,7 +1694,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - pre-edit and post-edit `python -m unittest discover -s tests`: 213 tests passed;
   - protocol consistency audit confirmed disjoint splits, result-independent snapshots, calibration-only budgets, episode-level statistics, separate engineering/scientific criteria, and explicit anomaly/replacement handling;
   - Git diff was restricted to `README.md` and `docs/`.
-- Next priority: Milestone 5E-B parameterized static-AABB scenario and dataset generator with snapshot and scenario validators. Do not run calibration or generate formal quality results in M5E-B.
+- Historical next priority at M5E-A closeout: Milestone 5E-B parameterized static-AABB scenario and dataset generator with snapshot and scenario validators. Do not run calibration or generate formal quality results in M5E-B.
 
 ## Milestone 5E-B - Parameterized static-AABB dataset generator
 
@@ -1750,7 +1750,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
   - dependency scan found only shared immutable mask/polygon/tile-grid helpers; no codec encode, matcher, allocator, PSNR, SSIM, or quality-result dependency exists in generation or scenario selection;
   - future-actual scan found only the explicit false provenance field and validator assertion; no future actual position, velocity, or yaw is read.
-- Next priority: Milestone 5E-C calibration pilot and common-budget freeze. Do not generate calibration data, freeze budgets, or start any new quality experiment until that milestone is explicitly started.
+- Historical next priority at M5E-B closeout: Milestone 5E-C calibration pilot and common-budget freeze. Do not generate calibration data, freeze budgets, or start any new quality experiment until that milestone is explicitly started.
 
 ## Milestone 5E-B - GUI runner and S3 physics stabilization
 
@@ -1785,7 +1785,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - a fresh S1-S8 default smoke run passed with 8 episodes / 32 snapshots, followed by the independent dataset validator;
   - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators all exited `0`.
 - Manual boundary: S3, S5, and S7 collision corrections and S7 internal-PROTO diagnostics were accepted from explicit user Console and visual confirmation; S2 was also manually confirmed collision-free. These GUI observations complement, but do not replace, the complete S1-S8 automatic validator.
-- Next priority: Milestone 5E-C calibration pilot and common-budget freeze, only after an explicit milestone-start request.
+- Historical next priority after S3 GUI stabilization: Milestone 5E-C calibration pilot and common-budget freeze, only after an explicit milestone-start request.
 
 ## Commands actually run in the formal project
 
@@ -1824,15 +1824,15 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 - Formal project path and Git top level: verified.
 - Project `.venv` Python 3.11.14/64-bit: verified after copying.
-- Local branch state: `main` verified; no `master` branch rename was needed during this verification pass because the branch was already `main`.
+- Historical setup branch state: `main` was verified during the initial environment pass. Current M5E branch state is `feature/m5-risk-roi-compression`.
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
 - M5E-B smoke generator: final 8-episode / 32-snapshot smoke passed independently with no replacements; deterministic repeat evidence and targeted S2/S3/S5/S7 GUI acceptance are recorded above.
-- Calibration/formal M5E data, common budgets, object detection, networking, and closed-loop navigation: not implemented or tested.
+- M5E calibration data and common budgets: completed in M5E-C. Formal M5E-D/E/F evaluation, object detection, networking, and closed-loop navigation remain not implemented or tested.
 
 ## Current issues
 
-1. Project dependencies in `requirements.txt` are not fully installed as a controlled dependency pass; matplotlib and its runtime dependencies were installed into `.venv` for Milestone 2 plotting.
+1. The project-local `.venv` has run the current `requirements.txt` stack through the accepted M5E-C baseline; continue using `.\.venv\Scripts\python.exe` rather than unrelated Conda environments.
 2. The repository is on `feature/m5-risk-roi-compression`; generated data/results remain ignored and are not staged.
 3. The copied `.venv` remains based on a Python executable inside an application-specific Conda installation; it currently works and excludes that environment's site packages, but a dedicated base interpreter would reduce coupling if instability appears.
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.

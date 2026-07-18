@@ -51,7 +51,7 @@ The project-local `.venv` uses 64-bit Python 3.11.14. The Windows Python Launche
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Dependencies have not been installed yet. Do not install project packages into the existing application-specific Conda environments.
+The verified project environment has run the current `requirements.txt` stack for the accepted M5E-C baseline, including NumPy, pandas, matplotlib, Pillow, scikit-image, and OpenCV. Continue to use the project-local `.venv`; do not install project packages into unrelated application-specific Conda environments, and do not assume cross-platform support beyond the documented native-Windows/Webots setup.
 
 The verified Webots executable is installed under the standard Program Files location. From PowerShell, check it without opening a world:
 
@@ -321,7 +321,7 @@ The accepted M4D/M5D frame remains development-only and cannot enter M5E calibra
 .\.venv\Scripts\python.exe .\scripts\plot_m5e_dataset_diagnostics.py --output-root data
 ```
 
-The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B is accepted for deterministic dataset generation and frozen risk-scenario validation; targeted GUI manual checks covered S2, S3, S5, and S7. It does not generate calibration/formal data, select common budgets, or establish that Risk ROI is superior across multiple scenes.
+The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `data/masks/m5e/`, and `data/metadata/m5e/`; its manifest is `data/logs/m5/m5e_dataset_manifest.csv`. These generated artifacts are ignored by Git. M5E-B is accepted for deterministic dataset generation and frozen risk-scenario validation; targeted GUI manual checks covered S2, S3, S5, and S7. M5E-B did not generate calibration/formal data, select common budgets, or establish that Risk ROI is superior across multiple scenes. M5E-C later generated the calibration split and froze common budgets; formal M5E-D/E/F evaluation remains not started.
 
 ## Documentation
 
@@ -342,4 +342,6 @@ The smoke output contains 8 scenarios x 4 snapshots under `data/frames/m5e/`, `d
 - `docs/m5d_single_frame_evaluation_report.md`: Milestone 5D matched-budget single-frame quality report
 - `docs/m5e_multiscene_offline_evaluation_protocol.md`: Milestone 5E split, scenario, snapshot, budget, metric, statistics, and failure protocol
 - `docs/m5e_dataset_generator_validation_report.md`: Milestone 5E-B smoke generator, scenario validation, reproducibility, and GUI checklist
+- `docs/m5e_calibration_protocol.md`: Milestone 5E-C calibration-only byte-feasibility and common-budget freeze protocol
+- `docs/m5e_calibration_report.md`: Milestone 5E-C calibration results, frozen common budgets, and validation baseline
 - `docs/system_overview.md`: current end-to-end pipeline summary

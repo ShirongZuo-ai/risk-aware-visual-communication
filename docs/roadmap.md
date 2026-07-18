@@ -10,12 +10,12 @@ Acceptance: all checks are recorded truthfully in `docs/progress.md`; missing so
 
 ## Milestone 1 — Synchronized frame and robot-state capture
 
-- [ ] Create one repeatable Webots world with a differential-drive robot and forward RGB camera.
-- [ ] Implement minimal straight, left-turn, and right-turn motion.
-- [ ] Save at least 100 camera frames.
-- [ ] Save aligned CSV rows containing timestamp, pose, heading, linear velocity, angular velocity, and image path.
-- [ ] Verify image paths exist and timestamps align with the CSV.
-- [ ] Document exact launch and validation commands in `README.md`.
+- [x] Create one repeatable Webots world with a differential-drive robot and forward RGB camera.
+- [x] Implement minimal straight, left-turn, and right-turn motion.
+- [x] Save at least 100 camera frames.
+- [x] Save aligned CSV rows containing timestamp, pose, heading, linear velocity, angular velocity, and image path.
+- [x] Verify image paths exist and timestamps align with the CSV.
+- [x] Document exact launch and validation commands in `README.md`.
 
 Acceptance: Webots runs; the world is repeatable; all three motions work; at least 100 aligned frame/state samples are validated; README and progress record the real results.
 
@@ -194,17 +194,26 @@ Acceptance: passed. The calibration-only common interval is `[31240, 35779]` byt
 
 ### Milestone 5E-D - Formal encoding and metric evaluation
 
+- [ ] Generate the 8-scenario, 8-formal-episode, 4-snapshot split without changing M5E-C budgets.
+- [ ] Produce all 4096 method-budget reconstructions using the frozen allocation, codec, and metric definitions.
+
 Planned: generate 256 formal frames and 4096 matched-budget reconstructions, then compute frozen M5D metrics without changing protocol parameters.
 
 Acceptance: the formal matrix is complete, paired, byte-fair, deterministic, and independently recomputable.
 
 ### Milestone 5E-E - Episode statistics and diagnostics
 
+- [ ] Aggregate the formal metrics by episode.
+- [ ] Run the fixed-seed scenario-stratified paired bootstrap and generate diagnostics.
+
 Planned: aggregate four snapshots per episode, run the fixed-seed stratified paired bootstrap, and generate overall/per-scenario diagnostics.
 
 Acceptance: statistical outputs use episodes as the resampling unit and report all pre-registered comparisons, failures, utilization, uncertainty, and limitations.
 
 ### Milestone 5E-F - Formal validation and acceptance
+
+- [ ] Independently validate formal manifests, metrics, statistics, determinism, split isolation, and no-future-actual provenance.
+- [ ] State engineering acceptance separately from scientific support or nonsupport.
 
 Planned: independently validate all manifests, inputs, allocations, containers, metrics, statistics, split isolation, and no-future-actual provenance.
 
@@ -218,4 +227,4 @@ Acceptance: the report states what compression and image-risk-region claims are 
 
 ## Milestone 6 — Simple closed-loop navigation
 
-Planned only after offline evidence supports continuing.
+Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-D.

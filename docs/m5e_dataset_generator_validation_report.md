@@ -20,7 +20,7 @@ Milestone 5E-B implements one parameterized Webots world/controller for the eigh
 - Episode manifest: `data/metadata/m5e/m5e_episode_manifest.json`
 - Diagnostics: `results/m5_compression/m5e_smoke/m5e_scenario_diagnostics.png` and `m5e_snapshot_progress.png`
 
-Generated data and results are ignored by Git. No calibration or formal manifest was created. Calibration seed indices 0/1 and formal boundary indices 0/7 were checked only at configuration level for all scenarios.
+Generated data and results are ignored by Git. At M5E-B closeout, no calibration or formal manifest had been created. M5E-C later generated the separate calibration split and froze common budgets; formal data remain not generated. Calibration seed indices 0/1 and formal boundary indices 0/7 were checked only at configuration level for all scenarios during M5E-B.
 
 ## S5 diagnosis and correction
 
@@ -91,4 +91,4 @@ The complete automatic S1-S8 smoke validator remains the evidence for all eight 
 
 Risk values remain heuristic proxies, not collision probabilities. M5E-B establishes deterministic multi-scene input generation only. It provides no compression, communication, perception, or navigation benefit claim.
 
-Next priority: Milestone 5E-C calibration pilot and common-budget freeze, only when explicitly started. M5E-B has not generated calibration data, selected common budgets, run a multi-scene ROI quality experiment, or established Risk ROI superiority.
+Historical M5E-B closeout next priority was Milestone 5E-C calibration pilot and common-budget freeze. Current status after M5E-C: calibration data and common budgets are complete, formal M5E-D/E/F evaluation is not started, and no multi-scene ROI quality experiment or Risk ROI superiority claim exists.
