@@ -201,3 +201,10 @@
 - **Decision:** Use a fixed departure arc after the validation approach in S1, S2, S6, and S7.
 - **Reason:** It preserves the required high-risk approach at `p=0.70` while avoiding physical collision before all four deterministic snapshots are captured.
 - **Impact:** M5E-B can generate and independently validate a deterministic 32-frame smoke dataset. Risk formulas/parameters, Camera projection, trajectory definitions, snapshot targets, tile/compression policies, and M5E-A acceptance thresholds remain unchanged. Calibration generation and common-budget selection remain Milestone 5E-C work.
+
+## 2026-07-18 - S3 Webots contact clearance
+
+- **Decision:** Move only the nominal S3 `TURN_RISK` Box center from `(0.155, 0.080) m` to `(0.210, 0.110) m`, retaining its size and the complete S3 left-turn command schedule.
+- **Reason:** Per-step Webots evidence with the canonical single-instance world found the original e-puck body-cylinder/Box contact beginning at step `140` (`4.480 s`) during the left arc. Two corrected batch runs and one corrected GUI run retained the frozen S3 risk/yaw/centroid criteria while maintaining at least `0.003971330 m` estimated body clearance and zero obstacle contacts.
+- **Rejected:** Hiding the Console warning, changing the global `basicTimeStep`, weakening S3 validator thresholds, changing risk/trajectory/Camera/mask logic, changing wheel speed or turn semantics, or altering S1/S2/S4-S8.
+- **Impact:** S3 remains a forward-left-arc, high-risk visual scenario under the frozen M5E-A protocol, but its validation target is no longer a physical collider on the executed path. Generated data remain deterministic, and no compression or quality metric informed the correction.

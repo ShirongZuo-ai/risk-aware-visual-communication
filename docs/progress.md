@@ -1727,7 +1727,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - 32 frames/masks/snapshot metadata records under the protocol paths;
   - `results/m5_compression/m5e_smoke/m5e_scenario_diagnostics.png` and `m5e_snapshot_progress.png`.
 - Scientific boundary: no risk formula/parameter, trajectory model, Camera model, snapshot target, M5E-A threshold, M5 codec/allocation, or quality metric was changed. Risk remains a heuristic proxy, not collision probability. M5E-B provides dataset-generation evidence only.
-- GUI pending: inspect generated S1-S8 Box nodes, robot contact/stability, representative Camera/frame alignment, and Webots Console for red errors/Traceback/`status: 1`. These checks are not recorded as passed.
+- GUI status: the corrected S3 physics/robot-stability/Console check is passed; any remaining S1, S2, and S4-S8 checks must still be recorded separately before full M5E-B GUI acceptance.
 - Final automated validation:
   - `python -m pip check`: no broken requirements;
   - `python -m compileall -q compression evaluation navigation perception risk_map scripts simulator tests`: passed;
@@ -1739,7 +1739,42 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
   - dependency scan found only shared immutable mask/polygon/tile-grid helpers; no codec encode, matcher, allocator, PSNR, SSIM, or quality-result dependency exists in generation or scenario selection;
   - future-actual scan found only the explicit false provenance field and validator assertion; no future actual position, velocity, or yaw is read.
-- Next priority: Milestone 5E-C calibration data generation and common-budget freeze. Do not begin formal encoding or compression comparison first.
+- Next priority: complete and record any remaining Milestone 5E-B GUI checks before Milestone 5E-C.
+
+## Milestone 5E-B - GUI runner and S3 physics stabilization
+
+- Status: GUI acceptance support is implemented; S3's reported physics instability is fixed, automatically revalidated, and manually accepted for the corrected GUI rerun.
+- GUI support commit: `cb13318 fix: support GUI acceptance for M5E scenes`.
+  - `scripts/run_m5e_dataset_smoke.py --scenario S3 --output-root <isolated-root> --gui` launches one interactive realtime Webots instance, pauses after generation, and waits for manual close;
+  - the runner uses a temporary ignored world copy so Webots GUI saves cannot add runtime obstacles or robot state to the canonical world;
+  - default smoke behavior remains `--batch --mode=fast`, and GUI mode does not inherit the automatic 300-second timeout.
+- S3 root cause and localization:
+  - the original nominal `TURN_RISK` center `(0.155, 0.080) m` lay on the e-puck's executed left-arc path;
+  - a clean diagnostic run first reached the e-puck body-cylinder/Box contact boundary at Webots step `140`, simulation time `4.480 s`, in `left_arc`, after the `p=0.70` snapshot at `4.224 s`;
+  - contact/penetration was present for 49 logged steps, minimum estimated body-surface clearance was `-0.000662464 m`, and speed later fell from approximately `0.030 m/s` to `0.0112 m/s`;
+  - this is real near-contact/contact rather than an initialization, snapshot-capture, pause, dynamic-obstacle, or multi-instance port problem. A previously GUI-saved polluted world also contained duplicate runtime colliders, but the warning reproduced with the restored canonical world and one Webots instance.
+- Minimal S3-only correction:
+  - moved the nominal S3 `TURN_RISK` center to `(0.210, 0.110) m`; smoke seed `9003` deterministically produces `(0.211093647280262, 0.11133095177193035) m`;
+  - retained its `(0.030, 0.030, 0.060) m` size, both wheel-speed phases, left-turn onset/duration, start pose, four snapshot targets, risk/trajectory/Camera/mask code, S3 frozen validator thresholds, and every other scenario;
+  - fixed snapshot evidence remains valid: left-turn yaw change `0.670769 rad`, combined risk `0.256176`, required lateral-risk centroid condition passed, `actual_future_trajectory_used=false`, and combined mask remains pixelwise `max(planned,state)`.
+- Optional diagnostics:
+  - `M5E_PHYSICS_DIAGNOSTICS_PATH=<project-relative-jsonl>` enables per-step pose, roll/pitch/yaw, height, wheel command, measured velocity, command segment, snapshot crossing, contact points, obstacle-node IDs, AABB relation, and exact horizontal body-cylinder/Box clearance logging;
+  - diagnostic output is exclusive-create, flushed per step, and closed in `finally`; it is disabled by default and does not change scientific outputs;
+  - the controller now rejects a nonempty runtime obstacle group before importing parameterized nodes, preventing duplicate Solid colliders from a contaminated world.
+- Fixed-run evidence:
+  - two independent S3 batch runs and one isolated GUI run each produced 188 diagnostic rows, four snapshots, zero obstacle contact rows, and minimum body-surface clearance `0.003971330 m`;
+  - both batch runs had exact equality for four RGB frames, float masks, ScenarioConfig/manifest fields, and normalized metadata;
+  - the GUI runner returned `GUI run completed: scenario=S3 snapshots=4`, deleted its temporary world, and left canonical `m5e_dataset_generator.wbt` at SHA-256 `52f79bf99e84d5264bb18ae9cdf05b976b4089ab4ea9a4018cd76a2a76d3863`.
+  - user manual confirmation after the corrected run: zero physics warnings in Webots Console; no robot contact, jitter, or visible tilt.
+- Validation actually run:
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q simulator risk_map perception compression scripts tests`: passed;
+  - `python -m unittest discover -s tests`: 254 tests passed; this repository uses `unittest`, and `pytest` is not installed in `.venv`;
+  - three isolated S3 output roots independently passed as 1 episode / 4 snapshots;
+  - a fresh S1-S8 default smoke run passed with 8 episodes / 32 snapshots, followed by the independent dataset validator;
+  - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators all exited `0`.
+- Manual boundary: S3's corrected GUI run is accepted from the user's explicit Console and visual confirmation. This does not automatically accept unreviewed S1, S2, or S4-S8 GUI runs.
+- Next priority: complete and record any remaining Milestone 5E-B GUI acceptance checks. Do not begin Milestone 5E-C first.
 
 ## Commands actually run in the formal project
 

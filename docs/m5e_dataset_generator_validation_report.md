@@ -56,17 +56,29 @@ The full smoke run was repeated under `data/m5e_repeat`. Comparison of all 32 fr
 
 Automated acceptance passed for the 32-frame smoke dataset and deterministic repeat. Unit, compile, dependency, leakage, and M3-M5 regression results are recorded in `docs/progress.md`.
 
+## S3 physics-warning diagnosis and correction
+
+The original S3 `TURN_RISK` Box was physically too close to the executed e-puck left arc. With the canonical world restored and only one Webots instance running, per-step diagnostics first found body-cylinder/Box contact at step `140`, `4.480 s`, during `left_arc`. This was after the third frozen snapshot at `4.224 s`, not during initialization, turn onset, snapshot capture, or GUI pause. The original run had 49 contact/penetration rows, minimum estimated surface clearance `-0.000662464 m`, and a later speed drop to approximately `0.0112 m/s`. This localizes the user-observed physics-warning interval to the post-snapshot left-arc approach/contact phase.
+
+The nominal S3 target center was moved from `(0.155, 0.080) m` to `(0.210, 0.110) m`. The smoke-seed instance is `(0.211093647280262, 0.11133095177193035) m` after the pre-existing deterministic jitter. Its size remains `(0.030, 0.030, 0.060) m`; the S3 wheel schedule, left-turn semantics, start pose, snapshot targets, risk parameters, trajectory models, Camera, projection, masks, and frozen validator thresholds are unchanged. S1, S2, and S4-S8 are unchanged.
+
+Two independent fixed S3 batch runs and one isolated GUI run each produced four snapshots, 188 diagnostic rows, zero obstacle-contact rows, and minimum estimated surface clearance `0.003971330 m`. The repeated batch outputs matched exactly for RGB frame bytes, float masks, ScenarioConfig/manifest values, and normalized metadata. S3 retained a left-turn yaw change of `0.670769 rad`, combined risk `0.256176`, the frozen lateral-centroid condition, `actual_future_trajectory_used=false`, and pixelwise `combined=max(planned,state)`.
+
+The optional project-relative `M5E_PHYSICS_DIAGNOSTICS_PATH` output records each Webots step, simulation time, command segment, wheel command, robot pose/roll/pitch/yaw/height, measured velocity, snapshot crossing, contact points, obstacle-node IDs, and robot/obstacle geometry. It is disabled by default and does not enter frame, mask, metadata, risk, compression, or quality calculations. The controller also refuses to import parameterized obstacles into a nonempty runtime group, preventing duplicate colliders if a generated GUI world is accidentally reused.
+
+The isolated GUI lifecycle generated and validated four snapshots, paused, remained open for inspection, and returned normally after manual close. Automated diagnostics establish zero obstacle contact. The user then explicitly confirmed zero Webots physics warnings and no visible contact, jitter, or tilt. The corrected S3 GUI check is accepted; this does not substitute for any still-unrecorded GUI checks for the other scenarios.
+
 ## GUI checklist
 
-Manual GUI acceptance is pending. Check only:
+The corrected S3 run passed the robot-stability and Console-warning checks. Complete any remaining scenario checks using only:
 
 1. Each S1-S8 generated world instance contains the configured static Box DEF nodes and no unintended overlap.
 2. The e-puck remains upright and does not become stuck or collide during the complete episode.
 3. Representative saved frames agree with the visible Camera view and expected partial clipping.
-4. Webots Console has no red controller error, Traceback, or `status: 1`.
+4. Webots Console has no physics-step warning, red controller error, Traceback, or `status: 1`.
 
 ## Interpretation boundary
 
 Risk values remain heuristic proxies, not collision probabilities. M5E-B establishes deterministic multi-scene input generation only. It provides no compression, communication, perception, or navigation benefit claim.
 
-Next priority: Milestone 5E-C calibration data generation and common-budget freeze.
+Next priority: complete and record any remaining Milestone 5E-B GUI acceptance checks. Do not begin Milestone 5E-C first.

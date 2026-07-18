@@ -150,8 +150,10 @@ def generate_scenario(scenario_id: str, split: str, seed: int) -> ScenarioConfig
     elif scenario_id in {"S3", "S4"}:
         sign = 1.0 if scenario_id == "S3" else -1.0
         direction = "left" if sign > 0 else "right"
+        turn_risk_x = 0.210 if scenario_id == "S3" else 0.155
+        turn_risk_y = 0.110 + dy if scenario_id == "S3" else -(0.080 + dy)
         obstacles = (
-            _obstacle(scenario_id, "TURN_RISK", "turn_high_risk", 0.155 + dx, sign * (0.080 + dy), (0.030, 0.030, 0.060), (0.2, 0.8, 0.25), risk="high"),
+            _obstacle(scenario_id, "TURN_RISK", "turn_high_risk", turn_risk_x + dx, turn_risk_y, (0.030, 0.030, 0.060), (0.2, 0.8, 0.25), risk="high"),
             _obstacle(scenario_id, "CONTEXT", "far_visible_context", 0.400 + dx, sign * 0.200, large, (0.45, 0.45, 0.45), risk="low"),
         )
         schedule = _turn_schedule(direction)

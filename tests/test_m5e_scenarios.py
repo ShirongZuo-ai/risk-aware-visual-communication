@@ -32,6 +32,13 @@ class M5EScenarioTests(unittest.TestCase):
         self.assertEqual(tuple(abs(item.left_rad_s) for item in left.command_schedule), tuple(abs(item.right_rad_s) for item in right.command_schedule))
         self.assertEqual(tuple(abs(item.right_rad_s) for item in left.command_schedule), tuple(abs(item.left_rad_s) for item in right.command_schedule))
 
+    def test_s3_turn_risk_obstacle_has_physics_clearance_position(self) -> None:
+        config = generate_scenario("S3", "smoke", 9003)
+        obstacle = next(item for item in config.obstacle_specs if item.role == "turn_high_risk")
+        self.assertAlmostEqual(obstacle.center_world[0], 0.211093647280262)
+        self.assertAlmostEqual(obstacle.center_world[1], 0.11133095177193035)
+        self.assertEqual(obstacle.size_xyz, (0.030, 0.030, 0.060))
+
     def test_s5_has_distinct_branch_roles(self) -> None:
         config = generate_scenario("S5", "smoke", 9005)
         roles = {item.role for item in config.obstacle_specs}

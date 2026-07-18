@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import sys
 import traceback
+from typing import TextIO
 
 from controller import Supervisor
 
@@ -30,6 +31,7 @@ from simulator.m5e_config import (  # noqa: E402
 )
 from simulator.m5e_dataset_schema import episode_id, episode_summary, relative_path, sha256_file  # noqa: E402
 from simulator.m5e_gui_acceptance import gui_acceptance_requested, pause_for_gui_acceptance  # noqa: E402
+from simulator.m5e_physics_diagnostics import diagnostics_path, robot_obstacle_relation, roll_pitch_yaw  # noqa: E402
 from simulator.m5e_scenarios import M5EObstacleSpec, ScenarioConfig, WheelCommandPhase, config_hash  # noqa: E402
 from simulator.m5e_snapshot_protocol import build_trajectories, command_phase_at, next_crossing, reference_progress, yaw_change  # noqa: E402
 
@@ -89,6 +91,8 @@ def _import_obstacles(robot: Supervisor, specs: tuple[M5EObstacleSpec, ...]) -> 
     children = group.getField("children")
     if children is None:
         raise RuntimeError("M5E_OBSTACLES children field is missing")
+    if children.getCount() != 0:
+        raise RuntimeError("M5E_OBSTACLES must be empty before parameterized obstacle import")
     for spec in specs:
         children.importMFNodeFromString(-1, _vrml(spec))
 
@@ -103,6 +107,59 @@ def _state(self_node) -> dict[str, float]:
         "linear_velocity_m_s": math.hypot(float(velocity[0]), float(velocity[1])),
         "angular_velocity_rad_s": float(velocity[5]),
     }
+
+
+def _write_physics_diagnostic(
+    handle: TextIO,
+    self_node,
+    config: ScenarioConfig,
+    step_count: int,
+    time_s: float,
+    phase: WheelCommandPhase,
+    crossing,
+    obstacle_node_ids: dict[str, int],
+) -> None:
+    position = self_node.getPosition()
+    orientation = self_node.getOrientation()
+    velocity = self_node.getVelocity()
+    roll, pitch, yaw = roll_pitch_yaw(orientation)
+    contacts = self_node.getContactPoints(True)
+    contact_node_ids = {int(contact.node_id) for contact in contacts}
+    obstacles = {
+        spec.obstacle_id: robot_obstacle_relation(position[0], position[1], position[2], spec.center_world, spec.size_xyz)
+        for spec in config.obstacle_specs
+    }
+    record = {
+        "webots_step": step_count,
+        "simulation_time_s": time_s,
+        "command_segment": phase.name,
+        "left_wheel_velocity_rad_s": phase.left_rad_s,
+        "right_wheel_velocity_rad_s": phase.right_rad_s,
+        "snapshot_crossing_index": None if crossing is None else crossing.snapshot_index,
+        "robot_pose": {
+            "x": float(position[0]),
+            "y": float(position[1]),
+            "z": float(position[2]),
+            "roll": roll,
+            "pitch": pitch,
+            "yaw": yaw,
+        },
+        "robot_velocity": {
+            "linear_m_s": math.hypot(float(velocity[0]), float(velocity[1])),
+            "angular_rad_s": float(velocity[5]),
+        },
+        "contact_points": [
+            {"point": [float(value) for value in contact.point], "other_node_id": int(contact.node_id)}
+            for contact in contacts
+        ],
+        "obstacle_node_ids": obstacle_node_ids,
+        "contacting_obstacle_ids": sorted(
+            obstacle_id for obstacle_id, node_id in obstacle_node_ids.items() if node_id in contact_node_ids
+        ),
+        "obstacles": obstacles,
+    }
+    handle.write(json.dumps(record, sort_keys=True) + "\n")
+    handle.flush()
 
 
 def _camera_json(camera_snapshot) -> dict:
@@ -285,6 +342,7 @@ def main() -> None:
     self_node.getField("rotation").setSFRotation([0.0, 0.0, 1.0, config.start_pose[2]])
     self_node.resetPhysics()
     _import_obstacles(robot, config.obstacle_specs)
+    obstacle_node_ids = {spec.obstacle_id: int(robot.getFromDef(spec.obstacle_id).getId()) for spec in config.obstacle_specs}
     left = robot.getDevice(LEFT_WHEEL_DEVICE_NAME)
     right = robot.getDevice(RIGHT_WHEEL_DEVICE_NAME)
     camera = robot.getDevice(CAMERA_DEVICE_NAME)
@@ -292,6 +350,12 @@ def main() -> None:
         raise RuntimeError("M5E required robot device is missing")
     left.setPosition(float("inf")); right.setPosition(float("inf")); left.setVelocity(0.0); right.setVelocity(0.0)
     camera.enable(timestep)
+    diagnostic_destination = diagnostics_path(os.environ, PROJECT_ROOT)
+    diagnostic_handle = None
+    if diagnostic_destination is not None:
+        diagnostic_destination.parent.mkdir(parents=True, exist_ok=True)
+        diagnostic_handle = diagnostic_destination.open("x", encoding="utf-8")
+        self_node.enableContactPointsTracking(timestep, True)
     completed, snapshots, step_count = set(), [], 0
     try:
         while robot.step(timestep) != -1:
@@ -300,6 +364,17 @@ def main() -> None:
             phase = command_phase_at(config, time_s)
             left.setVelocity(phase.left_rad_s); right.setVelocity(phase.right_rad_s)
             crossing = next_crossing(config, completed, time_s, step_count)
+            if diagnostic_handle is not None:
+                _write_physics_diagnostic(
+                    diagnostic_handle,
+                    self_node,
+                    config,
+                    step_count,
+                    time_s,
+                    phase,
+                    crossing,
+                    obstacle_node_ids,
+                )
             if crossing is not None:
                 snapshots.append(_capture(robot, config, job, crossing, self_node, camera, step_count))
                 completed.add(crossing.snapshot_index)
@@ -325,6 +400,9 @@ def main() -> None:
         _write_summary(job, episode_summary(config, original_seed=job["original_seed"], replacement_index=job["replacement_index"], status="invalid_controller_error", snapshots=snapshots, failure_reason=f"{type(exc).__name__}: {exc}"))
         traceback.print_exc()
         raise
+    finally:
+        if diagnostic_handle is not None:
+            diagnostic_handle.close()
 
 
 if __name__ == "__main__":
