@@ -97,3 +97,24 @@
 - **Decision:** Use one shared validation parameter set for all six obstacles and both trajectories: `corridor_radius_m = 0.037592257`, `sigma_distance_m = 0.05`, `tau_time_s = 1.0`, `maximum_horizon_s = 2.0`, and `geometry_tolerance_m = 0.000001`.
 - **Rejected for now:** Dynamic obstacles, camera projection, image risk heatmaps, ROI compression, formal Milestone 3D plots, and per-obstacle risk-parameter tuning.
 - **Impact:** Milestone 3C produces a 6-row world-coordinate CSV and automatic validator only. Later Milestone 3D should use this accepted CSV for diagnostics before any image-space risk work.
+
+## 2026-07-18 - Milestone 4A image-risk projection design
+
+- **Decision:** Project full static 3D obstacle Boxes into image polygons, not only obstacle centers and not only raw min/max corner bounding boxes.
+- **Reason:** Center projection loses object extent, and raw corner min/max fails around near-plane intersections and can over-cover pixels that are not part of the projected support.
+- **Decision:** Keep planned, state, and combined image-risk masks as separate channels.
+- **Reason:** Planned and state risk remain distinct evidence sources from Milestone 3. Channel separation preserves interpretability and later ablations.
+- **Decision:** Use `max` for overlapping obstacle mask values, not `sum`.
+- **Reason:** Milestone 3 combined risk uses max-union semantics, and max keeps image-risk values in `[0, 1]` without double-counting overlap.
+- **Decision:** First-version visibility is geometric frustum and image-boundary visibility only; it does not claim true inter-object occlusion handling.
+- **Reason:** The current accepted M3 evidence has no depth, segmentation, recognition mask, or z-buffer validation for real rendered visibility.
+- **Decision:** The first Risk ROI is based on projected risky obstacle visual regions, not a filled projection of the empty trajectory corridor.
+- **Reason:** The communication target should preserve pixels containing safety-relevant obstacles, not mark empty ground as high risk merely because a future corridor crosses it.
+- **Decision:** The world-to-camera-to-project-optical coordinate transform must be explicit, including a fixed Webots device-frame to project-optical-frame axis transform.
+- **Reason:** Webots Camera coordinates and image pixel coordinates are not identical to the project optical frame; implicit conventions would risk left/right or up/down mirroring errors.
+- **Decision:** Do not guess the e-puck Camera convention from generic camera habits. Use the R2025a official e-puck PROTO, Webots Camera API, current project worlds, and later overlay validation.
+- **Reason:** The current e-puck Camera has version-locked fields and a specific mount position. M4B/M4C must validate the frozen convention against actual Webots output.
+- **Decision:** Keep the projection core standard-library first; allow Pillow later for image IO/masks if needed, defer OpenCV until automatic validation requires it, and do not add Shapely or ML frameworks.
+- **Reason:** This preserves M3's auditable ordinary-Python style while avoiding unreliable custom image encoders when image files become necessary.
+- **Rejected for now:** Camera projection implementation in 4A, M4 Webots scenes/controllers, mask artifacts, JPEG/H.264/ROI compression, network simulation, true occlusion claims, Shapely, and machine learning.
+- **Impact:** Milestone 4B should implement the pure projection core from `docs/image_risk_projection_design.md`; Webots API access belongs only in a later adapter layer.

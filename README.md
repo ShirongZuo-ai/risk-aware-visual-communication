@@ -2,7 +2,7 @@
 
 Research prototype for **Trajectory-Conditioned Collision-Risk-Aware Visual Communication for Remote Robot Navigation**.
 
-Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, and Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and diagnosed the world-coordinate risk core. Image risk maps, compression, perception, and navigation are not implemented.
+Current status: the native-Windows environment baseline has been checked, the official Webots R2025a stable release is installed and verified, Milestone 1A/1B/1C/1D have created the synchronized Webots data pipeline, Milestone 2/2R have created trajectory prediction, in-place rotation validation, forward-arc validation, and empirical uncertainty corridor evaluation, Milestone 3A/3B/3C/3D have frozen, implemented, Webots-validated, and accepted the world-coordinate risk core, and Milestone 4A has frozen the image-risk projection design. Camera projection code, image risk masks, compression, perception, and navigation are not implemented.
 
 ## Scope
 
@@ -187,6 +187,16 @@ Milestone 3 report:
 docs/m3_world_risk_validation_report.md
 ```
 
+## Milestone 4 image-risk projection design
+
+Milestone 4A is design-only. It freezes the world-to-camera-to-image coordinate chain, camera intrinsics/extrinsics, 3D Box projection semantics, visibility statuses, planned/state/combined image-risk mask rules, validation scene roles, error metrics, module boundaries, and dependency policy:
+
+```text
+docs/image_risk_projection_design.md
+```
+
+No Milestone 4 projection module, Webots world/controller, frame, mask, figure, ROI compression, or codec pipeline has been created yet.
+
 ## Documentation
 
 - `AGENTS.md`: Codex entry point and working rules
@@ -197,4 +207,5 @@ docs/m3_world_risk_validation_report.md
 - `docs/trajectory_prediction_design.md`: Milestone 2 trajectory source definitions and uncertainty design
 - `docs/risk_formulation_design.md`: Milestone 3 world-coordinate risk definitions and implemented core API notes
 - `docs/m3_world_risk_validation_report.md`: Milestone 3D validation report and generated figure paths
+- `docs/image_risk_projection_design.md`: Milestone 4A image-risk projection design and acceptance criteria
 - `docs/system_overview.md`: current end-to-end pipeline summary

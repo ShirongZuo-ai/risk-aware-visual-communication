@@ -76,9 +76,42 @@ Acceptance: Webots runs the M3C world, the controller writes one risk row per ob
 
 Acceptance: M3D diagnostics are generated from `risk_validation_episode_0002.csv`, role acceptance and formulas pass automatically, parameter sensitivity over the tested 9 combinations is reported, the validation report is complete, generated data/results remain ignored, and GUI human acceptance has passed. `risk_validation_episode_0002` remains the official evidence data; `risk_validation_episode_0005` is GUI reproduction evidence only.
 
-## Milestone 4 — Budget-matched compression comparison
+## Milestone 4 — Image-space risk projection
 
-Planned: implement Uniform, Fixed Center ROI, Object ROI, and Proposed block-wise prototypes; match target byte budgets and report mismatch.
+### Milestone 4A - Projection design and interface freeze
+
+- [x] Freeze world-to-camera-to-image coordinate terminology.
+- [x] Freeze Camera intrinsics and extrinsics interface targets.
+- [x] Freeze 3D Box projection, visibility, clipping, and image-risk mask semantics.
+- [x] Define M4 validation scene roles, automatic verification plan, error metrics, module boundaries, and dependency policy.
+
+Acceptance: `docs/image_risk_projection_design.md` documents the projection model, interfaces, validation roles, and boundaries. No camera projection code, M4 Webots world/controller, camera frame, mask, figure, compression, networking, or machine-learning component is created.
+
+### Milestone 4B - Pure-Python projection core
+
+- [ ] Implement frozen camera models and validation.
+- [ ] Implement world/device/optical/image transforms.
+- [ ] Implement pinhole projection, near-plane clipping, image-boundary clipping, and 3D Box projected polygons.
+- [ ] Implement initial mask-generation rules only after projection geometry tests pass.
+
+Acceptance: core projection and mask logic are unit-tested and remain decoupled from Webots, OpenCV, ROS, and machine learning unless a later dependency decision changes this.
+
+### Milestone 4C - Webots calibration and projection validation
+
+- [ ] Create a separate M4 validation world without modifying accepted M3 worlds.
+- [ ] Read camera intrinsics/extrinsics and 3D Box geometry through a Webots adapter.
+- [ ] Save RGB frame and snapshot metadata for repeatable projection validation.
+- [ ] Validate overlay direction, Box coverage, clipping, and numeric error metrics.
+
+Acceptance: Webots validation runs on a dedicated M4 scene; automatic metrics are recorded; GUI review is recorded separately and does not replace numeric validation.
+
+### Milestone 4D - Image-space risk masks and diagnostics
+
+- [ ] Generate planned, state, and combined image-risk masks from projected obstacle polygons.
+- [ ] Validate mask value range, channel separation, overlap max-union, and invisible-obstacle handling.
+- [ ] Generate diagnostic overlays and summaries.
+
+Acceptance: image-space risk masks are generated from validated projections and documented. Compression policy, bitrate allocation, JPEG/H.264 integration, and task evaluation remain out of scope until the next compression milestone.
 
 ## Milestone 5 — Offline task evaluation
 

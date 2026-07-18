@@ -55,7 +55,16 @@ Milestone 3D adds world-coordinate diagnostics and reporting:
 2. World-coordinate corridors, AABB obstacles, entry points, and risk scores are visualized.
 3. Risk formulas are recalculated from CSV values.
 4. Parameter sensitivity is checked for 9 sigma/tau combinations.
-5. `docs/m3_world_risk_validation_report.md` records Milestone 3 validation and remaining GUI acceptance status.
+5. `docs/m3_world_risk_validation_report.md` records Milestone 3 validation and passed GUI acceptance status.
+
+Milestone 4A freezes image-risk projection design without implementation:
+
+1. World, robot body, Webots Camera device, project optical, and image pixel frames are separated.
+2. Camera intrinsics are derived from actual e-puck Camera fields: `160x120`, horizontal FOV `0.84 rad`, and near clip `0.0055 m`.
+3. The planned interface uses `CameraIntrinsics`, `CameraExtrinsics`, `ObstacleBox3D`, `ProjectedPoint`, and `ProjectedObstacle`.
+4. 3D Boxes project to clipped image polygons and metadata, not center points alone.
+5. Planned, state, and combined image-risk masks remain separate and use max-union on overlaps.
+6. True rendered occlusion is explicitly out of scope until depth, segmentation, recognition, or equivalent validation evidence is selected.
 
 ## Trajectory Types
 
@@ -72,6 +81,7 @@ Milestone 3D adds world-coordinate diagnostics and reporting:
 - Milestone 3C accepted risk validation CSV: `data/logs/m3/risk_validation_episode_0002.csv`
 - Milestone 3D generated trajectories: `data/logs/m3/risk_validation_episode_0002_trajectories.csv`
 - Milestone 3D diagnostics: `results/m3_world_risk/`
+- Milestone 4A projection design: `docs/image_risk_projection_design.md`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -125,9 +135,10 @@ Outputs:
 
 The later risk module should consume a trajectory corridor rather than a single exact line. The corridor combines robot half-width, measured prediction error quantile, and a safety margin, and should be interpreted as a band along the predicted path.
 
-Milestone 3B keeps this in world coordinates. Camera projection, image-space risk maps, and compression allocation remain downstream work.
-Milestone 3D still keeps risk in world coordinates. The Webots adapter provides obstacle ground truth only; it does not project into camera pixels.
+Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in world coordinates. The Webots adapter provides obstacle ground truth only; it does not project into camera pixels.
+
+Milestone 4A defines the next camera-projection boundary but does not implement it. Future M4 code should project static obstacle 3D Boxes into image polygons, then fill planned/state/combined image-risk masks over those clipped obstacle regions. It should not project empty trajectory corridors as the main Risk ROI.
 
 ## Explicitly Not Implemented
 
-The project still does not implement camera projection, image risk maps, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement camera projection algorithms, image risk masks, ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

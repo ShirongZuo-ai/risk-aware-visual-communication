@@ -21,6 +21,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 3C: connected the risk core to a Webots multi-obstacle validation scene and generated an automatically validated 6-row world-risk CSV.
 - Completed Milestone 3D automated diagnostics and Milestone 3D-R figure-readability corrections: generated world-coordinate figures, summary tables, parameter sensitivity checks, and the Milestone 3 validation report from accepted episode_0002.
 - Accepted Milestone 3 after user GUI and figure review. `episode_0002` remains the official evidence data; `episode_0005` is GUI reproduction evidence only.
+- Completed Milestone 4A: froze world-risk-to-camera-image projection design, interfaces, terminology, validation roles, and acceptance criteria without creating projection code or M4 data.
 
 ## Native Windows environment results
 
@@ -941,6 +942,82 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - M3D evaluation: exit code 0.
   - M3D report validator: exit code 0.
 
+## Milestone 4A: image-risk projection design freeze
+
+- Stage: Milestone 4A complete on local branch `feature/m4-image-risk-projection`.
+- Starting commit: `85fa41c docs: accept world risk milestone`.
+- Project root and Git:
+  - `C:\Users\ROG\Documents\risk-aware-visual-communication`
+  - Git top-level resolved to `C:/Users/ROG/Documents/risk-aware-visual-communication`.
+  - Current branch verified as `feature/m4-image-risk-projection`.
+  - Working tree was clean before Milestone 4A edits.
+  - Branch contains the accepted Milestone 3 commit `85fa41c`.
+- Created design document:
+  - `docs/image_risk_projection_design.md`
+- Updated documentation:
+  - `docs/progress.md`
+  - `docs/roadmap.md`
+  - `docs/decisions.md`
+  - `docs/system_overview.md`
+  - `README.md`
+- Official M3 evidence retained:
+  - `data/logs/m3/risk_validation_episode_0002.csv`
+  - `data/logs/m3/risk_validation_episode_0002_trace.txt`
+  - `episode_0005` remains GUI reproduction evidence only.
+- Coordinate definitions frozen:
+  - Webots world ground plane: `x-y`.
+  - Webots vertical axis: `z`.
+  - Robot body forward axis: e-puck local `+x`.
+  - Robot body left axis: e-puck local `+y`; right is `-y`; up is `+z`.
+  - Yaw: heading of robot local `+x` around world `+z`.
+  - Webots Camera device convention for the first implementation: `+x_device` image/right, `+y_device` image/up, `-z_device` optical forward.
+  - Project optical frame: `+z_optical` forward, `+x_optical` right, `+y_optical` down.
+  - Frozen device-to-optical transform: `diag(1, -1, -1)`.
+  - Image pixel frame: `u` right, `v` down, pixel-center convention, top-left pixel center `(0, 0)`.
+- Camera parameters frozen from R2025a official e-puck PROTO and current worlds:
+  - Camera device name: `camera`.
+  - Camera mount in e-puck PROTO: `translation 0.03 0 0.028`.
+  - Current camera rotation: `0 0 1 0`.
+  - Width: `160 px`.
+  - Height: `120 px`.
+  - Horizontal FOV: `0.84 rad`.
+  - Near clip: `0.0055 m`.
+  - Intrinsics rule: `fx = W / (2 * tan(horizontal_fov / 2))`, `fy = fx`, `cx = (W - 1) / 2`, `cy = (H - 1) / 2`.
+  - Current derived values: `fx=179.142225973 px`, `fy=179.142225973 px`, `cx=79.5 px`, `cy=59.5 px`, `vertical_fov=0.646372669 rad`.
+- Interface and method boundaries frozen:
+  - `CameraIntrinsics`
+  - `CameraExtrinsics`
+  - `ObstacleBox3D`
+  - `ProjectedPoint`
+  - `ProjectedObstacle`
+  - Visibility statuses: `fully_visible`, `partially_visible`, `outside_frustum`, `behind_camera`, `intersects_near_plane`, `degenerate_projection`.
+  - 3D Box projection must use corners, edges, near-plane clipping, image-boundary clipping, and a projected polygon; center-only and raw min/max-only projection are rejected.
+  - Risk masks remain independent planned/state/combined channels and use max-union on overlaps.
+  - Image-risk masks represent risky obstacle visual regions, not empty trajectory-corridor pixels.
+  - First version does not claim true inter-object occlusion handling.
+- Dependency decision:
+  - Projection geometry core should start with Python standard library only.
+  - Pillow may be used later for image IO/masks if needed.
+  - OpenCV is deferred until automatic image validation requires it.
+  - Shapely and ML frameworks are not introduced.
+- Explicitly not created or modified in Milestone 4A:
+  - no camera projection algorithm;
+  - no Python projection module;
+  - no M4 Webots world/controller;
+  - no Camera frame, mask, plot, or generated data;
+  - no JPEG, ROI compression, network simulation, or machine learning;
+  - no M3 algorithm, scene, parameter, CSV, or official evidence modification.
+- Validation actually run:
+  - `.\.venv\Scripts\python.exe -m unittest discover -s tests`
+  - `Select-String` documentation consistency checks across `docs/image_risk_projection_design.md`, `docs/roadmap.md`, `docs/decisions.md`, `docs/system_overview.md`, `README.md`, and `docs/progress.md`
+  - `C:\Program Files\Git\cmd\git.exe status --short --ignored`
+  - `C:\Program Files\Git\cmd\git.exe diff --stat`
+- Validation results:
+  - Existing unit-test baseline: `75` tests passed.
+  - Documentation records `episode_0002` as official M3 evidence and `episode_0005` as GUI reproduction evidence only.
+  - README and roadmap both state that M4A is design-only and that projection code, masks, scenes, and compression are not implemented.
+  - Git diff contains only documentation changes; ignored `data/`, `results/`, cache, and Webots GUI files remain untracked/ignored.
+
 ## Commands actually run in the formal project
 
 ```text
@@ -995,4 +1072,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 3 is formally accepted. The next priority is to plan Milestone 4 camera projection and image-space work without changing the accepted Milestone 3 evidence.
+Milestone 4B is the next priority: implement and unit-test the pure-Python projection core from `docs/image_risk_projection_design.md` without Webots dependencies.
