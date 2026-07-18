@@ -111,9 +111,9 @@ Acceptance: Webots validation runs on a dedicated M4 scene; automatic metrics ar
 - [x] Unit-test mask value range, channel separation, overlap max-union, invisible-obstacle handling, and rasterization invariants.
 - [x] Generate planned, state, and combined image-risk masks from one same-snapshot Webots validation episode.
 - [x] Generate diagnostic overlays and summaries.
-- [ ] Complete GUI human acceptance and Milestone 4D closeout.
+- [x] Complete GUI human acceptance and Milestone 4D closeout.
 
-Acceptance: image-space risk masks are generated from validated projections and documented. Compression policy, bitrate allocation, JPEG/H.264 integration, and task evaluation remain out of scope until the next compression milestone.
+Acceptance: image-space risk masks are generated from validated projections and documented. Milestone 4 is formally accepted: it proves the world-risk to image-risk mapping for the validation snapshot only. Compression policy, bitrate allocation, JPEG/H.264 integration, communication benefit, and task/navigation evaluation remain out of scope until Milestone 5.
 
 ## Milestone 5 — Offline task evaluation
 

@@ -24,6 +24,7 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 4A: froze world-risk-to-camera-image projection design, interfaces, terminology, validation roles, and acceptance criteria without creating projection code or M4 data.
 - Completed Milestone 4B: implemented and unit-tested the Webots-decoupled pure-Python camera projection core.
 - Completed and accepted Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, passed automatic image-alignment validation, and passed GUI human review.
+- Completed and accepted Milestone 4D and Milestone 4 overall: connected same-snapshot world-coordinate risk, Camera projection, and pure-Python image-risk masks; passed automatic validation and GUI human review on `image_risk_validation_episode_0001`.
 
 ## Native Windows environment results
 
@@ -1254,7 +1255,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 
 ## Milestone 4D-2 - Same-snapshot image-risk mask validation
 
-- Status: automatic end-to-end validation completed; GUI manual acceptance remains pending.
+- Status: automatic end-to-end validation completed; GUI manual acceptance passed. Milestone 4D and Milestone 4 overall are formally accepted.
 - Branch and baseline:
   - working branch: `feature/m4-image-risk-projection`;
   - baseline commits present: `8034a9d docs: accept Webots camera projection alignment` and `e88d37f feat: implement image risk mask core`;
@@ -1280,7 +1281,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - controller: `simulator/controllers/m4d_image_risk_validation/m4d_image_risk_validation.py`;
   - no M3 or M4C accepted world/controller was modified.
 - Same-snapshot evidence:
-  - successful M4D automatic episode: `image_risk_validation_episode_0001`;
+  - successful M4D automatic and GUI-accepted episode: `image_risk_validation_episode_0001`;
   - snapshot time: `7.968 s`;
   - planned trajectory source: command-conditioned rollout from the pre-existing future wheel-command schedule;
   - state trajectory source: state-only constant-twist rollout from current Webots snapshot state;
@@ -1365,6 +1366,11 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - `python scripts\validate_m3d_report.py`: passed.
 - Webots command-line behavior:
   - Webots again remained open at the shell level after the controller completed. The process was stopped after output files were confirmed.
+- GUI manual acceptance:
+  - passed by user review for `image_risk_validation_episode_0001`;
+  - planned-dominant, state-dominant, shared-risk, low-risk, partial clipping, visibility filtering, overlap max-union, combined max invariant, image direction, geometry alignment, and no-future-actual checks were all accepted;
+  - `OUTSIDE_VIEW` and `BEHIND_CAMERA` confirm that world risk alone does not imply current Camera-visible image-mask transmission;
+  - planned/state/combined overlay differences are visually subtle because support regions match, many risks are low, and transparency is used. Numeric masks, summary, and validator prove channel differences. Current overlays are diagnostic evidence, not final publication-quality figures.
 - Explicitly not implemented in Milestone 4D-2:
   - no JPEG/H.264/H.265/URVC;
   - no ROI resource allocation or bytes/frame matching;
@@ -1375,7 +1381,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no dynamic obstacles;
   - no true rendered occlusion model.
 - Next priority:
-  - GUI manual acceptance for Milestone 4D outputs, then Milestone 4D closeout. Do not enter Milestone 5 before GUI acceptance and closeout.
+  - Milestone 5A compression and fair-bitrate design freeze. Do not implement compression code before the design freeze is requested.
 
 ## Commands actually run in the formal project
 
@@ -1431,4 +1437,4 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 ## Next priority
 
-Milestone 4D is the next priority: generate planned, state, and combined image-risk masks from the accepted Milestone 4C projection outputs. Do not implement compression, networking, or navigation as part of Milestone 4D unless explicitly requested.
+Milestone 5A is the next priority: freeze compression and fair-bitrate comparison design. Do not implement compression, networking, or navigation code before that design-freeze task is explicitly requested.

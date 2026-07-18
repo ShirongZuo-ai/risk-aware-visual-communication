@@ -4,9 +4,9 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 
 ## Status
 
-Milestone 4D-2 automatic end-to-end validation is complete on `feature/m4-image-risk-projection`.
+Milestone 4D-2 automatic end-to-end validation is complete and GUI human acceptance has passed on `feature/m4-image-risk-projection`.
 
-GUI manual acceptance is pending. This report does not claim compression benefit, communication gain, improved perception, or navigation safety.
+Milestone 4D and the full Milestone 4 image-space risk projection milestone are formally accepted. This report does not claim compression benefit, communication gain, improved perception, or navigation safety.
 
 ## Scope
 
@@ -20,7 +20,7 @@ Risk scores remain heuristic proxy scores, not collision probabilities. The firs
 
 ## Evidence Episode
 
-Successful automatic episode:
+Successful automatic and GUI-accepted episode:
 
 ```text
 data/frames/m4/image_risk_validation_episode_0001.png
@@ -172,23 +172,30 @@ python scripts\validate_m3d_report.py
 - M3C validator on `risk_validation_episode_0002.csv`: exit 0.
 - M3D evaluate: exit 0.
 - M3D report validator: exit 0.
+- GUI manual acceptance: passed by user review.
 
 As in earlier Webots command-line runs, the Webots shell process did not exit by itself after the controller completed; it was stopped after output files were confirmed.
 
-## GUI Checklist Pending
+## GUI Human Acceptance
 
-The user should manually check:
+GUI manual acceptance passed by user review for `image_risk_validation_episode_0001`.
 
-1. Planned-dominant target is stronger in planned overlay.
-2. State-dominant target is stronger in state overlay.
-3. Combined overlay follows the higher of planned/state.
-4. LOW_RISK is visible but weak.
-5. PARTIAL is filled only inside the image boundary.
-6. OUTSIDE and BEHIND do not appear in masks.
-7. Overlap regions are max-union, not summed above 1.
-8. Overlay is not mirrored or vertically inverted.
-9. Risk fill covers obstacle regions, not unrelated background.
-10. Console has no Traceback or status:1 and reports completion.
+Accepted observations:
+
+1. `PLANNED_DOMINANT_VISIBLE` has planned risk `0.469831075`, state risk `0.189292428`, and combined risk `0.469831075`. It is stronger in the planned mask than the state mask, and combined selects the planned value.
+2. `STATE_DOMINANT_VISIBLE` has planned risk `0.136077497`, state risk `0.226684741`, and combined risk `0.226684741`. It is stronger in the state mask than the planned mask, and combined selects the state value.
+3. `SHARED_RISK_VISIBLE` has nonzero planned risk `0.074374604` and nonzero state risk `0.083360084`; combined risk is `0.083360084`.
+4. `LOW_RISK_VISIBLE` is visible but weak, with combined risk `0.006903238`, clearly below dominant and shared targets.
+5. `OUTSIDE_VIEW` is `outside_frustum`, `eligible_for_mask=false`, and writes zero pixels. `BEHIND_CAMERA` is `behind_camera`, has combined world risk `0.360288054`, `eligible_for_mask=false`, and writes zero pixels. This confirms that world risk exists independently of current Camera visibility.
+6. `PARTIAL_VISIBLE` is `partially_visible` and writes mask pixels only inside the image boundary; the outside-image region has no mask pixels.
+7. `OVERLAP_BACK` has 4218 candidate pixels and writes zero pixels; `OVERLAP_FRONT` has 4532 candidate pixels and writes 347 planned/state/combined pixels. The summary and images match pixelwise max semantics, risk is not summed above 1, and lower-risk overlapping objects do not reduce existing mask values.
+8. The combined mask equals `max(planned mask, state mask)` pixelwise. Planned, state, and combined masks all have 11065 nonzero support pixels; their support regions match, while risk intensities differ.
+9. The overlay has no left/right mirroring or vertical inversion, the principal point is near the image center, polygon outlines cover the corresponding Boxes, risk fill lies inside the corresponding clipped polygons, PARTIAL clips as expected, and OUTSIDE/BEHIND do not write image-mask pixels.
+10. Metadata records `actual_future_trajectory_used=false`; risk and masks come from snapshot state plus the future command schedule available at that snapshot, without reading future actual trajectory.
+
+## Visualization Note
+
+The planned/state/combined overlay differences are visually subtle because the three masks have identical nonzero support, many risk values are low, and the overlays use transparency. The numeric masks, summary, and validator prove that the three channels differ. The current overlays are accepted diagnostic evidence, not final publication-quality figures. Later paper figures can use fixed color scales, color bars, and a planned-state difference map without changing the accepted M4D evidence.
 
 ## Limitations
 
@@ -196,4 +203,5 @@ The user should manually check:
 - One Webots snapshot and one validation scene.
 - Risk is heuristic, not probability.
 - No true inter-object occlusion model.
+- Milestone 4 proves world-risk to image-risk mapping only.
 - No image-risk compression, bytes/frame matching, network simulation, remote perception, closed-loop navigation, ROS 2, or machine learning.
