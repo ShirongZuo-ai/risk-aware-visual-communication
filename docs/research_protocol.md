@@ -66,7 +66,7 @@ The first compression experiment is a tiled-JPEG spatial allocation prototype, n
 
 Milestone 5E-A freezes the multi-scene protocol in `docs/m5e_multiscene_offline_evaluation_protocol.md`. The M4D/M5D frame is development-only and excluded from M5E calibration and formal statistics. M5E common budgets are selected from calibration data only, then frozen before formal evaluation. The four methods, scoring rules, allocation search, risk threshold, JPEG/container settings, snapshot rules, and scenario weights cannot be changed from formal outcomes.
 
-M5E-C froze the common complete-container-byte interval `[31240, 35779]` and the formal targets severe `31466`, low `32374`, medium `33509`, and high `34871` bytes. M5E-D generated the formal 256-frame split and 4096 matched-budget reconstructions with those targets unchanged. M5E-E statistics and scientific interpretation remain separate and not completed.
+M5E-C froze the common complete-container-byte interval `[31240, 35779]` and the formal targets severe `31466`, low `32374`, medium `33509`, and high `34871` bytes. M5E-D generated the formal 256-frame split and 4096 matched-budget reconstructions with those targets unchanged. M5E-E completed the pre-registered episode-level statistics without changing the protocol: H1 is not fully supported, while H2/H3 receive direction-specific support under their frozen scenario contrasts. These remain offline image-quality findings only.
 
 ## Metrics
 
@@ -80,7 +80,7 @@ For M5E, the primary offline metric is continuous combined-risk-weighted PSNR at
 
 ## Milestone 5E scenario set
 
-The first formal multi-scene experiment is limited to static AABB obstacles and freezes eight families: straight collision-relevant obstacle, off-trajectory visual distractor, left turn, right turn, planned/state disagreement, large low-risk versus small high-risk, partial visibility, and low-risk control. Development, calibration, and formal seeds/episodes are disjoint. Calibration contains 64 frames; formal evaluation contains 256 frames and 4096 method-budget reconstructions. M5E-D completed that formal metric table; M5E-E episode statistics and scientific support criteria are still governed by the M5E protocol and remain uncompleted.
+The first formal multi-scene experiment is limited to static AABB obstacles and freezes eight families: straight collision-relevant obstacle, off-trajectory visual distractor, left turn, right turn, planned/state disagreement, large low-risk versus small high-risk, partial visibility, and low-risk control. Development, calibration, and formal seeds/episodes are disjoint. Calibration contains 64 frames; formal evaluation contains 256 frames and 4096 method-budget reconstructions. M5E-D completed that formal metric table and M5E-E completed the frozen episode-level analysis. M5E-F full-evidence validation and acceptance remain unstarted.
 
 ## Initial scenarios
 

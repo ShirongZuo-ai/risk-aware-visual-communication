@@ -382,4 +382,4 @@ Repeated execution in the frozen software environment must reproduce scene param
 - **M5E-E:** compute episode-level statistics and diagnostic figures.
 - **M5E-F:** independently validate all evidence and formally accept or reject the M5E engineering milestone and scientific hypotheses.
 
-Historical note: the only next priority after the M5E-A protocol freeze was M5E-B. After M5E-B and M5E-C completion, the current mainline next step is M5E-D using the frozen M5E-C budgets unchanged.
+Historical execution sequence: M5E-B followed the M5E-A freeze, M5E-C froze budgets, M5E-D generated the formal metric table, and M5E-E completed episode statistics. The current next mainline milestone is M5E-F independent validation and acceptance. This status note does not alter the frozen protocol above.

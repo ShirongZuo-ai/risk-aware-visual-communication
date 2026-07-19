@@ -101,4 +101,4 @@ M5E-D establishes a complete, deterministic, byte-fair formal metric table. It d
 
 Risk remains a heuristic proxy, not a collision probability. The tiled-JPEG backend remains a spatial allocation prototype, not a standards-compatible JPEG ROI codec. Formal data are evaluation evidence and must not be used for machine-learning training.
 
-The next mainline milestone is M5E-E episode statistics and diagnostics using these frozen M5E-D outputs.
+Historical M5E-D closeout next priority was M5E-E episode statistics and diagnostics using these frozen outputs. M5E-E is now complete; M5E-F independent full-evidence validation and acceptance remain unstarted.

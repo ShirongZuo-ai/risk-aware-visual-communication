@@ -234,3 +234,10 @@
 - **Reason:** This creates the fixed formal evidence table needed by M5E-E while preserving paired frame-method-budget identity, actual-byte fairness, and no-future-actual provenance.
 - **Rejected:** Running episode-level statistics, bootstrapping, method ranking, formal superiority claims, perception evaluation, learned training, or closed-loop navigation inside M5E-D.
 - **Impact:** M5E-E must use the M5E-D metric table as frozen input for pre-registered episode statistics and diagnostics. Engineering completeness remains separate from scientific support or nonsupport.
+
+## 2026-07-19 - M5E-E structural empty-region aggregation
+
+- **Decision:** Keep the primary continuous risk-weighted PSNR fully paired over all four snapshots. For secondary high-risk-region diagnostics only, retain each structurally empty frame as `undefined`, average the defined frames within an episode, record valid and undefined frame counts, and leave an episode undefined when all four frames are empty.
+- **Reason:** The M5D/M5E protocol forbids inventing a metric for an empty region. Explicit counts preserve that rule while allowing clearly labeled descriptive regional diagnostics where the frozen region exists.
+- **Rejected:** Replacing empty regions with zero, infinity, a favorable sentinel, the full-frame metric, or dropping an episode from primary analysis.
+- **Impact:** No primary pair is missing. High-risk-region results remain secondary diagnostics and cannot replace continuous RW-PSNR conclusions.

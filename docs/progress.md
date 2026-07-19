@@ -33,6 +33,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 - Completed and accepted Milestone 5E-B: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, reproduced frames/masks/configs/metadata exactly, and recorded targeted S2/S3/S5/S7 GUI manual acceptance.
 - Completed Milestone 5E-C: generated and independently validated the isolated 64-frame calibration split, exhaustively measured the legal complete-container-byte range for all frame-method pairs, and froze four common actual-byte budgets without running a formal quality evaluation.
 - Completed Milestone 5E-D: generated and validated the isolated 256-frame formal split, produced all 4,096 method-budget reconstructions with the frozen M5E-C budgets, computed frozen M5D metrics, and independently recomputed the formal metric table. No M5E-E statistics or method-performance conclusion has been produced.
+- Completed Milestone 5E-E: aggregated four snapshots within each of 64 formal episodes, generated 384 primary pairs, ran the frozen 10,000-replicate scenario-stratified bootstrap, retained all negative/null findings, generated nine deterministic figures, and independently recomputed the statistical outputs. H1 is not fully supported; H2/H3 receive direction-specific support only.
 
 ## Native Windows environment results
 
@@ -1829,7 +1830,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
 - M5E-B smoke generator: final 8-episode / 32-snapshot smoke passed independently with no replacements; deterministic repeat evidence and targeted S2/S3/S5/S7 GUI acceptance are recorded above.
-- M5E calibration data and common budgets: completed in M5E-C. Formal encoding and metric generation completed in M5E-D. Formal M5E-E/F statistics/acceptance, object detection, networking, and closed-loop navigation remain not implemented or tested.
+- M5E calibration data and common budgets: completed in M5E-C. Formal encoding and metric generation completed in M5E-D. Episode statistics and diagnostics completed in M5E-E. M5E-F full-evidence acceptance, object detection, networking, machine learning, and closed-loop navigation remain not implemented or tested.
 
 ## Current issues
 
@@ -1840,10 +1841,11 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 5. Git `user.name` and `user.email` are now configured locally/globally for this environment as `ShirongZuo-ai <3095325284@qq.com>`.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
 7. M5E-B GUI evidence is limited to the documented targeted S2/S3/S5/S7 manual checks; it complements the automatic all-scenario validator and is not an automatic Console or visual proof.
+8. The historical smoke output directly under `data/` predates accepted S3/S5/S7 corrections and fails current config-hash reproduction. The canonical M5E-B regression root is `data/m5e_final_acceptance_smoke/`, which passes; no stale smoke data enter calibration, formal metrics, or M5E-E.
 
 ## Next priority
 
-Milestone 5E-D formal encoding and metric evaluation is complete. The next priority is Milestone 5E-E episode statistics and diagnostics using the frozen M5E-D metric table; do not change the M5E-C budgets from formal outcomes.
+Milestone 5E-E episode statistics and diagnostics are complete. The next priority is Milestone 5E-F independent full-evidence validation and acceptance. Do not alter the M5E-E outputs, frozen budgets, hypotheses, or scenario weights.
 
 ## Milestone 5E-C - Calibration and common-budget freeze
 
@@ -1861,7 +1863,7 @@ Milestone 5E-D formal encoding and metric evaluation is complete. The next prior
 
 ## Milestone 5E-D - Formal encoding and metric evaluation
 
-- Status: completed on `feature/m5-risk-roi-compression` as formal encoding and metric-generation work. M5E-E episode statistics, method-performance conclusions, perception evaluation, networking, machine learning, and closed-loop navigation remain not started.
+- Historical M5E-D closeout status: completed on `feature/m5-risk-roi-compression` as formal encoding and metric-generation work. At that closeout, M5E-E episode statistics had not started. M5E-E is now complete; perception evaluation, networking, machine learning, and closed-loop navigation remain not started.
 - Formal dataset: 64 accepted primary episodes and 256 frames (`S1-S8 x 8 formal seeds x 4 first-crossing snapshots`) under `data/m5e_formal/`. Formal seeds follow `200000 + 100 * scenario_index + seed_index`, `seed_index=0..7`; all used replacement index `0`.
 - Frozen budgets used unchanged: severe `31466`, low `32374`, medium `33509`, high `34871` bytes from the M5E-C common interval `[31240, 35779]`.
 - Reconstruction matrix: 4 methods x 4 budgets x 256 frames = 4,096 complete-container reconstructions and 4,096 metric rows. All rows are at or below target; utilization is `[0.991568925468154, 1.0]`.
@@ -1884,4 +1886,50 @@ Milestone 5E-D formal encoding and metric evaluation is complete. The next prior
   - formal determinism comparator: passed, 512 shared rows;
   - diagnostic plotting: passed;
   - new helper unit tests: 5 passed.
-- Documentation: `docs/m5e_formal_evaluation_report.md` records the formal evidence, validation, determinism, and interpretation boundary. M5E-D does not establish Risk ROI superiority; that requires M5E-E statistics and remains unstarted.
+- Documentation: `docs/m5e_formal_evaluation_report.md` records the formal evidence, validation, determinism, and interpretation boundary. M5E-D alone does not establish Risk ROI superiority. M5E-E later analyzed the frozen table and found heterogeneous rather than general superiority.
+
+## Milestone 5E-E - Episode-level statistics and diagnostics
+
+- Status: completed on `feature/m5-risk-roi-compression` using only the frozen M5E-D formal metric table.
+- Frozen analysis:
+  - episode is the resampling unit; four same-episode snapshots are aggregated before inference;
+  - 64 episodes, eight per S1-S8;
+  - 384 valid primary pairs (`64 x 3 baselines x 2 primary budgets`);
+  - scenario-stratified paired bootstrap with 10,000 replicates and seed `20260718`;
+  - equal-weight mean of eight scenario means and percentile 95% intervals;
+  - severe `31466`, low `32374`, medium `33509`, and high `34871` budgets retained unchanged.
+- Primary RW-PSNR results:
+  - severe Risk-minus-Uniform: `-1.122 dB`, 95% CI `[-1.326, -0.919]`, W/T/L `14/0/50`;
+  - severe Risk-minus-Center: `0.520 dB`, 95% CI `[0.219, 0.820]`, W/T/L `41/0/23`;
+  - severe Risk-minus-Object: `-0.883 dB`, 95% CI `[-1.108, -0.660]`, W/T/L `17/0/47`;
+  - low Risk-minus-Uniform: `1.798 dB`, 95% CI `[1.422, 2.194]`, W/T/L `44/0/20`;
+  - low Risk-minus-Center: `2.964 dB`, 95% CI `[2.511, 3.400]`, W/T/L `57/0/7`;
+  - low Risk-minus-Object: `0.191 dB`, 95% CI `[-0.219, 0.606]`, W/T/L `32/1/31`.
+- Hypothesis status:
+  - H1 is not fully supported because severe Risk-minus-Uniform/Object are negative and low Risk-minus-Object crosses zero;
+  - H2's frozen `(S2,S6) - (S1,S8)` Risk-minus-Object contrast is positive at severe and low budgets;
+  - all six H3 Risk-minus-Center `(S2,S3,S4) - S1` contrasts have the predicted positive direction, but the low S2 contrast interval crosses zero;
+  - the complete basic initial support gate is not met because low Risk-minus-Object is single-scenario dominated and severe Risk-minus-Object is negative.
+- Negative and trade-off evidence retained:
+  - Risk ROI lowers overall full-frame and background PSNR against every baseline at both primary budgets;
+  - S5 and S7 do not show a broad Risk advantage;
+  - S8 unexpectedly has large low-budget gains against Uniform/Center and dominates the low Risk-minus-Uniform effect, so it is not a null low-risk control for continuous RW-PSNR.
+- Machine-readable ignored outputs:
+  - `data/m5e_formal/statistical_analysis/episode_level_metrics.csv`;
+  - `paired_effects.csv`, `bootstrap_results.csv`, `scenario_diagnostics.csv`, `win_tie_loss.csv`, and `figure_inputs.csv`;
+  - `statistical_summary.json`, `analysis_manifest.json`, `failure_log.json`, `figure_manifest.json`, and the M5E-E validation summary.
+- Deterministic figures: nine PNG files under `results/m5_compression/m5e_statistics/`; all visually inspected for complete axes, labels, and episode-unit annotations.
+- Determinism: a second complete run under `data/m5e_formal/statistical_analysis_repeat/` matched six CSV files, four normalized JSON files, all bootstrap hashes/intervals, all figure inputs, and all nine PNG files exactly.
+- Validation actually run:
+  - project `.venv` `pip check`: passed;
+  - repository `compileall`: passed;
+  - full unit suite: 285 tests passed, including 17 M5E-E helper tests;
+  - M3C, M3D evaluation/report, M4C, M4D, M5B, M5C, and M5D validators: passed;
+  - M5E-B canonical final smoke: passed for 8 episodes / 32 snapshots;
+  - M5E-C: passed for 16 episodes / 64 frames / 256 ranges / 1,024 allocations;
+  - M5E-D: passed for 64 episodes / 256 frames / 4,096 independently recomputed metric rows;
+  - M5E-E: passed for 64 episodes / 384 primary pairs / 10,000 bootstrap iterations / nine figures;
+  - complete M5E-E deterministic repeat comparison: passed.
+- Documentation: `docs/m5e_statistical_analysis_report.md` separates engineering validity, primary outcomes, secondary trade-offs, scenario heterogeneity, negative/null findings, limitations, and unproven claims.
+- Scientific boundary: risk remains a heuristic proxy, tiled-JPEG remains a spatial allocation prototype, and no perception, collision, network, navigation, machine-learning, or real-robot claim is supported.
+- Next priority: Milestone 5E-F independent full-evidence validation and acceptance. It remains unstarted.

@@ -4,7 +4,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 
 ## Status
 
-M5E-C calibration and common-budget freeze completed on `feature/m5-risk-roi-compression`. This report covers byte feasibility only. At M5E-C closeout, formal evaluation had not started, no formal frames had been generated, and no comparison of method quality or Risk ROI superiority had been performed. Current status after M5E-D: formal frames and frozen metrics exist, but M5E-E statistics and method-performance conclusions remain unstarted.
+M5E-C calibration and common-budget freeze completed on `feature/m5-risk-roi-compression`. This report covers byte feasibility only. At M5E-C closeout, formal evaluation had not started, no formal frames had been generated, and no comparison of method quality or Risk ROI superiority had been performed. Current status after M5E-E: formal metrics and episode statistics exist, H1 is not fully supported, and the calibration budgets remain unchanged.
 
 ## Calibration Dataset
 

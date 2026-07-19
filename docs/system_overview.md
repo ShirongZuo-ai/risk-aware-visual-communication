@@ -157,7 +157,16 @@ Milestone 5E-D completes formal encoding and metric generation:
 5. All formal rows are at or below their target bytes; utilization is `[0.991568925468154, 1.0]`.
 6. The independent validator recomputes the formal allocations and metrics from source frames, masks, metadata, frozen budgets, and codec/allocation definitions.
 7. A 32-frame repeat subset matches the full formal run exactly for 512 shared frame-method-budget rows.
-8. M5E-D is metric-table evidence only; M5E-E statistics and method-performance interpretation remain unstarted.
+8. M5E-D is the frozen metric-table input to M5E-E.
+
+Milestone 5E-E performs the pre-registered episode-level analysis:
+
+1. Four same-episode snapshots are aggregated before inference; frames are never independent samples.
+2. Risk ROI is paired with Uniform, Center ROI, and Object ROI on identical scenario, episode, seed, and budget identities.
+3. Six primary severe/low RW-PSNR comparisons use a 10,000-replicate, seed-`20260718`, scenario-stratified bootstrap and equal-weight scenario means.
+4. Machine-readable outputs retain all scenario effects, unfavorable results, structural empty-region counts, byte fairness, and deterministic sample hashes.
+5. H1 is not fully supported. H2/H3 have direction-specific support under their frozen scenario contrasts, but the complete basic initial support gate is not met.
+6. M5E-E remains offline image-quality evidence; M5E-F full-evidence acceptance has not started.
 
 ## Trajectory Types
 
@@ -260,8 +269,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
-Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. Milestone 5E-A freezes the multi-scene protocol, M5E-B implements deterministic input generation and validation, M5E-C freezes calibration-only common budgets, and M5E-D completes formal encoding and metric generation. These steps do not select a generally best method, run M5E-E statistics, add a network model, add remote perception, or add navigation code.
+Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. Milestone 5E-A freezes the multi-scene protocol, M5E-B implements deterministic input generation and validation, M5E-C freezes calibration-only common budgets, M5E-D completes formal encoding and metric generation, and M5E-E completes episode statistics and diagnostics. These steps do not select a generally best method, add a network model, add remote perception, or add navigation code.
 
 ## Explicitly Not Implemented
 
-The project still does not implement M5E-E/F formal episode statistics and acceptance, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement M5E-F independent full-evidence acceptance, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

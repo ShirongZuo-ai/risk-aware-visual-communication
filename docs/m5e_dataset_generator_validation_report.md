@@ -91,4 +91,4 @@ The complete automatic S1-S8 smoke validator remains the evidence for all eight 
 
 Risk values remain heuristic proxies, not collision probabilities. M5E-B establishes deterministic multi-scene input generation only. It provides no compression, communication, perception, or navigation benefit claim.
 
-Historical M5E-B closeout next priority was Milestone 5E-C calibration pilot and common-budget freeze. Current status after M5E-D: calibration data, common budgets, formal data, and the formal metric table are complete. M5E-E/F statistics and acceptance remain not started, and no multi-scene ROI superiority claim exists.
+Historical M5E-B closeout next priority was Milestone 5E-C calibration pilot and common-budget freeze. Current status after M5E-E: calibration data, common budgets, formal data, the formal metric table, and episode statistics are complete. M5E-F acceptance remains unstarted, and M5E-E does not establish general ROI superiority.

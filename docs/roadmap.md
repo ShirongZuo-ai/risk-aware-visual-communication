@@ -203,12 +203,12 @@ Acceptance: passed. The formal matrix is complete, paired, byte-fair, determinis
 
 ### Milestone 5E-E - Episode statistics and diagnostics
 
-- [ ] Aggregate the formal metrics by episode.
-- [ ] Run the fixed-seed scenario-stratified paired bootstrap and generate diagnostics.
+- [x] Aggregate the formal metrics by episode.
+- [x] Run the fixed-seed scenario-stratified paired bootstrap and generate diagnostics.
 
-Planned: aggregate four snapshots per episode, run the fixed-seed stratified paired bootstrap, and generate overall/per-scenario diagnostics.
+Completed: aggregated four snapshots within each of 64 episodes, generated 384 primary paired effects, ran the 10,000-replicate seed-`20260718` scenario-stratified bootstrap, and produced overall/per-scenario diagnostics plus deterministic figures.
 
-Acceptance: statistical outputs use episodes as the resampling unit and report all pre-registered comparisons, failures, utilization, uncertainty, and limitations.
+Acceptance: passed. Statistical outputs use episodes as the resampling unit and report all pre-registered comparisons, failures, utilization, uncertainty, negative findings, and limitations. H1 is not fully supported; H2/H3 retain their pre-registered direction-specific interpretation.
 
 ### Milestone 5E-F - Formal validation and acceptance
 
@@ -227,4 +227,4 @@ Acceptance: the report states what compression and image-risk-region claims are 
 
 ## Milestone 6 — Simple closed-loop navigation
 
-Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-E.
+Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-F independent formal validation and acceptance; it has not started.
