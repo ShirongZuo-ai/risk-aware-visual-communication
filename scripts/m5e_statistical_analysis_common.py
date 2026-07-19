@@ -675,9 +675,43 @@ def diagnostic_correlations(figure_inputs: list[dict[str, str]]) -> list[dict[st
     return output
 
 
+def _scenario_contrast_bootstrap(
+    pair_rows: list[dict[str, str]],
+    *,
+    budget_label: str,
+    baseline_method: str,
+    focal_scenarios: tuple[str, ...],
+    reference_scenarios: tuple[str, ...],
+) -> tuple[float, float, str]:
+    scenario_samples: dict[str, np.ndarray] = {}
+    for scenario in set(focal_scenarios + reference_scenarios):
+        values = [
+            parse_metric(row["paired_difference"])
+            for row in pair_rows
+            if row["metric_name"] == "risk_weighted_psnr_db"
+            and row["budget_label"] == budget_label
+            and row["baseline_method"] == baseline_method
+            and row["scenario_id"] == scenario
+            and row["pair_valid"] == "true"
+        ]
+        scenario_samples[scenario] = scenario_bootstrap(values)
+    focal = np.mean(
+        np.stack([scenario_samples[scenario] for scenario in focal_scenarios]),
+        axis=0,
+    )
+    reference = np.mean(
+        np.stack([scenario_samples[scenario] for scenario in reference_scenarios]),
+        axis=0,
+    )
+    contrast = focal - reference
+    lower, upper = np.quantile(contrast, [0.025, 0.975], method="linear")
+    return float(lower), float(upper), _bootstrap_hash(contrast)
+
+
 def hypothesis_summary(
     bootstrap_rows: list[dict[str, str]],
     scenario_rows: list[dict[str, str]],
+    pair_rows: list[dict[str, str]],
 ) -> dict[str, Any]:
     primary = {
         (row["budget_label"], row["baseline_method"]): row
@@ -708,12 +742,22 @@ def hypothesis_summary(
         reference = np.mean([
             scenario_index[(scenario, budget, "object_roi")] for scenario in ("S1", "S8")
         ])
+        lower, upper, sample_hash = _scenario_contrast_bootstrap(
+            pair_rows,
+            budget_label=budget,
+            baseline_method="object_roi",
+            focal_scenarios=("S2", "S6"),
+            reference_scenarios=("S1", "S8"),
+        )
         h2.append(
             {
                 "budget_label": budget,
                 "focal_s2_s6_mean": float(focal),
                 "reference_s1_s8_mean": float(reference),
                 "contrast": float(focal - reference),
+                "ci_lower_95": lower,
+                "ci_upper_95": upper,
+                "bootstrap_sample_sha256": sample_hash,
                 "direction_supported": bool(focal - reference > 0.0),
             }
         )
@@ -722,6 +766,13 @@ def hypothesis_summary(
         reference = scenario_index[("S1", budget, "center_roi")]
         for scenario in ("S2", "S3", "S4"):
             contrast = scenario_index[(scenario, budget, "center_roi")] - reference
+            lower, upper, sample_hash = _scenario_contrast_bootstrap(
+                pair_rows,
+                budget_label=budget,
+                baseline_method="center_roi",
+                focal_scenarios=(scenario,),
+                reference_scenarios=("S1",),
+            )
             h3.append(
                 {
                     "budget_label": budget,
@@ -729,9 +780,65 @@ def hypothesis_summary(
                     "scenario_difference": scenario_index[(scenario, budget, "center_roi")],
                     "s1_reference_difference": reference,
                     "contrast": contrast,
+                    "ci_lower_95": lower,
+                    "ci_upper_95": upper,
+                    "bootstrap_sample_sha256": sample_hash,
                     "direction_supported": bool(contrast > 0.0),
                 }
             )
+    relevant_scenarios = (
+        ("S2", "object_roi"),
+        ("S3", "center_roi"),
+        ("S4", "center_roi"),
+        ("S6", "object_roi"),
+    )
+    initial_support = []
+    for budget in PRIMARY_BUDGETS:
+        object_row = primary[(budget, "object_roi")]
+        relevant_checks = []
+        for scenario, baseline in relevant_scenarios:
+            row = next(
+                item for item in scenario_rows
+                if item["scenario_id"] == scenario
+                and item["budget_label"] == budget
+                and item["baseline_method"] == baseline
+                and item["metric_name"] == "risk_weighted_psnr_db"
+            )
+            win_rate = int(row["wins"]) / int(row["episode_count"])
+            relevant_checks.append(
+                {
+                    "scenario_id": scenario,
+                    "baseline_method": baseline,
+                    "win_rate": win_rate,
+                    "exceeds_50_percent": win_rate > 0.5,
+                }
+            )
+        criteria = {
+            "risk_minus_object_mean_positive": (
+                float(object_row["observed_equal_scenario_mean_difference"]) > 0.0
+            ),
+            "risk_minus_object_interval_not_wholly_below_zero": (
+                float(object_row["ci_upper_95"]) >= 0.0
+            ),
+            "majority_relevant_scenarios_win_rate_above_50_percent": (
+                sum(item["exceeds_50_percent"] for item in relevant_checks) >= 3
+            ),
+            "actual_byte_fairness_passed": (
+                object_row["actual_byte_fairness_passed"] == "true"
+            ),
+            "no_single_scenario_dominance": (
+                object_row["single_scenario_dominance"] == "false"
+            ),
+        }
+        initial_support.append(
+            {
+                "budget_label": budget,
+                "criteria": criteria,
+                "relevant_scenario_checks": relevant_checks,
+                "statistical_criteria_all_passed": all(criteria.values()),
+                "independent_validator_gate": "evaluated_separately",
+            }
+        )
     return {
         "H1": {
             "verbatim": "At severe and low budgets, Risk ROI has higher continuous risk-weighted PSNR than Uniform, Center ROI, and Object ROI.",
@@ -753,6 +860,12 @@ def hypothesis_summary(
             "operational_contrasts": h3,
             "direction_supported_for_all_frozen_contrasts": all(
                 item["direction_supported"] for item in h3
+            ),
+        },
+        "basic_initial_support": {
+            "budget_checks": initial_support,
+            "supported_at_any_primary_budget_before_validator_gate": any(
+                item["statistical_criteria_all_passed"] for item in initial_support
             ),
         },
     }
@@ -817,7 +930,7 @@ def build_analysis(
             "confidence_interval": "percentile_95",
             "resampling_unit": "episode",
         },
-        "hypotheses": hypothesis_summary(bootstrap, scenarios),
+        "hypotheses": hypothesis_summary(bootstrap, scenarios, pairs),
         "primary_results": [
             row for row in bootstrap if row["analysis_role"] == "primary"
         ],
