@@ -14,6 +14,7 @@ from scripts.m5e_statistical_analysis_common import (
     parse_metric,
     scenario_bootstrap,
     sha256_json,
+    software_versions,
     stratified_paired_bootstrap,
     summarize_comparisons,
 )
@@ -189,6 +190,11 @@ class M5EStatisticalAnalysisTests(unittest.TestCase):
     def test_bootstrap_constants_match_preregistration(self) -> None:
         self.assertEqual(BOOTSTRAP_SEED, 20260718)
         self.assertEqual(BOOTSTRAP_ITERATIONS, 10_000)
+
+    def test_software_versions_record_only_imported_analysis_dependencies(self) -> None:
+        versions = software_versions()
+        self.assertEqual(set(versions), {"python", "numpy", "matplotlib"})
+        self.assertTrue(all(versions.values()))
 
 
 if __name__ == "__main__":

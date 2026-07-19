@@ -5,7 +5,6 @@ from __future__ import annotations
 import csv
 from datetime import datetime, timezone
 import hashlib
-import importlib.metadata
 import json
 import math
 import os
@@ -778,10 +777,13 @@ def _git_commit() -> str:
 
 
 def software_versions() -> dict[str, str]:
-    versions = {"python": os.sys.version.split()[0], "numpy": np.__version__}
-    for package, key in (("pandas", "pandas"), ("matplotlib", "matplotlib")):
-        versions[key] = importlib.metadata.version(package)
-    return versions
+    import matplotlib
+
+    return {
+        "python": os.sys.version.split()[0],
+        "numpy": np.__version__,
+        "matplotlib": matplotlib.__version__,
+    }
 
 
 def build_analysis(
