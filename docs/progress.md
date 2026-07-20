@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A Phase 2B-3 production-boundary migration: `process_m6a_snapshot(SnapshotInput, M6AProjectionConfig)` now creates exactly the independent state-only and command-conditioned trusted artifacts internally. External raw/combined/oracle/actual-future mask arguments are rejected by its closed signature. No Webots execution, pilot data, calibration, formal evaluation, runner, or evaluator was started; serializer provenance migration and runtime adapter migration remain Phase 2B-4 work.
+
 - Implemented M6-A Phase 1: strict independent State-only and Command-conditioned dual-ROI API boundaries, serializable zero-leakage provenance, and an eight-identity dry-run runner. Synthetic/unit inputs only; no Webots, pilot data, calibration, or formal run was started.
 - Prepared M6-A's independent byte-fair command-conditioned versus state-only manifest and preflight: 16 calibration, 32 formal, and 8 pilot identities; 128 future formal frames and 1,024 future cases. The 16-case codec-only smoke passed with zero over-budget rows; it is not a Webots pilot or formal result, and formal execution remains blocked.
 - Completed a read-only M5E-D closeout audit and synchronized stale M5E-F status language. The audit confirms the frozen 64-episode / 256-frame / 4,096-reconstruction matrix is complete and readable with zero replacements, missing/duplicate keys, non-finite values, missing artifacts, unreadable decoded images, or over-budget rows. The new M6 follow-up protocol keeps the current methods as fairness baselines, predeclares state-only/corridor/footprint/dynamic/horizon ablations, and requires independent data; it does not authorize Risk-VoI training.

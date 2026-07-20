@@ -8,6 +8,7 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 import hashlib, json
 from typing import Iterable
+import math
 from navigation.trajectory_prediction import CommandSegment, EPUCK_ROBOT_HALF_WIDTH_M, TrajectoryPoint, predict_command_conditioned_trajectory, predict_state_only_trajectory
 from risk_map.image_risk_map import Mask2D
 from scripts.m6a_common import VERSION
@@ -45,15 +46,34 @@ def provenance(*,method:Method,state:CurrentState,trajectory:Iterable[Trajectory
 @dataclass(frozen=True)
 class SnapshotInput:
  protocol_version:str; manifest_hash:str; scene:str; episode_id:str; seed:int; snapshot_id:str; timestamp_s:float; state:CurrentState; frame_reference:str; schedule:ScheduleEvidence
-def process_m6a_snapshot(item:SnapshotInput,*,state_mask:Mask2D,command_mask:Mask2D,forbidden:dict|None=None)->dict:
- if item.protocol_version!=VERSION: raise ValueError('protocol mismatch')
- _reject(forbidden)
- st=predict(Method.STATE_ONLY_RISK_ROI,item.state,snapshot_time_s=item.timestamp_s)
- ct=predict(Method.COMMAND_CONDITIONED_RISK_ROI,item.state,schedule=item.schedule,snapshot_time_s=item.timestamp_s)
- outputs={}
- for method,traj,mask,schedule in ((Method.STATE_ONLY_RISK_ROI,st,state_mask,None),(Method.COMMAND_CONDITIONED_RISK_ROI,ct,command_mask,item.schedule)):
-  outputs[method.value]={'method':method.value,'trajectory':[asdict(p) for p in traj],'mask_values':list(mask.values),'provenance':provenance(method=method,state=item.state,trajectory=traj,mask=mask,manifest_hash=item.manifest_hash,scene=item.scene,episode_id=item.episode_id,seed=item.seed,snapshot_id=item.snapshot_id,snapshot_time_s=item.timestamp_s,schedule=schedule)}
- return {'frame_reference':item.frame_reference,'methods':outputs,'comparison':{'shared_current_state_digest':_hash(asdict(item.state)),'allowed_input_difference':['predefined_future_command_schedule']}}
+def process_m6a_snapshot(item:SnapshotInput,projection_config)->dict:
+ """Generate the only two M6-A production masks from allowed snapshot inputs.
+
+ This deliberately has no mask parameters: callers cannot supply raw, M5,
+ combined, oracle, or actual-future masks through the production boundary.
+ """
+ from scripts.m6a_mask_generation import generate_command_conditioned_risk_mask,generate_state_only_risk_mask
+ from scripts.m6a_trusted_artifacts import GeneratedRiskMask,digest
+ if not isinstance(item,SnapshotInput) or item.protocol_version!=VERSION: raise ValueError('invalid M6-A snapshot input')
+ if not item.manifest_hash or not item.scene or not item.episode_id or not item.snapshot_id or not item.frame_reference: raise ValueError('incomplete snapshot metadata')
+ if not math.isfinite(item.timestamp_s): raise ValueError('invalid snapshot timestamp')
+ projection_config.validate()
+ state=generate_state_only_risk_mask(item.state,projection_config)
+ command=generate_command_conditioned_risk_mask(item.state,item.schedule,projection_config,timestamp_s=item.timestamp_s)
+ expected={Method.STATE_ONLY_RISK_ROI.value:'state_only_predictor',Method.COMMAND_CONDITIONED_RISK_ROI.value:'command_conditioned_predictor'}
+ config_digests={
+  'horizon_digest':digest(projection_config.horizon_s),'step_digest':digest(projection_config.step_s),
+  'footprint_digest':digest(projection_config.footprint_half_width_m),'corridor_digest':digest(projection_config.corridor_rule),
+  'projection_digest':digest(projection_config.projection_rule),'rasterization_digest':digest((projection_config.width_px,projection_config.height_px,projection_config.rasterization_rule)),
+ }
+ for artifact in (state,command):
+  if not isinstance(artifact,GeneratedRiskMask) or expected.get(artifact.method)!=artifact.source_predictor: raise ValueError('trusted method/source pairing failed')
+  if artifact.predictor_config_digest!=projection_config.sha256(): raise ValueError('projection configuration mismatch')
+  if any((artifact.actual_future_usage,artifact.combined_usage,artifact.raw_external_mask_usage,artifact.fallback,artifact.replacement)): raise ValueError('unsafe trusted artifact')
+ if state.footprint_digest!=config_digests['footprint_digest'] or command.footprint_digest!=config_digests['footprint_digest'] or state.projection_digest!=config_digests['projection_digest'] or command.projection_digest!=config_digests['projection_digest'] or state.rasterization_digest!=config_digests['rasterization_digest'] or command.rasterization_digest!=config_digests['rasterization_digest']: raise ValueError('shared bridge configuration mismatch')
+ methods={Method.STATE_ONLY_RISK_ROI.value:state,Method.COMMAND_CONDITIONED_RISK_ROI.value:command}
+ if set(methods)!=set(expected): raise ValueError('M6-A requires exactly two independent methods')
+ return {'snapshot':{'manifest_hash':item.manifest_hash,'scene':item.scene,'episode_id':item.episode_id,'seed':item.seed,'snapshot_id':item.snapshot_id,'timestamp_s':item.timestamp_s},'frame_reference':item.frame_reference,'methods':methods,'comparison':{'shared_current_state_digest':_hash(asdict(item.state)),'shared_projection_config_digest':projection_config.sha256(),**config_digests,'allowed_input_difference':['predictor identity','predefined_future_command_schedule'],'actual_future_usage_count':0,'combined_usage_count':0,'raw_mask_usage_count':0,'fallback_count':0,'replacement_count':0}}
 def serialize_snapshot(output:dict,target:Path)->None:
  if 'm5' in target.parts: raise ValueError('M5 output roots are forbidden')
  if target.exists(): raise FileExistsError('refusing overwrite')
