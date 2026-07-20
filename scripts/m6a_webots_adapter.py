@@ -127,9 +127,18 @@ def main_m6a_webots_controller():
  config_path=os.environ.get('M6A_RUNTIME_CONFIG')
  if not config_path:return 2
  try:
-  from controller import Robot # delayed: ordinary Python imports remain Webots-free
-  config,schedule=load_m6a_runtime_config(config_path,expected_manifest_hash=json.loads(Path(config_path).read_text())['manifest_hash'])
   from controller import Supervisor
-  robot=Supervisor();reader=WebotsCurrentStateReader(robot);facade=WebotsRobotFacade(robot,pose_reader=lambda:asdict(reader().state))
-  run_m6a_webots_episode(config,facade,state_reader=reader,frame_reader=facade.frame_sample,predefined_schedule=schedule);return 0
+  from navigation.trajectory_prediction import CommandSegment
+  from scripts.m6a_v2_runtime_summary import run_v2_controller_lifecycle
+  runtime=json.loads(Path(config_path).read_text(encoding='utf-8'));holder={}
+  def devices(supervisor,cfg):
+   reader=WebotsCurrentStateReader(supervisor,robot_def='ROBOT',left_motor=cfg['left_motor'],right_motor=cfg['right_motor']);holder['reader']=reader;holder['facade']=WebotsRobotFacade(supervisor,pose_reader=lambda:asdict(reader().state))
+  def episode(supervisor,cfg):
+   from scripts.m6a_dual_roi import ScheduleEvidence
+   schedule=ScheduleEvidence(cfg['schedule']['schedule_id'],cfg['schedule']['available_time_s'],tuple(CommandSegment(x['start_s'],x['end_s'],x['left_rad_s'],x['right_rad_s']) for x in cfg['schedule']['segments']))
+   root=Path(cfg['output_root']);root.mkdir(parents=True,exist_ok=True)
+   legacy=M6ARuntimeConfig(cfg['v2_manifest_sha256'],cfg['scene'],cfg['episode_id'],cfg['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in cfg['snapshots']),root,M6AProjectionConfig(**cfg['projection_config']))
+   result=run_m6a_webots_episode(legacy,holder['facade'],state_reader=holder['reader'],frame_reader=holder['facade'].frame_sample,predefined_schedule=schedule)
+   return [{'snapshot_id':item['snapshot_id'],'timestamp_s':item['timestamp_s'],'path':path,'methods':list(result.method_set),'actual_future_usage':0,'combined_usage':0,'raw_mask_usage':0,'fallback':0,'replacement':0} for item,path in zip(cfg['snapshots'],result.serialized_snapshot_paths)]
+  root=Path(runtime['output_root']);code,_=run_v2_controller_lifecycle(config_path,supervisor_factory=Supervisor,devices_initializer=devices,episode_runner=episode,summary_path=root/'episode_runtime_summary.json',status_path=root/'episode_runtime_status.json');return code
  except Exception:return 1
