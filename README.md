@@ -111,7 +111,7 @@ Completed through Milestone 5E-E:
 - multi-scene offline compression evaluation;
 - episode-level statistical analysis.
 
-Next milestone in the roadmap: Milestone 5E-F independent full-evidence validation and acceptance.
+Milestone 5E-F independent full-evidence validation and acceptance has passed. M5 is formally frozen; the acceptance report is [here](docs/m5e_f_independent_acceptance_report.md). The next work is independent M6 counterfactual data/protocol preparation, not immediate Risk-VoI training.
 
 ## Limitations
 
@@ -123,8 +123,7 @@ Next milestone in the roadmap: Milestone 5E-F independent full-evidence validati
 
 ## Planned Work
 
-- Complete independent M5E-F evidence validation.
-- Keep the completed M5E-E Heuristic Risk ROI result as a baseline and, only after M5E-F, execute the planned [Risk-conditioned Visual VoI study](docs/m6_risk_voi_experiment_plan.md).
+- Keep the completed M5E-E Heuristic Risk ROI result as a baseline while preparing the independently split data and protocol required by the planned [Risk-conditioned Visual VoI study](docs/m6_risk_voi_experiment_plan.md).
 - Decide whether the offline evidence justifies perception or closed-loop navigation evaluation.
 - Add a license before encouraging reuse.
 - Package a cleaner reproduction subset if the project is prepared for external benchmarking.
