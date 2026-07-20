@@ -256,3 +256,9 @@
 - **Decision:** Treat the existing M5E Risk ROI as the Heuristic Risk ROI baseline. Plan, but do not start, a counterfactual tile-level Visual VoI study until M5E-F independent acceptance.
 - **Reason:** M5E-E shows heterogeneous offline image-quality effects and does not support a general superiority or navigation claim. Current M5E outputs do not contain enough controlled tile-quality counterfactuals to train a VoI allocator.
 - **Impact:** The new plan prioritizes trajectory-critical obstacle recall, episode/scene-isolated splits, actual complete-container byte increments, an offline oracle, and a deterministic greedy allocator before any learned policy, closed-loop navigation, or network simulation.
+
+## 2026-07-20 - Milestone 5 public presentation boundary
+
+- **Decision:** Curate the public README around four figures and regenerate M5E figures from a checked snapshot of the frozen M5E-E outputs, rather than editing prior raster figures or exposing every diagnostic on the landing page.
+- **Reason:** A compact presentation makes the formal scope, heterogeneous primary results, and limitations reviewable without concealing adverse results or turning the README into a paper-length report.
+- **Impact:** The README retains S7/S8, negative/null effects, matched-byte context, and simulation-only limits; detailed diagnostics remain linked from the statistical and acceptance reports. Public plotting is presentation-only and does not write M5E-D/E formal data or manifests.
