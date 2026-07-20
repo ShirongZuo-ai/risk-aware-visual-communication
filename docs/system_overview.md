@@ -1,6 +1,6 @@
 # System Overview
 
-Last updated: 2026-07-18 (Asia/Shanghai)
+Last updated: 2026-07-19 (Asia/Shanghai)
 
 ## Completed Pipeline
 
@@ -82,13 +82,91 @@ Milestone 4C connects projection to Webots for calibration and validation:
 5. Webots e-puck Camera axis calibration: `x_optical=-y_device`, `y_optical=-z_device`, `z_optical=x_device`.
 6. GUI human review passed.
 
-Milestone 4D-1 and 4D-2 implement and automatically validate image-space risk masks:
+Milestone 4D-1 and 4D-2 implement and validate image-space risk masks:
 
 1. A Webots-decoupled pure-Python mask core fills planned, state, and combined channels over projected clipped obstacle polygons.
 2. A dedicated M4D Webots scene samples one 7.968 s snapshot and computes world risk, Camera projection, and image masks from that same snapshot.
 3. Numeric masks are saved as row-major floating-point arrays; PNG masks are visualization-only quantized copies.
 4. Automatic validation recomputes trajectories, world risks, projections, and masks from metadata and checks exact ID binding, max-union overlap, invisible-obstacle skipping, exclusive-pixel risk binding, and RGB geometry alignment.
-5. GUI human acceptance for M4D remains pending.
+5. GUI human acceptance for M4D passed, and Milestone 4 is formally accepted.
+
+Milestone 5A freezes the compression and fair-bitrate protocol without implementation:
+
+1. The first prototype is a tiled-JPEG spatial allocation experiment, not a standards-compatible ROI video codec.
+2. All methods share the same `160x120` frame, `20x20` tile grid, deterministic container, encoder, decoder, and budget matcher.
+3. Uniform, Center ROI, Object ROI, and Risk ROI are the frozen first baselines.
+4. Risk ROI uses the accepted combined image-risk mask and must not use future actual trajectories or downstream evaluation results.
+5. Budgets are selected after a Uniform JPEG pilot in Milestone 5B, not hard-coded during 5A.
+
+Milestone 5B implements the shared Uniform tiled-JPEG codec foundation:
+
+1. A deterministic Pillow-based tile encoder/decoder for the frozen `160x120`, `20x20`, 48-tile grid.
+2. A strict binary container with a 23-byte header, 48 six-byte index entries, and row-major JPEG payloads.
+3. Actual-byte accounting where `total_bytes = container_overhead_bytes + sum(tile_jpeg_payload_bytes)`.
+4. Exhaustive Uniform quality matching over JPEG qualities 1 through 95, with no over-budget candidate selection.
+5. A Uniform pilot on `image_risk_validation_episode_0001.png` that records development budgets only.
+
+Milestone 5C implements spatial scoring and allocation while keeping the M5B transport backend unchanged:
+
+1. Center ROI scores normalized Gaussian distance from the fixed camera principal point.
+2. Object ROI scores maximum clipped-polygon coverage for eligible visible M4D obstacles.
+3. Risk ROI scores the maximum value of the accepted combined floating-point image-risk mask per tile.
+4. All non-Uniform methods share one pre-encoded tile cache and exhaustive actual-byte candidate search; Uniform continues to use its accepted M5B matcher.
+5. The resulting 16 method-budget allocation rows validate byte accounting and no-future-actual inputs only, not image quality or task benefit.
+
+Milestone 5D evaluates those already fixed 16 allocations without invoking a matcher or changing the selected quality maps:
+
+1. Each saved M5C quality tuple is deterministically re-encoded, serialized, decoded, and checked against its original actual container bytes.
+2. The evaluator measures full RGB MSE/PSNR/SSIM, continuous combined-mask risk-weighted MSE/PSNR, and pixel-center eligible-object, high-risk (`combined >= 0.20`), and background regional MSE/PSNR.
+3. Generated CSV, metadata, decoded PNGs, and diagnostics are ignored development evidence for one `160x120` M4D snapshot.
+4. This is not a perception, communication, collision-probability, navigation, or multi-frame generalization result; M5E is the next priority for broader offline evidence.
+
+Milestone 5E-A freezes the broader offline experiment without generating data:
+
+1. Development, 64-frame calibration, and 256-frame formal splits are disjoint.
+2. Eight static-AABB scenario families cover straight risk, visual distractors, left/right turns, planned/state disagreement, area-risk disagreement, partial visibility, and low-risk controls.
+3. Four method-independent snapshots per episode use fixed reference-motion progress.
+4. Calibration alone establishes four common feasible actual-byte budgets; formal data cannot alter them.
+5. Formal inference aggregates snapshots within episodes and uses paired, scenario-stratified bootstrap resampling.
+6. Engineering validity is separated from scientific support, and failed or unfavorable episodes cannot be silently removed.
+
+Milestone 5E-B implements deterministic multi-scene input generation without compression evaluation:
+
+1. One parameterized Webots world/controller instantiates the eight frozen static-AABB scenario families from seeded configs.
+2. Four snapshots per episode are triggered at fixed reference-motion progress and save aligned RGB, planned/state/combined float masks, and complete metadata.
+3. An independent validator recomputes trajectories, world risks, Camera projections, masks, scenario roles, hashes, and no-future-actual provenance.
+4. The smoke dataset contains 8 episodes and 32 snapshots; a second output run is byte/config/metadata identical.
+5. It does not perform formal encoding, metric evaluation, or statistics.
+
+Milestone 5E-C completes calibration-only byte feasibility and common-budget freezing:
+
+1. The calibration split contains 16 accepted primary episodes and 64 frames.
+2. All calibration episodes used replacement index `0`.
+3. The common complete-container-byte interval is `[31240, 35779]`.
+4. The frozen formal targets are severe `31466`, low `32374`, medium `33509`, and high `34871` bytes.
+5. All 1024 calibration frame-method-budget allocations are feasible under the frozen matcher.
+6. The recorded baseline is 263 unit tests passed plus passing M3/M4/M5 validators.
+7. Calibration is byte-feasibility evidence only; it is not a formal quality comparison or a Risk ROI superiority result.
+
+Milestone 5E-D completes formal encoding and metric generation:
+
+1. The formal split contains 64 accepted primary episodes and 256 frames.
+2. All formal episodes used replacement index `0`.
+3. The frozen M5E-C budgets are used unchanged.
+4. The formal matrix contains 4096 complete-container reconstructions and 4096 frozen M5D metric rows.
+5. All formal rows are at or below their target bytes; utilization is `[0.991568925468154, 1.0]`.
+6. The independent validator recomputes the formal allocations and metrics from source frames, masks, metadata, frozen budgets, and codec/allocation definitions.
+7. A 32-frame repeat subset matches the full formal run exactly for 512 shared frame-method-budget rows.
+8. M5E-D is the frozen metric-table input to M5E-E.
+
+Milestone 5E-E performs the pre-registered episode-level analysis:
+
+1. Four same-episode snapshots are aggregated before inference; frames are never independent samples.
+2. Risk ROI is paired with Uniform, Center ROI, and Object ROI on identical scenario, episode, seed, and budget identities.
+3. Six primary severe/low RW-PSNR comparisons use a 10,000-replicate, seed-`20260718`, scenario-stratified bootstrap and equal-weight scenario means.
+4. Machine-readable outputs retain all scenario effects, unfavorable results, structural empty-region counts, byte fairness, and deterministic sample hashes.
+5. H1 is not fully supported. H2/H3 have direction-specific support under their frozen scenario contrasts, but the complete basic initial support gate is not met.
+6. M5E-E remains offline image-quality evidence; M5E-F full-evidence acceptance has not started.
 
 ## Trajectory Types
 
@@ -113,6 +191,27 @@ Milestone 4D-1 and 4D-2 implement and automatically validate image-space risk ma
 - Milestone 4D float masks: `data/masks/m4/image_risk_validation_episode_0001_masks.json`
 - Milestone 4D RGB frame: `data/frames/m4/image_risk_validation_episode_0001.png`
 - Milestone 4D diagnostics: `results/m4_image_risk/`
+- Milestone 5A compression protocol: `docs/m5_compression_and_bitrate_protocol.md`
+- Milestone 5B validation report: `docs/m5b_tiled_jpeg_validation_report.md`
+- Milestone 5B generated Uniform pilot CSV: `data/logs/m5/m5b_uniform_quality_sweep.csv`
+- Milestone 5B generated Uniform pilot metadata: `data/metadata/m5/m5b_uniform_pilot.json`
+- Milestone 5B generated payload curve: `results/m5_compression/m5b_uniform_payload_curve.png`
+- Milestone 5C allocation CSV: `data/logs/m5/m5c_allocation_validation.csv`
+- Milestone 5C allocation metadata: `data/metadata/m5/m5c_allocation_validation.json`
+- Milestone 5C allocation diagnostics: `results/m5_compression/`
+- Milestone 5D quality CSV: `data/logs/m5/m5d_single_frame_quality.csv`
+- Milestone 5D quality metadata and decoded frames: `data/metadata/m5/m5d_single_frame_evaluation.json`, `data/decoded/m5/m5d/`
+- Milestone 5D diagnostics and report: `results/m5_compression/m5d_*.png`, `docs/m5d_single_frame_evaluation_report.md`
+- Milestone 5E-A protocol: `docs/m5e_multiscene_offline_evaluation_protocol.md`
+- Milestone 5E-B generator report: `docs/m5e_dataset_generator_validation_report.md`
+- Milestone 5E-B smoke manifest: `data/logs/m5/m5e_dataset_manifest.csv`
+- Milestone 5E-B smoke diagnostics: `results/m5_compression/m5e_smoke/`
+- Milestone 5E-C calibration protocol: `docs/m5e_calibration_protocol.md`
+- Milestone 5E-C calibration report: `docs/m5e_calibration_report.md`
+- Milestone 5E-C calibration root: `data/m5e_calibration/`
+- Milestone 5E-D formal report: `docs/m5e_formal_evaluation_report.md`
+- Milestone 5E-D formal root: `data/m5e_formal/`
+- Milestone 5E-D formal diagnostics: `results/m5_compression/m5e_formal/`
 - Milestone 2 results: `results/m2_trajectory/`
 - Milestone 2R arc results: `results/m2_trajectory_arc/`
 
@@ -170,6 +269,8 @@ Milestone 3B keeps this in world coordinates. Milestone 3D still keeps risk in w
 
 Milestone 4C validates static obstacle 3D Box projection into image polygons against a real Webots RGB frame. Milestone 4D fills planned/state/combined image-risk masks over validated clipped obstacle regions. It does not project empty trajectory corridors as the main Risk ROI.
 
+Milestone 5A defines how later compression experiments consume accepted image-risk masks. Milestone 5B adds the shared Uniform tiled-JPEG backend and budget pilot. Milestone 5C adds Center/Object/Risk scoring and shared actual-byte allocation on the M4D development snapshot. Milestone 5D measures fixed-allocation single-frame quality only. Milestone 5E-A freezes the multi-scene protocol, M5E-B implements deterministic input generation and validation, M5E-C freezes calibration-only common budgets, M5E-D completes formal encoding and metric generation, and M5E-E completes episode statistics and diagnostics. These steps do not select a generally best method, add a network model, add remote perception, or add navigation code.
+
 ## Explicitly Not Implemented
 
-The project still does not implement ROI compression, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.
+The project still does not implement M5E-F independent full-evidence acceptance, object detection, closed-loop navigation, ROS 2, WSL, or machine learning.

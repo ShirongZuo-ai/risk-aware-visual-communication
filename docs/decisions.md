@@ -9,10 +9,10 @@
 
 ## 2026-07-17 — Communication comparison policy
 
-- **Decision:** Compare policies at matched or closely matched actual byte budgets of 5, 10, 20, and 40 KB/frame.
-- **Reason:** Resource allocation cannot be credited for gains obtained by sending more data.
+- **Decision:** Initial rough candidate budgets were 5, 10, 20, and 40 KB/frame. This early choice is superseded by the Milestone 5A budget-selection protocol.
+- **Reason:** Resource allocation cannot be credited for gains obtained by sending more data, and the actual feasible budget range must be measured from the tiled-JPEG container and source frames.
 - **Rejected:** Comparing methods only at nominal quality settings or unequal byte counts.
-- **Impact:** Every later evaluation must log actual bytes and budget mismatch.
+- **Impact:** Every later evaluation must log actual bytes and budget mismatch. Milestone 5B must run a Uniform JPEG pilot before selecting final budgets.
 
 ## 2026-07-17 — Terminology
 
@@ -125,3 +125,126 @@
 - **Reason:** Actual M4C Webots RGB validation showed that Boxes in front of the e-puck camera are seen when they lie along local `+x_device`, LEFT/RIGHT are correctly separated by the sign of local `y_device`, and vertical image direction matches local `z_device`. The earlier Milestone 4A initial assumption `diag(1,-1,-1)` made all front Boxes project outside the frustum in `episode_0001`.
 - **Rejected:** Keeping the initial `diag(1,-1,-1)` e-puck adapter mapping despite failed Webots evidence, or changing the generic pure-Python projection core to hard-code Webots-specific axes.
 - **Impact:** `perception` remains Webots-decoupled and accepts explicit extrinsics. The Webots adapter supplies the calibrated `R_device_to_optical` matrix for the R2025a e-puck Camera. M4C accepted automatic evidence starts from `projection_validation_episode_0003`; earlier M4C episodes are calibration/debug artifacts.
+
+## 2026-07-18 - Milestone 5A compression and fair-bitrate protocol
+
+- **Decision:** Use a tiled-JPEG spatial allocation prototype for the first compression experiment.
+- **Reason:** It is simple, auditable, deterministic, and sufficient to test whether spatial resource allocation favors risk-relevant image regions under equal transmitted bytes.
+- **Rejected for now:** Standards-compatible JPEG ROI coding, H.264/H.265/VVC/AV1 QP maps, neural codecs, temporal video coding, network simulation, remote perception, and closed-loop navigation.
+- **Decision:** Use a `160x120` frame split into `20x20` tiles, giving 8 columns, 6 rows, and 48 row-major tiles.
+- **Reason:** This exactly covers the accepted e-puck Camera frame without overlap or gaps and keeps per-tile accounting inspectable.
+- **Decision:** Compare Uniform, Center ROI, Object ROI, and Risk ROI using the same encoder, deterministic container, decoder, tile grid, JPEG settings, and budget matcher.
+- **Reason:** Fair comparison requires that Risk ROI can only differ in tile scoring, not in byte accounting or codec machinery.
+- **Decision:** Match methods by actual total transmitted bytes, including container overhead and all transmitted metadata, and never select over-budget candidates.
+- **Reason:** Nominal quality settings are not a fair communication budget because JPEG payloads vary by image content and ROI selection.
+- **Decision:** Select numeric budgets only after a Milestone 5B Uniform JPEG pilot; the old 5/10/20/40 KB values are not frozen defaults.
+- **Reason:** The feasible range depends on tiled payload sizes, container overhead, and actual source-frame complexity.
+- **Decision:** Risk ROI tile scores use `max` combined image risk inside each tile for the first version.
+- **Reason:** A maximum preserves small high-risk objects that would be diluted by mean risk over a `20x20` tile.
+- **Decision:** Treat risk-weighted quality as an image-quality diagnostic over the accepted heuristic combined mask, not as collision probability, perception accuracy, or navigation safety.
+- **Impact:** Milestone 5B may implement the shared codec backend and pilot, but no compression implementation belongs in Milestone 5A. Later claims remain limited until separately validated.
+
+## 2026-07-18 - Milestone 5B tiled-JPEG backend
+
+- **Decision:** Add `Pillow==12.3.0` as the explicit JPEG backend dependency for the first tiled-JPEG prototype.
+- **Reason:** The current project environment already validates Pillow `12.3.0`, and using the installed version makes M5B payload and budget evidence reproducible on this machine.
+- **Decision:** Use Pillow JPEG settings `format="JPEG"`, `quality=1..95`, `progressive=False`, `optimize=False`, and `subsampling=0`.
+- **Reason:** Explicit settings avoid hidden Pillow defaults. `subsampling=0` preserves color edges in `20x20` tiles and is shared by every later baseline using this backend.
+- **Decision:** Do not transmit tile quality values in the M5B container.
+- **Reason:** JPEG payloads contain the tables required for decode, and quality values are experiment diagnostics rather than receiver-required payload.
+- **Decision:** Use a strict big-endian binary container with magic `RAVCJT1`, version `1`, a 23-byte header, 48 six-byte tile index entries, and concatenated row-major JPEG payloads.
+- **Reason:** This makes actual-byte accounting deterministic and includes only decode-required information.
+- **Decision:** M5B Uniform budget matching exhaustively enumerates qualities 1 through 95 and chooses the largest legal actual container payload under the target, using higher quality as the tie-break.
+- **Reason:** JPEG payload bytes are content-dependent and need not be strictly monotonic; exhaustive search avoids invalid binary-search assumptions.
+- **Decision:** Development budgets for the accepted M4D frame are selected from actual Uniform container bytes at qualities 5, 25, 50, and 80.
+- **Reason:** These produce four distinct under-budget matched qualities on the accepted development frame while remaining tied to measured payloads rather than intuition.
+- **Impact:** Center/Object/Risk ROI allocation in Milestone 5C must reuse the same tile grid, JPEG settings, container, and budget matcher. Bit-exact payload stability is only claimed within the same Pillow/libjpeg environment; other environments must rerun the pilot and matcher.
+
+## 2026-07-18 - Milestone 5C shared spatial allocation completion
+
+- **Decision:** Resolve the M5A numeric allocation ambiguity with one shared exhaustive candidate space: background quality `1..94`, enhancement quality `2..95` constrained by `enhancement_quality > background_quality`, and top-k enhanced tiles `1..48`. If every score is equal, use a Uniform-quality candidate path rather than assigning an arbitrary ROI.
+- **Reason:** M5A froze the allocation family and fairness rule but intentionally left numeric ranges to the implementation phase. The chosen range covers the full M5B JPEG quality domain while retaining a genuine high-versus-background split. The equal-score behavior preserves stable semantics.
+- **Decision:** Center ROI uses tile-center Gaussian scores around the accepted M4D principal point (`79.5`, `59.5`) with normalized `sigma=0.5`; normalized offsets divide by the frame half-width and half-height.
+- **Reason:** This supplies the protocol's unspecified Center parameter without following obstacles, risk, RGB content, robot turn direction, or later evaluation results, and preserves left/right and top/bottom symmetry on the frozen grid.
+- **Decision:** Object ROI uses the maximum exact clipped-polygon coverage fraction per tile over `fully_visible`, `partially_visible`, and `intersects_near_plane` projections. Risk ROI uses the maximum accepted combined floating-point mask value in each tile.
+- **Reason:** These are the M5A baseline definitions and maintain method isolation: Object does not read risk values; Risk does not read RGB, labels, or future actual trajectory.
+- **Impact:** All non-Uniform methods share cache, JPEG settings, binary container, actual-byte objective, and tie-break: maximum legal actual bytes, then higher enhancement quality, higher background quality, smaller top-k, and lexicographic configuration. M5C proves allocation/fairness mechanics only, not image-quality, perception, navigation, or communication benefit.
+
+## 2026-07-18 - Milestone 5D single-frame quality evaluation
+
+- **Decision:** Define the M5D high-risk image region as the accepted continuous combined float mask satisfying `combined_risk >= 0.20`; retain the continuous, unthresholded combined mask for the primary risk-weighted MSE and PSNR.
+- **Reason:** The M4D risk scale is a bounded heuristic proxy, and `0.20` yields a fixed, explicit diagnostic subset without discarding the continuous weighting used by the primary risk-weighted metric. The threshold is specified before reading M5D quality results and applies identically to all four fixed M5C allocations.
+- **Decision:** Use `scikit-image==0.26.0` only in the M5D evaluator for the frozen RGB SSIM call (`data_range=255`, `channel_axis=-1`, Gaussian weights, `sigma=1.5`, population covariance, `win_size=11`), alongside `numpy==2.4.6` for numeric evaluation.
+- **Reason:** These dependencies provide the protocol-defined, deterministic full-image quality metric without changing the codec, allocation matcher, container, risk model, Webots adapter, or M4 evidence. `imageio` is an indirect wheel dependency of scikit-image in this environment; it is neither imported by project code nor listed as a direct project requirement.
+- **Impact:** M5D reports descriptive quality values for one accepted 160x120 M4D frame and its pre-existing 16 M5C fixed allocations. It does not retune allocation from quality metrics and must not be interpreted as a claim of collision probability, general method superiority, perception benefit, navigation benefit, or statistical significance.
+
+## 2026-07-18 - Milestone 5E-A multi-scene protocol freeze
+
+- **Decision:** Exclude `image_risk_validation_episode_0001` from M5E and separate development, calibration, and formal evidence by split, seed, episode, frame, and path. Use 64 calibration frames and 256 formal frames across eight equally weighted static-AABB scenario families.
+- **Reason:** The accepted frame has already informed M4D-M5D development and cannot provide independent evidence. Balanced, disjoint scenario episodes reduce selection bias while remaining practical on the current machine.
+- **Decision:** Select four M5E budgets only from the calibration-wide common feasible complete-container-byte interval, using fixed 5%, 25%, 50%, and 80% interval positions plus pre-registered adequacy checks. Formal evaluation may not recalibrate budgets.
+- **Reason:** Single-frame M5B targets do not guarantee feasibility across different image content. A common interval and method-identical targets preserve actual-byte fairness without using formal outcomes.
+- **Decision:** Select four snapshots at fixed reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`; invalidate and replace an entire episode when a required snapshot or scenario condition fails.
+- **Reason:** Deterministic, method-independent triggers prevent post-hoc selection. Whole-episode replacement preserves paired comparisons and within-episode correlation.
+- **Decision:** Use episode-level paired differences and a 10,000-replicate, seed-`20260718`, scenario-stratified bootstrap. Equal-weight the eight scenario means in overall estimates.
+- **Reason:** Four snapshots in one episode are correlated and must not be treated as independent samples. Stratification prevents a single scenario from dominating the overall estimate.
+- **Impact:** Center/Object/Risk scoring, M5C allocation, `HIGH_RISK_THRESHOLD=0.20`, M5D metrics, JPEG/container settings, and risk/projection definitions are frozen. Engineering acceptance is independent of Risk ROI performance. The next task is M5E-B generator implementation; no M5E data exist yet.
+
+## 2026-07-18 - Milestone 5E-B deterministic dataset generator
+
+- **Decision:** Use one parameterized Webots world/controller that imports static, unrotated AABB Box nodes from an immutable per-episode `ScenarioConfig`.
+- **Reason:** A shared generator reduces scene drift while retaining exact scenario IDs, roles, seeds, geometry, command schedules, and hashes in saved evidence.
+- **Decision:** Capture the first Webots step at or after reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`, and validate against tolerance `0.006`.
+- **Reason:** This implements the frozen M5E-A result-independent snapshot rule without selecting frames from risk or image-quality outcomes.
+- **Decision:** Calibrate S5 with a bounded deterministic geometry sweep using only snapshot-time planned/state trajectories and Camera geometry, then write the selected schedule and AABBs back into the static scenario definition.
+- **Reason:** The original S5 geometry and turn timing did not create stable opposite risk rankings at the frozen third snapshot. The selected configuration gives visible, mask-contributing branch objects with positive planned/state margins without reading compression or quality results.
+- **Decision:** Use a fixed departure arc after the validation approach in S1, S2, S6, and S7.
+- **Reason:** It preserves the required high-risk approach at `p=0.70` while avoiding physical collision before all four deterministic snapshots are captured.
+- **Impact:** M5E-B can generate and independently validate a deterministic 32-frame smoke dataset. Risk formulas/parameters, Camera projection, trajectory definitions, snapshot targets, tile/compression policies, and M5E-A acceptance thresholds remain unchanged. Calibration generation and common-budget selection remain Milestone 5E-C work.
+
+## 2026-07-18 - S3 Webots contact clearance
+
+- **Decision:** Move only the nominal S3 `TURN_RISK` Box center from `(0.155, 0.080) m` to `(0.210, 0.110) m`, retaining its size and the complete S3 left-turn command schedule.
+- **Reason:** Per-step Webots evidence with the canonical single-instance world found the original e-puck body-cylinder/Box contact beginning at step `140` (`4.480 s`) during the left arc. Two corrected batch runs and one corrected GUI run retained the frozen S3 risk/yaw/centroid criteria while maintaining at least `0.003971330 m` estimated body clearance and zero obstacle contacts.
+- **Rejected:** Hiding the Console warning, changing the global `basicTimeStep`, weakening S3 validator thresholds, changing risk/trajectory/Camera/mask logic, changing wheel speed or turn semantics, or altering S1/S2/S4-S8.
+- **Impact:** S3 remains a forward-left-arc, high-risk visual scenario under the frozen M5E-A protocol, but its validation target is no longer a physical collider on the executed path. Generated data remain deterministic, and no compression or quality metric informed the correction.
+
+## 2026-07-19 - S5/S7 Webots contact clearance and diagnostic identity
+
+- **Decision:** Move both S5 branch Boxes `0.030 m` in `+y`, retaining their dimensions and command schedule; retain all S7 geometry and switch only to a stop phase at `5.5 s`, after its final frozen snapshot.
+- **Reason:** GUI and step diagnostics found post-snapshot e-puck body contact with `M5E_S5_PLANNED_BRANCH` and `M5E_S7_RISK`. The corrected configurations retain every frozen S5/S7 validator condition while producing positive full-episode clearance.
+- **Decision:** Optional M5E contact diagnostics may record only the top-level e-puck body node ID. Do not call `getId()` on internal e-puck PROTO nodes.
+- **Reason:** Internal wheel DEF nodes produced Webots Console errors and their IDs were diagnostic-only. Obstacle identity is already stable through top-level DEF nodes and immutable `ScenarioConfig.obstacle_id` strings.
+- **Impact:** No risk, trajectory, Camera, projection, mask, snapshot, codec, or evaluation definition changed. M5E-B can be closed as data-generation/risk-scenario validation evidence only; it does not support a multi-scene Risk ROI superiority claim.
+
+## 2026-07-19 - M5E-C common actual-byte budget freeze
+
+- **Decision:** Freeze M5E formal target budgets from the calibration-only common complete-container-byte interval, not from development evidence, JPEG quality labels, payload-only sizes, or method outcomes.
+- **Reason:** Across the 64 calibration frames and all four frozen methods, exhaustive legal candidate measurement yields a nonempty common interval `[31240, 35779]` bytes. The predeclared floor rule produces strictly increasing common targets: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes.
+- **Decision:** Retain the existing deterministic M5C matching/tie-break and require actual complete container bytes at or below each target for every frame-method combination.
+- **Reason:** This preserves method-identical byte fairness and includes header, tile index, and JPEG payload in every budget. The 1,024 calibration allocation matrix passed without an over-budget result.
+- **Rejected:** Selecting different budgets per method, using M5B/M5D development targets, tuning a target from PSNR/SSIM/RW-PSNR, or choosing budgets to favor Risk ROI.
+- **Impact:** M5E-D/E, if explicitly started, must use these values unchanged. Calibration establishes only byte feasibility; it does not establish Risk ROI, perception, collision, or navigation benefit.
+
+## 2026-07-19 - M5E-D formal metric table
+
+- **Decision:** Generate the full formal split and metric table with the M5E-C frozen budgets unchanged: severe `31466`, low `32374`, medium `33509`, and high `34871` bytes.
+- **Reason:** The protocol requires formal evidence to be independent of budget selection. M5E-D therefore may encode, reconstruct, and compute frozen metrics, but may not tune budgets or interpret method performance.
+- **Decision:** Treat M5E-D as a deterministic engineering evidence milestone: 256 formal frames, 4,096 complete-container reconstructions, and frozen M5D metrics with independent recomputation.
+- **Reason:** This creates the fixed formal evidence table needed by M5E-E while preserving paired frame-method-budget identity, actual-byte fairness, and no-future-actual provenance.
+- **Rejected:** Running episode-level statistics, bootstrapping, method ranking, formal superiority claims, perception evaluation, learned training, or closed-loop navigation inside M5E-D.
+- **Impact:** M5E-E must use the M5E-D metric table as frozen input for pre-registered episode statistics and diagnostics. Engineering completeness remains separate from scientific support or nonsupport.
+
+## 2026-07-19 - M5E-E structural empty-region aggregation
+
+- **Decision:** Keep the primary continuous risk-weighted PSNR fully paired over all four snapshots. For secondary high-risk-region diagnostics only, retain each structurally empty frame as `undefined`, average the defined frames within an episode, record valid and undefined frame counts, and leave an episode undefined when all four frames are empty.
+- **Reason:** The M5D/M5E protocol forbids inventing a metric for an empty region. Explicit counts preserve that rule while allowing clearly labeled descriptive regional diagnostics where the frozen region exists.
+- **Rejected:** Replacing empty regions with zero, infinity, a favorable sentinel, the full-frame metric, or dropping an episode from primary analysis.
+- **Impact:** No primary pair is missing. High-risk-region results remain secondary diagnostics and cannot replace continuous RW-PSNR conclusions.
+
+## 2026-07-20 - Public repository preparation
+
+- **Decision:** Keep raw generated Webots data, large local result sets, logs, caches, virtual environments, and Webots GUI files ignored for public release; expose only small curated figures and a compact M2 summary CSV under `docs/`.
+- **Reason:** A public research repository should let external readers understand the evidence without committing bulky raw frames, local caches, or machine-specific artifacts.
+- **Rejected:** Publishing the full generated `data/` and `results/` trees, changing experimental values for presentation, adding a license without an explicit authorization choice, or claiming real-robot performance.
+- **Impact:** README now points to curated public artifacts, while detailed milestone evidence remains documented in `docs/`. The public-release preparation does not alter validated experiment outputs.

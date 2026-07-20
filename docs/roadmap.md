@@ -10,12 +10,12 @@ Acceptance: all checks are recorded truthfully in `docs/progress.md`; missing so
 
 ## Milestone 1 — Synchronized frame and robot-state capture
 
-- [ ] Create one repeatable Webots world with a differential-drive robot and forward RGB camera.
-- [ ] Implement minimal straight, left-turn, and right-turn motion.
-- [ ] Save at least 100 camera frames.
-- [ ] Save aligned CSV rows containing timestamp, pose, heading, linear velocity, angular velocity, and image path.
-- [ ] Verify image paths exist and timestamps align with the CSV.
-- [ ] Document exact launch and validation commands in `README.md`.
+- [x] Create one repeatable Webots world with a differential-drive robot and forward RGB camera.
+- [x] Implement minimal straight, left-turn, and right-turn motion.
+- [x] Save at least 100 camera frames.
+- [x] Save aligned CSV rows containing timestamp, pose, heading, linear velocity, angular velocity, and image path.
+- [x] Verify image paths exist and timestamps align with the CSV.
+- [x] Document exact launch and validation commands in `README.md`.
 
 Acceptance: Webots runs; the world is repeatable; all three motions work; at least 100 aligned frame/state samples are validated; README and progress record the real results.
 
@@ -117,8 +117,114 @@ Acceptance: image-space risk masks are generated from validated projections and 
 
 ## Milestone 5 — Offline task evaluation
 
-Planned: evaluate communication, image-quality, and safety-critical perception metrics across scenarios and budgets.
+Planned: evaluate communication, image-quality, and safety-critical perception metrics across scenarios and budgets. The first Milestone 5 substeps are split below.
+
+### Milestone 5A - Compression and fair-bitrate protocol freeze
+
+- [x] Freeze the first tiled-JPEG spatial allocation prototype terminology.
+- [x] Freeze the `160x120` frame, `20x20` tile grid, 8 columns, 6 rows, and 48 row-major tiles.
+- [x] Define deterministic container byte accounting and actual transmitted byte matching.
+- [x] Define Uniform, Center ROI, Object ROI, and Risk ROI baselines.
+- [x] Define shared score-to-quality allocation and under-budget selection rules.
+- [x] Define the budget-selection pilot process instead of hard-coding budget values.
+- [x] Define communication, whole-image, risk-weighted, and regional quality metrics.
+- [x] Define fairness and leakage checks.
+
+Acceptance: `docs/m5_compression_and_bitrate_protocol.md` freezes the protocol and scope. No compression algorithm, JPEG container, compressed image, experiment CSV, risk algorithm change, Camera projection change, image-risk-mask change, network, perception, navigation, or machine-learning code is created.
+
+### Milestone 5B - Tiled-JPEG codec and budget pilot
+
+- [x] Add explicit Pillow dependency for the JPEG backend.
+- [x] Implement the deterministic tiled-JPEG encoder/decoder.
+- [x] Implement the strict binary tiled-frame container and byte accounting.
+- [x] Implement Uniform exhaustive quality-to-budget matching.
+- [x] Run the Uniform JPEG quality sweep on the accepted M4D development frame.
+- [x] Generate development budgets from actual Uniform container bytes.
+- [x] Validate the pilot outputs and rerun determinism checks.
+
+Acceptance: all methods can later share one encode/container/decode backend, target budgets are selected from measured Uniform pilot data, and generated compression data remains ignored by Git. Milestone 5B is complete; Center ROI, Object ROI, Risk ROI, method comparison, perception, networking, navigation, and machine learning remain out of scope until later milestones.
+
+### Milestone 5C - Baseline allocation implementation
+
+- [x] Implement immutable row-major tile score maps with deterministic ranking.
+- [x] Implement the frozen Center Gaussian, visible-polygon Object, and combined-float-mask Risk scoring rules.
+- [x] Implement one shared cached tiled-JPEG allocation search and fair actual-byte matcher for all non-Uniform methods.
+- [x] Preserve the M5B Uniform matcher and its four official development-budget results.
+- [x] Generate, independently recompute, and validate the 16-row single-frame allocation matrix and diagnostics.
+
+Acceptance: all baselines use identical byte matching, tile grid, JPEG settings, and container accounting; Risk ROI receives no extra budget or future actual information. M5C is complete as an allocation/fairness implementation milestone only; it does not compare image quality, perception, or navigation outcomes.
+
+### Milestone 5D - First single-frame compression validation
+
+- [x] Reconstruct the existing 16 M5C selected tiled-JPEG containers without rerunning allocation or matching.
+- [x] Measure full-image MSE, PSNR, and frozen-parameter SSIM on uint8 RGB reconstructions.
+- [x] Measure continuous-mask risk-weighted and eligible-object, high-risk, and background regional quality.
+- [x] Validate exact actual-byte matching, fixed M5C quality maps, decoding, no-future-actual provenance, and deterministic reruns.
+- [x] Generate metric, quality-allocation, and per-budget reconstruction diagnostics.
+
+Acceptance: communication metrics, whole-image quality, risk-weighted quality, regional quality, and fairness checks are reported for the accepted single-frame M4D evidence. M5D is complete as a single-frame descriptive evaluation only; M5E must establish whether any observation persists across multiple snapshots and layouts.
+
+### Milestone 5E-A - Multi-scene protocol freeze
+
+- [x] Separate development, calibration, and formal evidence.
+- [x] Freeze eight static-AABB scenario families, deterministic four-snapshot rules, seed namespaces, validation thresholds, and replacement policy.
+- [x] Freeze the calibration-only common-budget rule, metrics, episode-level paired statistics, engineering acceptance, and scientific support criteria.
+
+Acceptance: `docs/m5e_multiscene_offline_evaluation_protocol.md` is internally consistent and no M5E world, controller, code, frame, CSV, JSON, decoded image, or figure is created.
+
+### Milestone 5E-B - Parameterized scenario and dataset generator
+
+[x] Implement deterministic static-AABB scenario generation and split-safe seeds.
+[x] Implement the parameterized Webots world/controller and four fixed-progress snapshot triggers.
+[x] Save RGB frames, floating-point masks, metadata, episode summaries, and stable manifests.
+[x] Independently validate all S1-S8 scenario roles, hashes, max-union, and no-future-actual provenance.
+[x] Generate and exactly repeat the 32-frame smoke dataset and diagnostics.
+[x] Complete targeted GUI manual acceptance for S2, S3, S5, and S7, including collision/Console checks and S7 partial visibility.
+
+Acceptance: M5E-B is accepted for deterministic multi-scene dataset generation and risk-scenario validation. All eight smoke scenarios passed with four snapshots each, no replacements, deterministic repeat evidence, and no future-actual leakage. Targeted GUI manual evidence passed for S2/S3/S5/S7; it complements rather than replaces automatic validation. No calibration/formal data, common budget, or compression evaluation was generated.
+
+### Milestone 5E-C - Calibration pilot and common budget freeze
+
+- [x] Generate the independent 64-frame calibration split (S1-S8, two fixed seeds each, four fixed-progress snapshots).
+- [x] Exhaustively measure actual complete-container byte ranges for Uniform, Center ROI, Object ROI, and Risk ROI.
+- [x] Freeze method-identical severe/low/medium/high targets from the nonempty common interval.
+- [x] Validate 1,024 deterministic under-budget allocations and repeat the complete calibration run.
+
+Acceptance: passed. The calibration-only common interval is `[31240, 35779]` bytes and the frozen targets are `31466`, `32374`, `33509`, and `34871` bytes. No formal image-quality or method-performance result is included.
+
+### Milestone 5E-D - Formal encoding and metric evaluation
+
+- [x] Generate the 8-scenario, 8-formal-episode, 4-snapshot split without changing M5E-C budgets.
+- [x] Produce all 4096 method-budget reconstructions using the frozen allocation, codec, and metric definitions.
+
+Completed: generated 256 formal frames and 4096 matched-budget reconstructions, then computed frozen M5D metrics without changing protocol parameters.
+
+Acceptance: passed. The formal matrix is complete, paired, byte-fair, deterministic, and independently recomputable. No M5E-E statistics or method-performance conclusion is included.
+
+### Milestone 5E-E - Episode statistics and diagnostics
+
+- [x] Aggregate the formal metrics by episode.
+- [x] Run the fixed-seed scenario-stratified paired bootstrap and generate diagnostics.
+
+Completed: aggregated four snapshots within each of 64 episodes, generated 384 primary paired effects, ran the 10,000-replicate seed-`20260718` scenario-stratified bootstrap, and produced overall/per-scenario diagnostics plus deterministic figures.
+
+Acceptance: passed. Statistical outputs use episodes as the resampling unit and report all pre-registered comparisons, failures, utilization, uncertainty, negative findings, and limitations. H1 is not fully supported; H2/H3 retain their pre-registered direction-specific interpretation.
+
+### Milestone 5E-F - Formal validation and acceptance
+
+- [ ] Independently validate formal manifests, metrics, statistics, determinism, split isolation, and no-future-actual provenance.
+- [ ] State engineering acceptance separately from scientific support or nonsupport.
+
+Planned: independently validate all manifests, inputs, allocations, containers, metrics, statistics, split isolation, and no-future-actual provenance.
+
+Acceptance: engineering acceptance is stated independently of whether the hypotheses receive scientific support; unsupported outcomes are retained and reported.
+
+### Milestone 5F - Compression validation report and next-step decision
+
+Planned: write the Milestone 5 report and decide whether remote perception or closed-loop navigation evaluation is justified.
+
+Acceptance: the report states what compression and image-risk-region claims are supported, what remains unproven, and the single next priority.
 
 ## Milestone 6 — Simple closed-loop navigation
 
-Planned only after offline evidence supports continuing.
+Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-F independent formal validation and acceptance; it has not started.

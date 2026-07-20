@@ -60,7 +60,13 @@ Possible later additions: semantic ROI, learned spatial mask, no-TTC ablation, a
 
 ## Fair comparison
 
-Target budgets: 5, 10, 20, and 40 KB/frame. Record actual bytes and budget mismatch. The proposed method must not receive a systematically larger budget. Phase 1 must be described as a **block-wise spatial compression prototype**, not a standards-compatible ROI video encoder.
+Milestone 5A freezes the detailed compression and fair-bitrate protocol in `docs/m5_compression_and_bitrate_protocol.md`.
+
+The first compression experiment is a tiled-JPEG spatial allocation prototype, not a standards-compatible ROI video encoder. Numeric budgets are not hard-coded at protocol time; Milestone 5B must run a Uniform JPEG pilot and then select at least four feasible target budgets. Every comparison must match actual transmitted bytes, including container overhead, and the proposed Risk ROI method must not receive a systematically larger budget.
+
+Milestone 5E-A freezes the multi-scene protocol in `docs/m5e_multiscene_offline_evaluation_protocol.md`. The M4D/M5D frame is development-only and excluded from M5E calibration and formal statistics. M5E common budgets are selected from calibration data only, then frozen before formal evaluation. The four methods, scoring rules, allocation search, risk threshold, JPEG/container settings, snapshot rules, and scenario weights cannot be changed from formal outcomes.
+
+M5E-C froze the common complete-container-byte interval `[31240, 35779]` and the formal targets severe `31466`, low `32374`, medium `33509`, and high `34871` bytes. M5E-D generated the formal 256-frame split and 4096 matched-budget reconstructions with those targets unchanged. M5E-E completed the pre-registered episode-level statistics without changing the protocol: H1 is not fully supported, while H2/H3 receive direction-specific support under their frozen scenario contrasts. These remain offline image-quality findings only.
 
 ## Metrics
 
@@ -69,6 +75,12 @@ Target budgets: 5, 10, 20, and 40 KB/frame. Record actual bytes and budget misma
 - Task/safety: trajectory-critical obstacle recall, trajectory-corridor obstacle miss rate, risk-region IoU, navigation success rate, collision rate, near misses, completion time, path length, and emergency stops.
 
 Conclusions must not rely on PSNR or SSIM alone.
+
+For M5E, the primary offline metric is continuous combined-risk-weighted PSNR at severe and low matched actual-byte budgets. The primary paired comparisons are Risk ROI against Uniform, Center ROI, and Object ROI. The episode, not the frame, is the primary resampling unit: four fixed snapshots are aggregated within each episode, and 10,000 fixed-seed bootstrap replicates preserve the eight scenario strata. This remains image-quality evidence over a heuristic risk proxy, not perception, collision, or navigation evidence.
+
+## Milestone 5E scenario set
+
+The first formal multi-scene experiment is limited to static AABB obstacles and freezes eight families: straight collision-relevant obstacle, off-trajectory visual distractor, left turn, right turn, planned/state disagreement, large low-risk versus small high-risk, partial visibility, and low-risk control. Development, calibration, and formal seeds/episodes are disjoint. Calibration contains 64 frames; formal evaluation contains 256 frames and 4096 method-budget reconstructions. M5E-D completed that formal metric table and M5E-E completed the frozen episode-level analysis. M5E-F full-evidence validation and acceptance remain unstarted.
 
 ## Initial scenarios
 

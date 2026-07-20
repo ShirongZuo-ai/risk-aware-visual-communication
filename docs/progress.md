@@ -1,12 +1,12 @@
 # Progress
 
-Last updated: 2026-07-18 (Asia/Shanghai)
+Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
-- Confirmed that the formal project root is `C:\Users\ROG\Documents\risk-aware-visual-communication` on the native Windows host.
+- Confirmed that the formal project root is the native Windows project checkout selected by the user.
 - Verified that `git rev-parse --show-toplevel` resolves to the formal Documents path. In the current PowerShell session, `git` is not on PATH, so verification used `C:\Program Files\Git\cmd\git.exe`.
-- Confirmed the local no-commit branch is `main`. The requested `master` to `main` rename had already been applied before this verification pass; no remote is configured and nothing was pushed.
+- Historical status at repository setup: confirmed the local no-commit branch was `main`. Current active work is on `feature/m5-risk-roi-compression`.
 - Verified the copied project `.venv`: `.\.venv\Scripts\python.exe` runs Python 3.11.14, 64-bit, with the environment prefix under the formal Documents path.
 - Installed the official Cyberbotics Webots R2025a stable Windows release and verified its command-line runtime and graphics-system detection.
 - Completed Milestone 1A: created and GUI-verified a minimal repeatable Webots e-puck camera world.
@@ -25,16 +25,25 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 - Completed Milestone 4B: implemented and unit-tested the Webots-decoupled pure-Python camera projection core.
 - Completed and accepted Milestone 4C: created a dedicated Webots camera-projection validation scene, connected the projection core through a Webots adapter, saved one RGB snapshot plus a 9-row projection CSV and metadata JSON, generated an overlay, passed automatic image-alignment validation, and passed GUI human review.
 - Completed and accepted Milestone 4D and Milestone 4 overall: connected same-snapshot world-coordinate risk, Camera projection, and pure-Python image-risk masks; passed automatic validation and GUI human review on `image_risk_validation_episode_0001`.
+- Completed Milestone 5A: froze the tiled-JPEG spatial allocation prototype, fair actual-byte matching rules, first baselines, metrics, output schema, and acceptance criteria without implementing compression code.
+- Completed Milestone 5B: implemented the deterministic Uniform tiled-JPEG codec/container, Uniform quality sweep pilot, and fair actual-byte matcher without implementing Center/Object/Risk ROI allocation or method comparison.
+- Completed Milestone 5C: implemented and validated deterministic Center/Object/Risk scoring and fair spatial allocation on the accepted development frame.
+- Completed Milestone 5D: evaluated the 16 fixed single-frame allocations with full, continuous risk-weighted, and regional image-quality metrics; this remains development evidence only.
+- Completed Milestone 5E-A: froze the multi-scene split, scenario, snapshot, common-budget, metric, episode-statistics, scientific-interpretation, and failure/replacement protocol without generating M5E data or modifying implementation code.
+- Completed and accepted Milestone 5E-B: implemented the parameterized static-AABB Webots generator, independently validated all eight smoke scenarios and 32 snapshots, reproduced frames/masks/configs/metadata exactly, and recorded targeted S2/S3/S5/S7 GUI manual acceptance.
+- Completed Milestone 5E-C: generated and independently validated the isolated 64-frame calibration split, exhaustively measured the legal complete-container-byte range for all frame-method pairs, and froze four common actual-byte budgets without running a formal quality evaluation.
+- Completed Milestone 5E-D: generated and validated the isolated 256-frame formal split, produced all 4,096 method-budget reconstructions with the frozen M5E-C budgets, computed frozen M5D metrics, and independently recomputed the formal metric table. No M5E-E statistics or method-performance conclusion has been produced.
+- Completed Milestone 5E-E: aggregated four snapshots within each of 64 formal episodes, generated 384 primary pairs, ran the frozen 10,000-replicate scenario-stratified bootstrap, retained all negative/null findings, generated nine deterministic figures, and independently recomputed the statistical outputs. H1 is not fully supported; H2/H3 receive direction-specific support only.
 
 ## Native Windows environment results
 
 - OS: Microsoft Windows 11 Home China, version 25H2, build 26200.8875, 64-bit.
 - PowerShell: Windows PowerShell 5.1.26100.8875.
-- Working directory and Git top level: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+- Working directory and Git top level: the user-selected native Windows project checkout.
 - Project Python: `.\.venv\Scripts\python.exe`, Python 3.11.14, 64-bit. The copied environment executed successfully after the project move.
 - PATH-default Python: 64-bit Anaconda Python 3.12.7 at `D:\Anaconda\python.exe`.
 - Python Launcher: `C:\Windows\py.exe`, launcher file version 3.9.10150.1013; it does not discover the installed Conda interpreters.
-- Git: 2.55.0.windows.3 at `C:\Program Files\Git\cmd\git.exe`. The repository is on the no-commit `main` branch; all project files are untracked and no remote is configured. The bare `git` command is not available on the current PowerShell PATH.
+- Git: 2.55.0.windows.3 at `C:\Program Files\Git\cmd\git.exe`. Historical setup started from a no-commit `main` branch; the current verified branch for M5E work is `feature/m5-risk-roi-compression`. The bare `git` command is not available on the current PowerShell PATH.
 - winget: 1.29.280. No exact `Cyberbotics.Webots` package was present in the configured winget source.
 - GPU: NVIDIA GeForce RTX 4060 Laptop GPU, driver 561.00, 8188 MiB VRAM.
 - WSL: installed but remains out of scope as the development environment.
@@ -56,9 +65,9 @@ Last updated: 2026-07-18 (Asia/Shanghai)
 ## Milestone 1A: minimal repeatable Webots scene
 
 - Stage: Milestone 1A, minimal e-puck camera scene only.
-- Project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
-- Git top level: `C:/Users/ROG/Documents/risk-aware-visual-communication`, verified with `C:\Program Files\Git\cmd\git.exe`.
-- Git branch and commit state: `main`, no commits yet. No remote is configured.
+- Project root: the user-selected native Windows project checkout.
+- Git top level: verified with the local Git executable.
+- Historical Milestone 1A branch and commit state: `main`, no commits yet. Later milestones are committed on feature branches; current M5E work is on `feature/m5-risk-roi-compression`.
 - Git identity: `user.name` and `user.email` were both unset, so the requested initial commit was not created and no Git configuration was changed.
 - Created world: `simulator/worlds/minimal_epuck_camera.wbt`.
 - Robot model: official Cyberbotics/GCtronic `E-puck.proto`, `version "2"`, no custom controller.
@@ -195,7 +204,7 @@ The Webots command timed out at the shell tool level because Webots remains open
 ```text
 minimal_epuck_motion: start
 sequence: 0.0-1.2s straight, 1.2-2.2s left_turn, 2.2-3.2s right_turn, 3.2s+ stop
-camera=camera width=160 height=120 sampling_period_ms=32 output=C:\Users\ROG\Documents\risk-aware-visual-communication\data\frames\m1c
+camera=camera width=160 height=120 sampling_period_ms=32 output=<project-root>\data\frames\m1c
 phase=straight t=0.032s left=2.00 right=2.00
 phase=left_turn t=1.216s left=-1.50 right=1.50
 phase=right_turn t=2.208s left=1.50 right=-1.50
@@ -235,7 +244,7 @@ minimal_epuck_motion: complete
 - CSV data rows: `116` plus one header row.
 - Camera device: `camera`; camera size in CSV: `160x120`; sampling period: `32 ms`.
 - CSV fields: `episode_id`, `frame_index`, `sim_time_s`, `sim_time_ms`, `image_path`, `motion_phase`, `robot_x`, `robot_y`, `robot_z`, `yaw_rad`, `linear_velocity_m_s`, `angular_velocity_rad_s`, `left_wheel_command_rad_s`, `right_wheel_command_rad_s`, `camera_width`, `camera_height`.
-- Image path format: project-relative paths such as `data/frames/m1d/episode_0001/frame_000000_t0000032.png`; no absolute `C:\Users\ROG\...` paths are written to CSV.
+- Image path format: project-relative paths such as `data/frames/m1d/episode_0001/frame_000000_t0000032.png`; no personal absolute Windows user paths are written to CSV.
 - File naming rule: `frame_<six-digit-index>_t<seven-digit-sim-ms>.png`.
 - Strict alignment rule implemented: each controller loop computes the command and state for the current Webots simulation time, calls `camera.saveImage()`, and writes exactly one CSV row only after that image save succeeds.
 - No CSV row is written if `camera.saveImage()` fails.
@@ -270,8 +279,8 @@ The Webots command timed out at the shell tool level because Webots remains open
 ```text
 minimal_epuck_motion: start
 sequence: 0.0-1.2s straight, 1.2-2.2s left_turn, 2.2-3.2s right_turn, 3.2s+ stop
-camera=camera width=160 height=120 sampling_period_ms=32 output=C:\Users\ROG\Documents\risk-aware-visual-communication\data\frames\m1d\episode_0001
-episode_id=episode_0001 csv=C:\Users\ROG\Documents\risk-aware-visual-communication\data\logs\m1d\episode_0001.csv ground_plane=x_y vertical_axis=z yaw=atan2(orientation[3],orientation[0])
+camera=camera width=160 height=120 sampling_period_ms=32 output=<project-root>\data\frames\m1d\episode_0001
+episode_id=episode_0001 csv=<project-root>\data\logs\m1d\episode_0001.csv ground_plane=x_y vertical_axis=z yaw=atan2(orientation[3],orientation[0])
 phase=straight t=0.032s left=2.00 right=2.00
 phase=left_turn t=1.216s left=-1.50 right=1.50
 phase=right_turn t=2.208s left=1.50 right=-1.50
@@ -950,8 +959,8 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Stage: Milestone 4A complete on local branch `feature/m4-image-risk-projection`.
 - Starting commit: `85fa41c docs: accept world risk milestone`.
 - Project root and Git:
-  - `C:\Users\ROG\Documents\risk-aware-visual-communication`
-  - Git top-level resolved to `C:/Users/ROG/Documents/risk-aware-visual-communication`.
+  - the user-selected native Windows project checkout
+  - Git top-level resolved to the same project checkout.
   - Current branch verified as `feature/m4-image-risk-projection`.
   - Working tree was clean before Milestone 4A edits.
   - Branch contains the accepted Milestone 3 commit `85fa41c`.
@@ -1215,7 +1224,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Branch and baseline:
   - working branch: `feature/m4-image-risk-projection`;
   - starting commit: `8034a9d docs: accept Webots camera projection alignment`;
-  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+  - project root: the user-selected native Windows project checkout.
 - New core file:
   - `risk_map/image_risk_map.py`.
 - New tests:
@@ -1259,7 +1268,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Branch and baseline:
   - working branch: `feature/m4-image-risk-projection`;
   - baseline commits present: `8034a9d docs: accept Webots camera projection alignment` and `e88d37f feat: implement image risk mask core`;
-  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+  - project root: the user-selected native Windows project checkout.
 - Created implementation files:
   - `simulator/m4d_config.py`;
   - `simulator/worlds/m4d_image_risk_validation.wbt`;
@@ -1380,8 +1389,405 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - no machine learning;
   - no dynamic obstacles;
   - no true rendered occlusion model.
+- Follow-up:
+  - Milestone 5A compression and fair-bitrate design freeze was completed next, without implementing compression code.
+
+## Milestone 5A - Compression and fair-bitrate protocol freeze
+
+- Status: completed as a design freeze only.
+- Branch and baseline:
+  - working branch: `feature/m5-risk-roi-compression`;
+  - starting commit: `96cb3e2 docs: accept image-space risk milestone`;
+  - project root: the user-selected native Windows project checkout;
+  - working tree was clean before the documentation edits.
+- M4 baseline:
+  - Milestone 4D GUI manual acceptance has passed;
+  - Milestone 4 overall is formally accepted;
+  - official M4D evidence remains `image_risk_validation_episode_0001`;
+  - no M4 frame, CSV, metadata, mask, projection, adapter, world, controller, or risk code was modified.
+- New design document:
+  - `docs/m5_compression_and_bitrate_protocol.md`.
+- Frozen scientific question:
+  - under equal actual transmitted bytes, test whether trajectory-conditioned collision-risk visual allocation preserves risk-relevant image information better than Uniform, Center ROI, Object ROI, and Risk ROI alternatives;
+  - first claims are limited to image quality and risk-region quality, not detection, navigation, collision, or network benefit.
+- Frozen prototype:
+  - tiled-JPEG spatial allocation prototype;
+  - not standards-compatible JPEG ROI, H.264/H.265/VVC/AV1 ROI/QP maps, a neural codec, or a video codec.
+- Frozen tile grid:
+  - source frame `160x120` RGB;
+  - tile size `20x20`;
+  - 8 columns, 6 rows, 48 row-major tiles;
+  - non-overlapping full-frame coverage.
+- Frozen baselines:
+  - Uniform: all tiles share one JPEG quality, matched by budget search;
+  - Center ROI: fixed scene-independent Gaussian tile score around the principal point;
+  - Object ROI: visible obstacle polygon/tile coverage, with no risk values;
+  - Risk ROI: `max` combined image-risk value inside each tile.
+- Frozen fairness rule:
+  - compare by actual total transmitted bytes, including container overhead and any transmitted metadata;
+  - `actual_total_bytes <= target_bytes` is mandatory;
+  - choose the largest legal under-budget payload;
+  - record target bytes, actual bytes, unused budget, utilization, quality config, per-tile bytes, and overhead.
+- Budget selection:
+  - Milestone 5A does not freeze numeric budgets;
+  - Milestone 5B must first run a Uniform JPEG pilot and then select at least four feasible budgets across severe, low, medium, and high regimes;
+  - earlier `5/10/20/40 KB/frame` values are only historical rough candidates, not current defaults.
+- Metrics frozen:
+  - communication metrics: target/actual bytes, bits/frame, utilization, compression ratio, overhead, tile bytes, encode/decode time;
+  - whole-image metrics: MSE, PSNR, optional SSIM;
+  - risk-weighted metrics over the accepted combined float mask, including `weighted_MSE` and `risk_weighted_PSNR`;
+  - regional metrics: visible-object-region PSNR, risk-region PSNR, background PSNR, high-risk tile quality, and low-risk tile quality.
+- Dependency check:
+  - `requirements.txt` currently lists NumPy, OpenCV, pandas, and matplotlib, but not Pillow;
+  - the current `.venv` can import Pillow `12.3.0`;
+  - no dependency file was changed in Milestone 5A. Milestone 5B must decide whether to add an explicit Pillow version range before encoding JPEG tiles.
+- Validation actually run for Milestone 5A:
+  - Git branch/top-level checks confirmed `feature/m5-risk-roi-compression` at the user-selected native Windows project checkout;
+  - HEAD contains `96cb3e2 docs: accept image-space risk milestone`;
+  - dependency check confirmed Pillow import status;
+  - terminology/fairness text checks confirmed the protocol names actual-byte matching, same encoder/container/decoder, the four baselines, tiled-JPEG prototype scope, and no future actual trajectory for Risk ROI;
+  - `python -m compileall -q navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 148 tests passed;
+  - Git diff/status review showed only README and `docs/` files changed, with no risk, projection, image-mask, Webots, compression, data, results, cache, or virtual-environment files added.
+- Explicitly not implemented in Milestone 5A:
+  - no compression module;
+  - no JPEG container or encoder/decoder;
+  - no compressed image outputs;
+  - no compression CSV;
+  - no budget pilot;
+  - no risk, projection, image-mask, Webots, M4 evidence, network, perception, navigation, ROS 2, WSL, or machine-learning code changes.
+- Follow-up:
+  - Milestone 5B tiled-JPEG codec, deterministic container, uniform-pilot budget measurement, and fair byte matcher was completed next.
+
+## Milestone 5B - Deterministic tiled-JPEG codec and Uniform budget pilot
+
+- Status: completed.
+- Branch and baseline:
+  - working branch: `feature/m5-risk-roi-compression`;
+  - starting commit contained `6168d0c docs: freeze risk-aware compression protocol`;
+  - project root: the user-selected native Windows project checkout;
+  - working tree was clean before implementation.
+- Dependency:
+  - `requirements.txt` now includes `Pillow==12.3.0`;
+  - runtime Pillow version verified as `12.3.0`;
+  - `pip check` reported no broken requirements;
+  - JPEG payload bit-exactness is claimed only for the same Pillow/libjpeg environment, and budget matching must be rerun across environments.
+- Implemented files:
+  - `compression/__init__.py`;
+  - `compression/tiled_jpeg.py`;
+  - `compression/tile_container.py`;
+  - `compression/budget_matcher.py`;
+  - `scripts/run_m5b_uniform_pilot.py`;
+  - `scripts/validate_m5b_uniform_pilot.py`;
+  - `tests/test_tiled_jpeg.py`;
+  - `tests/test_tile_container.py`;
+  - `tests/test_budget_matcher.py`;
+  - `tests/test_m5b_pilot_helpers.py`;
+  - `docs/m5b_tiled_jpeg_validation_report.md`.
+- Updated documentation:
+  - `README.md`;
+  - `docs/progress.md`;
+  - `docs/roadmap.md`;
+  - `docs/decisions.md`;
+  - `docs/system_overview.md`.
+- Fixed tile grid:
+  - frame `160x120` RGB;
+  - tile `20x20`;
+  - 8 columns, 6 rows, 48 total row-major tiles;
+  - tile ID rule `tile_id = tile_row * columns + tile_column`;
+  - crop bounds are left-closed and right-open.
+- JPEG parameters:
+  - `format="JPEG"`;
+  - `quality=1..95`;
+  - `progressive=False`;
+  - `optimize=False`;
+  - `subsampling=0`.
+- Container format:
+  - magic `RAVCJT1`;
+  - version `1`;
+  - big-endian `struct` encoding;
+  - header bytes `23`;
+  - index entry bytes `6`;
+  - 48 row-major index entries;
+  - overhead bytes `311`;
+  - `total_bytes = 311 + sum(tile_jpeg_payload_bytes)`;
+  - no risk masks, risk scores, method labels, target budget, original image, trajectories, debug metadata, or quality values are transmitted.
+- Uniform pilot:
+  - input frame: `data/frames/m4/image_risk_validation_episode_0001.png`;
+  - frame SHA-256: `2b9e6b0b992d022a0e52fe6861b177c98841a1210a45688907d99c016f8bfa91`;
+  - generated CSV: `data/logs/m5/m5b_uniform_quality_sweep.csv`;
+  - generated metadata: `data/metadata/m5/m5b_uniform_pilot.json`;
+  - generated plot: `results/m5_compression/m5b_uniform_payload_curve.png`;
+  - generated outputs are ignored by Git.
+- Quality sweep results:
+  - qualities `1..95`, 95 rows;
+  - minimum actual total bytes: `31258` at quality `1`;
+  - maximum actual total bytes: `37125` at quality `95`;
+  - key rows:
+    - q1: total `31258`, tile JPEG bytes `30947`, overhead `311`;
+    - q5: total `31348`, tile JPEG bytes `31037`, overhead `311`;
+    - q25: total `32105`, tile JPEG bytes `31794`, overhead `311`;
+    - q50: total `32729`, tile JPEG bytes `32418`, overhead `311`;
+    - q80: total `33959`, tile JPEG bytes `33648`, overhead `311`;
+    - q95: total `37125`, tile JPEG bytes `36814`, overhead `311`.
+- Development budgets from actual Uniform payloads:
+  - severe: target `31348` bytes, `250784` bits/frame, matched q5, utilization `1.000`;
+  - low: target `32105` bytes, `256840` bits/frame, matched q25, utilization `1.000`;
+  - medium: target `32729` bytes, `261832` bits/frame, matched q50, utilization `1.000`;
+  - high: target `33959` bytes, `271672` bits/frame, matched q80, utilization `1.000`;
+  - these are development budgets for the accepted single M4D frame only, not final multi-frame budgets.
+- Matcher:
+  - exhaustive search over all integer qualities 1 through 95;
+  - legal candidates require `actual_total_bytes <= target_bytes`;
+  - selects the maximum legal actual total bytes;
+  - ties choose higher quality;
+  - matcher uses only actual container total bytes, not PSNR, SSIM, risk, object regions, or other evaluation metrics.
+- Determinism and validation:
+  - per-quality repeated encode produced identical container bytes in the same process;
+  - container deserialize round-trip preserved JPEG tile bytes;
+  - decoded frames are `160x120` RGB;
+  - re-running the pilot reproduced the same payload range, development budgets, metadata hash, and plot hash;
+  - CSV hash changed because encode/decode timing fields are measured each run; payload/container determinism is validated separately.
+- Validation actually run:
+  - `python -m pip show Pillow`: version `12.3.0`;
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q compression navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 173 tests passed, including 25 new M5B tests;
+  - `python scripts\run_m5b_uniform_pilot.py`: exit 0;
+  - `python scripts\validate_m5b_uniform_pilot.py`: exit 0;
+  - pilot rerun: exit 0;
+  - validator rerun: exit 0;
+  - `python scripts\validate_m4d_image_risk_dataset.py data\logs\m4\image_risk_validation_episode_0001.csv`: exit 0;
+  - `python scripts\validate_m4c_projection_dataset.py data\logs\m4\projection_validation_episode_0003.csv`: exit 0;
+  - `python scripts\validate_m3c_risk_dataset.py data\logs\m3\risk_validation_episode_0002.csv`: exit 0;
+  - `python scripts\evaluate_m3d_world_risk.py`: exit 0;
+  - `python scripts\validate_m3d_report.py`: exit 0;
+  - forbidden dependency scan over M5B compression modules/scripts found no OpenCV, NumPy, imageio, Shapely, torch, TensorFlow, ffmpeg, Webots/controller, `risk_map`, or `perception` imports.
+- Explicitly not implemented in Milestone 5B:
+  - no Center ROI allocation;
+  - no Object ROI allocation;
+  - no Risk ROI allocation;
+  - no four-method comparison;
+  - no risk-weighted PSNR or SSIM;
+  - no perception model;
+  - no network simulation;
+  - no closed-loop navigation;
+  - no machine learning or neural codec;
+  - no M1-M4 algorithm, world, controller, adapter, formal episode, risk parameter, Camera projection, or image-risk mask change.
 - Next priority:
-  - Milestone 5A compression and fair-bitrate design freeze. Do not implement compression code before the design freeze is requested.
+  - Milestone 5C Center/Object/Risk allocation implementation using the shared M5B backend and fair actual-byte matcher.
+
+## Milestone 5C - Spatial ROI allocation and fair actual-byte matching
+
+- Status: completed. This milestone implements allocation mechanics and fairness validation only; it does not make an image-quality, risk-region-quality, perception, navigation, or best-method claim.
+- Branch and baseline: `feature/m5-risk-roi-compression`, with accepted M5A/M5B commits `6168d0c` and `0befd0b` in history; formal project root remains the user-selected native Windows project checkout.
+- New implementation:
+  - `compression/tile_scoring.py`: immutable 48-item row-major `TileScoreMap`, M5A Center/Object/Risk scoring, projection and float-mask input validation.
+  - `compression/spatial_allocation.py`: source-tile JPEG cache, shared score-to-quality mapping, exhaustive non-Uniform actual-byte matcher, deterministic container serialization, and tie-break accounting.
+  - `scripts/run_m5c_allocation_validation.py`, `scripts/validate_m5c_allocation_validation.py`, `scripts/plot_m5c_allocation_maps.py`, and shared M4D evidence loader `scripts/m5c_allocation_common.py`.
+  - Tests: `tests/test_tile_scoring.py`, `tests/test_spatial_allocation.py`, and `tests/test_m5c_allocation_helpers.py`.
+  - Report: `docs/m5c_spatial_allocation_validation_report.md`.
+- Inputs and method isolation:
+  - frame, metadata, projection polygons, and float mask are the accepted M4D `image_risk_validation_episode_0001` evidence;
+  - Center uses only tile positions, camera principal point `(79.5, 59.5)`, and normalized Gaussian `sigma=0.5`;
+  - Object uses maximum coverage fraction of eligible M4D clipped polygons and does not read risk values;
+  - Risk uses the combined formal float mask maximum per tile, not a PNG, RGB content, labels, or future actual trajectory;
+  - M4D metadata is required to state `actual_future_trajectory_used=false`.
+- Shared allocation decision required by the M5A numeric ambiguity:
+  - Center/Object/Risk all search background quality `1..94`, enhancement quality `2..95`, strict enhancement greater than background, and `top_k=1..48`;
+  - score ranking is descending score then ascending tile ID;
+  - selection is maximum legal actual bytes, then higher enhancement quality, higher background quality, smaller top-k, and lexicographic configuration;
+  - all-equal scores reduce to a Uniform-quality candidate path;
+  - the decision and reason are recorded in `docs/decisions.md` and the protocol now points to it.
+- Development budgets from the M5B pilot remain unchanged: severe `31348`, low `32105`, medium `32729`, high `33959` bytes/frame. Uniform regression remained exact: q5, q25, q50, q80 respectively.
+- M5C output evidence, all ignored by Git:
+  - `data/logs/m5/m5c_allocation_validation.csv` with 16 unique method-budget rows;
+  - `data/metadata/m5/m5c_allocation_validation.json`;
+  - selected serialized containers and decoded `160x120` RGB frames under `data/compression/m5/m5c_selected_containers/`;
+  - `results/m5_compression/m5c_score_maps.png`, `m5c_quality_maps.png`, and `m5c_budget_utilization.png`.
+- Actual M5C result summary: every one of the 16 combinations selected exactly its target bytes and utilization `1.000` on the accepted single development frame. This exact matching is a discrete payload outcome, not quality evidence.
+  - Center q range / enhanced tiles: severe `2-66 / 5`, low `12-93 / 11`, medium `23-91 / 15`, high `4-95 / 23`.
+  - Object q range / enhanced tiles: severe `3-69 / 9`, low `21-91 / 10`, medium `49-95 / 5`, high `60-91 / 25`.
+  - Risk q range / enhanced tiles: severe `3-90 / 2`, low `22-95 / 2`, medium `24-94 / 5`, high `62-95 / 8`.
+- Validation actually run during implementation:
+  - 24 new M5C tests passed before full-suite validation;
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q compression navigation perception risk_map scripts simulator tests`: passed;
+  - `python -m unittest discover -s tests`: 197 tests passed;
+  - `python scripts/run_m5b_uniform_pilot.py` and `python scripts/validate_m5b_uniform_pilot.py`: exit 0; the original four Uniform matches remained q5/q25/q50/q80;
+  - `python scripts/run_m5c_allocation_validation.py`: exit 0, generated 16 rows;
+  - `python scripts/validate_m5c_allocation_validation.py`: exit 0 before and after plotting;
+  - `python scripts/plot_m5c_allocation_maps.py`: exit 0;
+  - second M5C run and validator: exit 0 with the same selected allocation evidence;
+  - M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exit 0;
+  - forbidden-import and allocation metric-leakage scans found no executable forbidden dependency or quality-metric selection path.
+  - the validator independently recomputes M4D inputs, scores, candidate allocations, selected JPEG payloads, serialized container bytes, Uniform regression, decoded dimensions, score/quality monotonicity, and no-future-actual guard.
+- Explicitly not implemented in Milestone 5C:
+  - no PSNR, SSIM, MSE, risk-weighted image-quality metric, ranking, or best-method declaration;
+  - no Milestone 5D quality evaluation, multi-frame evaluation, network, perception, navigation, ML/neural codec, H.264/H.265, Webots world/controller, or M1-M4 evidence modification.
+- Next priority: Milestone 5D, first single-frame matched-budget quality and fairness evaluation. No perception or navigation work should begin first.
+
+## Milestone 5D - Single-frame matched-budget quality evaluation
+
+- Status: completed on `feature/m5-risk-roi-compression`. M5D evaluates the accepted M4D frame only and does not rerun the M5C allocator or matcher.
+- New implementation:
+  - `evaluation/image_quality.py` provides uint8 RGB full, continuous-risk-weighted, and masked-region MSE/PSNR plus frozen-parameter SSIM.
+  - `evaluation/region_masks.py` reconstructs the pixel-center eligible-object union from accepted M4D clipped polygons and creates risk-support, high-risk, and background diagnostic masks.
+  - `evaluation/matched_budget_evaluation.py` reconstructs only the saved M5C quality tuples, verifies their tile payloads and container bytes, decodes them, and reports metrics and tile diagnostics.
+  - `scripts/run_m5d_single_frame_evaluation.py`, `scripts/validate_m5d_single_frame_evaluation.py`, and `scripts/plot_m5d_single_frame_results.py` produce and independently validate the 16-row evidence and diagnostics.
+  - `tests/test_image_quality.py`, `tests/test_region_masks.py`, `tests/test_matched_budget_evaluation.py`, and `tests/test_m5d_evaluation_helpers.py` add 16 focused tests.
+- Fixed evidence and fairness:
+  - source: `data/frames/m4/image_risk_validation_episode_0001.png`, `160x120` RGB, SHA-256 `2b9e6b0b992d022a0e52fe6861b177c98841a1210a45688907d99c016f8bfa91`;
+  - M5C source commit: `1788688`; four methods and four fixed actual-byte targets produce exactly 16 rows;
+  - severe `31348`, low `32105`, medium `32729`, and high `33959` bytes/frame each have zero unused bytes and utilization `1.000` for all methods;
+  - container overhead remains `311` bytes; M5D checks the original selected quality map and tile JPEG payload sizes instead of selecting an alternative allocation;
+  - provenance remains `actual_future_trajectory_used=false`.
+- Metrics and diagnostic regions:
+  - full RGB MSE/PSNR/SSIM use uint8 RGB; SSIM uses `scikit-image==0.26.0` with `data_range=255`, `channel_axis=-1`, Gaussian weights, `sigma=1.5`, population covariance, and `win_size=11`;
+  - risk-weighted metrics use the continuous combined float mask, not a rendered PNG or tile score;
+  - eligible-object union and risk support each contain `11065` pixels; high risk is fixed before result interpretation as `combined >= 0.20` and contains `4293` pixels; background contains `8135` pixels;
+  - the threshold decision and evaluation-only dependencies are recorded in `docs/decisions.md`.
+- Generated, ignored evidence:
+  - `data/logs/m5/m5d_single_frame_quality.csv`;
+  - `data/metadata/m5/m5d_single_frame_evaluation.json`;
+  - `data/decoded/m5/m5d/<budget>/<method>.png`;
+  - eleven plots under `results/m5_compression/m5d_*.png`;
+  - full metric definitions, unrounded CSV provenance, the 16-result table, diagnostics, and limitations are in `docs/m5d_single_frame_evaluation_report.md`.
+- Descriptive result boundary:
+  - the figures and table document the quality trade-offs of one source frame, the frozen M5C tile scores, and discrete JPEG payload behavior;
+  - no quality metric feeds allocation; M5D does not claim a generally best method, collision probability, statistical significance, perception benefit, communication benefit, or navigation benefit.
+- Validation actually run:
+  - `python -m pip check`: passed;
+  - `python -m compileall -q compression navigation perception risk_map scripts simulator tests evaluation`: passed;
+  - `python -m unittest discover -s tests`: 213 tests passed, including 16 new M5D tests;
+  - M5B validator, M5C run and validator, M5D run and validator, M5D plot, repeated M5D validator, second M5D run and validator: all exited `0`;
+  - M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
+  - compression/allocation import scans confirm they do not import the M5D evaluator, NumPy, scikit-image, or quality metrics, and the M5D runner never imports a matcher or allocator.
+- Next priority: Milestone 5E multi-frame and multi-scene offline evaluation using the same frozen fairness, region, and no-future-actual rules. Do not begin perception, networking, navigation, or machine-learning work first.
+
+## Milestone 5E-A - Multi-scene offline evaluation protocol freeze
+
+- Status: completed as a design-only task on `feature/m5-risk-roi-compression`; no M5E dataset or implementation was created.
+- Baseline verified before edits:
+  - formal root: the user-selected native Windows project checkout;
+  - clean `feature/m5-risk-roi-compression` branch;
+  - required commits `1788688` and `8539f04` in history;
+  - no Git remote;
+  - Python 3.11.14;
+  - 213 unit tests passed.
+- Created `docs/m5e_multiscene_offline_evaluation_protocol.md` and froze:
+  - the question and H1-H3 as hypotheses rather than conclusions;
+  - Uniform, Center ROI, Object ROI, and Risk ROI as the only M5E methods;
+  - strict development/calibration/formal split isolation, with the accepted M4D/M5D frame excluded from M5E statistics;
+  - eight static-AABB primary scenario families and machine-verifiable thresholds;
+  - calibration scale of 64 frames and formal scale of 256 frames / 4096 reconstructions;
+  - disjoint primary and replacement seed namespaces;
+  - four method-independent snapshots at reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`;
+  - required manifest provenance, robot/trajectory/risk/projection fields, and `actual_future_trajectory_used=false`;
+  - calibration-only common feasible byte interval and fixed 5%/25%/50%/80% target formula;
+  - continuous risk-weighted PSNR as primary metric, Risk-versus-three-baseline comparisons, and severe/low as primary budgets;
+  - episode-level paired differences, eight-scenario stratification, 10,000 bootstrap replicates, and seed `20260718`;
+  - independent engineering acceptance and scientific-support criteria;
+  - complete failure statuses, retained logs, whole-episode exclusion, and ascending same-scenario replacement seeds;
+  - M5E-A through M5E-F execution order.
+- Existing definitions remain frozen: Center `sigma=0.5`, Object clipped-polygon coverage, Risk tile maximum, M5C search/tie-break, `HIGH_RISK_THRESHOLD=0.20`, M5D metrics, risk parameters, Camera projection, tiled-JPEG parameters, and `RAVCJT1` container.
+- No Webots world/controller/config, runner, validator, test, frame, CSV, JSON, figure, risk/scoring/allocation code, dependency, or generated evidence was changed or created.
+- Validation actually run:
+  - pre-edit and post-edit `python -m unittest discover -s tests`: 213 tests passed;
+  - protocol consistency audit confirmed disjoint splits, result-independent snapshots, calibration-only budgets, episode-level statistics, separate engineering/scientific criteria, and explicit anomaly/replacement handling;
+  - Git diff was restricted to `README.md` and `docs/`.
+- Historical next priority at M5E-A closeout: Milestone 5E-B parameterized static-AABB scenario and dataset generator with snapshot and scenario validators. Do not run calibration or generate formal quality results in M5E-B.
+
+## Milestone 5E-B - Parameterized static-AABB dataset generator
+
+- Status: formally accepted on `feature/m5-risk-roi-compression` for deterministic multi-scene dataset generation and risk-scenario validation. Targeted GUI manual acceptance is recorded separately from automatic evidence.
+- Safety checkpoint: created and reapplied `stash@{0}` named `backup: M5E-B S1-S4 validated checkpoint`; the stash record was retained during implementation and final validation.
+- Implemented:
+  - immutable seeded `ScenarioConfig` generation for S1-S8 and disjoint smoke/calibration/formal seed namespaces;
+  - one parameterized Webots world/controller for static unrotated AABB Box obstacles;
+  - fixed snapshot crossings at reference-motion progress `0.20`, `0.45`, `0.70`, and `0.90`;
+  - aligned RGB frame, planned/state/combined float-mask, metadata, episode summary, dataset manifest, and episode manifest output;
+  - default no-overwrite, explicit overwrite/resume, bounded replacement pools, dry-run, timeout, and retained failure records;
+  - independent scenario/data validator, deterministic-run comparator, rich scenario diagnostics, and smoke plots.
+- S5 original risk-role selection before the later physical-clearance correction:
+  - root cause was insufficient/late trajectory separation plus obstacle visibility/depth geometry that made one candidate dominate both channels; the first validator also used index 1 instead of the frozen third snapshot at `p=0.70`;
+  - a bounded deterministic offline geometry sweep used only planned/state trajectory and Camera geometry, not compression or quality metrics;
+  - selected schedule is left arc `1.0/2.0 rad/s` through `4.25 s`, then right arc `2.0/1.0 rad/s` through `6.0 s`;
+  - at `p=0.704`, planned argmax is `M5E_S5_PLANNED_BRANCH` with margin `0.17591532330398388`; state argmax is `M5E_S5_STATE_BRANCH` with margin `0.1725670221363893`; trajectory disagreement is `0.03721414398972764 m`;
+  - both branch targets are eligible, have nonempty clipped polygons and mask contributions, and planned/state masks differ.
+- S5 physics correction:
+  - the initial GUI run made real e-puck body contact with `M5E_S5_PLANNED_BRANCH` at step `170` / `5.440 s`, after snapshot 3 at `5.408 s`; the estimated minimum clearance was `-0.000590270 m`;
+  - both branch Boxes were moved only in `+y` by `0.030 m`, retaining their sizes, command schedule, snapshot targets, risk/trajectory/Camera/mask code, and all frozen validator rules;
+  - the corrected snapshot-2 rankings remain planned `M5E_S5_PLANNED_BRANCH` (margin `0.029617548`) and state `M5E_S5_STATE_BRANCH` (margin `0.036683973`), with disagreement `0.037214144 m`, distinct masks, and nonzero contributions;
+  - corrected batch diagnostics show zero body overlap and minimum clearance `0.010794580 m`; user GUI review confirmed four snapshots, no collision, and preserved planned/state disagreement.
+- S7 physics and internal-PROTO correction:
+  - the initial GUI run contacted `M5E_S7_RISK` at step `185` / `5.920 s`, after snapshot 3 at `5.408 s`; the estimated minimum clearance was `-0.000386838 m`;
+  - the S7 obstacle geometry and partial target are unchanged. The schedule now stops at `5.5 s`, after the final frozen snapshot, preventing the post-capture collision; corrected minimum clearance is `0.010996237 m` with zero body overlap;
+  - an optional diagnostic attempt to call `getId()` for internal e-puck wheel PROTO nodes produced two Webots Console errors. Those IDs were diagnostic-only and are now removed: diagnostics use only the top-level e-puck body ID, while obstacles retain stable top-level DEF IDs and `ScenarioConfig.obstacle_id` strings;
+  - the new regression test prohibits `getFromProtoDef()` in this controller. The corrected GUI run had four snapshots, passed the independent validator, had no internal-PROTO error or physics warning, and was manually confirmed collision-free with normal partial visibility.
+- Other frozen-role evidence at `p=0.704`:
+  - S6 small-high: `938 px`, combined risk `0.3593353909604333`; large-low: `3652 px`, risk `0.0011643852196083705`; projected-area ratio `3.893390191897655`, with a shared tile and nonzero contributions;
+  - S7 partial target: `partially_visible`, `1154` candidate/written pixels, combined risk `0.03360701169399`, truncation `0.5862820200055942`, and projected polygon crossing the left boundary;
+  - S8 has one eligible visible obstacle in every snapshot; max combined risks are `1.3235533551247435e-05`, `4.4110649896514015e-05`, `0.00014998117730962427`, and `0.0004900511667976293`, with positive mask sums and empty high-risk regions handled as valid.
+- Smoke evidence:
+  - generated 8 primary episodes using seeds `9001..9008`, 4 snapshots each, 32 manifest rows, and no replacements;
+  - all 32 identities, frame hashes, float-mask hashes, configs, paths, and summaries are complete and unique as required;
+  - maximum snapshot progress error is `0.0040000000000000036`, within tolerance `0.006`;
+  - second full run under `data/m5e_repeat` compared exactly for all 32 frame bytes/hashes, masks, configs, and normalized metadata;
+  - calibration seed indices 0/1 and formal boundary indices 0/7 passed config-level checks only; no calibration/formal Webots run, manifest, frame, or mask was generated.
+- Generated ignored evidence:
+  - `data/logs/m5/m5e_dataset_manifest.csv` and `data/metadata/m5e/m5e_episode_manifest.json`;
+  - 32 frames/masks/snapshot metadata records under the protocol paths;
+  - `results/m5_compression/m5e_smoke/m5e_scenario_diagnostics.png` and `m5e_snapshot_progress.png`.
+- Scientific boundary: no risk formula/parameter, trajectory model, Camera model, snapshot target, M5E-A threshold, M5 codec/allocation, or quality metric was changed. Risk remains a heuristic proxy, not collision probability. M5E-B provides dataset-generation evidence only.
+- GUI status: targeted human acceptance passed for S2 (four snapshots, no collision), S3 (no physics warning, collision, jitter, or visible tilt), S5 (four snapshots, no collision, planned/state disagreement retained), and S7 (four snapshots, no internal-PROTO error, physics warning, collision, jitter, or visible tilt, and normal partial visibility). These are manual GUI observations, not automatic proof; all eight scenario families remain independently covered by the complete automated smoke validator.
+- Final automated validation:
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q compression evaluation navigation perception risk_map scripts simulator tests`: passed;
+  - final `python -m unittest discover -s tests`: 257 tests passed;
+  - smoke dry-run: passed against an isolated output root and wrote no episode artifacts;
+  - M5E independent validator: passed for 8 episodes / 32 snapshots before and after plotting;
+  - repeat-output validator and deterministic comparator: passed; all 32 frames, masks, configs, and normalized metadata are identical;
+  - S1-S8 smoke plus calibration indices 0/1 and formal boundary indices 0/7: 40 config-level sanity checks passed without writing calibration/formal artifacts;
+  - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators: all exited `0`;
+  - dependency scan found only shared immutable mask/polygon/tile-grid helpers; no codec encode, matcher, allocator, PSNR, SSIM, or quality-result dependency exists in generation or scenario selection;
+  - future-actual scan found only the explicit false provenance field and validator assertion; no future actual position, velocity, or yaw is read.
+- Historical next priority at M5E-B closeout: Milestone 5E-C calibration pilot and common-budget freeze. Do not generate calibration data, freeze budgets, or start any new quality experiment until that milestone is explicitly started.
+
+## Milestone 5E-B - GUI runner and S3 physics stabilization
+
+- Status: GUI acceptance support is implemented; S3's reported physics instability is fixed, automatically revalidated, and manually accepted for the corrected GUI rerun.
+- GUI support commit: `cb13318 fix: support GUI acceptance for M5E scenes`.
+  - `scripts/run_m5e_dataset_smoke.py --scenario S3 --output-root <isolated-root> --gui` launches one interactive realtime Webots instance, pauses after generation, and waits for manual close;
+  - the runner uses a temporary ignored world copy so Webots GUI saves cannot add runtime obstacles or robot state to the canonical world;
+  - default smoke behavior remains `--batch --mode=fast`, and GUI mode does not inherit the automatic 300-second timeout.
+- S3 root cause and localization:
+  - the original nominal `TURN_RISK` center `(0.155, 0.080) m` lay on the e-puck's executed left-arc path;
+  - a clean diagnostic run first reached the e-puck body-cylinder/Box contact boundary at Webots step `140`, simulation time `4.480 s`, in `left_arc`, after the `p=0.70` snapshot at `4.224 s`;
+  - contact/penetration was present for 49 logged steps, minimum estimated body-surface clearance was `-0.000662464 m`, and speed later fell from approximately `0.030 m/s` to `0.0112 m/s`;
+  - this is real near-contact/contact rather than an initialization, snapshot-capture, pause, dynamic-obstacle, or multi-instance port problem. A previously GUI-saved polluted world also contained duplicate runtime colliders, but the warning reproduced with the restored canonical world and one Webots instance.
+- Minimal S3-only correction:
+  - moved the nominal S3 `TURN_RISK` center to `(0.210, 0.110) m`; smoke seed `9003` deterministically produces `(0.211093647280262, 0.11133095177193035) m`;
+  - retained its `(0.030, 0.030, 0.060) m` size, both wheel-speed phases, left-turn onset/duration, start pose, four snapshot targets, risk/trajectory/Camera/mask code, S3 frozen validator thresholds, and every other scenario;
+  - fixed snapshot evidence remains valid: left-turn yaw change `0.670769 rad`, combined risk `0.256176`, required lateral-risk centroid condition passed, `actual_future_trajectory_used=false`, and combined mask remains pixelwise `max(planned,state)`.
+- Optional diagnostics:
+  - `M5E_PHYSICS_DIAGNOSTICS_PATH=<project-relative-jsonl>` enables per-step pose, roll/pitch/yaw, height, wheel command, measured velocity, command segment, snapshot crossing, contact points, obstacle-node IDs, AABB relation, and exact horizontal body-cylinder/Box clearance logging;
+  - diagnostic output is exclusive-create, flushed per step, and closed in `finally`; it is disabled by default and does not change scientific outputs;
+  - the controller now rejects a nonempty runtime obstacle group before importing parameterized nodes, preventing duplicate Solid colliders from a contaminated world.
+- Fixed-run evidence:
+  - two independent S3 batch runs and one isolated GUI run each produced 188 diagnostic rows, four snapshots, zero obstacle contact rows, and minimum body-surface clearance `0.003971330 m`;
+  - both batch runs had exact equality for four RGB frames, float masks, ScenarioConfig/manifest fields, and normalized metadata;
+  - the GUI runner returned `GUI run completed: scenario=S3 snapshots=4`, deleted its temporary world, and left canonical `m5e_dataset_generator.wbt` at SHA-256 `52f79bf99e84d5264bb18ae9cdf05b976b4089ab4ea9a4018cd76a2a76d3863`.
+  - user manual confirmation after the corrected run: zero physics warnings in Webots Console; no robot contact, jitter, or visible tilt.
+- Validation actually run:
+  - `python -m pip check`: no broken requirements;
+  - `python -m compileall -q simulator risk_map perception compression scripts tests`: passed;
+  - `python -m unittest discover -s tests`: 254 tests passed; this repository uses `unittest`, and `pytest` is not installed in `.venv`;
+  - three isolated S3 output roots independently passed as 1 episode / 4 snapshots;
+  - a fresh S1-S8 default smoke run passed with 8 episodes / 32 snapshots, followed by the independent dataset validator;
+  - M5D, M5C, M5B, M4D, M4C, M3C, M3D evaluation, and M3D report validators all exited `0`.
+- Manual boundary: S3, S5, and S7 collision corrections and S7 internal-PROTO diagnostics were accepted from explicit user Console and visual confirmation; S2 was also manually confirmed collision-free. These GUI observations complement, but do not replace, the complete S1-S8 automatic validator.
+- Historical next priority after S3 GUI stabilization: Milestone 5E-C calibration pilot and common-budget freeze, only after an explicit milestone-start request.
 
 ## Commands actually run in the formal project
 
@@ -1420,21 +1826,122 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 
 - Formal project path and Git top level: verified.
 - Project `.venv` Python 3.11.14/64-bit: verified after copying.
-- Local branch state: `main` verified; no `master` branch rename was needed during this verification pass because the branch was already `main`.
+- Historical setup branch state: `main` was verified during the initial environment pass. Current M5E branch state is `feature/m5-risk-roi-compression`.
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
-- Camera frame capture: implemented and verified in Milestone 1C. Robot-state CSV logging, risk maps, ROI compression, object detection, and closed-loop navigation: not implemented and not tested.
+- M5E-B smoke generator: final 8-episode / 32-snapshot smoke passed independently with no replacements; deterministic repeat evidence and targeted S2/S3/S5/S7 GUI acceptance are recorded above.
+- M5E calibration data and common budgets: completed in M5E-C. Formal encoding and metric generation completed in M5E-D. Episode statistics and diagnostics completed in M5E-E. M5E-F full-evidence acceptance, object detection, networking, machine learning, and closed-loop navigation remain not implemented or tested.
 
 ## Current issues
 
-1. Project dependencies in `requirements.txt` are not fully installed as a controlled dependency pass; matplotlib and its runtime dependencies were installed into `.venv` for Milestone 2 plotting.
-2. The repository now has local commits on `feature/m2-trajectory-models`; generated data/results remain untracked and ignored.
+1. The project-local `.venv` has run the current `requirements.txt` stack through the accepted M5E-C baseline; continue using `.\.venv\Scripts\python.exe` rather than unrelated Conda environments.
+2. The repository is on `feature/m5-risk-roi-compression`; generated data/results remain ignored and are not staged.
 3. The copied `.venv` remains based on a Python executable inside an application-specific Conda installation; it currently works and excludes that environment's site packages, but a dedicated base interpreter would reduce coupling if instability appears.
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.
-5. Git `user.name` and `user.email` are now configured locally/globally for this environment as `ShirongZuo-ai <3095325284@qq.com>`.
+5. Git `user.name` and `user.email` are configured in this environment; the exact local identity is not required for reproduction and is omitted from public notes.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
-7. Milestone 2 and 2R Webots GUI Console red-error status still needs user visual confirmation if a GUI-level console check is required.
+7. M5E-B GUI evidence is limited to the documented targeted S2/S3/S5/S7 manual checks; it complements the automatic all-scenario validator and is not an automatic Console or visual proof.
+8. The historical smoke output directly under `data/` predates accepted S3/S5/S7 corrections and fails current config-hash reproduction. The canonical M5E-B regression root is `data/m5e_final_acceptance_smoke/`, which passes; no stale smoke data enter calibration, formal metrics, or M5E-E.
 
 ## Next priority
 
-Milestone 5A is the next priority: freeze compression and fair-bitrate comparison design. Do not implement compression, networking, or navigation code before that design-freeze task is explicitly requested.
+Milestone 5E-E episode statistics and diagnostics are complete. The next priority is Milestone 5E-F independent full-evidence validation and acceptance. Do not alter the M5E-E outputs, frozen budgets, hypotheses, or scenario weights.
+
+## Public GitHub release preparation
+
+- Status: public-release preparation completed locally on `feature/m5-risk-roi-compression` before push/PR creation.
+- Branch relation check: local `main` exists and is an ancestor of the active feature branch.
+- Safety stashes: two existing safety stashes were listed and left untouched.
+- Public-facing cleanup: personal Windows user paths and local Git identity details were removed from tracked documentation where they were not required for reproduction.
+- README: rewritten as a public research entry point that states the research question, motivation, current Webots simulation system, methods, key results, repository structure, quick start, reproducibility, status, limitations, and planned work.
+- Curated public artifacts: added three small README figures under `docs/assets/` and one compact M2 trajectory metric summary under `docs/results/`.
+- Metric boundary: the 2.0 s stable-window ADE values are recorded as Webots simulation results only: State-only `0.000715992 m` and Command-conditioned `0.000013655 m`.
+- License status: no `LICENSE` file exists; no license was created because no explicit license choice has been made.
+- Next priority after release PR creation remains Milestone 5E-F independent full-evidence validation and acceptance.
+
+## Milestone 5E-C - Calibration and common-budget freeze
+
+- Status: completed on `feature/m5-risk-roi-compression` as calibration-only byte-feasibility work. No formal evaluation, quality metric, method comparison, or scientific conclusion was generated.
+- Calibration data: 16 accepted primary episodes and 64 frames (`S1-S8 x 2 seeds x 4 first-crossing snapshots`) under `data/m5e_calibration/`. Seed pairs are `100100/100101` through `100800/100801`; all used replacement index `0`.
+- Frozen invariants retained: snapshot progress `0.20/0.45/0.70/0.90`, static-AABB scenario conditions, Camera/risk/projection/mask definitions, deterministic tiled-JPEG, M5C score definitions and lexicographic tie-break, and `actual_future_trajectory_used=false`.
+- Actual-byte feasibility: exhaustively measured 256 frame-method range records. Each method's global observed legal range is `31169..40675` bytes; the calibration-wide common interval is `[31240, 35779]` bytes, width `4539`.
+- Common-interval witnesses: lower is `m5e_calibration_s7_seed100700_actual100700_snapshot01` / Uniform; upper is `m5e_calibration_s3_seed100300_actual100300_snapshot02` / Center ROI. Every frame-method range covers the common interval.
+- Frozen calibration-only targets: severe `31466`, low `32374`, medium `33509`, high `34871` bytes, calculated with `floor` at 5%, 25%, 50%, and 80% of the common span. The targets are strictly increasing, method-identical, and cannot be adjusted from later formal outcomes.
+- Allocation validation: all `64 x 4 x 4 = 1024` allocations exist, obey frozen matching/tie-break rules, and are at or below target. Utilization is `[0.992859, 1.000000]`; no over-budget allocation occurred.
+- Independent validation: `scripts/validate_m5e_calibration.py` recomputed the dataset checks, 256 ranges, common interval/witnesses, budgets, and 1,024 allocations. A second complete isolated Webots calibration run exactly matched source RGB hashes, float masks, ScenarioConfig, normalized metadata, ranges, budgets, allocations, and actual bytes.
+- Verification actually run: `pip check`, repository `compileall`, and 263 unit tests passed. Official M3C episode_0002, M3D evaluation/report, M4C episode_0003, M4D episode_0001, M5B, M5C, M5D, M5E-B final eight-scenario smoke, and M5E-C calibration validators all passed.
+- Generated calibration frames, masks, metadata, logs, containers, and repeat data remain ignored by `.gitignore`; no data/results/cache/virtual environment artifact was added to Git.
+- Documentation: `docs/m5e_calibration_protocol.md` and `docs/m5e_calibration_report.md` define and report this freeze. Calibration does not compare PSNR/SSIM/RW-PSNR or support a Risk ROI superiority, perception, collision-probability, or navigation claim.
+
+## Milestone 5E-D - Formal encoding and metric evaluation
+
+- Historical M5E-D closeout status: completed on `feature/m5-risk-roi-compression` as formal encoding and metric-generation work. At that closeout, M5E-E episode statistics had not started. M5E-E is now complete; perception evaluation, networking, machine learning, and closed-loop navigation remain not started.
+- Formal dataset: 64 accepted primary episodes and 256 frames (`S1-S8 x 8 formal seeds x 4 first-crossing snapshots`) under `data/m5e_formal/`. Formal seeds follow `200000 + 100 * scenario_index + seed_index`, `seed_index=0..7`; all used replacement index `0`.
+- Frozen budgets used unchanged: severe `31466`, low `32374`, medium `33509`, high `34871` bytes from the M5E-C common interval `[31240, 35779]`.
+- Reconstruction matrix: 4 methods x 4 budgets x 256 frames = 4,096 complete-container reconstructions and 4,096 metric rows. All rows are at or below target; utilization is `[0.991568925468154, 1.0]`.
+- Formal metrics: frozen M5D full-image MSE/PSNR/SSIM, continuous risk-weighted MSE/PSNR, and eligible-object, risk-support, high-risk, and background regional quality. Empty high-risk regions are recorded as `undefined`, not as failures.
+- Independent validation: the formal dataset validator passed for 64 episodes / 256 snapshots. The formal evaluation validator recomputed all 4,096 allocation and metric rows from source frames, masks, metadata, frozen budgets, and codec/allocation definitions.
+- Deterministic repeat subset: `data/m5e_formal_repeat_subset/` regenerated seed-index `0` for all eight scenarios, producing 8 episodes, 32 frames, and 512 reconstructions. The subset validator recomputed all metrics, and `scripts/compare_m5e_formal_determinism.py` matched all 512 shared rows exactly against the full formal run.
+- Generated ignored evidence:
+  - `data/m5e_formal/` formal frames, masks, metadata, manifests, allocation table, metric table, containers, decoded images, run metadata, and validation summary;
+  - `data/m5e_formal_repeat_subset/` repeat-subset data and metrics;
+  - `results/m5_compression/m5e_formal/m5e_d_*.png` descriptive diagnostics.
+- Verification actually run:
+  - `.\.venv\Scripts\python.exe -m pip check`: no broken requirements found;
+  - `.\.venv\Scripts\python.exe -m compileall -q compression evaluation navigation perception risk_map scripts simulator tests`: passed;
+  - full unit suite in the project `.venv`: 268 tests passed;
+  - M5E-D formal dataset generation: passed, 64 episodes / 256 frames;
+  - M5E formal dataset validator: passed;
+  - M5E-D formal evaluation: passed, 4,096 reconstructions, 0 over budget;
+  - M5E-D formal evaluation validator with recomputation: passed;
+  - repeat-subset generation/evaluation/validator: passed, 512 reconstructions;
+  - formal determinism comparator: passed, 512 shared rows;
+  - diagnostic plotting: passed;
+  - new helper unit tests: 5 passed.
+- Documentation: `docs/m5e_formal_evaluation_report.md` records the formal evidence, validation, determinism, and interpretation boundary. M5E-D alone does not establish Risk ROI superiority. M5E-E later analyzed the frozen table and found heterogeneous rather than general superiority.
+
+## Milestone 5E-E - Episode-level statistics and diagnostics
+
+- Status: completed on `feature/m5-risk-roi-compression` using only the frozen M5E-D formal metric table.
+- Frozen analysis:
+  - episode is the resampling unit; four same-episode snapshots are aggregated before inference;
+  - 64 episodes, eight per S1-S8;
+  - 384 valid primary pairs (`64 x 3 baselines x 2 primary budgets`);
+  - scenario-stratified paired bootstrap with 10,000 replicates and seed `20260718`;
+  - equal-weight mean of eight scenario means and percentile 95% intervals;
+  - severe `31466`, low `32374`, medium `33509`, and high `34871` budgets retained unchanged.
+- Primary RW-PSNR results:
+  - severe Risk-minus-Uniform: `-1.122 dB`, 95% CI `[-1.326, -0.919]`, W/T/L `14/0/50`;
+  - severe Risk-minus-Center: `0.520 dB`, 95% CI `[0.219, 0.820]`, W/T/L `41/0/23`;
+  - severe Risk-minus-Object: `-0.883 dB`, 95% CI `[-1.108, -0.660]`, W/T/L `17/0/47`;
+  - low Risk-minus-Uniform: `1.798 dB`, 95% CI `[1.422, 2.194]`, W/T/L `44/0/20`;
+  - low Risk-minus-Center: `2.964 dB`, 95% CI `[2.511, 3.400]`, W/T/L `57/0/7`;
+  - low Risk-minus-Object: `0.191 dB`, 95% CI `[-0.219, 0.606]`, W/T/L `32/1/31`.
+- Hypothesis status:
+  - H1 is not fully supported because severe Risk-minus-Uniform/Object are negative and low Risk-minus-Object crosses zero;
+  - H2's frozen `(S2,S6) - (S1,S8)` Risk-minus-Object contrast is positive at severe and low budgets;
+  - all six H3 Risk-minus-Center `(S2,S3,S4) - S1` contrasts have the predicted positive direction, but the low S2 contrast interval crosses zero;
+  - the complete basic initial support gate is not met because low Risk-minus-Object is single-scenario dominated and severe Risk-minus-Object is negative.
+- Negative and trade-off evidence retained:
+  - Risk ROI lowers overall full-frame and background PSNR against every baseline at both primary budgets;
+  - S5 and S7 do not show a broad Risk advantage;
+  - S8 unexpectedly has large low-budget gains against Uniform/Center and dominates the low Risk-minus-Uniform effect, so it is not a null low-risk control for continuous RW-PSNR.
+- Machine-readable ignored outputs:
+  - `data/m5e_formal/statistical_analysis/episode_level_metrics.csv`;
+  - `paired_effects.csv`, `bootstrap_results.csv`, `scenario_diagnostics.csv`, `win_tie_loss.csv`, and `figure_inputs.csv`;
+  - `statistical_summary.json`, `analysis_manifest.json`, `failure_log.json`, `figure_manifest.json`, and the M5E-E validation summary.
+- Deterministic figures: nine PNG files under `results/m5_compression/m5e_statistics/`; all visually inspected for complete axes, labels, and episode-unit annotations.
+- Determinism: a second complete run under `data/m5e_formal/statistical_analysis_repeat/` matched six CSV files, four normalized JSON files, all bootstrap hashes/intervals, all figure inputs, and all nine PNG files exactly.
+- Validation actually run:
+  - project `.venv` `pip check`: passed;
+  - repository `compileall`: passed;
+  - full unit suite: 285 tests passed, including 17 M5E-E helper tests;
+  - M3C, M3D evaluation/report, M4C, M4D, M5B, M5C, and M5D validators: passed;
+  - M5E-B canonical final smoke: passed for 8 episodes / 32 snapshots;
+  - M5E-C: passed for 16 episodes / 64 frames / 256 ranges / 1,024 allocations;
+  - M5E-D: passed for 64 episodes / 256 frames / 4,096 independently recomputed metric rows;
+  - M5E-E: passed for 64 episodes / 384 primary pairs / 10,000 bootstrap iterations / nine figures;
+  - complete M5E-E deterministic repeat comparison: passed.
+- Documentation: `docs/m5e_statistical_analysis_report.md` separates engineering validity, primary outcomes, secondary trade-offs, scenario heterogeneity, negative/null findings, limitations, and unproven claims.
+- Scientific boundary: risk remains a heuristic proxy, tiled-JPEG remains a spatial allocation prototype, and no perception, collision, network, navigation, machine-learning, or real-robot claim is supported.
+- Next priority: Milestone 5E-F independent full-evidence validation and acceptance. It remains unstarted.
