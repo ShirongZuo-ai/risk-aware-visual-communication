@@ -2,6 +2,7 @@
 from __future__ import annotations
 from scripts.m6a_dual_roi import CurrentState,ScheduleEvidence,Method,predict
 from scripts.m6a_trusted_artifacts import M6AProjectionConfig,create_generated_risk_mask,digest
+from dataclasses import asdict
 def _bridge(trajectory,config,method,input_digest,config_digest):
  config.validate(); values=[0.0]*(config.width_px*config.height_px)
  for p in trajectory:
@@ -12,4 +13,4 @@ def _bridge(trajectory,config,method,input_digest,config_digest):
 def generate_state_only_risk_mask(state:CurrentState,config:M6AProjectionConfig):
  t=predict(Method.STATE_ONLY_RISK_ROI,state);return _bridge(t,config,Method.STATE_ONLY_RISK_ROI.value,digest(state.__dict__),config.sha256())
 def generate_command_conditioned_risk_mask(state:CurrentState,schedule:ScheduleEvidence,config:M6AProjectionConfig,*,timestamp_s:float):
- t=predict(Method.COMMAND_CONDITIONED_RISK_ROI,state,schedule=schedule,snapshot_time_s=timestamp_s);return _bridge(t,config,Method.COMMAND_CONDITIONED_RISK_ROI.value,digest((state.__dict__,schedule.__dict__)),config.sha256())
+ t=predict(Method.COMMAND_CONDITIONED_RISK_ROI,state,schedule=schedule,snapshot_time_s=timestamp_s);return _bridge(t,config,Method.COMMAND_CONDITIONED_RISK_ROI.value,digest((state.__dict__,asdict(schedule))),config.sha256())
