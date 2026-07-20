@@ -2,6 +2,7 @@
 from __future__ import annotations
 from dataclasses import asdict,dataclass
 import os
+import math
 import hashlib,json,math,shutil
 from pathlib import Path
 from scripts.m6a_dual_roi import CurrentState,ScheduleEvidence,SnapshotInput,process_m6a_snapshot,serialize_snapshot
@@ -79,6 +80,26 @@ class WebotsRobotFacade:
   pose=self.pose_reader();return StateSample(CurrentState(**pose),self.robot.getTime())
  def frame_sample(self):
   raw=self.camera.getImage();return CameraFrame(webots_bgra_to_rgb(raw,160,120),self.robot.getTime())
+class WebotsCurrentStateReader:
+ """Supervisor-only, current-timestep e-puck state source; never reads a trace."""
+ WHEEL_RADIUS_M=.02;AXLE_LENGTH_M=.052
+ def __init__(self,supervisor,*,robot_def='EPUCK',left_motor='left wheel motor',right_motor='right wheel motor'):
+  self.supervisor=supervisor;self.node=supervisor.getFromDef(robot_def)
+  if self.node is None:raise ValueError('M6-A robot DEF not found')
+  self.translation=self.node.getField('translation');self.rotation=self.node.getField('rotation');self.left=supervisor.getDevice(left_motor);self.right=supervisor.getDevice(right_motor)
+  if None in (self.translation,self.rotation,self.left,self.right):raise ValueError('M6-A pose or wheel device unavailable')
+  self.last_time=None
+ def __call__(self):
+  t=self.supervisor.getTime()
+  if self.last_time is not None and t<=self.last_time:raise ValueError('non-increasing current state timestamp')
+  p=self.translation.getSFVec3f();r=self.rotation.getSFRotation()
+  if len(p)!=3 or len(r)!=4 or not all(math.isfinite(x) for x in (*p,*r,t)):raise ValueError('invalid current pose')
+  # Existing worlds use z-up; the axis-angle yaw is signed only for the z axis.
+  if abs(r[0])>1e-9 or abs(r[1])>1e-9:raise ValueError('unsupported non-z-up robot rotation')
+  yaw=r[3] if r[2]>=0 else -r[3];left=self.left.getVelocity();right=self.right.getVelocity()
+  if not all(math.isfinite(x) for x in (left,right)):raise ValueError('invalid current wheel velocity')
+  self.last_time=t;linear=self.WHEEL_RADIUS_M*(left+right)/2;angular=self.WHEEL_RADIUS_M*(right-left)/self.AXLE_LENGTH_M
+  return StateSample(CurrentState(p[0],p[1],yaw,linear,angular),t)
 def webots_bgra_to_rgb(raw,width=160,height=120):
  if not isinstance(raw,(bytes,bytearray)) or len(raw)!=width*height*4:raise ValueError('invalid Webots BGRA frame')
  out=bytearray(width*height*3)
@@ -102,6 +123,7 @@ def main_m6a_webots_controller():
  try:
   from controller import Robot # delayed: ordinary Python imports remain Webots-free
   config,schedule=load_m6a_runtime_config(config_path,expected_manifest_hash=json.loads(Path(config_path).read_text())['manifest_hash'])
-  robot=Robot();facade=WebotsRobotFacade(robot,pose_reader=lambda:(_ for _ in ()).throw(RuntimeError('Supervisor pose reader must be injected by M6-A world controller')))
-  run_m6a_webots_episode(config,facade,state_reader=facade.state_sample,frame_reader=facade.frame_sample,predefined_schedule=schedule);return 0
+  from controller import Supervisor
+  robot=Supervisor();reader=WebotsCurrentStateReader(robot);facade=WebotsRobotFacade(robot,pose_reader=lambda:asdict(reader().state))
+  run_m6a_webots_episode(config,facade,state_reader=reader,frame_reader=facade.frame_sample,predefined_schedule=schedule);return 0
  except Exception:return 1
