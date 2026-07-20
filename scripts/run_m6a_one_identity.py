@@ -1,7 +1,9 @@
 """Preflight-only first-pilot launcher preparation; deliberately never launches Webots."""
 from __future__ import annotations
-import argparse,hashlib,json
+import argparse,hashlib,json,sys
 from pathlib import Path
+PROJECT_ROOT=Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:sys.path.insert(0,str(PROJECT_ROOT))
 from scripts.m6a_common import PROJECT_ROOT,VERSION,METHODS,BUDGETS,SNAPSHOT_PROGRESS,validate
 def first_pilot(manifest_path):
  data=json.loads(Path(manifest_path).read_text(encoding='utf-8'));validate(data)
