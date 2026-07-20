@@ -116,6 +116,12 @@ def load_m6a_runtime_config(path,*,expected_manifest_hash):
  if not evidence.schedule_id or evidence.available_time_s is None:raise ValueError('invalid predefined schedule')
  config=M6ARuntimeConfig(data['manifest_hash'],data['scene'],data['episode_id'],data['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in data['snapshots']),Path(data['output_root']),M6AProjectionConfig(**data.get('projection_config',{})),protocol_version=data.get('protocol_version',VERSION));config.validate()
  return config,evidence
+def initialize_m6a_v2_scene_from_runtime_config(path,supervisor):
+ """Controller pre-motion gate: it must succeed before devices or snapshots start."""
+ from scripts.m6a_v2_scene_wiring import initialize_v2_scene_before_motion
+ from scripts.run_m6a_one_identity import load_v2_runtime_config
+ data=json.loads(Path(path).read_text(encoding='utf-8'));load_v2_runtime_config(data)
+ return initialize_v2_scene_before_motion(data,supervisor)
 def main_m6a_webots_controller():
  """Webots-only entry: host passes M6A_RUNTIME_CONFIG; no defaults or fallback."""
  config_path=os.environ.get('M6A_RUNTIME_CONFIG')

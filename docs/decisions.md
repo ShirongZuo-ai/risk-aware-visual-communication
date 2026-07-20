@@ -268,3 +268,10 @@
 - **Decision:** Curate the public README around four figures and regenerate M5E figures from a checked snapshot of the frozen M5E-E outputs, rather than editing prior raster figures or exposing every diagnostic on the landing page.
 - **Reason:** A compact presentation makes the formal scope, heterogeneous primary results, and limitations reviewable without concealing adverse results or turning the README into a paper-length report.
 - **Impact:** The README retains S7/S8, negative/null effects, matched-byte context, and simulation-only limits; detailed diagnostics remain linked from the statistical and acceptance reports. Public plotting is presentation-only and does not write M5E-D/E formal data or manifests.
+
+## 2026-07-21 - M6-A v2 scene-initialization authority
+
+- **Decision:** Use controller-side Option A for M6-A v2 scene initialization. The temporary world changes only the controller wiring to `m6a_trusted_runtime` and preserves `supervisor TRUE`; the controller must apply the frozen v2 scene/seed, initial pose, and obstacle geometry before any motion, camera enablement, or snapshot lifecycle.
+- **Reason:** The immutable M5E base world intentionally contains an empty obstacle group, while its historical controller imports deterministic obstacles at episode start. Keeping this single runtime authority avoids geometry drift, preserves the base-world hash, and is verifiable with Supervisor read-back digests.
+- **Rejected:** Static host-side geometry materialization (Option B), modifying the M5E base world, using M5 historical results or actual traces, and maintaining dual controller/world scene authorities.
+- **Impact:** A later launcher may use only the preflight-generated temporary world and must call the pre-motion initialization gate before it enables runtime devices. This decision does not authorize Webots launch, pilot generation, or scientific evaluation.

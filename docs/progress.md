@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A v2-B3A's pre-motion, source-record-bound scene initializer and safe temporary-world wiring. The immutable M5E base world is copied only to a system-temporary path with its controller changed to `m6a_trusted_runtime`; `supervisor TRUE` is preserved. Scene geometry and initial pose remain the controller's single pre-motion authority, recreated from the frozen v2 scene/seed with read-back hashes. Fake-Supervisor tests only: no Webots, pilot data, or scientific result exists.
+
 - Bound M6-A one-identity runtime configuration to the immutable v2 manifest/lock and its first pilot source record; external episode-source input is no longer a production authority. This remains preflight-only: no Webots, temporary world, pilot data, or scientific result exists.
 
 - Implemented M6-A v2-A causal episode-source schema and in-memory deterministic adapter for all 56 retained v1 identities. It reuses only versioned M5E scene primitives and the immutable base world; no M5 result, actual trace, Webots run, or v2 manifest was created.
