@@ -80,7 +80,7 @@ For M5E, the primary offline metric is continuous combined-risk-weighted PSNR at
 
 ## Milestone 5E scenario set
 
-The first formal multi-scene experiment is limited to static AABB obstacles and freezes eight families: straight collision-relevant obstacle, off-trajectory visual distractor, left turn, right turn, planned/state disagreement, large low-risk versus small high-risk, partial visibility, and low-risk control. Development, calibration, and formal seeds/episodes are disjoint. Calibration contains 64 frames; formal evaluation contains 256 frames and 4096 method-budget reconstructions. M5E-D completed that formal metric table and M5E-E completed the frozen episode-level analysis. M5E-F full-evidence validation and acceptance remain unstarted.
+The first formal multi-scene experiment is limited to static AABB obstacles and freezes eight families: straight collision-relevant obstacle, off-trajectory visual distractor, left turn, right turn, planned/state disagreement, large low-risk versus small high-risk, partial visibility, and low-risk control. Development, calibration, and formal seeds/episodes are disjoint. Calibration contains 64 frames; formal evaluation contains 256 frames and 4096 method-budget reconstructions. M5E-D completed that formal metric table, M5E-E completed the frozen episode-level analysis, and M5E-F independently reproduced and formally accepted the evidence. These remain offline image-quality findings only.
 
 ## Initial scenarios
 

@@ -170,6 +170,6 @@ The historical smoke data directly under `data/` predate accepted S3/S5/S7 corre
 
 ## What Remains Unproven
 
-M5E-E does not prove lower collision rate, higher navigation success, guaranteed safety, real-network performance, real-robot performance, or superiority over semantic communication methods. Machine learning and closed-loop navigation remain unstarted. M5E-F independent full-evidence acceptance also remains unstarted.
+M5E-E does not prove lower collision rate, higher navigation success, guaranteed safety, real-network performance, real-robot performance, or superiority over semantic communication methods. Machine learning and closed-loop navigation remain unstarted. M5E-F independently reproduced and formally accepted the frozen evidence; that engineering acceptance does not change these scientific boundaries.
 
 The only next mainline milestone is M5E-F formal validation and acceptance. It must preserve the M5E-E outputs and separate engineering acceptance from scientific support or nonsupport.

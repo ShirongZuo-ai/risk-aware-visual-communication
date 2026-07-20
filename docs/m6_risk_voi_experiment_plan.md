@@ -2,7 +2,7 @@
 
 ## Status and gate
 
-This is a planning document only. It does not train an allocator, alter the frozen M5E-D data, or change the M5E protocol. M5E-E provides heterogeneous offline image-quality evidence, not a general Risk ROI win: Risk ROI is worse than Uniform and Object ROI at severe budget, better than Uniform and Center ROI at low budget, and the low-budget Risk-versus-Object interval crosses zero. M5E-F independent evidence validation and acceptance remains the required mainline gate before any M6 experiment begins.
+This is a planning document only. It does not train an allocator, alter the frozen M5E-D data, or change the M5E protocol. M5E-E provides heterogeneous offline image-quality evidence, not a general Risk ROI win: Risk ROI is worse than Uniform and Object ROI at severe budget, better than Uniform and Center ROI at low budget, and the low-budget Risk-versus-Object interval crosses zero. M5E-F independent evidence validation and acceptance passed; M6 still requires independent counterfactual data and a frozen task protocol before any experiment begins.
 
 ## Baseline and objective
 
@@ -50,8 +50,7 @@ Do not advance an allocator when it:
 
 ## Sequencing
 
-1. Complete M5E-F independently, preserving the M5E-E outputs.
-2. Freeze the M6 counterfactual generator, split, utility label, byte accounting, and analysis protocol.
+1. Preserve the accepted M5E-F evidence and freeze the M6 counterfactual generator, split, utility label, byte accounting, and analysis protocol.
 3. Generate and validate counterfactual tile-quality samples.
 4. Benchmark oracle and greedy allocation against all four existing methods.
 5. Consider a learned allocator only after the held-out greedy/oracle evidence is positive and stable.

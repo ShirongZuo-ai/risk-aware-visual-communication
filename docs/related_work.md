@@ -1,6 +1,6 @@
 # Related work
 
-This document is a versioned project-positioning note. It is not yet a systematic literature review and does not add paper-specific claims, performance numbers, or novelty claims that are not already supported by project evidence. Detailed paper monitoring and innovation-threat notes should be folded in here only after source-backed review.
+This document is a versioned project-positioning note. It is not yet a systematic literature review and does not add paper-specific claims, performance numbers, or novelty claims that are not already supported by project evidence. Detailed paper monitoring and innovation-threat notes should be folded in here only after source-backed review. The current repository contains no source-backed per-paper extraction; the corresponding no-inference baseline matrix and implementation actions are recorded in [M6 Follow-up Baseline and Ablation Protocol v1](m6_followup_evaluation_protocol.md).
 
 ## Current Research Positioning
 

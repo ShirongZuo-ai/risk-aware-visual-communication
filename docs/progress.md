@@ -4,6 +4,7 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Completed a read-only M5E-D closeout audit and synchronized stale M5E-F status language. The audit confirms the frozen 64-episode / 256-frame / 4,096-reconstruction matrix is complete and readable with zero replacements, missing/duplicate keys, non-finite values, missing artifacts, unreadable decoded images, or over-budget rows. The new M6 follow-up protocol keeps the current methods as fairness baselines, predeclares state-only/corridor/footprint/dynamic/horizon ablations, and requires independent data; it does not authorize Risk-VoI training.
 - Finalized the Milestone 5 public presentation without changing frozen formal evidence: the README now leads with the formal scope, balanced primary findings, retained S7/S8 heterogeneity, limitations, and M6 gate. Four publication figures are regenerated from a checked snapshot of frozen M5E-E outputs as 300 dpi PNG and SVG; regression tests verify coverage, key values, CI crossing, output files, and README paths.
 - Completed M5E-F independent formal acceptance. The full M5E-D validator independently recomputed the frozen 64-episode / 256-frame / 4,096-reconstruction matrix. An isolated M5E-E reproduction matched all six CSVs and nine figures byte-for-byte and all four JSON outputs after normalizing run-specific timestamp/commit provenance. M5 is formally frozen; M6 requires independent counterfactual data generation and does not begin Risk-VoI training.
 - Regenerated the curated M2 ADE comparison and a companion improvement-factor figure directly from `docs/results/m2_in_place_summary_metrics.csv`. The new plotting script rejects missing schema, duplicate method/category/horizon keys, non-finite values, and zero ADE values incompatible with log scaling. The public CSV currently supports only the stable-window, 2.0 s comparison; no transition or 1.0 s values were inferred.
@@ -1835,7 +1836,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 - Documents path references: old Downloads root is not present as a current project root in `docs/*.md`, `AGENTS.md`, or `README.md`. The only remaining `Downloads` mention records that the old root was removed.
 - Webots R2025a installation: verified through file, registry, version, help, and system-information checks.
 - M5E-B smoke generator: final 8-episode / 32-snapshot smoke passed independently with no replacements; deterministic repeat evidence and targeted S2/S3/S5/S7 GUI acceptance are recorded above.
-- M5E calibration data and common budgets: completed in M5E-C. Formal encoding and metric generation completed in M5E-D. Episode statistics and diagnostics completed in M5E-E. M5E-F full-evidence acceptance, object detection, networking, machine learning, and closed-loop navigation remain not implemented or tested.
+- M5E calibration data and common budgets: completed in M5E-C. Formal encoding and metric generation completed in M5E-D. Episode statistics and diagnostics completed in M5E-E. M5E-F full-evidence acceptance is complete; object detection, networking, machine learning, and closed-loop navigation remain not implemented or tested.
 
 ## Current issues
 

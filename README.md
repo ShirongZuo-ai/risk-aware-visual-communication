@@ -81,6 +81,8 @@ Use Python 3.11 and Webots R2025a from the repository root:
 
 The formal M5 data are intentionally held out and frozen. Full formal-validation and isolated-reproduction commands are documented in the [acceptance report](docs/m5e_f_independent_acceptance_report.md); generated evidence remains under ignored `data/` and `results/` paths.
 
+The read-only [M5E-D closeout](docs/m5e_d_closeout_report.md) records the engineering audit and its reproducible descriptive summary. The next experiment-design step is the [M6 baseline and ablation protocol](docs/m6_followup_evaluation_protocol.md); it requires independent data and does not authorize immediate Risk-VoI training.
+
 ## Limitations
 
 - Controlled Webots simulation and offline evaluation only.

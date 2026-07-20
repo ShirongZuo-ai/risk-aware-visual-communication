@@ -229,4 +229,6 @@ Acceptance: the report states what compression and image-risk-region claims are 
 
 M5 is formally frozen after M5E-F acceptance. M6 remains planned and does not authorize immediate Risk-VoI training or closed-loop navigation: it first requires independent counterfactual data generation, frozen task utility/splits, and oracle/greedy baseline validation.
 
+The M5E-D closeout audit and [M6 follow-up baseline/ablation protocol](m6_followup_evaluation_protocol.md) are complete design artifacts. The first M6 execution candidate is independent-data byte-fairness validation plus the command-conditioned versus state-only trajectory ablation; no M5 formal evidence may be retuned or reused for training.
+
 The post-M5E-E [Risk-conditioned Visual VoI plan](m6_risk_voi_experiment_plan.md) is a future experiment-design artifact, not authorization to train a model or start M6 before M5E-F acceptance.
