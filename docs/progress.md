@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A Phase 2C-2C1 runtime-config builder/materializer with canonical JSON and safe target protection. It requires an explicit verified episode source for complete schedule and absolute snapshot times, then fails closed if that source is absent or mismatched; only temporary-fixture materialization was tested, and no Webots/pilot data exists.
+
 - Prepared M6-A Phase 2C-2B's preflight-only one-identity host plan. It deterministically selects only `m6a_pilot_s1_seed600100` from the frozen pilot manifest and reports the fixed 1/4/2/4/32 scale without any Webots launch or output generation. Temporary-world wiring and real launch remain explicitly unauthorized/pending.
 
 - Implemented M6-A Phase 2C-2A Supervisor-only current pose/state reader and Webots-discoverable controller wrapper. Current e-puck state uses the current z-up pose and current wheel velocities with frozen 0.02 m wheel radius and 0.052 m axle length; only fake APIs were tested. Real Webots, pilot data, host launching, and scientific evaluation remain pending.
