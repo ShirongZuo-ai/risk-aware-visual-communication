@@ -1,0 +1,3 @@
+method,horizon_s,category,window_count,ade_mean_m,fde_mean_m,yaw_mae_mean_rad,compute_time_mean_ms,source_artifact
+state_only,2.0,all_stable,251,0.000715992,0.001359725,0.017649484,0.078869721,results/m2_trajectory/summary_metrics.csv
+command_conditioned,2.0,all_stable,251,0.000013655,0.000023841,0.050328531,0.198914343,results/m2_trajectory/summary_metrics.csv

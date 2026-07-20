@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-07-19 (Asia/Shanghai)
+Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
-- Confirmed that the formal project root is `C:\Users\ROG\Documents\risk-aware-visual-communication` on the native Windows host.
+- Confirmed that the formal project root is the native Windows project checkout selected by the user.
 - Verified that `git rev-parse --show-toplevel` resolves to the formal Documents path. In the current PowerShell session, `git` is not on PATH, so verification used `C:\Program Files\Git\cmd\git.exe`.
 - Historical status at repository setup: confirmed the local no-commit branch was `main`. Current active work is on `feature/m5-risk-roi-compression`.
 - Verified the copied project `.venv`: `.\.venv\Scripts\python.exe` runs Python 3.11.14, 64-bit, with the environment prefix under the formal Documents path.
@@ -39,7 +39,7 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 
 - OS: Microsoft Windows 11 Home China, version 25H2, build 26200.8875, 64-bit.
 - PowerShell: Windows PowerShell 5.1.26100.8875.
-- Working directory and Git top level: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+- Working directory and Git top level: the user-selected native Windows project checkout.
 - Project Python: `.\.venv\Scripts\python.exe`, Python 3.11.14, 64-bit. The copied environment executed successfully after the project move.
 - PATH-default Python: 64-bit Anaconda Python 3.12.7 at `D:\Anaconda\python.exe`.
 - Python Launcher: `C:\Windows\py.exe`, launcher file version 3.9.10150.1013; it does not discover the installed Conda interpreters.
@@ -65,8 +65,8 @@ Last updated: 2026-07-19 (Asia/Shanghai)
 ## Milestone 1A: minimal repeatable Webots scene
 
 - Stage: Milestone 1A, minimal e-puck camera scene only.
-- Project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
-- Git top level: `C:/Users/ROG/Documents/risk-aware-visual-communication`, verified with `C:\Program Files\Git\cmd\git.exe`.
+- Project root: the user-selected native Windows project checkout.
+- Git top level: verified with the local Git executable.
 - Historical Milestone 1A branch and commit state: `main`, no commits yet. Later milestones are committed on feature branches; current M5E work is on `feature/m5-risk-roi-compression`.
 - Git identity: `user.name` and `user.email` were both unset, so the requested initial commit was not created and no Git configuration was changed.
 - Created world: `simulator/worlds/minimal_epuck_camera.wbt`.
@@ -204,7 +204,7 @@ The Webots command timed out at the shell tool level because Webots remains open
 ```text
 minimal_epuck_motion: start
 sequence: 0.0-1.2s straight, 1.2-2.2s left_turn, 2.2-3.2s right_turn, 3.2s+ stop
-camera=camera width=160 height=120 sampling_period_ms=32 output=C:\Users\ROG\Documents\risk-aware-visual-communication\data\frames\m1c
+camera=camera width=160 height=120 sampling_period_ms=32 output=<project-root>\data\frames\m1c
 phase=straight t=0.032s left=2.00 right=2.00
 phase=left_turn t=1.216s left=-1.50 right=1.50
 phase=right_turn t=2.208s left=1.50 right=-1.50
@@ -244,7 +244,7 @@ minimal_epuck_motion: complete
 - CSV data rows: `116` plus one header row.
 - Camera device: `camera`; camera size in CSV: `160x120`; sampling period: `32 ms`.
 - CSV fields: `episode_id`, `frame_index`, `sim_time_s`, `sim_time_ms`, `image_path`, `motion_phase`, `robot_x`, `robot_y`, `robot_z`, `yaw_rad`, `linear_velocity_m_s`, `angular_velocity_rad_s`, `left_wheel_command_rad_s`, `right_wheel_command_rad_s`, `camera_width`, `camera_height`.
-- Image path format: project-relative paths such as `data/frames/m1d/episode_0001/frame_000000_t0000032.png`; no absolute `C:\Users\ROG\...` paths are written to CSV.
+- Image path format: project-relative paths such as `data/frames/m1d/episode_0001/frame_000000_t0000032.png`; no personal absolute Windows user paths are written to CSV.
 - File naming rule: `frame_<six-digit-index>_t<seven-digit-sim-ms>.png`.
 - Strict alignment rule implemented: each controller loop computes the command and state for the current Webots simulation time, calls `camera.saveImage()`, and writes exactly one CSV row only after that image save succeeds.
 - No CSV row is written if `camera.saveImage()` fails.
@@ -279,8 +279,8 @@ The Webots command timed out at the shell tool level because Webots remains open
 ```text
 minimal_epuck_motion: start
 sequence: 0.0-1.2s straight, 1.2-2.2s left_turn, 2.2-3.2s right_turn, 3.2s+ stop
-camera=camera width=160 height=120 sampling_period_ms=32 output=C:\Users\ROG\Documents\risk-aware-visual-communication\data\frames\m1d\episode_0001
-episode_id=episode_0001 csv=C:\Users\ROG\Documents\risk-aware-visual-communication\data\logs\m1d\episode_0001.csv ground_plane=x_y vertical_axis=z yaw=atan2(orientation[3],orientation[0])
+camera=camera width=160 height=120 sampling_period_ms=32 output=<project-root>\data\frames\m1d\episode_0001
+episode_id=episode_0001 csv=<project-root>\data\logs\m1d\episode_0001.csv ground_plane=x_y vertical_axis=z yaw=atan2(orientation[3],orientation[0])
 phase=straight t=0.032s left=2.00 right=2.00
 phase=left_turn t=1.216s left=-1.50 right=1.50
 phase=right_turn t=2.208s left=1.50 right=-1.50
@@ -959,8 +959,8 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Stage: Milestone 4A complete on local branch `feature/m4-image-risk-projection`.
 - Starting commit: `85fa41c docs: accept world risk milestone`.
 - Project root and Git:
-  - `C:\Users\ROG\Documents\risk-aware-visual-communication`
-  - Git top-level resolved to `C:/Users/ROG/Documents/risk-aware-visual-communication`.
+  - the user-selected native Windows project checkout
+  - Git top-level resolved to the same project checkout.
   - Current branch verified as `feature/m4-image-risk-projection`.
   - Working tree was clean before Milestone 4A edits.
   - Branch contains the accepted Milestone 3 commit `85fa41c`.
@@ -1224,7 +1224,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Branch and baseline:
   - working branch: `feature/m4-image-risk-projection`;
   - starting commit: `8034a9d docs: accept Webots camera projection alignment`;
-  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+  - project root: the user-selected native Windows project checkout.
 - New core file:
   - `risk_map/image_risk_map.py`.
 - New tests:
@@ -1268,7 +1268,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Branch and baseline:
   - working branch: `feature/m4-image-risk-projection`;
   - baseline commits present: `8034a9d docs: accept Webots camera projection alignment` and `e88d37f feat: implement image risk mask core`;
-  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+  - project root: the user-selected native Windows project checkout.
 - Created implementation files:
   - `simulator/m4d_config.py`;
   - `simulator/worlds/m4d_image_risk_validation.wbt`;
@@ -1398,7 +1398,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Branch and baseline:
   - working branch: `feature/m5-risk-roi-compression`;
   - starting commit: `96cb3e2 docs: accept image-space risk milestone`;
-  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - project root: the user-selected native Windows project checkout;
   - working tree was clean before the documentation edits.
 - M4 baseline:
   - Milestone 4D GUI manual acceptance has passed;
@@ -1442,7 +1442,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
   - the current `.venv` can import Pillow `12.3.0`;
   - no dependency file was changed in Milestone 5A. Milestone 5B must decide whether to add an explicit Pillow version range before encoding JPEG tiles.
 - Validation actually run for Milestone 5A:
-  - Git branch/top-level checks confirmed `feature/m5-risk-roi-compression` at `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - Git branch/top-level checks confirmed `feature/m5-risk-roi-compression` at the user-selected native Windows project checkout;
   - HEAD contains `96cb3e2 docs: accept image-space risk milestone`;
   - dependency check confirmed Pillow import status;
   - terminology/fairness text checks confirmed the protocol names actual-byte matching, same encoder/container/decoder, the four baselines, tiled-JPEG prototype scope, and no future actual trajectory for Risk ROI;
@@ -1465,7 +1465,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 - Branch and baseline:
   - working branch: `feature/m5-risk-roi-compression`;
   - starting commit contained `6168d0c docs: freeze risk-aware compression protocol`;
-  - project root: `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - project root: the user-selected native Windows project checkout;
   - working tree was clean before implementation.
 - Dependency:
   - `requirements.txt` now includes `Pillow==12.3.0`;
@@ -1580,7 +1580,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 ## Milestone 5C - Spatial ROI allocation and fair actual-byte matching
 
 - Status: completed. This milestone implements allocation mechanics and fairness validation only; it does not make an image-quality, risk-region-quality, perception, navigation, or best-method claim.
-- Branch and baseline: `feature/m5-risk-roi-compression`, with accepted M5A/M5B commits `6168d0c` and `0befd0b` in history; formal project root remains `C:\Users\ROG\Documents\risk-aware-visual-communication`.
+- Branch and baseline: `feature/m5-risk-roi-compression`, with accepted M5A/M5B commits `6168d0c` and `0befd0b` in history; formal project root remains the user-selected native Windows project checkout.
 - New implementation:
   - `compression/tile_scoring.py`: immutable 48-item row-major `TileScoreMap`, M5A Center/Object/Risk scoring, projection and float-mask input validation.
   - `compression/spatial_allocation.py`: source-tile JPEG cache, shared score-to-quality mapping, exhaustive non-Uniform actual-byte matcher, deterministic container serialization, and tie-break accounting.
@@ -1669,7 +1669,7 @@ $env:M2_ARC_VALIDATION_TRACE = (Resolve-Path .\results).Path + '\webots_m2r_arc_
 
 - Status: completed as a design-only task on `feature/m5-risk-roi-compression`; no M5E dataset or implementation was created.
 - Baseline verified before edits:
-  - formal root `C:\Users\ROG\Documents\risk-aware-visual-communication`;
+  - formal root: the user-selected native Windows project checkout;
   - clean `feature/m5-risk-roi-compression` branch;
   - required commits `1788688` and `8539f04` in history;
   - no Git remote;
@@ -1838,7 +1838,7 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 2. The repository is on `feature/m5-risk-roi-compression`; generated data/results remain ignored and are not staged.
 3. The copied `.venv` remains based on a Python executable inside an application-specific Conda installation; it currently works and excludes that environment's site packages, but a dedicated base interpreter would reduce coupling if instability appears.
 4. `git` is installed but not available as a bare command on the current PowerShell PATH; use `C:\Program Files\Git\cmd\git.exe` or fix PATH before relying on `git`.
-5. Git `user.name` and `user.email` are now configured locally/globally for this environment as `ShirongZuo-ai <3095325284@qq.com>`.
+5. Git `user.name` and `user.email` are configured in this environment; the exact local identity is not required for reproduction and is omitted from public notes.
 6. Webots controller stdout/stderr did not propagate to shell logs; Milestone 1B, 1C, and 1D verification used optional controller trace files.
 7. M5E-B GUI evidence is limited to the documented targeted S2/S3/S5/S7 manual checks; it complements the automatic all-scenario validator and is not an automatic Console or visual proof.
 8. The historical smoke output directly under `data/` predates accepted S3/S5/S7 corrections and fails current config-hash reproduction. The canonical M5E-B regression root is `data/m5e_final_acceptance_smoke/`, which passes; no stale smoke data enter calibration, formal metrics, or M5E-E.
@@ -1846,6 +1846,18 @@ The first `curl.exe` download attempt was reset before transferring data. A subs
 ## Next priority
 
 Milestone 5E-E episode statistics and diagnostics are complete. The next priority is Milestone 5E-F independent full-evidence validation and acceptance. Do not alter the M5E-E outputs, frozen budgets, hypotheses, or scenario weights.
+
+## Public GitHub release preparation
+
+- Status: public-release preparation completed locally on `feature/m5-risk-roi-compression` before push/PR creation.
+- Branch relation check: local `main` exists and is an ancestor of the active feature branch.
+- Safety stashes: two existing safety stashes were listed and left untouched.
+- Public-facing cleanup: personal Windows user paths and local Git identity details were removed from tracked documentation where they were not required for reproduction.
+- README: rewritten as a public research entry point that states the research question, motivation, current Webots simulation system, methods, key results, repository structure, quick start, reproducibility, status, limitations, and planned work.
+- Curated public artifacts: added three small README figures under `docs/assets/` and one compact M2 trajectory metric summary under `docs/results/`.
+- Metric boundary: the 2.0 s stable-window ADE values are recorded as Webots simulation results only: State-only `0.000715992 m` and Command-conditioned `0.000013655 m`.
+- License status: no `LICENSE` file exists; no license was created because no explicit license choice has been made.
+- Next priority after release PR creation remains Milestone 5E-F independent full-evidence validation and acceptance.
 
 ## Milestone 5E-C - Calibration and common-budget freeze
 

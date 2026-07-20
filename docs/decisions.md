@@ -241,3 +241,10 @@
 - **Reason:** The M5D/M5E protocol forbids inventing a metric for an empty region. Explicit counts preserve that rule while allowing clearly labeled descriptive regional diagnostics where the frozen region exists.
 - **Rejected:** Replacing empty regions with zero, infinity, a favorable sentinel, the full-frame metric, or dropping an episode from primary analysis.
 - **Impact:** No primary pair is missing. High-risk-region results remain secondary diagnostics and cannot replace continuous RW-PSNR conclusions.
+
+## 2026-07-20 - Public repository preparation
+
+- **Decision:** Keep raw generated Webots data, large local result sets, logs, caches, virtual environments, and Webots GUI files ignored for public release; expose only small curated figures and a compact M2 summary CSV under `docs/`.
+- **Reason:** A public research repository should let external readers understand the evidence without committing bulky raw frames, local caches, or machine-specific artifacts.
+- **Rejected:** Publishing the full generated `data/` and `results/` trees, changing experimental values for presentation, adding a license without an explicit authorization choice, or claiming real-robot performance.
+- **Impact:** README now points to curated public artifacts, while detailed milestone evidence remains documented in `docs/`. The public-release preparation does not alter validated experiment outputs.

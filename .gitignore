@@ -1,10 +1,16 @@
 # Python
 __pycache__/
+**/__pycache__/
 *.py[cod]
 .venv/
+venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Local environment and credentials
+.env
+.env.*
 
 # IDE and OS
 .vscode/
@@ -13,6 +19,7 @@ __pycache__/
 Thumbs.db
 
 # Generated data and experiment outputs
+webots_cache/
 data/frames/*
 data/logs/*
 data/metadata/*
@@ -40,4 +47,9 @@ simulator/worlds/.m5e_gui_acceptance_*.wbt
 # Local Webots/generated files
 *.wbproj
 *.wbt.bak
+*.log
+*.tmp
+*.bak
+*.backup
+*~
 simulator/worlds/.*.jpg
