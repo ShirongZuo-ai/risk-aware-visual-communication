@@ -1,6 +1,7 @@
 """Injected, Webots-import-free M6-A runtime boundary (mock-testable)."""
 from __future__ import annotations
 from dataclasses import asdict,dataclass
+import os
 import hashlib,json,math,shutil
 from pathlib import Path
 from scripts.m6a_dual_roi import CurrentState,ScheduleEvidence,SnapshotInput,process_m6a_snapshot,serialize_snapshot
@@ -66,3 +67,41 @@ class M6AWebotsRuntimeAdapter:
   return EpisodeRuntimeSummary({'manifest_hash':self.config.manifest_hash,'scene':self.config.scene,'episode_id':self.config.episode_id,'seed':self.config.seed},len(self.config.snapshots),len(self.done),tuple(x[1] for x in self.done),tuple(x[2] for x in self.done),tuple(sorted(outputs[0].methods)),0,0,0,0,0,True)
 def run_m6a_webots_episode(runtime_config,robot_facade,*,state_reader,frame_reader,predefined_schedule):
  return M6AWebotsRuntimeAdapter(runtime_config,robot_facade,state_reader=state_reader,frame_reader=frame_reader,schedule=predefined_schedule).run()
+class WebotsRobotFacade:
+ """Concrete Webots wrapper; constructed only after the controller's delayed import."""
+ def __init__(self,robot,*,pose_reader):
+  self.robot=robot;self.pose_reader=pose_reader;self.timestep_ms=robot.getBasicTimeStep();self.camera=robot.getDevice('camera')
+  if not self.timestep_ms or self.camera is None:raise ValueError('required Webots devices unavailable')
+  self.camera.enable(int(self.timestep_ms))
+ def step(self):
+  return None if self.robot.step(int(self.timestep_ms))==-1 else self.robot.getTime()
+ def state_sample(self):
+  pose=self.pose_reader();return StateSample(CurrentState(**pose),self.robot.getTime())
+ def frame_sample(self):
+  raw=self.camera.getImage();return CameraFrame(webots_bgra_to_rgb(raw,160,120),self.robot.getTime())
+def webots_bgra_to_rgb(raw,width=160,height=120):
+ if not isinstance(raw,(bytes,bytearray)) or len(raw)!=width*height*4:raise ValueError('invalid Webots BGRA frame')
+ out=bytearray(width*height*3)
+ for i in range(width*height):
+  b,g,r,_=raw[i*4:i*4+4];out[i*3:i*3+3]=bytes((r,g,b))
+ return bytes(out)
+def load_m6a_runtime_config(path,*,expected_manifest_hash):
+ from navigation.trajectory_prediction import CommandSegment
+ data=json.loads(Path(path).read_text(encoding='utf-8'))
+ forbidden={'actual_future','actual_future_trajectory','combined','combined_mask','oracle','oracle_mask'}
+ if data.get('split')!='pilot' or forbidden&set(data) or data.get('manifest_hash')!=expected_manifest_hash:raise ValueError('unsafe M6-A controller configuration')
+ schedule=data.get('schedule',{});segments=tuple(CommandSegment(**x) for x in schedule.get('segments',[]))
+ evidence=ScheduleEvidence(schedule.get('schedule_id',''),schedule.get('available_time_s'),segments)
+ if not evidence.schedule_id or evidence.available_time_s is None:raise ValueError('invalid predefined schedule')
+ config=M6ARuntimeConfig(data['manifest_hash'],data['scene'],data['episode_id'],data['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in data['snapshots']),Path(data['output_root']),M6AProjectionConfig(**data.get('projection_config',{})),protocol_version=data.get('protocol_version',VERSION));config.validate()
+ return config,evidence
+def main_m6a_webots_controller():
+ """Webots-only entry: host passes M6A_RUNTIME_CONFIG; no defaults or fallback."""
+ config_path=os.environ.get('M6A_RUNTIME_CONFIG')
+ if not config_path:return 2
+ try:
+  from controller import Robot # delayed: ordinary Python imports remain Webots-free
+  config,schedule=load_m6a_runtime_config(config_path,expected_manifest_hash=json.loads(Path(config_path).read_text())['manifest_hash'])
+  robot=Robot();facade=WebotsRobotFacade(robot,pose_reader=lambda:(_ for _ in ()).throw(RuntimeError('Supervisor pose reader must be injected by M6-A world controller')))
+  run_m6a_webots_episode(config,facade,state_reader=facade.state_sample,frame_reader=facade.frame_sample,predefined_schedule=schedule);return 0
+ except Exception:return 1

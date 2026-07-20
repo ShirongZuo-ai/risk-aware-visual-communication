@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A Phase 2C-1 concrete Webots facade, delayed-import controller entry, pilot-only runtime-config loader, canonical schedule loading, and BGRA-to-RGB camera conversion. Only fake Webots APIs were tested; no real Webots process, pilot data, or scientific result exists. The host one-identity runner remains pending.
+
 - Implemented M6-A Phase 2B-4B's injected Webots-runtime adapter and mock-validated four-snapshot lifecycle. It captures only current state/frame and predefined schedule evidence, calls the trusted production/serialization chain, records aligned raw frame/state/schedule metadata, and fails closed on timing, schedule, duplicate, or overwrite errors. Real Webots was not started, no pilot data exists, and runner/codec/evaluator/auditor work remains pending.
 
 - Implemented M6-A Phase 2B-4A trusted snapshot serialization: the serializer now accepts only production `DualROISnapshotOutput` values, validates both trusted provenance chains before writing, writes a deterministic two-method schema atomically, and provides a single-snapshot round-trip validator. No Webots runtime adapter, runner, evaluator/auditor, pilot data, calibration, or formal execution exists; runtime adapter and serializer integration remain later Phase 2B-4 work.
