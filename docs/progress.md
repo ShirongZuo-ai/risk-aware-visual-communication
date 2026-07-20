@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Bound M6-A one-identity runtime configuration to the immutable v2 manifest/lock and its first pilot source record; external episode-source input is no longer a production authority. This remains preflight-only: no Webots, temporary world, pilot data, or scientific result exists.
+
 - Implemented M6-A v2-A causal episode-source schema and in-memory deterministic adapter for all 56 retained v1 identities. It reuses only versioned M5E scene primitives and the immutable base world; no M5 result, actual trace, Webots run, or v2 manifest was created.
 
 - Implemented M6-A Phase 2C-2C1 runtime-config builder/materializer with canonical JSON and safe target protection. It requires an explicit verified episode source for complete schedule and absolute snapshot times, then fails closed if that source is absent or mismatched; only temporary-fixture materialization was tested, and no Webots/pilot data exists.
