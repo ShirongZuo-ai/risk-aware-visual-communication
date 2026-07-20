@@ -110,6 +110,12 @@ def _annotate(ax, x: float, value: float) -> None:
     )
 
 
+def _normalize_svg_whitespace(path: Path) -> None:
+    """Remove Matplotlib's line-ending whitespace for clean version-control diffs."""
+    text = path.read_text(encoding="utf-8")
+    path.write_text("\n".join(line.rstrip() for line in text.splitlines()) + "\n", encoding="utf-8")
+
+
 def write_figures(rows: list[dict[str, object]], output_dir: Path) -> list[Path]:
     """Write log-scale ADE and factor figures as PNG (300 dpi) and SVG."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -141,6 +147,7 @@ def write_figures(rows: list[dict[str, object]], output_dir: Path) -> list[Path]
     main_svg = output_dir / "m2_method_comparison_ade.svg"
     figure.savefig(main_png, dpi=300, bbox_inches="tight")
     figure.savefig(main_svg, bbox_inches="tight")
+    _normalize_svg_whitespace(main_svg)
     plt.close(figure)
 
     factor_figure, factor_axes = plt.subplots(1, len(categories), figsize=(5.1 * len(categories), 4.5), squeeze=False, constrained_layout=True)
@@ -159,6 +166,7 @@ def write_figures(rows: list[dict[str, object]], output_dir: Path) -> list[Path]
     factor_svg = output_dir / "m2_method_improvement_factor.svg"
     factor_figure.savefig(factor_png, dpi=300, bbox_inches="tight")
     factor_figure.savefig(factor_svg, bbox_inches="tight")
+    _normalize_svg_whitespace(factor_svg)
     plt.close(factor_figure)
     return [main_png, main_svg, factor_png, factor_svg]
 
