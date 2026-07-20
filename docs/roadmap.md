@@ -212,12 +212,12 @@ Acceptance: passed. Statistical outputs use episodes as the resampling unit and 
 
 ### Milestone 5E-F - Formal validation and acceptance
 
-- [ ] Independently validate formal manifests, metrics, statistics, determinism, split isolation, and no-future-actual provenance.
-- [ ] State engineering acceptance separately from scientific support or nonsupport.
+- [x] Independently validate formal manifests, metrics, statistics, determinism, split isolation, and no-future-actual provenance.
+- [x] State engineering acceptance separately from scientific support or nonsupport.
 
-Planned: independently validate all manifests, inputs, allocations, containers, metrics, statistics, split isolation, and no-future-actual provenance.
+Completed: independently recomputed the M5E-D matrix and reproduced M5E-E in an isolated acceptance directory. Six statistical CSVs and nine figures matched byte-for-byte; four JSON outputs matched after normalizing run-specific timestamp and commit provenance. See `docs/m5e_f_independent_acceptance_report.md`.
 
-Acceptance: engineering acceptance is stated independently of whether the hypotheses receive scientific support; unsupported outcomes are retained and reported.
+Acceptance: passed. Engineering acceptance is separate from scientific support: H1 remains not fully supported, H2/H3 retain direction-specific support only, and unsupported outcomes are retained.
 
 ### Milestone 5F - Compression validation report and next-step decision
 
@@ -227,4 +227,6 @@ Acceptance: the report states what compression and image-risk-region claims are 
 
 ## Milestone 6 — Simple closed-loop navigation
 
-Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-F independent formal validation and acceptance; it has not started.
+M5 is formally frozen after M5E-F acceptance. M6 remains planned and does not authorize immediate Risk-VoI training or closed-loop navigation: it first requires independent counterfactual data generation, frozen task utility/splits, and oracle/greedy baseline validation.
+
+The post-M5E-E [Risk-conditioned Visual VoI plan](m6_risk_voi_experiment_plan.md) is a future experiment-design artifact, not authorization to train a model or start M6 before M5E-F acceptance.

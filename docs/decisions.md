@@ -248,3 +248,17 @@
 - **Reason:** A public research repository should let external readers understand the evidence without committing bulky raw frames, local caches, or machine-specific artifacts.
 - **Rejected:** Publishing the full generated `data/` and `results/` trees, changing experimental values for presentation, adding a license without an explicit authorization choice, or claiming real-robot performance.
 - **Impact:** README now points to curated public artifacts, while detailed milestone evidence remains documented in `docs/`. The public-release preparation does not alter validated experiment outputs.
+
+## 2026-07-20 - M2 public ADE visualization and Risk-VoI sequencing
+
+- **Decision:** Regenerate the curated M2 ADE figure from its compact public CSV with a log-scale y-axis and publish an explicit ADE improvement-factor companion figure. Draw only category/horizon combinations actually present in the CSV.
+- **Reason:** The previous linear-scale chart made command-conditioned ADE nearly invisible and visually implied stable/transition and horizon coverage that the published compact CSV does not contain.
+- **Decision:** Treat the existing M5E Risk ROI as the Heuristic Risk ROI baseline. Plan, but do not start, a counterfactual tile-level Visual VoI study until M5E-F independent acceptance.
+- **Reason:** M5E-E shows heterogeneous offline image-quality effects and does not support a general superiority or navigation claim. Current M5E outputs do not contain enough controlled tile-quality counterfactuals to train a VoI allocator.
+- **Impact:** The new plan prioritizes trajectory-critical obstacle recall, episode/scene-isolated splits, actual complete-container byte increments, an offline oracle, and a deterministic greedy allocator before any learned policy, closed-loop navigation, or network simulation.
+
+## 2026-07-20 - Milestone 5 public presentation boundary
+
+- **Decision:** Curate the public README around four figures and regenerate M5E figures from a checked snapshot of the frozen M5E-E outputs, rather than editing prior raster figures or exposing every diagnostic on the landing page.
+- **Reason:** A compact presentation makes the formal scope, heterogeneous primary results, and limitations reviewable without concealing adverse results or turning the README into a paper-length report.
+- **Impact:** The README retains S7/S8, negative/null effects, matched-byte context, and simulation-only limits; detailed diagnostics remain linked from the statistical and acceptance reports. Public plotting is presentation-only and does not write M5E-D/E formal data or manifests.
