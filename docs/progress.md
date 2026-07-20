@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A v2-A causal episode-source schema and in-memory deterministic adapter for all 56 retained v1 identities. It reuses only versioned M5E scene primitives and the immutable base world; no M5 result, actual trace, Webots run, or v2 manifest was created.
+
 - Implemented M6-A Phase 2C-2C1 runtime-config builder/materializer with canonical JSON and safe target protection. It requires an explicit verified episode source for complete schedule and absolute snapshot times, then fails closed if that source is absent or mismatched; only temporary-fixture materialization was tested, and no Webots/pilot data exists.
 
 - Prepared M6-A Phase 2C-2B's preflight-only one-identity host plan. It deterministically selects only `m6a_pilot_s1_seed600100` from the frozen pilot manifest and reports the fixed 1/4/2/4/32 scale without any Webots launch or output generation. Temporary-world wiring and real launch remain explicitly unauthorized/pending.
