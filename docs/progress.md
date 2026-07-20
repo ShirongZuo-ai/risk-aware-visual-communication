@@ -4,6 +4,9 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Regenerated the curated M2 ADE comparison and a companion improvement-factor figure directly from `docs/results/m2_in_place_summary_metrics.csv`. The new plotting script rejects missing schema, duplicate method/category/horizon keys, non-finite values, and zero ADE values incompatible with log scaling. The public CSV currently supports only the stable-window, 2.0 s comparison; no transition or 1.0 s values were inferred.
+- Re-ran the independent M5E-E statistics validator against the frozen M5E-D evidence: 64 episodes, 384 valid primary pairs, fixed 10,000-replicate bootstrap, and nine figures recomputed successfully. Regenerated the nine missing repeat diagnostic figures from the existing repeat statistical tables and completed the byte-identical determinism comparison (6 CSVs, 4 normalized JSON files, and 9 figures). No M5E-D formal CSV, JSON, reconstruction, scenario, seed, budget, or metric definition was changed.
+- Wrote a post-M5E-E Risk-conditioned Visual VoI experiment plan. It records Heuristic Risk ROI as the baseline, prioritizes trajectory-critical obstacle recall and actual complete-container byte increments, and explicitly gates all M6 execution on M5E-F independent acceptance.
 - Confirmed that the formal project root is the native Windows project checkout selected by the user.
 - Verified that `git rev-parse --show-toplevel` resolves to the formal Documents path. In the current PowerShell session, `git` is not on PATH, so verification used `C:\Program Files\Git\cmd\git.exe`.
 - Historical status at repository setup: confirmed the local no-commit branch was `main`. Current active work is on `feature/m5-risk-roi-compression`.

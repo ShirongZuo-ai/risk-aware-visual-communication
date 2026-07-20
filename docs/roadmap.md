@@ -228,3 +228,5 @@ Acceptance: the report states what compression and image-risk-region claims are 
 ## Milestone 6 — Simple closed-loop navigation
 
 Planned only after offline evidence supports continuing. The only current mainline next step is Milestone 5E-F independent formal validation and acceptance; it has not started.
+
+The post-M5E-E [Risk-conditioned Visual VoI plan](m6_risk_voi_experiment_plan.md) is a future experiment-design artifact, not authorization to train a model or start M6 before M5E-F acceptance.

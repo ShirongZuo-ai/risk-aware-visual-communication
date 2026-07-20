@@ -6,6 +6,10 @@ This repository is an ongoing Webots simulation study. The current results are f
 
 ![Trajectory prediction ADE comparison](docs/assets/m2_method_comparison_ade.png)
 
+The ADE figure is generated from the curated M2 summary CSV by `scripts/plot_m2_method_comparison.py`. Its log-scaled y-axis makes the retained non-zero values readable across orders of magnitude; the currently published CSV contains only the 2.0 s stable-window comparison, so it does not imply unavailable transition-window or 1.0 s results. Stable windows exclude command-transition guard intervals as defined by the M2 evaluator. ADE is measured in metres, and all values are from controlled Webots simulation rather than physical-robot performance.
+
+![M2 ADE improvement factor](docs/assets/m2_method_improvement_factor.png)
+
 ## Research Question
 
 Under the same or closely matched communication budget, can trajectory- and collision-risk-driven visual resource allocation preserve safety-relevant obstacle information better than uniform compression, a fixed center ROI, or an object-only ROI?
@@ -120,6 +124,7 @@ Next milestone in the roadmap: Milestone 5E-F independent full-evidence validati
 ## Planned Work
 
 - Complete independent M5E-F evidence validation.
+- Keep the completed M5E-E Heuristic Risk ROI result as a baseline and, only after M5E-F, execute the planned [Risk-conditioned Visual VoI study](docs/m6_risk_voi_experiment_plan.md).
 - Decide whether the offline evidence justifies perception or closed-loop navigation evaluation.
 - Add a license before encouraging reuse.
 - Package a cleaner reproduction subset if the project is prepared for external benchmarking.
