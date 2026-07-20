@@ -44,3 +44,5 @@ Primary metric: simulator-ground-truth **trajectory-critical obstacle recall** a
 ## Entry decision
 
 The first execution item is B0 plus A1 on independent data, because it directly tests the untested command-conditioned versus state-only causal claim while preserving the strong Uniform/Center/Object/Risk comparison and byte fairness. Do not start Risk-VoI training: it requires the separate counterfactual data and oracle/greedy validation already described in [the M6 VoI plan](m6_risk_voi_experiment_plan.md).
+
+M6-A v1 now freezes the independent manifest and preflight for this first item; see [M6-A preflight](m6a_preflight_report.md). It does not authorize a Webots pilot or formal run by itself.

@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-20 - M6-A independent byte-fair preparation
+
+- **Decision:** Freeze M6-A v1 with new deterministic episode-disjoint calibration/formal/pilot identities, State-only versus Command-conditioned Risk ROI, the existing four complete-container targets, and a 2.0 s primary horizon.
+- **Reason:** This is the smallest reproducible direct test of decision-time command information without retuning M5 or using actual-future leakage.
+- **Gate:** A Webots pilot must pass before any formal execution; the current codec-only smoke is not scientific evidence.
+
 ## 2026-07-17 — Phase 1 scope and implementation strategy
 
 - **Decision:** Start with a native-Windows Webots/Python research prototype using simulator ground truth and interpretable geometric risk.

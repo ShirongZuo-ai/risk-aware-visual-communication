@@ -1,0 +1,368 @@
+{
+  "actual_future_trajectory_used_by_methods": false,
+  "command_conditioned_extra_input": "decision-time future command schedule only",
+  "episodes": {
+    "calibration": [
+      {
+        "episode_id": "m6a_calibration_s1_seed610100",
+        "scenario_id": "S1",
+        "seed": 610100,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s1_seed610101",
+        "scenario_id": "S1",
+        "seed": 610101,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s2_seed610200",
+        "scenario_id": "S2",
+        "seed": 610200,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s2_seed610201",
+        "scenario_id": "S2",
+        "seed": 610201,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s3_seed610300",
+        "scenario_id": "S3",
+        "seed": 610300,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s3_seed610301",
+        "scenario_id": "S3",
+        "seed": 610301,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s4_seed610400",
+        "scenario_id": "S4",
+        "seed": 610400,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s4_seed610401",
+        "scenario_id": "S4",
+        "seed": 610401,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s5_seed610500",
+        "scenario_id": "S5",
+        "seed": 610500,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s5_seed610501",
+        "scenario_id": "S5",
+        "seed": 610501,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s6_seed610600",
+        "scenario_id": "S6",
+        "seed": 610600,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s6_seed610601",
+        "scenario_id": "S6",
+        "seed": 610601,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s7_seed610700",
+        "scenario_id": "S7",
+        "seed": 610700,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s7_seed610701",
+        "scenario_id": "S7",
+        "seed": 610701,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s8_seed610800",
+        "scenario_id": "S8",
+        "seed": 610800,
+        "split": "calibration"
+      },
+      {
+        "episode_id": "m6a_calibration_s8_seed610801",
+        "scenario_id": "S8",
+        "seed": 610801,
+        "split": "calibration"
+      }
+    ],
+    "formal": [
+      {
+        "episode_id": "m6a_formal_s1_seed620100",
+        "scenario_id": "S1",
+        "seed": 620100,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s1_seed620101",
+        "scenario_id": "S1",
+        "seed": 620101,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s1_seed620102",
+        "scenario_id": "S1",
+        "seed": 620102,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s1_seed620103",
+        "scenario_id": "S1",
+        "seed": 620103,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s2_seed620200",
+        "scenario_id": "S2",
+        "seed": 620200,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s2_seed620201",
+        "scenario_id": "S2",
+        "seed": 620201,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s2_seed620202",
+        "scenario_id": "S2",
+        "seed": 620202,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s2_seed620203",
+        "scenario_id": "S2",
+        "seed": 620203,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s3_seed620300",
+        "scenario_id": "S3",
+        "seed": 620300,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s3_seed620301",
+        "scenario_id": "S3",
+        "seed": 620301,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s3_seed620302",
+        "scenario_id": "S3",
+        "seed": 620302,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s3_seed620303",
+        "scenario_id": "S3",
+        "seed": 620303,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s4_seed620400",
+        "scenario_id": "S4",
+        "seed": 620400,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s4_seed620401",
+        "scenario_id": "S4",
+        "seed": 620401,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s4_seed620402",
+        "scenario_id": "S4",
+        "seed": 620402,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s4_seed620403",
+        "scenario_id": "S4",
+        "seed": 620403,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s5_seed620500",
+        "scenario_id": "S5",
+        "seed": 620500,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s5_seed620501",
+        "scenario_id": "S5",
+        "seed": 620501,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s5_seed620502",
+        "scenario_id": "S5",
+        "seed": 620502,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s5_seed620503",
+        "scenario_id": "S5",
+        "seed": 620503,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s6_seed620600",
+        "scenario_id": "S6",
+        "seed": 620600,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s6_seed620601",
+        "scenario_id": "S6",
+        "seed": 620601,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s6_seed620602",
+        "scenario_id": "S6",
+        "seed": 620602,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s6_seed620603",
+        "scenario_id": "S6",
+        "seed": 620603,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s7_seed620700",
+        "scenario_id": "S7",
+        "seed": 620700,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s7_seed620701",
+        "scenario_id": "S7",
+        "seed": 620701,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s7_seed620702",
+        "scenario_id": "S7",
+        "seed": 620702,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s7_seed620703",
+        "scenario_id": "S7",
+        "seed": 620703,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s8_seed620800",
+        "scenario_id": "S8",
+        "seed": 620800,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s8_seed620801",
+        "scenario_id": "S8",
+        "seed": 620801,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s8_seed620802",
+        "scenario_id": "S8",
+        "seed": 620802,
+        "split": "formal"
+      },
+      {
+        "episode_id": "m6a_formal_s8_seed620803",
+        "scenario_id": "S8",
+        "seed": 620803,
+        "split": "formal"
+      }
+    ],
+    "pilot": [
+      {
+        "episode_id": "m6a_pilot_s1_seed600100",
+        "scenario_id": "S1",
+        "seed": 600100,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s2_seed600200",
+        "scenario_id": "S2",
+        "seed": 600200,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s3_seed600300",
+        "scenario_id": "S3",
+        "seed": 600300,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s4_seed600400",
+        "scenario_id": "S4",
+        "seed": 600400,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s5_seed600500",
+        "scenario_id": "S5",
+        "seed": 600500,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s6_seed600600",
+        "scenario_id": "S6",
+        "seed": 600600,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s7_seed600700",
+        "scenario_id": "S7",
+        "seed": 600700,
+        "split": "pilot"
+      },
+      {
+        "episode_id": "m6a_pilot_s8_seed600800",
+        "scenario_id": "S8",
+        "seed": 600800,
+        "split": "pilot"
+      }
+    ]
+  },
+  "methods": [
+    "state_only_risk_roi",
+    "command_conditioned_risk_roi"
+  ],
+  "prediction_horizons_s": [
+    2.0
+  ],
+  "protocol_version": "m6a-byte-fair-v1",
+  "snapshot_progress": [
+    0.2,
+    0.45,
+    0.7,
+    0.9
+  ],
+  "target_bytes": {
+    "high": 34871,
+    "low": 32374,
+    "medium": 33509,
+    "severe": 31466
+  }
+}

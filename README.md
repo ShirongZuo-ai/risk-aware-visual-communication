@@ -83,6 +83,8 @@ The formal M5 data are intentionally held out and frozen. Full formal-validation
 
 The read-only [M5E-D closeout](docs/m5e_d_closeout_report.md) records the engineering audit and its reproducible descriptive summary. The next experiment-design step is the [M6 baseline and ablation protocol](docs/m6_followup_evaluation_protocol.md); it requires independent data and does not authorize immediate Risk-VoI training.
 
+M6-A has a frozen independent manifest and [preflight](docs/m6a_preflight_report.md), but no Webots pilot or formal M6 outcome. Actual future trajectories remain evaluation ground truth only.
+
 ## Limitations
 
 - Controlled Webots simulation and offline evaluation only.
