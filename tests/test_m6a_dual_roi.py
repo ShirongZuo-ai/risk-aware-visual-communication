@@ -19,12 +19,12 @@ class M6ADualRoiTests(unittest.TestCase):
   t=predict(Method.COMMAND_CONDITIONED_RISK_ROI,self.s,schedule=self.c);a=provenance(method=Method.COMMAND_CONDITIONED_RISK_ROI,state=self.s,trajectory=t,mask=self.m,manifest_hash='x',scene='S1',episode_id='e',seed=1,snapshot_id='0',snapshot_time_s=0,schedule=self.c);b=provenance(method=Method.COMMAND_CONDITIONED_RISK_ROI,state=self.s,trajectory=t,mask=self.m,manifest_hash='x',scene='S1',episode_id='e',seed=1,snapshot_id='0',snapshot_time_s=0,schedule=self.c);json.dumps(a);self.assertEqual(a['mask_sha256'],b['mask_sha256']);self.assertEqual(a['actual_future_usage_count'],0)
  def test_production_snapshot_generates_exactly_two_trusted_artifacts(self):
   item=SnapshotInput('m6a-byte-fair-v1','x','S1','e',1,'0',0,self.s,'frame.png',self.c);config=M6AProjectionConfig();out=process_m6a_snapshot(item,config)
-  self.assertEqual(set(out['methods']),{m.value for m in Method});self.assertEqual(out['snapshot']['snapshot_id'],'0')
-  state=out['methods'][Method.STATE_ONLY_RISK_ROI.value];command=out['methods'][Method.COMMAND_CONDITIONED_RISK_ROI.value]
+  self.assertEqual(set(out.methods),{m.value for m in Method});self.assertEqual(out.snapshot_id,'0')
+  state=out.methods[Method.STATE_ONLY_RISK_ROI.value];command=out.methods[Method.COMMAND_CONDITIONED_RISK_ROI.value]
   self.assertEqual(state.source_predictor,'state_only_predictor');self.assertEqual(command.source_predictor,'command_conditioned_predictor')
-  self.assertEqual(state.predictor_config_digest,command.predictor_config_digest);self.assertEqual(out['comparison']['shared_projection_config_digest'],config.sha256())
-  self.assertEqual(out['comparison']['allowed_input_difference'],['predictor identity','predefined_future_command_schedule'])
-  self.assertTrue(all(out['comparison'][key]==0 for key in ('actual_future_usage_count','combined_usage_count','raw_mask_usage_count','fallback_count','replacement_count')))
+  self.assertEqual(state.predictor_config_digest,command.predictor_config_digest);self.assertEqual(out.comparison['shared_projection_config_digest'],config.sha256())
+  self.assertEqual(out.comparison['allowed_input_difference'],['predictor identity','predefined_future_command_schedule'])
+  self.assertTrue(all(out.comparison[key]==0 for key in ('actual_future_usage_count','combined_usage_count','raw_mask_usage_count','fallback_count','replacement_count')))
  def test_production_snapshot_calls_each_trusted_generator_once(self):
   from scripts import m6a_mask_generation as bridge
   item=SnapshotInput('m6a-byte-fair-v1','x','S1','e',1,'0',0,self.s,'frame.png',self.c);config=M6AProjectionConfig()

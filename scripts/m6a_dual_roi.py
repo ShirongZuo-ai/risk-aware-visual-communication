@@ -46,7 +46,12 @@ def provenance(*,method:Method,state:CurrentState,trajectory:Iterable[Trajectory
 @dataclass(frozen=True)
 class SnapshotInput:
  protocol_version:str; manifest_hash:str; scene:str; episode_id:str; seed:int; snapshot_id:str; timestamp_s:float; state:CurrentState; frame_reference:str; schedule:ScheduleEvidence
-def process_m6a_snapshot(item:SnapshotInput,projection_config)->dict:
+@dataclass(frozen=True)
+class DualROISnapshotOutput:
+ protocol_version:str;manifest_hash:str;scene:str;episode_id:str;seed:int;snapshot_id:str;timestamp_s:float;frame_reference:str;state_only_risk_roi:object;command_conditioned_risk_roi:object;comparison:dict
+ @property
+ def methods(self):return {'state_only_risk_roi':self.state_only_risk_roi,'command_conditioned_risk_roi':self.command_conditioned_risk_roi}
+def process_m6a_snapshot(item:SnapshotInput,projection_config)->DualROISnapshotOutput:
  """Generate the only two M6-A production masks from allowed snapshot inputs.
 
  This deliberately has no mask parameters: callers cannot supply raw, M5,
@@ -71,11 +76,11 @@ def process_m6a_snapshot(item:SnapshotInput,projection_config)->dict:
   if artifact.predictor_config_digest!=projection_config.sha256(): raise ValueError('projection configuration mismatch')
   if any((artifact.actual_future_usage,artifact.combined_usage,artifact.raw_external_mask_usage,artifact.fallback,artifact.replacement)): raise ValueError('unsafe trusted artifact')
  if state.footprint_digest!=config_digests['footprint_digest'] or command.footprint_digest!=config_digests['footprint_digest'] or state.projection_digest!=config_digests['projection_digest'] or command.projection_digest!=config_digests['projection_digest'] or state.rasterization_digest!=config_digests['rasterization_digest'] or command.rasterization_digest!=config_digests['rasterization_digest']: raise ValueError('shared bridge configuration mismatch')
- methods={Method.STATE_ONLY_RISK_ROI.value:state,Method.COMMAND_CONDITIONED_RISK_ROI.value:command}
- if set(methods)!=set(expected): raise ValueError('M6-A requires exactly two independent methods')
- return {'snapshot':{'manifest_hash':item.manifest_hash,'scene':item.scene,'episode_id':item.episode_id,'seed':item.seed,'snapshot_id':item.snapshot_id,'timestamp_s':item.timestamp_s},'frame_reference':item.frame_reference,'methods':methods,'comparison':{'shared_current_state_digest':_hash(asdict(item.state)),'shared_projection_config_digest':projection_config.sha256(),**config_digests,'allowed_input_difference':['predictor identity','predefined_future_command_schedule'],'actual_future_usage_count':0,'combined_usage_count':0,'raw_mask_usage_count':0,'fallback_count':0,'replacement_count':0}}
-def serialize_snapshot(output:dict,target:Path)->None:
- if 'm5' in target.parts: raise ValueError('M5 output roots are forbidden')
- if target.exists(): raise FileExistsError('refusing overwrite')
- for method,data in output['methods'].items():
-  path=target/method; path.mkdir(parents=True); (path/'output.json').write_text(json.dumps(data,indent=2,sort_keys=True),encoding='utf-8')
+ if {Method.STATE_ONLY_RISK_ROI.value,Method.COMMAND_CONDITIONED_RISK_ROI.value}!=set(expected): raise ValueError('M6-A requires exactly two independent methods')
+ return DualROISnapshotOutput(VERSION,item.manifest_hash,item.scene,item.episode_id,item.seed,item.snapshot_id,item.timestamp_s,item.frame_reference,state,command,{'shared_current_state_digest':_hash(asdict(item.state)),'shared_projection_config_digest':projection_config.sha256(),**config_digests,'allowed_input_difference':['predictor identity','predefined_future_command_schedule'],'actual_future_usage_count':0,'combined_usage_count':0,'raw_mask_usage_count':0,'fallback_count':0,'replacement_count':0})
+def serialize_snapshot(output:DualROISnapshotOutput,target:Path,*,manifest_hash:str,protocol_version:str)->None:
+ from scripts.m6a_snapshot_serialization import serialize_snapshot as _serialize
+ _serialize(output,target,manifest_hash=manifest_hash,protocol_version=protocol_version)
+def load_and_validate_serialized_snapshot(target:Path,expected_manifest_hash:str)->DualROISnapshotOutput:
+ from scripts.m6a_snapshot_serialization import load_and_validate_serialized_snapshot as _load
+ return _load(target,expected_manifest_hash)

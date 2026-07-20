@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A Phase 2B-4A trusted snapshot serialization: the serializer now accepts only production `DualROISnapshotOutput` values, validates both trusted provenance chains before writing, writes a deterministic two-method schema atomically, and provides a single-snapshot round-trip validator. No Webots runtime adapter, runner, evaluator/auditor, pilot data, calibration, or formal execution exists; runtime adapter and serializer integration remain later Phase 2B-4 work.
+
 - Implemented M6-A Phase 2B-3 production-boundary migration: `process_m6a_snapshot(SnapshotInput, M6AProjectionConfig)` now creates exactly the independent state-only and command-conditioned trusted artifacts internally. External raw/combined/oracle/actual-future mask arguments are rejected by its closed signature. No Webots execution, pilot data, calibration, formal evaluation, runner, or evaluator was started; serializer provenance migration and runtime adapter migration remain Phase 2B-4 work.
 
 - Implemented M6-A Phase 1: strict independent State-only and Command-conditioned dual-ROI API boundaries, serializable zero-leakage provenance, and an eight-identity dry-run runner. Synthetic/unit inputs only; no Webots, pilot data, calibration, or formal run was started.
