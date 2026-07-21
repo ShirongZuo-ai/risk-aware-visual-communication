@@ -3,13 +3,15 @@ from pathlib import Path
 from unittest.mock import patch
 from scripts.m6a_v2_execution_safety import *
 class R:
- def __init__(self,launched=True):self.calls=0;self.launched=launched
+ def __init__(self,launched=True,code=0):self.calls=0;self.launched=launched;self.code=code
  def run(self,*,root,path_plan,owned_attempt_context):
   self.calls+=1
-  base={'launch_performed':self.launched,'started_at_utc':'2026-01-01T00:00:00+00:00','ended_at_utc':'2026-01-01T00:00:01+00:00','return_code':0,'timed_out':False,'termination_state':'exited','stdout_path':'','stderr_path':'','process_identity':'test-only-runner'}
+  base={'launch_performed':self.launched,'started_at_utc':'2026-01-01T00:00:00+00:00','ended_at_utc':'2026-01-01T00:00:01+00:00','return_code':self.code,'timed_out':False,'termination_state':'exited','stdout_path':'','stderr_path':'','process_identity':'test-only-runner'}
   if self.launched:
    Path(path_plan['stdout']).write_bytes(b'out');Path(path_plan['stderr']).write_bytes(b'err');base.update(stdout_path=path_plan['stdout'],stderr_path=path_plan['stderr'])
   return base
+def completion(spec,process,*,owned_output_root):
+ return {'integration_valid':True,'final_evidence':{'runtime_sha256':'runtime','snapshot_validation_sha256':'snapshots','b5_sha256':'aggregate-validation','aggregate_sha256':'aggregate','joint_validator_sha256':'joint','manifest_sha256':'manifest','lock_sha256':'lock'}}
 class T(unittest.TestCase):
  def package(self):return {"package_sha256":"p","identity_id":"m6a_pilot_s1_seed600100","scene_id":"S1","seed":600100,"launch_spec_sha256":"s","runtime_config_sha256":"r","temporary_world_sha256":"w","controller_sha256":"c","executable":{"path":"x"},"argv_sha256":"a","manifest_sha256":"m","lock_sha256":"l"}
  def test_preflight_root_and_concurrent_consumption(self):
@@ -38,3 +40,10 @@ class T(unittest.TestCase):
    ctx=ValidatedExecutionContext.test_fixture_for(launch_id='launch3',attempt_id='attempt3',identity_id='episode',scene_id='S1',seed=1,launch_spec_sha256='spec',runtime_config_sha256='runtime');p={'launch_id':'launch3','attempt_id':'attempt3','identity_id':'episode','scene_id':'S1','seed':1,'launch_spec_sha256':'spec','runtime_config_sha256':'runtime','prospective_attempt_root':ctx.prospective_attempt_root};owned=materialize_authorized_attempt(p,ctx)
    with self.assertRaises(RuntimeError):launch_owned_attempt(owned,R(False))
    self.assertFalse((Path(d)/'control'/'consumption').exists())
+ def test_finalization_closes_mocked_completion_and_recovers_idempotently(self):
+  with tempfile.TemporaryDirectory() as d,patch('scripts.m6a_v2_execution_safety.PILOT_ROOT',Path(d)/'pilot'),patch('scripts.m6a_v2_execution_safety.CONTROL_ROOT',Path(d)/'control'):
+   ctx=ValidatedExecutionContext.test_fixture_for(launch_id='launch4',attempt_id='attempt4',identity_id='episode',scene_id='S1',seed=1,launch_spec_sha256='spec',runtime_config_sha256='runtime');p={'launch_id':'launch4','attempt_id':'attempt4','identity_id':'episode','scene_id':'S1','seed':1,'launch_spec_sha256':'spec','runtime_config_sha256':'runtime','prospective_attempt_root':ctx.prospective_attempt_root};owned=materialize_authorized_attempt(p,ctx);launched=launch_owned_attempt(owned,R());final=finalize_launched_attempt(launched,{},completion_runner=completion);self.assertEqual(final['final_outcome'],'success');self.assertTrue((Path(final['attempt_root'])/FINAL).is_file());again=finalize_launched_attempt(launched,{},completion_runner=completion);self.assertTrue(again['idempotent'])
+ def test_failed_process_cannot_finalize(self):
+  with tempfile.TemporaryDirectory() as d,patch('scripts.m6a_v2_execution_safety.PILOT_ROOT',Path(d)/'pilot'),patch('scripts.m6a_v2_execution_safety.CONTROL_ROOT',Path(d)/'control'):
+   ctx=ValidatedExecutionContext.test_fixture_for(launch_id='launch5',attempt_id='attempt5',identity_id='episode',scene_id='S1',seed=1,launch_spec_sha256='spec',runtime_config_sha256='runtime');p={'launch_id':'launch5','attempt_id':'attempt5','identity_id':'episode','scene_id':'S1','seed':1,'launch_spec_sha256':'spec','runtime_config_sha256':'runtime','prospective_attempt_root':ctx.prospective_attempt_root};owned=materialize_authorized_attempt(p,ctx);launched=launch_owned_attempt(owned,R(code=1))
+   with self.assertRaises(RuntimeError):finalize_launched_attempt(launched,{},completion_runner=completion)

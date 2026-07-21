@@ -96,7 +96,7 @@ def attempt_root(launch_id,attempt_id):
  if not all(isinstance(x,str) and x and x.replace("-","").isalnum() for x in (launch_id,attempt_id)):raise ValueError("unsafe launch/attempt id")
  return (PILOT_ROOT/launch_id/attempt_id).resolve()
 def attempt_path_plan(launch_id,attempt_id,identity_id,scene_id,seed):
- root=attempt_root(launch_id,attempt_id); items={'ownership_marker':root/OWNER,'stdout':root/'host_stdout.log','stderr':root/'host_stderr.log','process_evidence':root/'host_process_result.json','runtime_summary':root/'episode_runtime_summary.json','runtime_status':root/'episode_runtime_status.json','runtime_diagnostic':root/'episode_runtime_failure.json','runtime_manifest':root/'runtime_artifacts.json','snapshot_root':root/'snapshots','codec_root':root/'codec','codec_aggregate':root/'codec_aggregate.json','aggregate_validation':root/'codec_aggregate_validation.json','joint_report':root/'joint_validation.json','final_marker':root/FINAL,'consumption_record':CONTROL_ROOT/'consumption'/(digest({'launch':launch_id,'attempt':attempt_id})+'.json')}
+ root=attempt_root(launch_id,attempt_id); items={'ownership_marker':root/OWNER,'ownership_terminal':root/'.m6a_v2_ownership_terminal.json','stdout':root/'host_stdout.log','stderr':root/'host_stderr.log','process_evidence':root/'host_process_result.json','runtime_summary':root/'episode_runtime_summary.json','runtime_status':root/'episode_runtime_status.json','runtime_diagnostic':root/'episode_runtime_failure.json','runtime_manifest':root/'runtime_artifacts.json','snapshot_root':root/'snapshots','codec_root':root/'codec','codec_aggregate':root/'codec_aggregate.json','aggregate_validation':root/'codec_aggregate_validation.json','joint_report':root/'joint_validation.json','final_marker':root/FINAL,'consumption_record':CONTROL_ROOT/'consumption'/(digest({'launch':launch_id,'attempt':attempt_id})+'.json')}
  if len({str(x.resolve()).lower() for x in items.values()})!=len(items):raise ValueError('artifact path alias')
  for name,path in items.items():
   if name!='consumption_record' and not _under(path,root):raise ValueError('artifact path escape')
@@ -135,3 +135,37 @@ def write_final_marker(root,evidence):
  required={"launch_id","attempt_id","authorization_id","ownership_sha256","consumption_sha256","process_sha256","runtime_sha256","snapshot_validation_sha256","b5_sha256","aggregate_sha256","joint_validator_sha256","manifest_sha256","lock_sha256"}
  if not required <= set(evidence) or evidence.get("joint_pass") is not True:raise ValueError("joint validation required")
  return _new(Path(root)/FINAL,{"schema_version":"m6a-v2-final-success-v1",**evidence,"created_at_utc":_utc(),"scientific_result":False})
+
+def _load_final_marker(path, launched):
+ value=json.loads(Path(path).read_text(encoding='utf-8'))
+ if value.get('sha256')!=digest({k:v for k,v in value.items() if k!='sha256'}) or any(value.get(k)!=launched[k] for k in ('launch_id','attempt_id','authorization_id')) or value.get('scientific_result') is not False:raise ValueError('invalid final marker')
+ return value
+
+def _terminal(path, launched, ownership, final):
+ return _new(path,{'schema_version':'m6a-v2-ownership-terminal-v1','launch_id':launched['launch_id'],'attempt_id':launched['attempt_id'],'authorization_id':launched['authorization_id'],'owner_identity':ownership['launcher_identity'],'ownership_sha256':ownership['sha256'],'final_marker_sha256':final['sha256'],'state':'completed','completed_at_utc':_utc()})
+
+def finalize_launched_attempt(launched_attempt_context, completion_spec, *, mode='test', completion_runner=None):
+ """Close a launched attempt only after reloading launch evidence; never launches a process."""
+ value=launched_attempt_context
+ if not isinstance(value,dict) or value.get('schema_version')!='m6a-v2-launched-attempt-context-v1' or value.get('canonical_digest')!=digest({k:v for k,v in value.items() if k!='canonical_digest'}) or value.get('execution_mode')!=mode:raise ValueError('invalid launched attempt context')
+ root=Path(value['attempt_root']).resolve(); ownership=_load_ownership(root/OWNER,root,owner_identity=value['owner_identity']);identity={'launch_id':value['launch_id'],'attempt_id':value['attempt_id'],'identity_id':value['identity_id'],'scene_id':ownership['scene'],'seed':ownership['seed']}
+ paths=attempt_path_plan(value['launch_id'],value['attempt_id'],value['identity_id'],ownership['scene'],ownership['seed'])['artifacts']; consumption=load_consumption(paths['consumption_record'],value)
+ from scripts.m6a_v2_runtime_evidence import load_process_evidence
+ process=load_process_evidence(paths['process_evidence'],identity)
+ if process['sha256']!=value['process_evidence_digest'] or consumption['sha256']!=value['consumption_digest']:raise ValueError('launched evidence mismatch')
+ final_path,terminal_path=Path(paths['final_marker']),Path(paths['ownership_terminal'])
+ if final_path.exists():
+  final=_load_final_marker(final_path,value)
+  if terminal_path.exists():return {'schema_version':'m6a-v2-finalized-attempt-result-v1','idempotent':True,'final_marker':final,'terminal':json.loads(terminal_path.read_text())}
+  terminal=_terminal(terminal_path,value,ownership,final);return {'schema_version':'m6a-v2-finalized-attempt-result-v1','idempotent':True,'final_marker':final,'terminal':terminal}
+ if terminal_path.exists():raise ValueError('completed ownership without final marker')
+ if process['return_code']!=0 or process['timed_out'] or process['termination_state']!='exited':raise RuntimeError('process not eligible for completion')
+ if completion_runner is None:
+  from scripts.m6a_v2_pilot_completion import process_completed_pilot_launch
+  completion_runner=process_completed_pilot_launch
+ result=completion_runner(completion_spec,{'started':True,'timed_out':False,'interrupted':False},owned_output_root=root)
+ evidence=result.get('final_evidence') if isinstance(result,dict) else None
+ if not result.get('integration_valid') or not isinstance(evidence,dict):raise ValueError('completion did not provide validated final evidence')
+ evidence={**evidence,'launch_id':value['launch_id'],'attempt_id':value['attempt_id'],'authorization_id':value['authorization_id'],'ownership_sha256':ownership['sha256'],'consumption_sha256':consumption['sha256'],'process_sha256':process['sha256'],'joint_pass':True}
+ final=write_final_marker(root,evidence);final=_load_final_marker(final_path,value);terminal=_terminal(terminal_path,value,ownership,final)
+ finalized={'schema_version':'m6a-v2-finalized-attempt-result-v1','launch_id':value['launch_id'],'attempt_id':value['attempt_id'],'identity_id':value['identity_id'],'authorization_id':value['authorization_id'],'attempt_root':str(root),'owner_identity':ownership['launcher_identity'],'consumption_digest':consumption['sha256'],'process_evidence_digest':process['sha256'],'runtime_manifest_digest':evidence['runtime_sha256'],'aggregate_validation_digest':evidence['b5_sha256'],'joint_report_digest':evidence['joint_validator_sha256'],'final_marker_digest':final['sha256'],'final_outcome':'success','completed_at_utc':terminal['completed_at_utc'],'execution_mode':mode};finalized['canonical_digest']=digest(finalized);return finalized
