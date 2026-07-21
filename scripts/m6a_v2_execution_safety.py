@@ -36,16 +36,51 @@ def materialize_authorized_attempt(package,context,*,launcher_identity='m6a-v2-h
  """The only B2-to-attempt transition; never called by preflight or wrapper planning."""
  if mode=='test':
   if not isinstance(context,ValidatedExecutionContext):raise TypeError('TestValidatedExecutionContext required')
-  root=context.validate(); auth={'authorization_id':context.authorization_id,'authorization_sha256':context.authorization_sha256,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'scene_id':context.scene_id,'seed':context.seed,'launch_spec_sha256':context.launch_spec_sha256}
+  root=context.validate(); auth={'authorization_id':context.authorization_id,'authorization_sha256':context.authorization_sha256,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'scene_id':context.scene_id,'seed':context.seed,'launch_spec_sha256':context.launch_spec_sha256,'nonce':digest({'test_context':context.authorization_id})}
  elif mode=='production':
   from scripts.m6a_v2_execution_authorization import ExternallyValidatedExecutionContext,build_expected_authorization_binding
   if not isinstance(context,ExternallyValidatedExecutionContext):raise TypeError('ExternallyValidatedExecutionContext required')
   if prepared_package_path is None:raise ValueError('production materialization requires authoritative prepared package path')
-  binding=build_expected_authorization_binding(prepared_package_path,package['preflight_report_path']);context.validate(binding); root=Path(context.data['prospective_attempt_root']);auth={'authorization_id':context.data['authorization_id'],'authorization_sha256':context.data['authorization_artifact_digest'],'launch_id':context.data['launch_id'],'attempt_id':context.data['attempt_id'],'identity_id':context.data['identity_id'],'scene_id':package['scene_id'],'seed':package['seed'],'launch_spec_sha256':context.data['launch_spec_digest']}
+  binding=build_expected_authorization_binding(prepared_package_path,package['preflight_report_path']);context.validate(binding); root=Path(context.data['prospective_attempt_root']);auth={'authorization_id':context.data['authorization_id'],'authorization_sha256':context.data['authorization_artifact_digest'],'launch_id':context.data['launch_id'],'attempt_id':context.data['attempt_id'],'identity_id':context.data['identity_id'],'scene_id':package['scene_id'],'seed':package['seed'],'launch_spec_sha256':context.data['launch_spec_digest'],'nonce':context.data['nonce']}
  else: raise ValueError('unknown materialization mode')
  if package.get('launch_id')!=auth['launch_id'] or package.get('attempt_id')!=auth['attempt_id'] or package.get('identity_id')!=auth['identity_id'] or package.get('prospective_attempt_root')!=str(root):raise ValueError('package/context mismatch')
  ownership=acquire_ownership(root,auth,launcher_identity=launcher_identity)
- return {'schema_version':'m6a-v2-owned-attempt-context-v1','attempt_root':str(root),'ownership':ownership,'launch_id':auth['launch_id'],'attempt_id':auth['attempt_id'],'identity_id':auth['identity_id'],'authorization_id':auth['authorization_id'],'execution_mode':mode,'test_fixture':mode=='test'}
+ owned={'schema_version':'m6a-v2-owned-attempt-context-v1','attempt_root':str(root),'ownership':ownership,'launch_id':auth['launch_id'],'attempt_id':auth['attempt_id'],'identity_id':auth['identity_id'],'authorization_id':auth['authorization_id'],'nonce':auth['nonce'],'execution_mode':mode,'test_fixture':mode=='test'};owned['canonical_digest']=digest(owned);return owned
+
+def _load_ownership(path, root, *, owner_identity):
+ value=json.loads(Path(path).read_text(encoding='utf-8'))
+ if value.get('sha256')!=digest({k:v for k,v in value.items() if k!='sha256'}) or value.get('output_root')!=str(Path(root)) or value.get('launcher_identity')!=owner_identity or value.get('state')!='owned_pre_spawn':raise ValueError('invalid ownership evidence')
+ return value
+
+def _validate_owned_context(value, *, mode):
+ if not isinstance(value,dict) or value.get('schema_version')!='m6a-v2-owned-attempt-context-v1' or value.get('canonical_digest')!=digest({k:v for k,v in value.items() if k!='canonical_digest'}) or value.get('execution_mode')!=mode or value.get('test_fixture')!=(mode=='test'):raise ValueError('invalid owned attempt context')
+ root=validate_prospective_root(value['attempt_root'],launch_id=value['launch_id'],attempt_id=value['attempt_id']) if not Path(value['attempt_root']).exists() else Path(value['attempt_root']).resolve()
+ if not _under(root, PILOT_ROOT) or mode=='test' and Path(tempfile.gettempdir()).resolve() not in PILOT_ROOT.resolve().parents and PILOT_ROOT.resolve()!=Path(tempfile.gettempdir()).resolve():raise ValueError('unsafe owned attempt root')
+ ownership=_load_ownership(root/OWNER,root,owner_identity='m6a-v2-host')
+ if ownership['launch_id']!=value['launch_id'] or ownership['attempt_id']!=value['attempt_id'] or ownership['identity_id']!=value['identity_id'] or ownership['authorization_id']!=value['authorization_id'] or ownership['sha256']!=value['ownership']['sha256']:raise ValueError('owned context mismatch')
+ return root,ownership
+
+def launch_owned_attempt(owned_attempt_context, process_runner, *, mode='test'):
+ """Launch boundary for an already-owned attempt; never calls completion or Webots directly."""
+ from scripts.m6a_v2_runtime_evidence import persist_process_evidence,load_process_evidence
+ root,ownership=_validate_owned_context(owned_attempt_context,mode=mode)
+ paths=attempt_path_plan(owned_attempt_context['launch_id'],owned_attempt_context['attempt_id'],owned_attempt_context['identity_id'],ownership['scene'],ownership['seed'])['artifacts']
+ consumption=Path(paths['consumption_record']); evidence=Path(paths['process_evidence']); final=Path(paths['final_marker'])
+ if final.exists():raise ValueError('attempt already finalized')
+ if consumption.exists() and evidence.exists():return {'schema_version':'m6a-v2-launched-attempt-context-v1','idempotent':True,'consumption':load_consumption(consumption,owned_attempt_context),'process_evidence':load_process_evidence(evidence,_identity(owned_attempt_context))}
+ if consumption.exists() or evidence.exists():raise ValueError('incomplete launch evidence; retry forbidden')
+ if not hasattr(process_runner,'run'):raise TypeError('process runner with run() required')
+ result=process_runner.run(root=root,path_plan=paths,owned_attempt_context=owned_attempt_context)
+ required={'launch_performed','started_at_utc','ended_at_utc','return_code','timed_out','termination_state','stdout_path','stderr_path','process_identity'}
+ if not isinstance(result,dict) or not required <= set(result) or not isinstance(result['launch_performed'],bool):raise ValueError('invalid process runner result')
+ if not result['launch_performed']:raise RuntimeError('process did not launch; authorization remains unconsumed')
+ auth={'authorization_id':owned_attempt_context['authorization_id'],'authorization_sha256':ownership['authorization_sha256'],'launch_id':owned_attempt_context['launch_id'],'attempt_id':owned_attempt_context['attempt_id'],'identity_id':owned_attempt_context['identity_id'],'scene_id':ownership['scene'],'seed':ownership['seed'],'launch_spec_sha256':ownership['launch_spec_sha256'],'nonce':owned_attempt_context['nonce']}
+ consumed=consume_authorization(auth,ownership,launch_performed_at_utc=result['started_at_utc'],path=consumption)
+ persisted=persist_process_evidence(evidence,_identity(owned_attempt_context),result['stdout_path'],result['stderr_path'],launch_performed=True,process_identity=result['process_identity'],timed_out=result['timed_out'],termination_state=result['termination_state'],started_at_utc=result['started_at_utc'],ended_at_utc=result['ended_at_utc'],return_code=result['return_code'],owner_identity=ownership['launcher_identity'],authorization_id=auth['authorization_id'],nonce=auth['nonce'])
+ loaded=load_process_evidence(evidence,_identity(owned_attempt_context));reloaded=load_consumption(consumption,owned_attempt_context)
+ launched={'schema_version':'m6a-v2-launched-attempt-context-v1','launch_id':auth['launch_id'],'attempt_id':auth['attempt_id'],'identity_id':auth['identity_id'],'authorization_id':auth['authorization_id'],'nonce':auth['nonce'],'owner_identity':ownership['launcher_identity'],'attempt_root':str(root),'ownership_digest':ownership['sha256'],'consumption_path':str(consumption),'consumption_digest':reloaded['sha256'],'process_evidence_path':str(evidence),'process_evidence_digest':loaded['sha256'],'launch_performed':True,'process_outcome':{'return_code':result['return_code'],'timed_out':result['timed_out'],'termination_state':result['termination_state']},'started_at_utc':result['started_at_utc'],'ended_at_utc':result['ended_at_utc'],'execution_mode':mode};launched['canonical_digest']=digest(launched);return launched
+
+def _identity(context):return {'launch_id':context['launch_id'],'attempt_id':context['attempt_id'],'identity_id':context['identity_id'],'scene_id':context['ownership']['scene'],'seed':context['ownership']['seed']}
 
 def _canon(x): return (json.dumps(x, sort_keys=True, separators=(",", ":"), ensure_ascii=True)+"\n").encode()
 def _utc(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -88,9 +123,14 @@ def build_authorization(package,*,head,branch,attempt_id,valid_minutes=30):
 def validate_authorization(a,package,*,head,branch):
  if a.get("authorization_sha256")!=digest({k:v for k,v in a.items() if k!="authorization_sha256"}) or not a.get("execution_authorized") or a.get("test_fixture") or a.get("consumed") or a.get("launch_performed") or a.get("scientific_result") or a.get("prepared_package_sha256")!=package["package_sha256"] or a.get("authorized_head")!=head or a.get("branch")!=branch or datetime.fromisoformat(a["valid_until_utc"])<=datetime.now(timezone.utc):raise PermissionError("invalid authorization")
  validate_prospective_root(a["owned_output_root"],launch_id=a["launch_id"],attempt_id=a["attempt_id"]);return a
-def consume_authorization(a,ownership):
- path=CONTROL_ROOT/"consumption"/(a["authorization_id"]+".json")
- return _new(path,{"schema_version":"m6a-v2-consumption-v1","authorization_id":a["authorization_id"],"authorization_sha256":a["authorization_sha256"],"launch_id":a["launch_id"],"attempt_id":a["attempt_id"],"output_root":a["owned_output_root"],"launch_spec_sha256":a["launch_spec_sha256"],"ownership_sha256":ownership["sha256"],"consumed_at_utc":_utc(),"state":"consumed_pre_spawn"})
+def consume_authorization(a,ownership,*,launch_performed_at_utc=None,path=None):
+ path=Path(path) if path is not None else CONTROL_ROOT/"consumption"/(a["authorization_id"]+".json")
+ root=a.get('owned_output_root',ownership.get('output_root'))
+ return _new(path,{"schema_version":"m6a-v2-consumption-v1","authorization_id":a["authorization_id"],"authorization_sha256":a["authorization_sha256"],"nonce":a.get('nonce','legacy-no-nonce'),"launch_id":a["launch_id"],"attempt_id":a["attempt_id"],"identity_id":a["identity_id"],"output_root":root,"launch_spec_sha256":a["launch_spec_sha256"],"ownership_sha256":ownership["sha256"],"owner_identity":ownership['launcher_identity'],"launch_performed_at_utc":launch_performed_at_utc or _utc(),"consumed_at_utc":_utc(),"state":"consumed_post_launch"})
+def load_consumption(path,context):
+ value=json.loads(Path(path).read_text(encoding='utf-8'))
+ if value.get('sha256')!=digest({k:v for k,v in value.items() if k!='sha256'}) or any(value.get(k)!=context[k] for k in ('authorization_id','launch_id','attempt_id','identity_id')) or value.get('nonce')!=context['nonce'] or value.get('state')!='consumed_post_launch':raise ValueError('invalid consumption evidence')
+ return value
 def write_final_marker(root,evidence):
  required={"launch_id","attempt_id","authorization_id","ownership_sha256","consumption_sha256","process_sha256","runtime_sha256","snapshot_validation_sha256","b5_sha256","aggregate_sha256","joint_validator_sha256","manifest_sha256","lock_sha256"}
  if not required <= set(evidence) or evidence.get("joint_pass") is not True:raise ValueError("joint validation required")
