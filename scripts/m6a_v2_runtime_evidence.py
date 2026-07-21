@@ -40,3 +40,11 @@ def persist_joint_report(path,identity,upstream):
   x=json.loads(Path(p).read_text());actual.append({'role':role,'path':str(Path(p).resolve()),'sha256':x.get('sha256')})
  if any(not x['sha256'] for x in actual):raise ValueError('missing upstream digest')
  return persist(path,{'schema_version':'m6a-v2-joint-report-v1','identity':identity,'upstream':actual,'passed':True,'errors':[]})
+def persist_process_evidence(path,identity,stdout,stderr,**fields):
+ out=file_entry('stdout',stdout,Path(path).parent);err=file_entry('stderr',stderr,Path(path).parent)
+ if fields.get('ended_at_utc','') < fields.get('started_at_utc','') or not isinstance(fields.get('return_code'),int):raise ValueError('invalid process timing/code')
+ return persist(path,{'schema_version':'m6a-v2-process-evidence-v1','identity':identity,'stdout':out,'stderr':err,**fields})
+def load_process_evidence(path,identity):
+ x=load(path,'m6a-v2-process-evidence-v1',identity);root=Path(path).parent
+ if file_entry('stdout',x['stdout']['path'],root)!=x['stdout'] or file_entry('stderr',x['stderr']['path'],root)!=x['stderr'] or x['ended_at_utc']<x['started_at_utc'] or not isinstance(x['return_code'],int) or any(not v for v in (x['stdout']['sha256'],x['stderr']['sha256'])):raise ValueError('invalid process evidence')
+ return x
