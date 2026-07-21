@@ -89,10 +89,10 @@ def build_episode_runtime_summary(runtime_config: dict, scene_evidence: SceneIni
         raise ValueError("episode is incomplete")
     identifiers = [item.get("snapshot_id") for item in snapshot_records]
     times = [item.get("timestamp_s") for item in snapshot_records]
-    paths = [item.get("path") for item in snapshot_records]
+    paths = [item.get("path") for item in snapshot_records]; snapshot_details=[item.get('snapshot_record') for item in snapshot_records]
     methods = tuple(sorted({method for item in snapshot_records for method in item.get("methods", [])}))
     counts = {key: sum(int(item.get(key, 0)) for item in snapshot_records) for key in ("actual_future_usage", "combined_usage", "raw_mask_usage", "fallback", "replacement")}
-    if identifiers != [item["snapshot_id"] for item in expected] or times != [item["timestamp_s"] for item in expected] or len(set(identifiers)) != 4 or methods != METHODS or any(counts.values()) or any(not isinstance(path, str) or not path for path in paths):
+    if identifiers != [item["snapshot_id"] for item in expected] or times != [item["timestamp_s"] for item in expected] or len(set(identifiers)) != 4 or methods != METHODS or any(counts.values()) or any(not isinstance(path, str) or not path for path in paths) or (any(x is not None for x in snapshot_details) and any(not isinstance(x,dict) or not Path(x.get('raw_rgb_path','')).is_file() or not Path(x.get('metadata_json_path','')).is_file() or not Path(x.get('serialized_snapshot_path','')).is_dir() for x in snapshot_details)):
         raise ValueError("invalid trusted snapshot records")
     payload = {
         "schema_version": SUMMARY_SCHEMA, "protocol_version": runtime_config["protocol_version"],
@@ -105,19 +105,27 @@ def build_episode_runtime_summary(runtime_config: dict, scene_evidence: SceneIni
         "snapshot_ids": identifiers, "snapshot_times_s": times, "snapshot_paths": paths, "method_set": list(methods), **counts,
         "scene_initialized_before_motion": True, "lifecycle_final_state": lifecycle.state.value, "success": True,
     }
+    if all(item is not None for item in snapshot_details):
+        payload["snapshots"] = snapshot_details
     payload["summary_sha256"] = digest(payload)
     return payload
 
 
 def validate_episode_runtime_summary(summary: dict, expected_runtime_config: dict, *, require_paths: bool = False) -> dict:
     load_v2_runtime_config(expected_runtime_config)
-    allowed = {"schema_version","protocol_version","v2_manifest_sha256","v2_lock_sha256","source_record_sha256","identity","controller","base_world","temporary_world","scene_evidence","schedule_sha256","projection_config_sha256","expected_snapshot_count","actual_snapshot_count","snapshot_ids","snapshot_times_s","snapshot_paths","method_set","actual_future_usage","combined_usage","raw_mask_usage","fallback","replacement","scene_initialized_before_motion","lifecycle_final_state","success","summary_sha256"}
-    if set(summary) != allowed or summary.get("schema_version") != SUMMARY_SCHEMA or summary.get("summary_sha256") != digest({key: value for key, value in summary.items() if key != "summary_sha256"}):
+    allowed = {"schema_version","protocol_version","v2_manifest_sha256","v2_lock_sha256","source_record_sha256","identity","controller","base_world","temporary_world","scene_evidence","schedule_sha256","projection_config_sha256","expected_snapshot_count","actual_snapshot_count","snapshot_ids","snapshot_times_s","snapshot_paths","snapshots","method_set","actual_future_usage","combined_usage","raw_mask_usage","fallback","replacement","scene_initialized_before_motion","lifecycle_final_state","success","summary_sha256"}
+    if not (set(summary) == allowed or set(summary) == allowed-{"snapshots"}) or summary.get("schema_version") != SUMMARY_SCHEMA or summary.get("summary_sha256") != digest({key: value for key, value in summary.items() if key != "summary_sha256"}):
         raise ValueError("invalid runtime summary digest or schema")
     identity = summary["identity"]
     if (summary["protocol_version"] != expected_runtime_config["protocol_version"] or summary["v2_manifest_sha256"] != expected_runtime_config["v2_manifest_sha256"] or summary["v2_lock_sha256"] != expected_runtime_config["v2_lock_sha256"] or summary["source_record_sha256"] != expected_runtime_config["source_record_sha256"] or identity != {"split": "pilot", "scene": expected_runtime_config["scene"], "episode_id": expected_runtime_config["episode_id"], "seed": expected_runtime_config["seed"]} or summary["controller"] != expected_runtime_config["controller"] or summary["base_world"] != {"path": expected_runtime_config["source_world"], "sha256": expected_runtime_config["source_world_sha256"]} or summary["base_world"]["sha256"].upper() != BASE_WORLD_SHA256 or summary["schedule_sha256"] != expected_runtime_config["schedule_sha256"] or summary["projection_config_sha256"] != expected_runtime_config["projection_config_sha256"]):
         raise ValueError("runtime summary identity mismatch")
     scene = _scene_evidence_dict(SceneInitializationEvidence(**summary["scene_evidence"]))
+    if "snapshots" in summary:
+        records=summary["snapshots"]
+        if len(records)!=4 or [x.get("snapshot_id") for x in records]!=summary["snapshot_ids"] or len({x.get("snapshot_index") for x in records})!=4: raise ValueError("invalid authoritative snapshot records")
+        for item in records:
+            raw,meta,serial=(Path(item.get(key,"")) for key in ("raw_rgb_path","metadata_json_path","serialized_snapshot_path"))
+            if not raw.is_file() or not meta.is_file() or not serial.is_dir() or item.get("scene")!=expected_runtime_config["scene"] or item.get("seed")!=expected_runtime_config["seed"]:raise ValueError("invalid snapshot artifact reference")
     if scene["source_record_sha256"] != expected_runtime_config["source_record_sha256"] or scene["seed"] != expected_runtime_config["seed"] or summary["expected_snapshot_count"] != 4 or summary["actual_snapshot_count"] != 4 or summary["method_set"] != list(METHODS) or summary["snapshot_ids"] != [item["snapshot_id"] for item in expected_runtime_config["snapshots"]] or summary["snapshot_times_s"] != [item["timestamp_s"] for item in expected_runtime_config["snapshots"]] or any(summary[key] != 0 for key in ("actual_future_usage", "combined_usage", "raw_mask_usage", "fallback", "replacement")) or not summary["scene_initialized_before_motion"] or summary["lifecycle_final_state"] not in {LifecycleState.EPISODE_COMPLETED.value, LifecycleState.SUMMARY_COMMITTED.value} or not summary["success"]:
         raise ValueError("runtime summary acceptance conditions failed")
     if require_paths and any(not Path(path).is_dir() for path in summary["snapshot_paths"]):

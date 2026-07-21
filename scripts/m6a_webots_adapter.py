@@ -25,7 +25,7 @@ class M6ARuntimeConfig:
   self.projection_config.validate()
 @dataclass(frozen=True)
 class EpisodeRuntimeSummary:
- identity:dict;expected_snapshot_count:int;actual_snapshot_count:int;serialized_snapshot_paths:tuple[str,...];frame_hashes:tuple[str,...];method_set:tuple[str,...];actual_future_usage:int;combined_usage:int;raw_mask_usage:int;fallback:int;replacement:int;success:bool
+ identity:dict;expected_snapshot_count:int;actual_snapshot_count:int;serialized_snapshot_paths:tuple[str,...];frame_hashes:tuple[str,...];method_set:tuple[str,...];actual_future_usage:int;combined_usage:int;raw_mask_usage:int;fallback:int;replacement:int;success:bool;snapshot_records:tuple[dict,...]=()
 class M6AWebotsRuntimeAdapter:
  def __init__(self,config,facade,*,state_reader,frame_reader,schedule):
   config.validate();self.config=config;self.facade=facade;self.state_reader=state_reader;self.frame_reader=frame_reader;self.schedule=schedule;self.done=[]
@@ -46,7 +46,7 @@ class M6AWebotsRuntimeAdapter:
   if raw_path.exists() or meta_path.exists() or snapshot_dir.exists():raise FileExistsError('refusing snapshot overwrite')
   try:
    raw_path.write_bytes(frame.rgb);frame_hash=hashlib.sha256(frame.rgb).hexdigest();reference=str(raw_path.relative_to(self.root)).replace('\\','/')
-   self._canonical_write(meta_path,{'frame_reference':reference,'frame_sha256':frame_hash,'width_px':160,'height_px':120,'simulation_timestamp_s':simulation_time,'state_timestamp_s':state.timestamp_s,'frame_timestamp_s':frame.timestamp_s,'target_timestamp_s':target_time,'state':asdict(state.state),'schedule_id':self.schedule.schedule_id,'schedule_available_time_s':self.schedule.available_time_s,'schedule_segments':[asdict(x) for x in self.schedule.segments],'schedule_sha256':digest(asdict(self.schedule))})
+   self._canonical_write(meta_path,{'schema_version':'m6a-v2-raw-snapshot-metadata-v1','snapshot_id':snapshot_id,'snapshot_index':len(self.done),'scene':self.config.scene,'seed':self.config.seed,'frame_reference':reference,'frame_sha256':frame_hash,'width_px':160,'height_px':120,'simulation_timestamp_s':simulation_time,'state_timestamp_s':state.timestamp_s,'frame_timestamp_s':frame.timestamp_s,'target_timestamp_s':target_time,'state':asdict(state.state),'schedule_id':self.schedule.schedule_id,'schedule_available_time_s':self.schedule.available_time_s,'schedule_segments':[asdict(x) for x in self.schedule.segments],'schedule_sha256':digest(asdict(self.schedule))})
    item=SnapshotInput(VERSION,self.config.manifest_hash,self.config.scene,self.config.episode_id,self.config.seed,snapshot_id,target_time,state.state,reference,self.schedule)
    output=process_m6a_snapshot(item,self.config.projection_config);serialize_snapshot(output,snapshot_dir,manifest_hash=self.config.manifest_hash,protocol_version=VERSION)
   except Exception:
@@ -54,7 +54,9 @@ class M6AWebotsRuntimeAdapter:
     if path.exists():path.unlink()
    if snapshot_dir.exists():shutil.rmtree(snapshot_dir)
    raise
-  self.done.append((snapshot_id,str(snapshot_dir),frame_hash,output))
+  record={'schema_version':'m6a-v2-authoritative-snapshot-record-v1','snapshot_id':snapshot_id,'snapshot_index':len(self.done),'scene':self.config.scene,'seed':self.config.seed,'capture_time_s':simulation_time,'raw_rgb_path':str(raw_path.resolve()),'metadata_json_path':str(meta_path.resolve()),'serialized_snapshot_path':str(snapshot_dir.resolve()),'producer_identity':'m6a_webots_runtime_adapter','producer_frame_hash':frame_hash}
+  if not raw_path.is_file() or not meta_path.is_file() or not snapshot_dir.is_dir():raise ValueError('snapshot artifact contract')
+  self.done.append((snapshot_id,str(snapshot_dir),frame_hash,output,record))
  def run(self):
   pending=list(self.config.snapshots)
   while pending:
@@ -65,7 +67,8 @@ class M6AWebotsRuntimeAdapter:
    if simulation_time>=target:self._capture(ident,target,simulation_time);pending.pop(0)
   if pending:raise ValueError('episode finalized before all snapshots')
   outputs=[x[3] for x in self.done]
-  return EpisodeRuntimeSummary({'manifest_hash':self.config.manifest_hash,'scene':self.config.scene,'episode_id':self.config.episode_id,'seed':self.config.seed},len(self.config.snapshots),len(self.done),tuple(x[1] for x in self.done),tuple(x[2] for x in self.done),tuple(sorted(outputs[0].methods)),0,0,0,0,0,True)
+  records=tuple(x[4] for x in self.done)
+  return EpisodeRuntimeSummary({'manifest_hash':self.config.manifest_hash,'scene':self.config.scene,'episode_id':self.config.episode_id,'seed':self.config.seed},len(self.config.snapshots),len(self.done),tuple(x['serialized_snapshot_path'] for x in records),tuple(x['producer_frame_hash'] for x in records),tuple(sorted(outputs[0].methods)),0,0,0,0,0,True,records)
 def run_m6a_webots_episode(runtime_config,robot_facade,*,state_reader,frame_reader,predefined_schedule):
  return M6AWebotsRuntimeAdapter(runtime_config,robot_facade,state_reader=state_reader,frame_reader=frame_reader,schedule=predefined_schedule).run()
 class WebotsRobotFacade:
@@ -139,6 +142,6 @@ def main_m6a_webots_controller():
    root=Path(cfg['output_root']);root.mkdir(parents=True,exist_ok=True)
    legacy=M6ARuntimeConfig(cfg['v2_manifest_sha256'],cfg['scene'],cfg['episode_id'],cfg['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in cfg['snapshots']),root,M6AProjectionConfig(**cfg['projection_config']))
    result=run_m6a_webots_episode(legacy,holder['facade'],state_reader=holder['reader'],frame_reader=holder['facade'].frame_sample,predefined_schedule=schedule)
-   return [{'snapshot_id':item['snapshot_id'],'timestamp_s':item['timestamp_s'],'path':path,'methods':list(result.method_set),'actual_future_usage':0,'combined_usage':0,'raw_mask_usage':0,'fallback':0,'replacement':0} for item,path in zip(cfg['snapshots'],result.serialized_snapshot_paths)]
+   return [{'snapshot_id':item['snapshot_id'],'timestamp_s':item['timestamp_s'],'path':record['serialized_snapshot_path'],'snapshot_record':record,'methods':list(result.method_set),'actual_future_usage':0,'combined_usage':0,'raw_mask_usage':0,'fallback':0,'replacement':0} for item,record in zip(cfg['snapshots'],result.snapshot_records)]
   root=Path(runtime['output_root']);code,_=run_v2_controller_lifecycle(config_path,supervisor_factory=Supervisor,devices_initializer=devices,episode_runner=episode,summary_path=root/'episode_runtime_summary.json',status_path=root/'episode_runtime_status.json');return code
  except Exception:return 1
