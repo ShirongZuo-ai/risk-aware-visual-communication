@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Added the B5 post-runtime handoff contract: runtime raw metadata now carries the predeclared schedule evidence needed by the strict loader, and a host-only `process_completed_pilot_launch` path rebuilds exact snapshot inputs before B4 processing. This remains unexecuted against Webots and does not authorize a smoke run.
+
 - Implemented the M6-A v2-B5 owned post-runtime integration boundary: strict persisted raw-artifact loading, per-snapshot eight-case B4 processing, owned 32-case aggregate persistence, and a joint completion validator. This has only synthetic temporary-root coverage; it does not authorize or represent a Webots pilot run.
 
 - Implemented M6-A v2-B4's offline-only byte-fair codec/evaluator/auditor contract for the frozen 4 snapshots × 2 methods × 4 budgets matrix. It reuses M5 tiled-JPEG and image-quality primitives, charges deterministic sparse-mask signaling plus codec metadata, fails closed on forbidden inputs or over-budget cases, and was exercised only with synthetic fixtures in a system temporary directory. No Webots, pilot data, or scientific result exists.
