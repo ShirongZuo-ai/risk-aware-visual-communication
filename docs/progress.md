@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Added a shell-free `OwnedPopenBackend` and launch-scoped authorization evidence. The production wrapper still refuses real backend spawn unless a matching explicit authorization is supplied; harmless Python-child tests validate capture only and are not Webots execution.
+
 - Added an M6-A v2 controlled host-process wrapper with injected mock backend, reviewed argv/environment validation, owned stdout/stderr evidence, timeout-only-owned-process handling, and post-runtime B5 invocation. Its default path rejects real execution; mock integration is not a Webots run or pilot completion.
 
 - Added the B5 post-runtime handoff contract: runtime raw metadata now carries the predeclared schedule evidence needed by the strict loader, and a host-only `process_completed_pilot_launch` path rebuilds exact snapshot inputs before B4 processing. This remains unexecuted against Webots and does not authorize a smoke run.

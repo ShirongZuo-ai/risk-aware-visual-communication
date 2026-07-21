@@ -2,7 +2,7 @@ import tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 from scripts.m6a_v2_launch_spec import build_one_identity_launch_spec,WebotsExecutableEvidence
-from scripts.m6a_v2_host_wrapper import execute_pilot_launch
+from scripts.m6a_v2_host_wrapper import execute_pilot_launch,OwnedPopenBackend,build_launch_authorization,validate_launch_authorization
 from scripts.m6a_v2_episode_source import MANIFEST_PATH,LOCK_PATH
 class P:
  pid=7;returncode=0
@@ -24,3 +24,7 @@ class T(unittest.TestCase):
    exe=Path(d)/'fake.exe';exe.write_bytes(b'x');ev=WebotsExecutableEvidence(str(exe),'R2025a','test',0)
    with patch('scripts.m6a_v2_launch_spec.resolve_webots_executable',return_value=ev):spec=build_one_identity_launch_spec(MANIFEST_PATH,LOCK_PATH,preflight_root=Path(d)/'owned')
    r=execute_pilot_launch(spec);self.assertFalse(r['started']);self.assertFalse(r['webots_started'])
+ def test_real_backend_harmless_child_requires_scoped_authorization(self):
+  import sys
+  with tempfile.TemporaryDirectory() as d:
+   backend=OwnedPopenBackend();proc=backend.start([str(Path(sys.executable).resolve()),'-c','import sys;print("ok");print("err",file=sys.stderr)'],{},d);out,err=proc.communicate(timeout=10);self.assertEqual(proc.returncode,0);self.assertEqual(out.replace(b'\r\n',b'\n'),b'ok\n');self.assertEqual(err.replace(b'\r\n',b'\n'),b'err\n')
