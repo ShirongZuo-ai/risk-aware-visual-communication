@@ -11,6 +11,7 @@ from scripts.m6a_v2_fresh_preflight import load_fresh_preflight_report
 
 SCHEMA='m6a-v2-execution-authorization-artifact-v1'
 RECEIPT_SCHEMA='m6a-v2-verified-authorization-receipt-v1'
+CONTEXT_SCHEMA='m6a-v2-externally-validated-execution-context-v1'; _TOKEN=object()
 def _b(x): return (json.dumps(x,sort_keys=True,separators=(',',':'))+'\n').encode()
 def _time(x): return datetime.fromisoformat(x)
 def _read(path):
@@ -63,3 +64,22 @@ def verify_execution_authorization(package_path,preflight_path,authorization_pat
  binding=build_expected_authorization_binding(package_path,preflight_path); authorization=load_execution_authorization_artifact(authorization_path); validate_authorization_binding(authorization,binding); receipt=verifier.verify(authorization,binding)
  if not isinstance(receipt,VerifiedAuthorizationReceipt):raise TypeError('verifier must return VerifiedAuthorizationReceipt')
  return receipt.validate(binding)
+
+class ExternallyValidatedExecutionContext:
+ def __init__(self,token,data):
+  if token is not _TOKEN: raise TypeError('externally validated context factory required')
+  self.data=data
+ def validate(self,binding):
+  d=self.data
+  if d.get('schema_version')!=CONTEXT_SCHEMA or d.get('canonical_context_digest')!=digest({k:v for k,v in d.items() if k!='canonical_context_digest'}) or d.get('verification_class')=='test':raise ValueError('context provenance')
+  receipt=VerifiedAuthorizationReceipt(d.get('verified_receipt',{})).validate(binding)
+  for key,value in asdict(binding).items():
+   if d.get(key)!=value:raise ValueError('context binding')
+  if d.get('authorization_id')!=receipt.data['authorization_id'] or d.get('verified_receipt_digest')!=receipt.data['canonical_receipt_digest'] or _time(d['context_created_at_utc'])<_time(receipt.data['verified_at_utc']) or _time(d['expires_at_utc'])<=datetime.now(timezone.utc) or Path(d['prospective_attempt_root']).exists():raise ValueError('context freshness')
+  return self
+def build_externally_validated_execution_context(package_path,preflight_path,authorization_path,receipt,*,now_utc=None):
+ binding=build_expected_authorization_binding(package_path,preflight_path); authorization=load_execution_authorization_artifact(authorization_path); validate_authorization_binding(authorization,binding)
+ if not isinstance(receipt,VerifiedAuthorizationReceipt):raise TypeError('VerifiedAuthorizationReceipt required')
+ receipt.validate(binding)
+ if receipt.data['verification_class']=='test':raise ValueError('test receipt cannot create external context')
+ now=now_utc or datetime.now(timezone.utc); d={'schema_version':CONTEXT_SCHEMA,'authorization_id':authorization['authorization_id'],'authorization_artifact_digest':authorization['canonical_artifact_digest'],'authorization_payload_digest':authorization['payload_digest'],'verified_receipt':receipt.data,'verified_receipt_digest':receipt.data['canonical_receipt_digest'],'verifier_identity':receipt.data['verifier_identity'],'verification_class':receipt.data['verification_class'],'trust_domain':receipt.data['trust_domain'],**asdict(binding),'issued_at_utc':authorization['issued_at_utc'],'expires_at_utc':authorization['expires_at_utc'],'verified_at_utc':receipt.data['verified_at_utc'],'context_created_at_utc':now.isoformat(),'nonce':authorization['nonce'],'authorization_policy_version':authorization['authorization_policy_version']};d['canonical_context_digest']=digest(d);return ExternallyValidatedExecutionContext(_TOKEN,d).validate(binding)
