@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Replaced M6-A v2's launch-time `webots.exe --version` probe with static installed `resources/version.txt` plus executable/version-file hashes. A fresh preflight control report now fails closed before authorization because the production attempt-root, atomic ownership-marker, single-use authorization, and final-marker gates are not yet implemented. No Webots process, pilot attempt, authorization evidence, calibration, formal data, or scientific result was created.
+
 - Added a shell-free `OwnedPopenBackend` and launch-scoped authorization evidence. The production wrapper still refuses real backend spawn unless a matching explicit authorization is supplied; harmless Python-child tests validate capture only and are not Webots execution.
 
 - Added an M6-A v2 controlled host-process wrapper with injected mock backend, reviewed argv/environment validation, owned stdout/stderr evidence, timeout-only-owned-process handling, and post-runtime B5 invocation. Its default path rejects real execution; mock integration is not a Webots run or pilot completion.

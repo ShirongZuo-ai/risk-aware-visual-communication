@@ -10,17 +10,17 @@ from scripts.m6a_v2_runtime_summary import Lifecycle, LifecycleState, SceneIniti
 from scripts.m6a_v2_episode_source import LOCK_PATH, MANIFEST_PATH, load_and_validate_m6a_v2_manifest
 
 class T(unittest.TestCase):
- def test_executable_detection_uses_safe_list_probe_and_rejects_bad_version(self):
+ def test_executable_detection_uses_static_version_evidence_and_rejects_bad_version(self):
   with tempfile.TemporaryDirectory() as d:
-   exe=Path(d)/'Webots R2025a.exe';exe.write_bytes(b'fake')
-   with patch('scripts.m6a_v2_launch_spec._probe_version',return_value='R2025a') as probe:
-    evidence=resolve_webots_executable(exe);self.assertEqual(evidence.path,str(exe.resolve()));probe.assert_called_once_with(exe)
-   with patch('scripts.m6a_v2_launch_spec._probe_version',side_effect=ValueError('unsupported')):
-    with self.assertRaises(ValueError):resolve_webots_executable(exe)
+   root=Path(d)/'Webots';exe=root/'msys64'/'mingw64'/'bin'/'webots.exe';exe.parent.mkdir(parents=True);exe.write_bytes(b'fake')
+   version=root/'resources'/'version.txt';version.parent.mkdir();version.write_text('R2025a\n',encoding='utf-8')
+   evidence=resolve_webots_executable(exe);self.assertEqual(evidence.path,str(exe.resolve()));self.assertEqual(evidence.version_evidence_path,str(version.resolve()));self.assertTrue(evidence.executable_sha256)
+   version.write_text('R2024b\n',encoding='utf-8')
+   with self.assertRaises(ValueError):resolve_webots_executable(exe)
   with self.assertRaises(ValueError):resolve_webots_executable('relative.exe')
  def spec(self):
   d=tempfile.TemporaryDirectory();base=Path(d.name);exe=base/'Webots R2025a.exe';exe.write_bytes(b'fake');root=base/'launch root'
-  evidence=WebotsExecutableEvidence(str(exe.resolve()),'R2025a','test',0)
+  evidence=WebotsExecutableEvidence(str(exe.resolve()),'R2025a','test','fixture-version.txt','v','e',4,0)
   with patch('scripts.m6a_v2_launch_spec.resolve_webots_executable',return_value=evidence):spec=build_one_identity_launch_spec(MANIFEST_PATH,LOCK_PATH,preflight_root=root,webots_executable=exe)
   return d,spec
  def test_launch_spec_is_preflight_only_and_owned(self):

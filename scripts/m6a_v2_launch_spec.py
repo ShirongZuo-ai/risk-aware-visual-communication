@@ -6,8 +6,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
-import subprocess
 import tempfile
 
 from scripts.m6a_common import PROJECT_ROOT
@@ -35,17 +33,26 @@ class WebotsExecutableEvidence:
     path: str
     version: str
     source: str
-    version_probe_returncode: int
+    version_evidence_path: str
+    version_evidence_sha256: str
+    executable_sha256: str
+    executable_bytes: int
+    executable_mtime_ns: int
 
 
-def _probe_version(path: Path) -> str:
-    result = subprocess.run([str(path), "--version"], shell=False, capture_output=True, text=True, timeout=15, check=False)
-    if result.returncode != 0:
-        raise ValueError("Webots --version failed")
-    text = (result.stdout or "") + (result.stderr or "")
-    if WEBOTS_VERSION not in text:
+def _static_version_evidence(path: Path) -> tuple[str, Path]:
+    """Read Webots' installed version record without launching an executable."""
+    try:
+        install_root = path.resolve().parents[3]
+    except IndexError as error:
+        raise ValueError("Webots executable has no expected installation layout") from error
+    version_path = install_root / "resources" / "version.txt"
+    if not version_path.is_file():
+        raise ValueError("Webots static version evidence is missing")
+    version = version_path.read_text(encoding="utf-8").strip()
+    if version != WEBOTS_VERSION:
         raise ValueError("unsupported Webots version")
-    return WEBOTS_VERSION
+    return version, version_path
 
 
 def resolve_webots_executable(explicit_path: str | Path | None = None) -> WebotsExecutableEvidence:
@@ -59,12 +66,15 @@ def resolve_webots_executable(explicit_path: str | Path | None = None) -> Webots
     if home:
         candidates.append((Path(home) / "msys64" / "mingw64" / "bin" / "webots.exe", "WEBOTS_HOME"))
     candidates.append((Path(r"C:\Program Files\Webots\msys64\mingw64\bin\webots.exe"), "R2025a-standard"))
-    found = shutil.which("webots")
-    if found:
-        candidates.append((Path(found), "PATH"))
     for candidate, source in candidates:
         if candidate.is_file():
-            return WebotsExecutableEvidence(str(candidate.resolve()), _probe_version(candidate), source, 0)
+            resolved = candidate.resolve()
+            version, version_path = _static_version_evidence(resolved)
+            stat = resolved.stat()
+            return WebotsExecutableEvidence(
+                str(resolved), version, source, str(version_path.resolve()), _sha256(version_path),
+                _sha256(resolved), stat.st_size, stat.st_mtime_ns,
+            )
     raise FileNotFoundError("Webots R2025a executable was not found")
 
 
