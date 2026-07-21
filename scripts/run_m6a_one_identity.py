@@ -41,8 +41,8 @@ def main():
  out=plan(a.v2_manifest,a.v2_lock);out['mode']='preflight' if a.preflight else 'dry-run'
  if a.preflight:
   if a.preflight_root is None:p.error('--preflight-root is required for --preflight')
-  root=a.preflight_root.resolve();root.mkdir(parents=True,exist_ok=True)
-  config=build_one_identity_runtime_config(a.v2_manifest,a.v2_lock,output_root=root/'episode_output')
-  out['runtime_config_path']=str(materialize_runtime_config(config,root/'runtime_config.json'))
+  from scripts.m6a_v2_launch_spec import build_one_identity_launch_spec
+  spec=build_one_identity_launch_spec(a.v2_manifest,a.v2_lock,preflight_root=a.preflight_root)
+  out['launch_spec']=spec
  print(json.dumps(out,sort_keys=True));return 0
 if __name__=='__main__':raise SystemExit(main())

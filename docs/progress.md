@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented M6-A v2-B3B2's preflight-only host launch specification: R2025a executable detection, verified batch argv, minimal controller environment, owned temporary-root marker, hashes, process contract, cleanup plan, and summary/status success validator. The launch spec is permanently `execution_authorized=false`; no Webots process, pilot data, or scientific result exists.
+
 - Implemented M6-A v2-B3B1's fail-closed controller lifecycle and canonical runtime-summary persistence. The v2 controller entry validates configuration and scene evidence before constructing devices, then permits the trusted four-snapshot runtime; success summaries require four snapshots, both methods, zero prohibited usage, and matching scene evidence. Only fake injection tests were run: no Webots process, pilot data, or scientific result exists.
 
 - Implemented M6-A v2-B3A's pre-motion, source-record-bound scene initializer and safe temporary-world wiring. The immutable M5E base world is copied only to a system-temporary path with its controller changed to `m6a_trusted_runtime`; `supervisor TRUE` is preserved. Scene geometry and initial pose remain the controller's single pre-motion authority, recreated from the frozen v2 scene/seed with read-back hashes. Fake-Supervisor tests only: no Webots, pilot data, or scientific result exists.

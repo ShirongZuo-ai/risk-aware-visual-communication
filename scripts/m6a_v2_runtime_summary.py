@@ -165,7 +165,7 @@ def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_f
         if runtime_config["robot_def"] != "ROBOT": raise ValueError("unexpected robot DEF")
         devices_initializer(supervisor, runtime_config); lifecycle.transition(LifecycleState.DEVICES_READY)
         lifecycle.transition(LifecycleState.EPISODE_RUNNING); snapshots = episode_runner(supervisor, runtime_config); lifecycle.transition(LifecycleState.EPISODE_COMPLETED)
-        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config); lifecycle.transition(LifecycleState.SUMMARY_COMMITTED)
+        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"}); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config); lifecycle.transition(LifecycleState.SUMMARY_COMMITTED)
         return 0, lifecycle
     except Exception as error:
         lifecycle.fail()
