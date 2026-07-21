@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Added the M6-A v2 prepared launch artifact contract: one prospective attempt path plan declares the required host, runtime, B5/aggregate, joint-validation, and final-marker paths without pre-filling future runtime digests. The local package remains control evidence only and does not create a pilot attempt root.
+
 - Added reusable fail-closed M6-A v2 execution-safety primitives for canonical prospective attempt roots, exclusive ownership markers, immutable authorization evidence, atomic append-only consumption records, and the sole exclusive final-marker writer. These primitives are covered only with temporary-directory tests; no pilot root, authorization, consumption record, marker, Webots process, or scientific data was created.
 
 - Replaced M6-A v2's launch-time `webots.exe --version` probe with static installed `resources/version.txt` plus executable/version-file hashes. A fresh preflight control report now fails closed before authorization because the production attempt-root, atomic ownership-marker, single-use authorization, and final-marker gates are not yet implemented. No Webots process, pilot attempt, authorization evidence, calibration, formal data, or scientific result was created.

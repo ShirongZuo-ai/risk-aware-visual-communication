@@ -30,6 +30,12 @@ def _under(path: Path, root: Path):
 def attempt_root(launch_id,attempt_id):
  if not all(isinstance(x,str) and x and x.replace("-","").isalnum() for x in (launch_id,attempt_id)):raise ValueError("unsafe launch/attempt id")
  return (PILOT_ROOT/launch_id/attempt_id).resolve()
+def attempt_path_plan(launch_id,attempt_id,identity_id,scene_id,seed):
+ root=attempt_root(launch_id,attempt_id); items={'ownership_marker':root/OWNER,'stdout':root/'host_stdout.log','stderr':root/'host_stderr.log','process_evidence':root/'host_process_result.json','runtime_summary':root/'episode_runtime_summary.json','runtime_status':root/'episode_runtime_status.json','runtime_diagnostic':root/'episode_runtime_failure.json','runtime_manifest':root/'runtime_artifacts.json','snapshot_root':root/'snapshots','codec_root':root/'codec','codec_aggregate':root/'codec_aggregate.json','aggregate_validation':root/'codec_aggregate_validation.json','joint_report':root/'joint_validation.json','final_marker':root/FINAL,'consumption_record':CONTROL_ROOT/'consumption'/(digest({'launch':launch_id,'attempt':attempt_id})+'.json')}
+ if len({str(x.resolve()).lower() for x in items.values()})!=len(items):raise ValueError('artifact path alias')
+ for name,path in items.items():
+  if name!='consumption_record' and not _under(path,root):raise ValueError('artifact path escape')
+ return {'schema_version':'m6a-v2-attempt-path-plan-v1','launch_id':launch_id,'attempt_id':attempt_id,'identity_id':identity_id,'scene_id':scene_id,'seed':seed,'attempt_root':str(root),'artifacts':{k:str(v.resolve()) for k,v in items.items()}}
 def validate_prospective_root(root,*,launch_id,attempt_id):
  root=Path(root)
  if root != attempt_root(launch_id,attempt_id) or root.exists() or not _under(root,PILOT_ROOT) or CONTROL_ROOT.resolve() in root.parents:raise ValueError("unsafe or reused attempt root")
