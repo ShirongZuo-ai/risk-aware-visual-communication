@@ -1,8 +1,10 @@
 # Progress
 
-Last updated: 2026-07-20 (Asia/Shanghai)
+Last updated: 2026-07-21 (Asia/Shanghai)
 
 ## Completed
+
+- Added the M6-A v2 runtime artifact manifest and authoritative four-snapshot reload validation. The manifest binds the runtime summary, status, diagnostic, runtime configuration, and canonical trusted-serialization trees; reload recalculates raw RGB/metadata/tree digests and rejects tampering, missing artifacts, identity drift, and path escape. Coverage uses only temporary directories and mock lifecycle hooks: no Webots process, authorization, attempt root, or pilot/calibration/formal data was created.
 
 - Added the M6-A v2 prepared launch artifact contract: one prospective attempt path plan declares the required host, runtime, B5/aggregate, joint-validation, and final-marker paths without pre-filling future runtime digests. The local package remains control evidence only and does not create a pilot attempt root.
 

@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-21 - M6-A v2 runtime artifact integrity contract
+
+- **Decision:** Extend the existing runtime-evidence manifest with canonical per-file serialization-tree evidence, rather than inventing a second snapshot serialization manifest.
+- **Reason:** The existing trusted snapshot loader is the authoritative definition of allowed root and method files. Reusing it while recording sorted relative file entries, sizes, and SHA-256 values provides reloadable integrity evidence without duplicate schema logic.
+- **Impact:** A successful runtime lifecycle persists its manifest only after summary, status, and diagnostic evidence, then immediately reloads every artifact. This is temporary-fixture coverage only and does not authorize a Webots execution.
+
 ## 2026-07-20 - M6-A independent byte-fair preparation
 
 - **Decision:** Freeze M6-A v1 with new deterministic episode-disjoint calibration/formal/pilot identities, State-only versus Command-conditioned Risk ROI, the existing four complete-container targets, and a 2.0 s primary horizon.
