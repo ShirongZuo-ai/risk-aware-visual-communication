@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-21 - M6-A v2 aggregate and joint completion evidence
+
+- **Decision:** Make canonical B5 case entries the aggregate's authority and persist separate reloadable aggregate-validation and joint-validation reports.
+- **Reason:** A declared case count cannot prove the frozen 4 × 2 × 4 matrix. Reconstructing identities and totals from case entries, then binding their validation to the runtime manifest, prevents completion from treating unverified in-memory dictionaries as evidence.
+- **Impact:** Completion returns success only after aggregate and joint reports are persisted and reloaded. The final marker and any authorization/ownership workflow remain deliberately outside this change.
+
 ## 2026-07-21 - M6-A v2 runtime artifact integrity contract
 
 - **Decision:** Extend the existing runtime-evidence manifest with canonical per-file serialization-tree evidence, rather than inventing a second snapshot serialization manifest.

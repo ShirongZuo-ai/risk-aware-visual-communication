@@ -109,7 +109,7 @@ def build_one_identity_launch_spec(v2_manifest_path, v2_lock_path, *, preflight_
         "webots": asdict(executable), "temporary_world": asdict(world), "controller": {"name": CONTROLLER_NAME, "path": str(CONTROLLER_PATH), "sha256": _sha256(CONTROLLER_PATH)},
         "runtime_config": {"path": str(config_path.resolve()), "sha256": _sha256(config_path)},
         "environment": {"M6A_RUNTIME_CONFIG": str(config_path.resolve())}, "environment_keys": ["M6A_RUNTIME_CONFIG"], "environment_sha256": digest({"M6A_RUNTIME_CONFIG": str(config_path.resolve())}),
-        "working_directory": str(PROJECT_ROOT), "summary_path": str(root / "episode_runtime_summary.json"), "status_path": str(root / "episode_runtime_status.json"), "diagnostic_path": str(root / "episode_runtime_failure.json"),
+        "working_directory": str(PROJECT_ROOT), "summary_path": str(root / "episode_runtime_summary.json"), "status_path": str(root / "episode_runtime_status.json"), "diagnostic_path": str(root / "episode_runtime_diagnostic.json"), "runtime_manifest_path": str(root / "runtime_artifacts.json"), "aggregate_validation_path": str(root / "codec_aggregate_validation.json"), "joint_report_path": str(root / "joint_validation.json"),
         "argv": [executable.path, "--batch", "--mode=fast", world.temporary_world_path], "timeout_s": 75, "graceful_termination_s": 10, "forced_termination": "terminate-owned-process-only",
         "owned_root": str(root), "owner_marker": str(root / OWNER_NAME), "owner_sha256": owner["owner_sha256"], "expected": {"episodes": 1, "snapshots": 4, "methods": 2, "budgets": 4, "future_cases": 32}, "execution_authorized": False, "webots_started": False,
     }
@@ -152,4 +152,4 @@ def validate_one_identity_launch_result(launch_spec: dict, process_result: dict)
 def owned_cleanup_plan(launch_spec: dict) -> tuple[Path, ...]:
     validate_launch_spec(launch_spec)
     root = Path(launch_spec["owned_root"]).resolve()
-    return tuple(path for path in (Path(launch_spec["runtime_config"]["path"]), Path(launch_spec["temporary_world"]["temporary_world_path"]), Path(launch_spec["summary_path"]), Path(launch_spec["status_path"]), Path(launch_spec["diagnostic_path"]), Path(launch_spec["owner_marker"])) if root in path.resolve().parents)
+    return tuple(path for path in (Path(launch_spec["runtime_config"]["path"]), Path(launch_spec["temporary_world"]["temporary_world_path"]), Path(launch_spec["summary_path"]), Path(launch_spec["status_path"]), Path(launch_spec["diagnostic_path"]), Path(launch_spec["runtime_manifest_path"]), Path(launch_spec["aggregate_validation_path"]), Path(launch_spec["joint_report_path"]), Path(launch_spec["owner_marker"])) if root in path.resolve().parents)
