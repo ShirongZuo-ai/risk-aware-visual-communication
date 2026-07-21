@@ -144,5 +144,8 @@ def process_completed_pilot_launch(launch_spec, process_result, *, owned_output_
     persist_codec_aggregate_validation(validation_path, runtime, aggregate_path, root=root, identity=identity)
     persist_joint_validation_report(joint_path, manifest_path, validation_path, runtime_config=runtime, root=root)
     joint = load_joint_validation_report(joint_path, runtime, root=root)
+    manifest = load_runtime_manifest(manifest_path, identity, root, runtime)
+    validation = load_codec_aggregate_validation(validation_path, runtime, root=root, identity=identity)
     completion = {"runtime_config_sha256": runtime["config_sha256"], "codec_aggregate_sha256": aggregate["aggregate_sha256"], "runtime_summary_sha256": summary["summary_sha256"], "launch_id": aggregate["launch_id"]}
-    return {**validate_pilot_completion(launch_spec, process_result, summary, aggregate, completion, owned_output_root=root), "joint_report_sha256": joint["joint_sha256"]}
+    final_evidence = {"runtime_sha256": manifest["sha256"], "snapshot_validation_sha256": manifest["snapshot_validation"]["canonical_digest"], "b5_sha256": validation["report_sha256"], "aggregate_sha256": aggregate["aggregate_sha256"], "joint_validator_sha256": joint["joint_sha256"], "manifest_sha256": runtime["v2_manifest_sha256"], "lock_sha256": runtime["v2_lock_sha256"]}
+    return {**validate_pilot_completion(launch_spec, process_result, summary, aggregate, completion, owned_output_root=root), "joint_report_sha256": joint["joint_sha256"], "final_evidence": final_evidence}
