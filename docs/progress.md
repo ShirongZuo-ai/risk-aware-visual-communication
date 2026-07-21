@@ -4,6 +4,8 @@ Last updated: 2026-07-20 (Asia/Shanghai)
 
 ## Completed
 
+- Implemented the M6-A v2-B5 owned post-runtime integration boundary: strict persisted raw-artifact loading, per-snapshot eight-case B4 processing, owned 32-case aggregate persistence, and a joint completion validator. This has only synthetic temporary-root coverage; it does not authorize or represent a Webots pilot run.
+
 - Implemented M6-A v2-B4's offline-only byte-fair codec/evaluator/auditor contract for the frozen 4 snapshots × 2 methods × 4 budgets matrix. It reuses M5 tiled-JPEG and image-quality primitives, charges deterministic sparse-mask signaling plus codec metadata, fails closed on forbidden inputs or over-budget cases, and was exercised only with synthetic fixtures in a system temporary directory. No Webots, pilot data, or scientific result exists.
 
 - Implemented M6-A v2-B3B2's preflight-only host launch specification: R2025a executable detection, verified batch argv, minimal controller environment, owned temporary-root marker, hashes, process contract, cleanup plan, and summary/status success validator. The launch spec is permanently `execution_authorized=false`; no Webots process, pilot data, or scientific result exists.
