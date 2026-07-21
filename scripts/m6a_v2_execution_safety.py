@@ -32,14 +32,20 @@ class ValidatedExecutionContext:
   root=attempt_root(launch_id,attempt_id)
   return cls('test-'+digest({'l':launch_id,'a':attempt_id}),digest({'l':launch_id,'a':attempt_id,'fixture':True}),launch_id,attempt_id,identity_id,scene_id,seed,launch_spec_sha256,runtime_config_sha256,str(root),_utc(),True)
 
-def materialize_authorized_attempt(package,context:ValidatedExecutionContext,*,launcher_identity='m6a-v2-host'):
+def materialize_authorized_attempt(package,context,*,launcher_identity='m6a-v2-host',mode='test',prepared_package_path=None):
  """The only B2-to-attempt transition; never called by preflight or wrapper planning."""
- if not isinstance(context,ValidatedExecutionContext):raise TypeError('ValidatedExecutionContext required')
- root=context.validate()
- if package.get('launch_id')!=context.launch_id or package.get('attempt_id')!=context.attempt_id or package.get('identity_id')!=context.identity_id or package.get('scene_id')!=context.scene_id or package.get('seed')!=context.seed or package.get('launch_spec_sha256')!=context.launch_spec_sha256 or package.get('runtime_config_sha256')!=context.runtime_config_sha256 or package.get('prospective_attempt_root')!=str(root):raise ValueError('package/context mismatch')
- auth={'authorization_id':context.authorization_id,'authorization_sha256':context.authorization_sha256,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'scene_id':context.scene_id,'seed':context.seed,'launch_spec_sha256':context.launch_spec_sha256}
+ if mode=='test':
+  if not isinstance(context,ValidatedExecutionContext):raise TypeError('TestValidatedExecutionContext required')
+  root=context.validate(); auth={'authorization_id':context.authorization_id,'authorization_sha256':context.authorization_sha256,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'scene_id':context.scene_id,'seed':context.seed,'launch_spec_sha256':context.launch_spec_sha256}
+ elif mode=='production':
+  from scripts.m6a_v2_execution_authorization import ExternallyValidatedExecutionContext,build_expected_authorization_binding
+  if not isinstance(context,ExternallyValidatedExecutionContext):raise TypeError('ExternallyValidatedExecutionContext required')
+  if prepared_package_path is None:raise ValueError('production materialization requires authoritative prepared package path')
+  binding=build_expected_authorization_binding(prepared_package_path,package['preflight_report_path']);context.validate(binding); root=Path(context.data['prospective_attempt_root']);auth={'authorization_id':context.data['authorization_id'],'authorization_sha256':context.data['authorization_artifact_digest'],'launch_id':context.data['launch_id'],'attempt_id':context.data['attempt_id'],'identity_id':context.data['identity_id'],'scene_id':package['scene_id'],'seed':package['seed'],'launch_spec_sha256':context.data['launch_spec_digest']}
+ else: raise ValueError('unknown materialization mode')
+ if package.get('launch_id')!=auth['launch_id'] or package.get('attempt_id')!=auth['attempt_id'] or package.get('identity_id')!=auth['identity_id'] or package.get('prospective_attempt_root')!=str(root):raise ValueError('package/context mismatch')
  ownership=acquire_ownership(root,auth,launcher_identity=launcher_identity)
- return {'schema_version':'m6a-v2-owned-attempt-context-v1','attempt_root':str(root),'ownership':ownership,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'test_fixture':True}
+ return {'schema_version':'m6a-v2-owned-attempt-context-v1','attempt_root':str(root),'ownership':ownership,'launch_id':auth['launch_id'],'attempt_id':auth['attempt_id'],'identity_id':auth['identity_id'],'authorization_id':auth['authorization_id'],'execution_mode':mode,'test_fixture':mode=='test'}
 
 def _canon(x): return (json.dumps(x, sort_keys=True, separators=(",", ":"), ensure_ascii=True)+"\n").encode()
 def _utc(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
