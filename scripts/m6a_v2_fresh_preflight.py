@@ -6,15 +6,19 @@ import hashlib
 import json
 import shutil
 import tempfile
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
 from scripts.m6a_v2_episode_source import LOCK_PATH, MANIFEST_PATH, load_and_validate_m6a_v2_manifest
 from scripts.m6a_v2_launch_spec import build_one_identity_launch_spec
+from scripts.m6a_v2_prepared_launch import load_prepared_launch_package
 
 
 CONTROL_ROOT = PROJECT_ROOT / "results" / "m6a_v2_control"
+FRESHNESS_SECONDS = 300
+REPORT_SCHEMA = "m6a-v2-authoritative-fresh-preflight-v1"
 
 
 def _sha256(path: Path) -> str:
@@ -30,6 +34,39 @@ def _write_new(path: Path, value: dict) -> None:
     if path.exists():
         raise FileExistsError(f"refusing to overwrite preflight evidence: {path}")
     path.write_bytes(_canonical(value))
+
+def _utc_now(): return datetime.now(timezone.utc).replace(microsecond=0)
+def _parse(value): return datetime.fromisoformat(value)
+
+def _build_report(package_path, *, now=None):
+    package_path=Path(package_path).resolve(); package=load_prepared_launch_package(package_path); spec=package['launch_spec']; now=now or _utc_now()
+    root=Path(package['prospective_attempt_root']); plan=package['prospective_attempt_path_plan']['artifacts']
+    errors=[]
+    if root.exists(): errors.append('prospective attempt root exists')
+    if package['preflight_workspace_root']==str(root): errors.append('preflight workspace equals attempt root')
+    if any(Path(plan[key]).exists() for key in ('ownership_marker','final_marker','consumption_record')): errors.append('attempt evidence already exists')
+    observed={'prospective_root_exists':root.exists(),'ownership_exists':Path(plan['ownership_marker']).exists(),'consumption_exists':Path(plan['consumption_record']).exists(),'final_marker_exists':Path(plan['final_marker']).exists()}
+    report={'schema_version':REPORT_SCHEMA,'launch_id':package['launch_id'],'attempt_id':package['attempt_id'],'identity_id':package['identity_id'],'scene':package['scene_id'],'seed':package['seed'],'prepared_package_path':str(package_path),'prepared_package_digest':package['package_sha256'],'launch_spec_digest':package['launch_spec_sha256'],'runtime_config_digest':package['runtime_config_sha256'],'prepared_world_digest':package['temporary_world_sha256'],'frozen_manifest_digest':package['manifest_sha256'],'frozen_lock_digest':package['lock_sha256'],'preflight_workspace_root':package['preflight_workspace_root'],'prospective_attempt_root':str(root),'checked_invariants':['package_reload','bound_digests','identity','root_absent','no_ownership_consumption_or_marker'],'observed_values':observed,'outcome':'pass' if not errors else 'fail','errors':errors,'checked_at_utc':now.isoformat(),'valid_until_utc':(now+timedelta(seconds=FRESHNESS_SECONDS)).isoformat(),'validator_identity':'m6a_v2_fresh_preflight','validator_version':'v1'}
+    report['canonical_digest']=digest(report); return report
+
+def validate_fresh_preflight_report(report, package_path, *, now=None):
+    if not isinstance(report,dict) or report.get('schema_version')!=REPORT_SCHEMA or report.get('canonical_digest')!=digest({k:v for k,v in report.items() if k!='canonical_digest'}): raise ValueError('preflight report digest')
+    checked,valid=_parse(report['checked_at_utc']),_parse(report['valid_until_utc']); now=now or _utc_now()
+    if checked>now or valid<=checked or valid<=now or (report['outcome']=='pass')!= (report['errors']==[]) or report['outcome'] not in {'pass','fail'}: raise ValueError('preflight freshness/outcome')
+    actual=_build_report(package_path,now=checked)
+    for key in ('launch_id','attempt_id','identity_id','scene','seed','prepared_package_path','prepared_package_digest','launch_spec_digest','runtime_config_digest','prepared_world_digest','frozen_manifest_digest','frozen_lock_digest','preflight_workspace_root','prospective_attempt_root','checked_invariants','observed_values','outcome','errors'):
+        if report.get(key)!=actual.get(key): raise ValueError('preflight binding changed')
+    return report
+
+def persist_fresh_preflight_report(path, package_path, *, now=None):
+    report=_build_report(package_path,now=now)
+    if report['outcome']!='pass': raise ValueError('fresh preflight failed')
+    _write_new(Path(path),report); return load_fresh_preflight_report(path,package_path,now=now)
+
+def load_fresh_preflight_report(path, package_path, *, now=None):
+    raw=Path(path).read_bytes(); report=json.loads(raw)
+    if raw!=_canonical(report): raise ValueError('noncanonical preflight report')
+    return validate_fresh_preflight_report(report,package_path,now=now)
 
 
 def _temporary_spec(manifest: Path, lock: Path, executable: Path) -> tuple[dict, bool]:
