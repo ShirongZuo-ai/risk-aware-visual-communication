@@ -1,6 +1,7 @@
 """Canonical, reloadable M6-A v2 runtime evidence; no Webots import or launch."""
 from __future__ import annotations
 import hashlib,json
+from datetime import datetime,timezone
 from pathlib import Path
 from scripts.m6a_trusted_artifacts import digest
 def _b(x):return (json.dumps(x,sort_keys=True,separators=(',',':'))+'\n').encode()
@@ -47,4 +48,16 @@ def persist_process_evidence(path,identity,stdout,stderr,**fields):
 def load_process_evidence(path,identity):
  x=load(path,'m6a-v2-process-evidence-v1',identity);root=Path(path).parent
  if file_entry('stdout',x['stdout']['path'],root)!=x['stdout'] or file_entry('stderr',x['stderr']['path'],root)!=x['stderr'] or x['ended_at_utc']<x['started_at_utc'] or not isinstance(x['return_code'],int) or any(not v for v in (x['stdout']['sha256'],x['stderr']['sha256'])):raise ValueError('invalid process evidence')
+ return x
+def persist_runtime_diagnostic(path,identity,outcome,issues,producer_identity='m6a_v2_runtime_summary'):
+ if outcome not in {'success','failure'} or not isinstance(issues,list):raise ValueError('diagnostic input')
+ state='not_required' if outcome=='success' else 'present'
+ if (outcome=='success' and issues) or (outcome=='failure' and not issues):raise ValueError('diagnostic issues')
+ return persist(path,{'schema_version':'m6a-v2-runtime-diagnostic-v1','identity':identity,'outcome':outcome,'diagnostic_state':state,'issue_count':len(issues),'issues':issues,'produced_at_utc':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'producer_identity':producer_identity})
+def load_runtime_diagnostic(path,identity,root=None):
+ if root is not None and not Path(path).resolve().is_relative_to(Path(root).resolve()):raise ValueError('diagnostic path')
+ x=load(path,'m6a-v2-runtime-diagnostic-v1',identity)
+ try:datetime.fromisoformat(x['produced_at_utc'])
+ except Exception as e:raise ValueError('diagnostic time') from e
+ if x['issue_count']!=len(x['issues']) or not isinstance(x['issues'],list) or x['outcome'] not in {'success','failure'} or (x['outcome']=='success' and (x['diagnostic_state']!='not_required' or x['issues'])) or (x['outcome']=='failure' and (x['diagnostic_state']!='present' or not x['issues'])):raise ValueError('diagnostic semantics')
  return x

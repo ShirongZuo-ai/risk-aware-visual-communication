@@ -18,3 +18,6 @@ class T(unittest.TestCase):
   with tempfile.TemporaryDirectory() as d:
    r=Path(d);i={'launch_id':'l','attempt_id':'a','identity_id':'e','scene_id':'S1','seed':1};(r/'out').write_bytes(b'o');(r/'err').write_bytes(b'e');persist_process_evidence(r/'process.json',i,r/'out',r/'err',started_at_utc='2026-01-01T00:00:00Z',ended_at_utc='2026-01-01T00:00:01Z',return_code=0,timeout_state=False,termination_state=False,backend_identity='fake',launch_performed=True,webots_started=False);self.assertEqual(load_process_evidence(r/'process.json',i)['return_code'],0);(r/'out').write_bytes(b'x')
    with self.assertRaises(ValueError):load_process_evidence(r/'process.json',i)
+ def test_runtime_diagnostic_success_and_failure(self):
+  with tempfile.TemporaryDirectory() as d:
+   r=Path(d);i={'launch_id':'l','attempt_id':'a','identity_id':'e','scene_id':'S1','seed':1};persist_runtime_diagnostic(r/'ok.json',i,'success',[]);self.assertEqual(load_runtime_diagnostic(r/'ok.json',i,r)['outcome'],'success');persist_runtime_diagnostic(r/'bad.json',i,'failure',['real failure']);self.assertEqual(load_runtime_diagnostic(r/'bad.json',i,r)['diagnostic_state'],'present')

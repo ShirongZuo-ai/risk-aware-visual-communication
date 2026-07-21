@@ -14,6 +14,7 @@ from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
 from scripts.m6a_v2_scene_wiring import BASE_WORLD_SHA256, SceneInitializationEvidence, initialize_v2_scene_before_motion
 from scripts.run_m6a_one_identity import load_v2_runtime_config
+from scripts.m6a_v2_runtime_evidence import persist_runtime_diagnostic, load_runtime_diagnostic
 
 
 SUMMARY_SCHEMA = "m6a-v2-episode-runtime-summary-v1"
@@ -157,7 +158,7 @@ def write_runtime_failure_status(status_path: str | Path, lifecycle: Lifecycle, 
     path.write_bytes(_canonical(payload))
 
 
-def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_factory, devices_initializer, episode_runner, summary_path: str | Path, status_path: str | Path) -> tuple[int, Lifecycle]:
+def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_factory, devices_initializer, episode_runner, summary_path: str | Path, status_path: str | Path, diagnostic_path: str | Path | None = None) -> tuple[int, Lifecycle]:
     lifecycle = Lifecycle()
     try:
         runtime_config = json.loads(Path(runtime_config_path).read_text(encoding="utf-8")); load_v2_runtime_config(runtime_config); lifecycle.transition(LifecycleState.CONFIG_VALIDATED)
@@ -165,7 +166,10 @@ def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_f
         if runtime_config["robot_def"] != "ROBOT": raise ValueError("unexpected robot DEF")
         devices_initializer(supervisor, runtime_config); lifecycle.transition(LifecycleState.DEVICES_READY)
         lifecycle.transition(LifecycleState.EPISODE_RUNNING); snapshots = episode_runner(supervisor, runtime_config); lifecycle.transition(LifecycleState.EPISODE_COMPLETED)
-        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"}); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config); lifecycle.transition(LifecycleState.SUMMARY_COMMITTED)
+        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"}); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config)
+        if diagnostic_path is not None:
+            identity={"launch_id":"runtime-local","attempt_id":"runtime-local","identity_id":runtime_config["episode_id"],"scene_id":runtime_config["scene"],"seed":runtime_config["seed"]};persist_runtime_diagnostic(diagnostic_path,identity,"success",[]);load_runtime_diagnostic(diagnostic_path,identity,Path(diagnostic_path).parent)
+        lifecycle.transition(LifecycleState.SUMMARY_COMMITTED)
         return 0, lifecycle
     except Exception as error:
         lifecycle.fail()
