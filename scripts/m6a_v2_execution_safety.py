@@ -6,6 +6,7 @@ may invoke its launch-time acquisition functions.
 from __future__ import annotations
 
 import json, os, socket, tempfile
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -16,6 +17,29 @@ PILOT_ROOT = PROJECT_ROOT / "data" / "m6a" / "pilot"
 CONTROL_ROOT = PROJECT_ROOT / "results" / "m6a_v2_control"
 OWNER = ".m6a_v2_ownership.json"
 FINAL = "m6a_v2_final_success.json"
+
+@dataclass(frozen=True)
+class ValidatedExecutionContext:
+ """B2-produced authority boundary; tests may use the explicit temporary fixture."""
+ authorization_id:str;authorization_sha256:str;launch_id:str;attempt_id:str;identity_id:str;scene_id:str;seed:int;launch_spec_sha256:str;runtime_config_sha256:str;prospective_attempt_root:str;validated_at_utc:str;test_fixture:bool=False
+ def validate(self):
+  if self.test_fixture is not True or not all(isinstance(x,str) and x for x in (self.authorization_id,self.authorization_sha256,self.launch_id,self.attempt_id,self.identity_id,self.scene_id,self.launch_spec_sha256,self.runtime_config_sha256)):raise ValueError('invalid validated execution context')
+  root=validate_prospective_root(self.prospective_attempt_root,launch_id=self.launch_id,attempt_id=self.attempt_id)
+  if Path(tempfile.gettempdir()).resolve() not in PILOT_ROOT.resolve().parents and PILOT_ROOT.resolve() != Path(tempfile.gettempdir()).resolve():raise ValueError('test context requires temporary pilot root')
+  return root
+ @classmethod
+ def test_fixture_for(cls,*,launch_id,attempt_id,identity_id,scene_id,seed,launch_spec_sha256,runtime_config_sha256):
+  root=attempt_root(launch_id,attempt_id)
+  return cls('test-'+digest({'l':launch_id,'a':attempt_id}),digest({'l':launch_id,'a':attempt_id,'fixture':True}),launch_id,attempt_id,identity_id,scene_id,seed,launch_spec_sha256,runtime_config_sha256,str(root),_utc(),True)
+
+def materialize_authorized_attempt(package,context:ValidatedExecutionContext,*,launcher_identity='m6a-v2-host'):
+ """The only B2-to-attempt transition; never called by preflight or wrapper planning."""
+ if not isinstance(context,ValidatedExecutionContext):raise TypeError('ValidatedExecutionContext required')
+ root=context.validate()
+ if package.get('launch_id')!=context.launch_id or package.get('attempt_id')!=context.attempt_id or package.get('identity_id')!=context.identity_id or package.get('scene_id')!=context.scene_id or package.get('seed')!=context.seed or package.get('launch_spec_sha256')!=context.launch_spec_sha256 or package.get('runtime_config_sha256')!=context.runtime_config_sha256 or package.get('prospective_attempt_root')!=str(root):raise ValueError('package/context mismatch')
+ auth={'authorization_id':context.authorization_id,'authorization_sha256':context.authorization_sha256,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'scene_id':context.scene_id,'seed':context.seed,'launch_spec_sha256':context.launch_spec_sha256}
+ ownership=acquire_ownership(root,auth,launcher_identity=launcher_identity)
+ return {'schema_version':'m6a-v2-owned-attempt-context-v1','attempt_root':str(root),'ownership':ownership,'launch_id':context.launch_id,'attempt_id':context.attempt_id,'identity_id':context.identity_id,'test_fixture':True}
 
 def _canon(x): return (json.dumps(x, sort_keys=True, separators=(",", ":"), ensure_ascii=True)+"\n").encode()
 def _utc(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat()

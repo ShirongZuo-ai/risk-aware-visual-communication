@@ -16,3 +16,9 @@ class T(unittest.TestCase):
   with tempfile.TemporaryDirectory() as d:
    e={k:'x' for k in ('launch_id','attempt_id','authorization_id','ownership_sha256','consumption_sha256','process_sha256','runtime_sha256','snapshot_validation_sha256','b5_sha256','aggregate_sha256','joint_validator_sha256','manifest_sha256','lock_sha256')};e['joint_pass']=True;write_final_marker(d,e)
    with self.assertRaises(FileExistsError):write_final_marker(d,e)
+ def test_test_context_materializes_only_temporary_attempt_once(self):
+  with tempfile.TemporaryDirectory() as d,patch('scripts.m6a_v2_execution_safety.PILOT_ROOT',Path(d)/'pilot'):
+   launch='launch1';attempt='attempt1';ctx=ValidatedExecutionContext.test_fixture_for(launch_id=launch,attempt_id=attempt,identity_id='episode',scene_id='S1',seed=1,launch_spec_sha256='spec',runtime_config_sha256='runtime');package={'launch_id':launch,'attempt_id':attempt,'identity_id':'episode','scene_id':'S1','seed':1,'launch_spec_sha256':'spec','runtime_config_sha256':'runtime','prospective_attempt_root':ctx.prospective_attempt_root}
+   owned=materialize_authorized_attempt(package,ctx);self.assertTrue(Path(owned['attempt_root']).is_dir());self.assertTrue((Path(owned['attempt_root'])/OWNER).is_file())
+   with self.assertRaises(ValueError):materialize_authorized_attempt(package,ctx)
+   with self.assertRaises(TypeError):materialize_authorized_attempt(package,{})

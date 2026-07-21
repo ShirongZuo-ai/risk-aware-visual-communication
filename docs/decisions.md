@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-21 - M6-A v2 preflight and attempt separation
+
+- **Decision:** Keep prepared files in a preflight workspace and record the pilot location solely as a prospective attempt root.
+- **Reason:** A preflight workspace may exist before authorization; an attempt root and ownership record must not. The explicit B2-to-materialization boundary preserves that distinction and reuses the existing ownership primitive.
+- **Impact:** B1.1 wrapper execution must accept only an owned context produced after B2 validation; it must not treat a preflight marker or generic dictionary as execution authority.
+
 ## 2026-07-21 - M6-A v2 aggregate and joint completion evidence
 
 - **Decision:** Make canonical B5 case entries the aggregate's authority and persist separate reloadable aggregate-validation and joint-validation reports.

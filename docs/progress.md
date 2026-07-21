@@ -4,6 +4,8 @@ Last updated: 2026-07-21 (Asia/Shanghai)
 
 ## Completed
 
+- Completed M6-A v2 B1.0 contract separation: a preflight workspace is now explicitly distinct from an uncreated prospective pilot attempt. A B2-facing validated execution-context boundary can materialize only a temporary test attempt and delegates ownership creation to the existing safety primitive. It does not generate or validate authorization, launch a process, consume authorization, or write a final marker.
+
 - Added M6-A v2 B5 aggregate and persisted joint validation. The authoritative aggregate reconstructs the frozen 4 snapshot × 2 method × 4 budget identity matrix from case entries, recalculates numerical totals, and is accompanied by an immutable reloadable validation report. Completion now reloads the runtime manifest, persists/reloads aggregate validation, then persists/reloads a joint report before returning integration success. All coverage is temporary-root/mock lifecycle evidence only; no real attempt, authorization, Webots process, or pilot/calibration/formal data was created.
 
 - Added the M6-A v2 runtime artifact manifest and authoritative four-snapshot reload validation. The manifest binds the runtime summary, status, diagnostic, runtime configuration, and canonical trusted-serialization trees; reload recalculates raw RGB/metadata/tree digests and rejects tampering, missing artifacts, identity drift, and path escape. Coverage uses only temporary directories and mock lifecycle hooks: no Webots process, authorization, attempt root, or pilot/calibration/formal data was created.
