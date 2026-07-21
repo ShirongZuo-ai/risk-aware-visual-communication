@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.m6a_v2_fresh_preflight import run_fresh_preflight, persist_fresh_preflight_report, load_fresh_preflight_report
+from scripts.m6a_v2_fresh_preflight import run_fresh_preflight, persist_fresh_preflight_report, load_fresh_preflight_report, run_fresh_preflight_for_prepared_launch
 from scripts.m6a_v2_prepared_launch import build_prepared_launch_package
 from unittest.mock import patch
 
@@ -26,3 +26,9 @@ class FreshPreflightTests(unittest.TestCase):
             self.assertEqual(load_fresh_preflight_report(report_path,package_path)['outcome'],'pass')
             report_path.write_text('{}')
             with self.assertRaises(ValueError): load_fresh_preflight_report(report_path,package_path)
+    def test_production_prepared_launch_entrypoint_persists_and_reloads(self):
+        with tempfile.TemporaryDirectory() as directory, patch('scripts.m6a_v2_execution_safety.PILOT_ROOT',Path(directory)/'pilot'):
+            package_path,package=build_prepared_launch_package(head='h',branch='main',attempt_id='a2',package_root=Path(directory)/'control')
+            report=run_fresh_preflight_for_prepared_launch(package_path)
+            self.assertEqual(report['outcome'],'pass'); self.assertTrue(Path(package['preflight_report_path']).is_file())
+            self.assertEqual(load_fresh_preflight_report(package['preflight_report_path'],package_path)['canonical_digest'],report['canonical_digest'])

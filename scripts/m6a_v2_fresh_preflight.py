@@ -68,6 +68,13 @@ def load_fresh_preflight_report(path, package_path, *, now=None):
     if raw!=_canonical(report): raise ValueError('noncanonical preflight report')
     return validate_fresh_preflight_report(report,package_path,now=now)
 
+def run_fresh_preflight_for_prepared_launch(package_path, *, now=None):
+    """Production preflight entry: package disk reload -> persist -> reload/validate."""
+    package=load_prepared_launch_package(package_path)
+    report_path=Path(package['preflight_report_path']).resolve()
+    if not report_path.is_relative_to(Path(package['preflight_workspace_root']).resolve()): raise ValueError('unsafe preflight report path')
+    return persist_fresh_preflight_report(report_path,package_path,now=now)
+
 
 def _temporary_spec(manifest: Path, lock: Path, executable: Path) -> tuple[dict, bool]:
     """Build twice in one disposable temp root and prove canonical spec stability."""
