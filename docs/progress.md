@@ -4,6 +4,8 @@ Last updated: 2026-07-21 (Asia/Shanghai)
 
 ## Completed
 
+- Provisioned the pinned M6-A v2 production public trust root and an unsigned authorization-signing-request export/readiness path. The repository reloads and fingerprints the public Ed25519 key, reconstructs the package/preflight binding, persists and reloads exact domain-separated bytes, and remains explicitly unauthorized. No private key, signature, real authorization, receipt, context, attempt, process, consumption, final marker, or pilot data was created.
+
 - Added an explicitly configured Ed25519 production authorization verifier adapter. It verifies a domain-separated canonical authorization payload with an externally supplied public key, pins SHA-256 over canonical raw Ed25519 public-key bytes, and returns the existing bound receipt type. Tests use ephemeral keys only. The repository can verify an externally signed authorization, but it does not generate, store, or possess the production private key, and no production trust root is configured.
 
 - Completed M6-A v2 B1.0 contract separation: a preflight workspace is now explicitly distinct from an uncreated prospective pilot attempt. A B2-facing validated execution-context boundary can materialize only a temporary test attempt and delegates ownership creation to the existing safety primitive. It does not generate or validate authorization, launch a process, consume authorization, or write a final marker.
