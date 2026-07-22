@@ -165,13 +165,13 @@ def load_execution_authorization_signing_request(path, *, package_path, prefligh
     return validate_execution_authorization_signing_request(value, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root, now=now)
 
 
-def export_execution_authorization_signing_request(package_path, preflight_path, trust_config_path, output_path, *, repository_root=PROJECT_ROOT, issued_at_utc=None, expires_at_utc=None, nonce=None):
+def export_execution_authorization_signing_request(package_path, preflight_path, trust_config_path, output_path, *, repository_root=PROJECT_ROOT, issued_at_utc=None, expires_at_utc=None, nonce=None, now=None):
     trust = load_production_authorization_trust_config(trust_config_path, repository_root=repository_root)
     build_production_authorization_verifier_from_config(trust_config_path, repository_root=repository_root)
-    binding = build_expected_authorization_binding(package_path, preflight_path)
-    now = datetime.now(timezone.utc).replace(microsecond=0)
-    issued = issued_at_utc or now.isoformat()
-    expires = expires_at_utc or (now + timedelta(minutes=15)).isoformat()
+    current = now or datetime.now(timezone.utc).replace(microsecond=0)
+    binding = build_expected_authorization_binding(package_path, preflight_path, now=current)
+    issued = issued_at_utc or current.isoformat()
+    expires = expires_at_utc or (current + timedelta(minutes=15)).isoformat()
     nonce = nonce or secrets.token_hex(32)
     payload = _authorization_payload(binding, trust, issued, expires, nonce)
     payload_bytes = authorization_canonical_payload_bytes(payload)
@@ -206,7 +206,7 @@ def export_execution_authorization_signing_request(package_path, preflight_path,
         "materialization_allowed": False,
     }
     request["canonical_request_digest"] = digest(request)
-    return persist_execution_authorization_signing_request(output_path, request, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root, now=now)
+    return persist_execution_authorization_signing_request(output_path, request, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root, now=current)
 
 
 def authoritative_signing_request_path(package_path):
@@ -218,7 +218,7 @@ def authoritative_signing_request_path(package_path):
     return workspace / "unsigned_authorization_signing_request.json"
 
 
-def run_production_authorization_readiness(package_path, preflight_path, trust_config_path, signing_request_path=None, *, repository_root=PROJECT_ROOT):
+def run_production_authorization_readiness(package_path, preflight_path, trust_config_path, signing_request_path=None, *, repository_root=PROJECT_ROOT, now=None):
     trust = load_production_authorization_trust_config(trust_config_path, repository_root=repository_root)
     verifier = build_production_authorization_verifier_from_config(trust_config_path, repository_root=repository_root)
     authoritative_path = authoritative_signing_request_path(package_path)
@@ -226,8 +226,8 @@ def run_production_authorization_readiness(package_path, preflight_path, trust_c
         raise ValueError("signing request path is not package-authoritative")
     signing_request_path = authoritative_path
     if signing_request_path.exists():
-        request = load_execution_authorization_signing_request(signing_request_path, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root)
+        request = load_execution_authorization_signing_request(signing_request_path, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root, now=now)
     else:
-        request = export_execution_authorization_signing_request(package_path, preflight_path, trust_config_path, signing_request_path, repository_root=repository_root)
-    load_execution_authorization_signing_request(signing_request_path, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root)
+        request = export_execution_authorization_signing_request(package_path, preflight_path, trust_config_path, signing_request_path, repository_root=repository_root, now=now)
+    load_execution_authorization_signing_request(signing_request_path, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root, now=now)
     return {"schema_version": "m6a-v2-production-authorization-readiness-v1", "verifier_identity": verifier.verifier_identity, "trust_config_digest": trust["config_digest"], "signing_request_path": str(signing_request_path), "signing_request_digest": request["canonical_request_digest"], "trust_root_loaded": True, "public_key_fingerprint_verified": True, "signing_request_valid": True, "signature_present": False, "authorization_verified": False, "execution_authorized": False, "attempt_materialized": False, "process_launched": False}

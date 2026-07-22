@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-22 - M6-A v2 authorization operator command boundary
+
+- **Decision:** Provide fixed-path `refresh-export` and `verify-only` repository commands, plus an explicitly repository-external signing template. The repository commands expose no private-key or output-root parameter and never create execution context or runtime evidence.
+- **Reason:** Multi-step `python -c` commands require manual path, digest, and timestamp handling inside a five-minute window. A narrow tested wrapper reuses existing authorities and reduces operator error without adding a signing service or authorization layer.
+- **Impact:** Expired unsigned requests can be validated against their retained preflight evidence and moved unchanged into digest-named history before renewal. Actual private-key access remains an explicit operator action outside the repository.
+
 ## 2026-07-22 - M6-A v2 detached authorization verification boundary
 
 - **Decision:** Accept repository-external signatures only through one canonical detached-bundle schema bound to the current unsigned-request digest, signed-message digest, authorization ID, and pinned key ID. Derive bundle, unverified-artifact, and receipt paths from the prepared workspace; reuse the existing authorization payload, Ed25519 verifier, and receipt type.

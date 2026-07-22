@@ -4,6 +4,8 @@ Last updated: 2026-07-22 (Asia/Shanghai)
 
 ## Completed
 
+- Added and rehearsed the M6-A v2 production authorization operator path using only temporary workspaces and an ephemeral encrypted Ed25519 key. Fixed-path repository commands now archive expired request evidence, renew/export a current request, and perform verification-only processing; a separate operator template must be copied outside the repository for interactive private-key use. No production workspace artifact, production signature, execution context, attempt, ownership, process, consumption, final marker, or pilot data was created.
+
 - Added the M6-A v2 offline detached-signature return and verification-only boundary. A canonical request-bound bundle is imported into the existing authorization artifact, verified with the configured pinned Ed25519 public trust, and persisted/reloaded as a verified receipt while execution context, materialization, ownership, process launch, consumption, and final-marker states remain false. Tests use only temporary workspaces and ephemeral keys; no production signature or private signing capability was accessed or created.
 
 - Made M6-A v2 authorization-request export renewable without changing prepared-package or scientific identity. Expired validated preflight evidence is retained in immutable workspace history, current evidence is safely renewed, and the production readiness path derives and validates one authoritative unsigned-request location with explicit non-authorization state.

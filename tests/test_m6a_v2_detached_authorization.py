@@ -278,6 +278,33 @@ class DetachedAuthorizationTests(unittest.TestCase):
                     package_path, package["preflight_report_path"], trust, repository_root=directory
                 )
 
+    def test_operator_signing_base64_or_digest_text_fails(self):
+        for signed_field, attempt_id in (
+            ("signed_message_base64", "mis-signed-base64"),
+            ("signed_message_sha256", "mis-signed-digest"),
+        ):
+            with self.subTest(signed_field=signed_field), tempfile.TemporaryDirectory() as directory, patch(
+                "scripts.m6a_v2_execution_safety.PILOT_ROOT", Path(directory) / "pilot"
+            ):
+                private, trust, package_path, package, request, now = self.prepare(
+                    directory, attempt_id=attempt_id
+                )
+                wrong_signature = private.sign(request[signed_field].encode("ascii"))
+                bundle = build_detached_signature_bundle(
+                    request,
+                    signature_base64=base64.b64encode(wrong_signature).decode("ascii"),
+                    signed_at_utc=now.isoformat(),
+                    now=now,
+                )
+                paths = authoritative_detached_authorization_paths(package_path)
+                persist_detached_signature_bundle(
+                    paths["detached_signature_bundle"], bundle, request=request, now=now
+                )
+                with self.assertRaises(PermissionError):
+                    run_detached_authorization_verification_only(
+                        package_path, package["preflight_report_path"], trust, repository_root=directory
+                    )
+
     def test_expired_request_and_stale_preflight_fail_closed(self):
         with tempfile.TemporaryDirectory() as directory, patch(
             "scripts.m6a_v2_execution_safety.PILOT_ROOT", Path(directory) / "pilot"

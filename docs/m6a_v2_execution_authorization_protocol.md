@@ -53,3 +53,5 @@ The authoritative follow-on paths are all derived from the prepared package work
 ## Short-validity operating sequence
 
 The effective signing/import deadline is the earlier of the fresh-preflight `valid_until_utc` (normally about five minutes after refresh) and request `expires_at_utc`. The intended sequence is: refresh package-bound preflight, export the current unsigned request, stop repository-side work, sign the decoded exact message offline, place the bundle at its authoritative workspace path, and immediately run verification-only processing. Do not run the full test suite between request export and signature import. Verification does not relax the independent requirement for another current fresh preflight before any future materialization step.
+
+The exact production commands, repository-external signing handoff, and fail-closed time-window procedure are recorded in [the operator runbook](m6a_v2_production_authorization_operator_runbook.md). Repository CLI commands expose only `refresh-export` and `verify-only`; they have no private-key, output-root, materialization, or process-launch options.
