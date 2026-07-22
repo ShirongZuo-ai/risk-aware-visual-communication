@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-22 - M6-A v2 materialization-only operator boundary
+
+- **Decision:** Extend the fixed-path operator CLI with one `materialize-only` command that revalidates the full persisted authorization chain, repeats pinned-public-key verification, builds the existing external context type, calls the existing production materializer, and reloads the existing owned-context/ownership contract.
+- **Reason:** A parallel ownership artifact or materializer would duplicate security semantics. Reusing the current context factory, atomic attempt-root creation, and ownership marker preserves a single authority chain and makes the stop-before-launch boundary explicit.
+- **Impact:** Successful materialization creates one root and ownership marker only. Pre-existing execution evidence, second use, test or arbitrary contexts, stale/tampered evidence, or path drift fail closed; no runner, process evidence, consumption, completion, or final marker is invoked.
+
 ## 2026-07-22 - M6-A v2 request archival path and recovery
 
 - **Decision:** Name archived unsigned requests `request.<canonical_request_digest>.json` inside the package workspace and implement explicit source/archive recovery states. Validate expired requests against their retained bound preflight at issue time before any move.

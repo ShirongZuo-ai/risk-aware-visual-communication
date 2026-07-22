@@ -1,11 +1,13 @@
-"""Safe operator commands for M6-A v2 authorization evidence only.
+"""Safe operator commands for M6-A v2 authorization and ownership gates.
 
-This module has no private-key input and never creates execution context,
-materializes an attempt, or starts a process.
+This module has no private-key input.  Its materialize-only command may create
+one validated context, attempt root, and ownership marker, but never starts a
+process, consumes authorization, or finalizes an attempt.
 """
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 from datetime import datetime, timezone
@@ -13,7 +15,25 @@ from pathlib import Path
 
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
-from scripts.m6a_v2_detached_authorization import run_detached_authorization_verification_only
+from scripts.m6a_v2_detached_authorization import (
+    authoritative_detached_authorization_paths,
+    load_detached_signature_bundle,
+    load_verified_authorization_receipt,
+    run_detached_authorization_verification_only,
+)
+from scripts.m6a_v2_execution_authorization import (
+    authorization_signed_message,
+    build_expected_authorization_binding,
+    build_externally_validated_execution_context,
+    load_execution_authorization_artifact,
+    validate_authorization_binding,
+    verify_execution_authorization,
+)
+from scripts.m6a_v2_execution_safety import (
+    attempt_path_plan,
+    load_owned_attempt_context,
+    materialize_authorized_attempt,
+)
 from scripts.m6a_v2_fresh_preflight import (
     load_fresh_preflight_report,
     refresh_fresh_preflight_for_prepared_launch,
@@ -21,6 +41,7 @@ from scripts.m6a_v2_fresh_preflight import (
 from scripts.m6a_v2_prepared_launch import load_prepared_launch_package
 from scripts.m6a_v2_production_trust import (
     authoritative_signing_request_path,
+    build_production_authorization_verifier_from_config,
     load_execution_authorization_signing_request,
     run_production_authorization_readiness,
 )
@@ -259,14 +280,112 @@ def verify_current_detached_signature(
     )
 
 
+def _receipts_match_persisted_evidence(persisted, reverified) -> bool:
+    omitted = {"verified_at_utc", "canonical_receipt_digest"}
+    return (
+        {key: item for key, item in persisted.data.items() if key not in omitted}
+        == {key: item for key, item in reverified.data.items() if key not in omitted}
+    )
+
+
+def materialize_current_verified_authorization(
+    package_path=PRODUCTION_PACKAGE,
+    trust_config_path=PRODUCTION_TRUST_CONFIG,
+    *,
+    repository_root=PROJECT_ROOT,
+    now: datetime | None = None,
+) -> dict:
+    """Command D: create/reload ownership and stop before process launch."""
+    package = load_prepared_launch_package(package_path)
+    preflight_path = Path(package["preflight_report_path"]).resolve()
+    current = now or datetime.now(timezone.utc)
+    load_fresh_preflight_report(preflight_path, package_path, now=current)
+    paths = authoritative_detached_authorization_paths(package_path)
+    request = load_execution_authorization_signing_request(
+        paths["unsigned_request"],
+        package_path=package_path,
+        preflight_path=preflight_path,
+        trust_config_path=trust_config_path,
+        repository_root=repository_root,
+        now=current,
+    )
+    bundle = load_detached_signature_bundle(paths["detached_signature_bundle"], request=request, now=current)
+    artifact = load_execution_authorization_artifact(paths["authorization_artifact"])
+    binding = build_expected_authorization_binding(package_path, preflight_path, now=current)
+    validate_authorization_binding(artifact, binding)
+    if artifact["authorization_id"] != request["authorization_id"]:
+        raise ValueError("authorization artifact/request identity mismatch")
+    if authorization_signed_message(artifact) != base64.b64decode(request["signed_message_base64"], validate=True):
+        raise ValueError("authorization artifact/request signed-message mismatch")
+    envelope = artifact["authenticator_envelope"]
+    if (
+        envelope.get("scheme") != bundle["signature_scheme"]
+        or envelope.get("key_id") != bundle["key_id"]
+        or envelope.get("signature_base64") != bundle["signature_base64"]
+    ):
+        raise ValueError("authorization artifact/detached bundle mismatch")
+    persisted_receipt = load_verified_authorization_receipt(paths["verified_receipt"], binding)
+    verifier = build_production_authorization_verifier_from_config(
+        trust_config_path, repository_root=repository_root
+    )
+    reverified_receipt = verify_execution_authorization(
+        package_path, preflight_path, paths["authorization_artifact"], verifier
+    )
+    if not _receipts_match_persisted_evidence(persisted_receipt, reverified_receipt):
+        raise ValueError("persisted receipt does not match fresh public-key verification")
+    context = build_externally_validated_execution_context(
+        package_path,
+        preflight_path,
+        paths["authorization_artifact"],
+        reverified_receipt,
+    )
+    plan = attempt_path_plan(
+        package["launch_id"], package["attempt_id"], package["identity_id"], package["scene_id"], package["seed"]
+    )["artifacts"]
+    if any(Path(plan[key]).exists() for key in ("ownership_marker", "consumption_record", "process_evidence", "final_marker")):
+        raise ValueError("execution evidence already exists before materialization")
+    owned = materialize_authorized_attempt(
+        package,
+        context,
+        mode="production",
+        prepared_package_path=package_path,
+    )
+    loaded = load_owned_attempt_context(owned, mode="production")
+    if any(Path(plan[key]).exists() for key in ("consumption_record", "process_evidence", "final_marker")):
+        raise ValueError("materialize-only produced forbidden execution evidence")
+    return {
+        "command": "materialize-only",
+        "launch_id": loaded["launch_id"],
+        "attempt_id": loaded["attempt_id"],
+        "identity_id": loaded["identity_id"],
+        "authorization_id": loaded["authorization_id"],
+        "attempt_root": loaded["attempt_root"],
+        "ownership_path": plan["ownership_marker"],
+        "ownership_digest": loaded["ownership"]["sha256"],
+        "owned_context_digest": loaded["canonical_digest"],
+        "trust_verified": True,
+        "receipt_valid": True,
+        "execution_context_created": True,
+        "materialization_allowed": True,
+        "attempt_materialized": True,
+        "ownership_acquired": True,
+        "process_launched": False,
+        "authorization_consumed": False,
+        "final_marker_written": False,
+        "stop_before_launch": True,
+    }
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("refresh-export", "verify-only"))
+    parser.add_argument("command", choices=("refresh-export", "verify-only", "materialize-only"))
     args = parser.parse_args(argv)
     if args.command == "refresh-export":
         result = refresh_and_export_current_request()
-    else:
+    elif args.command == "verify-only":
         result = verify_current_detached_signature()
+    else:
+        result = materialize_current_verified_authorization()
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 

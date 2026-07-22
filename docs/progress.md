@@ -4,6 +4,8 @@ Last updated: 2026-07-22 (Asia/Shanghai)
 
 ## Completed
 
+- Added and fully rehearsed the M6-A v2 `materialize-only` operator boundary in temporary directories with ephemeral Ed25519 trust. The command reloads and revalidates the full authorization chain, repeats public-key verification, creates the existing external context, calls the existing production materializer, and reloads persisted ownership. Success stops with one owned root and no process, consumption, completion, final marker, or pilot data; no real production materialization was performed.
+
 - Fixed the M6-A v2 operator request archival failure on the formal Windows checkout. The failed target was 276 characters long even though the history directory had been created; archival now uses a short digest-only name, preserves and rechecks exact bytes, and supports fail-closed recovery across request-move and preflight-renewal crash points.
 
 - Added and rehearsed the M6-A v2 production authorization operator path using only temporary workspaces and an ephemeral encrypted Ed25519 key. Fixed-path repository commands now archive expired request evidence, renew/export a current request, and perform verification-only processing; a separate operator template must be copied outside the repository for interactive private-key use. No production workspace artifact, production signature, execution context, attempt, ownership, process, consumption, final marker, or pilot data was created.

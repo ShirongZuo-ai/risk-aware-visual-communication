@@ -1,6 +1,6 @@
 # M6-A v2 production authorization operator runbook
 
-This runbook performs public-evidence preparation and signature verification only. It does not create an execution context, materialize an attempt, acquire ownership, launch Webots or another process, consume authorization, or write a final marker.
+Commands A through C perform public-evidence preparation and signature verification only. The separately invoked Command D creates exactly one validated execution context, prospective attempt root, and ownership marker, then stops. No command in this runbook launches Webots or another process, consumes authorization, creates process evidence, runs completion, or writes a final marker.
 
 ## Fixed production inputs
 
@@ -101,6 +101,34 @@ final_marker_written=false
 
 Stop after this output. A verified receipt is not materialization permission.
 
+## Command D: materialize-only
+
+Run this command only after Command C succeeds and while the preflight, request, authorization artifact, and receipt remain current:
+
+```powershell
+Set-Location 'C:\Users\ROG\Documents\risk-aware-visual-communication'
+.\.venv\Scripts\python.exe -m scripts.m6a_v2_authorization_operator materialize-only
+```
+
+The command derives every path from the prepared package and reloads the package, current preflight, unsigned request, detached bundle, authorization artifact, and persisted receipt. It repeats pinned-public-key verification and requires the persisted receipt to match that fresh verification before constructing `ExternallyValidatedExecutionContext`. It then calls the existing `materialize_authorized_attempt(..., mode="production")`, atomically creates the attempt root and ownership marker once, reloads the ownership marker through the owned-context validator, and stops.
+
+Success must report:
+
+```text
+trust_verified=true
+receipt_valid=true
+execution_context_created=true
+materialization_allowed=true
+attempt_materialized=true
+ownership_acquired=true
+process_launched=false
+authorization_consumed=false
+final_marker_written=false
+stop_before_launch=true
+```
+
+The command rejects a reused root, second materialization, arbitrary context, test receipt, stale or tampered evidence, identity/path drift, or any pre-existing ownership, consumption, process, or final-marker evidence. It does not accept path or private-key parameters.
+
 ## Time-window rule
 
 | Time | Required action |
@@ -109,6 +137,7 @@ Stop after this output. A verified receipt is not materialization permission.
 | Immediately after T0 | Record both deadlines and use `effective_deadline_utc`. |
 | As quickly as possible | Run Command B outside the repository. |
 | Immediately after signing | Return only the bundle and run Command C. |
+| Immediately after verified receipt | If explicitly authorized, run Command D once and stop before launch. |
 
 The hard deadline is:
 
@@ -123,4 +152,4 @@ If the deadline passes, do not import or verify the old signature. Keep old evid
 - Any canonical digest, identity, trust, key ID, signature length, signature, request, preflight, expiry, path, or existing-attempt failure is terminal for that request.
 - Do not edit request, bundle, authorization artifact, or receipt JSON.
 - Do not delete or overwrite prepared-workspace evidence to force a retry.
-- Do not proceed to materialization, ownership, Webots, consumption, or finalization from this runbook.
+- Do not proceed beyond Command D to Webots, consumption, completion, or finalization from this runbook.

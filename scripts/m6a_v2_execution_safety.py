@@ -44,6 +44,8 @@ def materialize_authorized_attempt(package,context,*,launcher_identity='m6a-v2-h
   binding=build_expected_authorization_binding(prepared_package_path,package['preflight_report_path']);context.validate(binding); root=Path(context.data['prospective_attempt_root']);auth={'authorization_id':context.data['authorization_id'],'authorization_sha256':context.data['authorization_artifact_digest'],'launch_id':context.data['launch_id'],'attempt_id':context.data['attempt_id'],'identity_id':context.data['identity_id'],'scene_id':package['scene_id'],'seed':package['seed'],'launch_spec_sha256':context.data['launch_spec_digest'],'nonce':context.data['nonce']}
  else: raise ValueError('unknown materialization mode')
  if package.get('launch_id')!=auth['launch_id'] or package.get('attempt_id')!=auth['attempt_id'] or package.get('identity_id')!=auth['identity_id'] or package.get('prospective_attempt_root')!=str(root):raise ValueError('package/context mismatch')
+ paths=attempt_path_plan(auth['launch_id'],auth['attempt_id'],auth['identity_id'],auth['scene_id'],auth['seed'])['artifacts']
+ if Path(root).exists() or any(Path(paths[key]).exists() for key in ('ownership_marker','consumption_record','process_evidence','final_marker')):raise ValueError('attempt or execution evidence already exists')
  ownership=acquire_ownership(root,auth,launcher_identity=launcher_identity)
  owned={'schema_version':'m6a-v2-owned-attempt-context-v1','attempt_root':str(root),'ownership':ownership,'launch_id':auth['launch_id'],'attempt_id':auth['attempt_id'],'identity_id':auth['identity_id'],'authorization_id':auth['authorization_id'],'nonce':auth['nonce'],'execution_mode':mode,'test_fixture':mode=='test'};owned['canonical_digest']=digest(owned);return owned
 
@@ -59,6 +61,13 @@ def _validate_owned_context(value, *, mode):
  ownership=_load_ownership(root/OWNER,root,owner_identity='m6a-v2-host')
  if ownership['launch_id']!=value['launch_id'] or ownership['attempt_id']!=value['attempt_id'] or ownership['identity_id']!=value['identity_id'] or ownership['authorization_id']!=value['authorization_id'] or ownership['sha256']!=value['ownership']['sha256']:raise ValueError('owned context mismatch')
  return root,ownership
+
+def load_owned_attempt_context(value,*,mode='production'):
+ """Reload the persisted ownership marker and return one validated owned context."""
+ root,ownership=_validate_owned_context(value,mode=mode)
+ loaded=dict(value);loaded['attempt_root']=str(root);loaded['ownership']=ownership
+ if loaded.get('canonical_digest')!=digest({k:v for k,v in loaded.items() if k!='canonical_digest'}):raise ValueError('owned context reload digest')
+ return loaded
 
 def launch_owned_attempt(owned_attempt_context, process_runner, *, mode='test'):
  """Launch boundary for an already-owned attempt; never calls completion or Webots directly."""
@@ -114,7 +123,10 @@ def acquire_ownership(root,authorization,*,launcher_identity="m6a-v2-host"):
  root=validate_prospective_root(root,launch_id=authorization["launch_id"],attempt_id=authorization["attempt_id"])
  root.mkdir(parents=True,exist_ok=False)
  marker={"schema_version":"m6a-v2-ownership-v1","launch_id":authorization["launch_id"],"attempt_id":authorization["attempt_id"],"authorization_id":authorization["authorization_id"],"identity_id":authorization["identity_id"],"scene":authorization["scene_id"],"seed":authorization["seed"],"launch_spec_sha256":authorization["launch_spec_sha256"],"authorization_sha256":authorization["authorization_sha256"],"output_root":str(root),"launcher_identity":launcher_identity,"host":socket.gethostname(),"acquired_at_utc":_utc(),"state":"owned_pre_spawn","launch_performed":False,"webots_started":False,"scientific_result":False}
- return _new(root/OWNER,marker)
+ try:return _new(root/OWNER,marker)
+ except Exception:
+  if root.is_dir() and not any(root.iterdir()):root.rmdir()
+  raise
 def build_authorization(package,*,head,branch,attempt_id,valid_minutes=30):
  launch_id=digest({"package":package["package_sha256"],"attempt":attempt_id})
  root=attempt_root(launch_id,attempt_id)
