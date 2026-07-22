@@ -6,6 +6,7 @@ materializes an attempt, or starts a process.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -64,19 +65,42 @@ def _bound_preflight_candidates(package: dict) -> list[Path]:
     return candidates
 
 
-def archive_existing_unsigned_request(
+def _request_history_directory(workspace: Path) -> Path:
+    history = workspace / REQUEST_HISTORY_DIRECTORY
+    resolved = history.resolve()
+    if resolved.parent != workspace or not resolved.is_relative_to(workspace):
+        raise ValueError("unsigned-request history escaped prepared workspace")
+    if history.is_symlink() or history.exists() and not history.is_dir():
+        raise ValueError("unsafe unsigned-request history directory")
+    history.mkdir(parents=True, exist_ok=True)
+    return history
+
+
+def _request_archive_path(workspace: Path, request_digest: str) -> Path:
+    if not isinstance(request_digest, str) or len(request_digest) != 64:
+        raise ValueError("invalid archived request digest")
+    try:
+        int(request_digest, 16)
+    except ValueError as exc:
+        raise ValueError("invalid archived request digest") from exc
+    history = _request_history_directory(workspace)
+    archive = history / f"request.{request_digest}.json"
+    if archive.resolve().parent != history.resolve() or archive.is_symlink():
+        raise ValueError("unsafe unsigned-request archive path")
+    return archive
+
+
+def _validate_historical_request(
+    request_path: Path,
     package_path,
+    package: dict,
     trust_config_path,
     *,
-    repository_root=PROJECT_ROOT,
-) -> Path:
-    """Archive one historically valid request without weakening current validation."""
-    package = load_prepared_launch_package(package_path)
-    request_path = authoritative_signing_request_path(package_path)
+    repository_root,
+) -> tuple[bytes, dict]:
     raw, request = _load_request_shape(request_path)
     target_preflight_digest = request["authorization_payload"]["fresh_preflight_report_digest"]
     historical_now = _parse_time(request["issued_at_utc"])
-    matched = None
     for candidate in _bound_preflight_candidates(package):
         try:
             report = json.loads(candidate.read_bytes())
@@ -92,21 +116,60 @@ def archive_existing_unsigned_request(
             repository_root=repository_root,
             now=historical_now,
         )
-        matched = candidate
-        break
-    if matched is None:
-        raise ValueError("existing unsigned request has no validated bound preflight evidence")
+        return raw, request
+    raise ValueError("existing unsigned request has no validated bound preflight evidence")
+
+
+def archive_existing_unsigned_request(
+    package_path,
+    trust_config_path,
+    *,
+    repository_root=PROJECT_ROOT,
+    expected_request_digest=None,
+) -> Path:
+    """Atomically archive or recover one historically validated request."""
+    package = load_prepared_launch_package(package_path)
+    request_path = authoritative_signing_request_path(package_path)
     workspace = Path(package["preflight_workspace_root"]).resolve()
-    history = workspace / REQUEST_HISTORY_DIRECTORY
-    history.mkdir(parents=True, exist_ok=True)
-    stamp = request["issued_at_utc"].replace(":", "").replace("+", "_")
-    archive = history / f"unsigned_authorization_signing_request.{stamp}.{request['canonical_request_digest']}.json"
+    if request_path.exists():
+        raw, request = _validate_historical_request(
+            request_path,
+            package_path,
+            package,
+            trust_config_path,
+            repository_root=repository_root,
+        )
+        request_digest = request["canonical_request_digest"]
+        if expected_request_digest is not None and request_digest != expected_request_digest:
+            raise ValueError("existing request does not match expected archive digest")
+    else:
+        if expected_request_digest is None:
+            raise FileNotFoundError("unsigned request source is absent and no recovery digest was supplied")
+        request_digest = expected_request_digest
+        archive = _request_archive_path(workspace, request_digest)
+        if not archive.is_file():
+            raise FileNotFoundError("unsigned request source and expected archive are both absent")
+        raw, request = _validate_historical_request(
+            archive,
+            package_path,
+            package,
+            trust_config_path,
+            repository_root=repository_root,
+        )
+        if request["canonical_request_digest"] != request_digest:
+            raise ValueError("recovered archive digest mismatch")
+        return archive
+    archive = _request_archive_path(workspace, request_digest)
     if archive.exists():
         if archive.read_bytes() != raw:
             raise FileExistsError("conflicting archived unsigned request evidence")
+        # A prior copy-before-crash left two identical names for the same evidence.
+        # The immutable archive is retained; the canonical current slot is released.
         request_path.unlink()
     else:
         request_path.rename(archive)
+    if archive.read_bytes() != raw or hashlib.sha256(archive.read_bytes()).digest() != hashlib.sha256(raw).digest():
+        raise OSError("archived unsigned request bytes changed")
     return archive
 
 

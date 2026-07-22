@@ -31,6 +31,8 @@ The command reloads the prepared package, validates and immutably archives an ex
 
 It stops with `signature_present=false`, `execution_authorized=false`, and `stop_after_export=true`. Copy these printed values into the operator record. Do not run tests, Git commands, or further Codex analysis before Command C.
 
+Expired requests are archived under `unsigned_authorization_request_history/request.<canonical_request_digest>.json`. The short digest-only filename avoids Windows legacy path-length failures while remaining deterministic and content-addressed. Archival validates the original canonical bytes and package/preflight/trust binding at the request's issue time; it never relaxes freshness checks for a current request. Repeated calls recover safely if an identical archive already exists, reject conflicting archive bytes, and can resume after either the request move or preflight renewal completed before a crash.
+
 ## Immediately after T0 — Command B: repository-external signing
 
 This is the only command that reads the production private key. The operator, not repository automation or Codex, runs it. First copy the public template and current unsigned request into the secure directory:

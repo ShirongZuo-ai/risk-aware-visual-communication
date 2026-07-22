@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-22 - M6-A v2 request archival path and recovery
+
+- **Decision:** Name archived unsigned requests `request.<canonical_request_digest>.json` inside the package workspace and implement explicit source/archive recovery states. Validate expired requests against their retained bound preflight at issue time before any move.
+- **Reason:** The original timestamp-plus-digest filename produced a 276-character Windows destination and failed with `WinError 3` after creating the history directory. A short content-addressed name is deterministic, portable, and avoids platform-specific extended-path handling.
+- **Impact:** First use, identical duplicate recovery, source-missing recovery, and the request-moved/preflight-refreshed crash boundaries are idempotent. Conflicting bytes, missing source plus missing expected archive, path escape, symlink, and invalid history types fail closed; current request freshness remains unchanged.
+
 ## 2026-07-22 - M6-A v2 authorization operator command boundary
 
 - **Decision:** Provide fixed-path `refresh-export` and `verify-only` repository commands, plus an explicitly repository-external signing template. The repository commands expose no private-key or output-root parameter and never create execution context or runtime evidence.

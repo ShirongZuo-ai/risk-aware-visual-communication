@@ -4,6 +4,8 @@ Last updated: 2026-07-22 (Asia/Shanghai)
 
 ## Completed
 
+- Fixed the M6-A v2 operator request archival failure on the formal Windows checkout. The failed target was 276 characters long even though the history directory had been created; archival now uses a short digest-only name, preserves and rechecks exact bytes, and supports fail-closed recovery across request-move and preflight-renewal crash points.
+
 - Added and rehearsed the M6-A v2 production authorization operator path using only temporary workspaces and an ephemeral encrypted Ed25519 key. Fixed-path repository commands now archive expired request evidence, renew/export a current request, and perform verification-only processing; a separate operator template must be copied outside the repository for interactive private-key use. No production workspace artifact, production signature, execution context, attempt, ownership, process, consumption, final marker, or pilot data was created.
 
 - Added the M6-A v2 offline detached-signature return and verification-only boundary. A canonical request-bound bundle is imported into the existing authorization artifact, verified with the configured pinned Ed25519 public trust, and persisted/reloaded as a verified receipt while execution context, materialization, ownership, process launch, consumption, and final-marker states remain false. Tests use only temporary workspaces and ephemeral keys; no production signature or private signing capability was accessed or created.
