@@ -124,7 +124,7 @@ def validate_execution_authorization_signing_request(value, *, package_path, pre
     if value.get("signature_absent") is not True or value.get("signature_present") is not False or value.get("trust_root_loaded") is not True or any(value.get(key) is not False for key in ("authorization_verified", "execution_authorized", "materialization_allowed")) or "signature" in value:
         raise ValueError("unsigned signing request semantics")
     trust = load_production_authorization_trust_config(trust_config_path, repository_root=repository_root)
-    binding = build_expected_authorization_binding(package_path, preflight_path)
+    binding = build_expected_authorization_binding(package_path, preflight_path, now=now)
     if value.get("trust_config_digest") != trust["config_digest"] or value.get("public_key_fingerprint") != trust["expected_public_key_fingerprint"] or value.get("key_id") != trust["expected_key_id"] or value.get("issuer") != trust["expected_issuer"] or value.get("policy_version") != trust["accepted_authorization_policy_version"] or value.get("trust_domain") != trust["trust_domain"] or value.get("signing_domain_hex") != ED25519_DOMAIN.hex():
         raise ValueError("unsigned signing request trust binding")
     payload = _authorization_payload(binding, trust, value["issued_at_utc"], value["expires_at_utc"], value["nonce"])

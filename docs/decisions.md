@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-22 - M6-A v2 detached authorization verification boundary
+
+- **Decision:** Accept repository-external signatures only through one canonical detached-bundle schema bound to the current unsigned-request digest, signed-message digest, authorization ID, and pinned key ID. Derive bundle, unverified-artifact, and receipt paths from the prepared workspace; reuse the existing authorization payload, Ed25519 verifier, and receipt type.
+- **Reason:** This closes the offline-signature return path without duplicating canonical payload or cryptographic logic, accepting artifact-claimed trust, or creating an execution context.
+- **Impact:** Successful verification proves signature and binding validity only. Materialization, ownership, process launch, consumption, and finalization remain separate and false; no repository component gains private-key access or signing capability.
+
 ## 2026-07-21 - M6-A v2 preflight and attempt separation
 
 - **Decision:** Keep prepared files in a preflight workspace and record the pilot location solely as a prospective attempt root.

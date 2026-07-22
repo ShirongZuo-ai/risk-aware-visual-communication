@@ -22,8 +22,8 @@ def _read(path):
 @dataclass(frozen=True)
 class ExpectedAuthorizationBinding:
  launch_id:str;attempt_id:str;identity_id:str;prepared_package_digest:str;fresh_preflight_report_digest:str;launch_spec_digest:str;runtime_config_digest:str;prospective_attempt_root:str
-def build_expected_authorization_binding(package_path,preflight_path):
- p=load_prepared_launch_package(package_path); r=load_fresh_preflight_report(preflight_path,package_path)
+def build_expected_authorization_binding(package_path,preflight_path,*,now=None):
+ p=load_prepared_launch_package(package_path); r=load_fresh_preflight_report(preflight_path,package_path,now=now)
  return ExpectedAuthorizationBinding(p['launch_id'],p['attempt_id'],p['identity_id'],p['package_sha256'],r['canonical_digest'],p['launch_spec_sha256'],p['runtime_config_sha256'],p['prospective_attempt_root'])
 def validate_execution_authorization_artifact(value,*,now=None):
  if not isinstance(value,dict) or value.get('schema_version')!=SCHEMA or value.get('canonical_artifact_digest')!=digest({k:v for k,v in value.items() if k!='canonical_artifact_digest'}): raise ValueError('authorization artifact digest')
