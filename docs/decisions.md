@@ -293,3 +293,9 @@
 - **Reason:** The immutable M5E base world intentionally contains an empty obstacle group, while its historical controller imports deterministic obstacles at episode start. Keeping this single runtime authority avoids geometry drift, preserves the base-world hash, and is verifiable with Supervisor read-back digests.
 - **Rejected:** Static host-side geometry materialization (Option B), modifying the M5E base world, using M5 historical results or actual traces, and maintaining dual controller/world scene authorities.
 - **Impact:** A later launcher may use only the preflight-generated temporary world and must call the pre-motion initialization gate before it enables runtime devices. This decision does not authorize Webots launch, pilot generation, or scientific evaluation.
+# M6-A v2 external authorization signature trust
+
+- Execution authorization signatures use Ed25519 from the mature `cryptography` implementation; no repository code implements curve mathematics.
+- The signed message is `b"RAVC-M6A-V2-EXECUTION-AUTHORIZATION\\x00"` followed by canonical JSON bytes for every authorization field except the authenticator envelope and the two derived artifact digests. The fixed prefix provides protocol-version domain separation.
+- Trust is configured only by an explicitly supplied Ed25519 public key plus pinned `SHA-256(raw 32-byte Ed25519 public key)` fingerprint, key ID, issuer claim, policy version, verifier identity, and trust domain. Artifact-declared fingerprints are consistency claims, never trust roots.
+- The production private key must remain offline and outside the repository. Missing, placeholder, malformed, or mismatched trust configuration fails closed. Test keys are ephemeral and may not be used as a production fallback.

@@ -4,6 +4,8 @@ Last updated: 2026-07-21 (Asia/Shanghai)
 
 ## Completed
 
+- Added an explicitly configured Ed25519 production authorization verifier adapter. It verifies a domain-separated canonical authorization payload with an externally supplied public key, pins SHA-256 over canonical raw Ed25519 public-key bytes, and returns the existing bound receipt type. Tests use ephemeral keys only. The repository can verify an externally signed authorization, but it does not generate, store, or possess the production private key, and no production trust root is configured.
+
 - Completed M6-A v2 B1.0 contract separation: a preflight workspace is now explicitly distinct from an uncreated prospective pilot attempt. A B2-facing validated execution-context boundary can materialize only a temporary test attempt and delegates ownership creation to the existing safety primitive. It does not generate or validate authorization, launch a process, consume authorization, or write a final marker.
 
 - Added M6-A v2 B5 aggregate and persisted joint validation. The authoritative aggregate reconstructs the frozen 4 snapshot × 2 method × 4 budget identity matrix from case entries, recalculates numerical totals, and is accompanied by an immutable reloadable validation report. Completion now reloads the runtime manifest, persists/reloads aggregate validation, then persists/reloads a joint report before returning integration success. All coverage is temporary-root/mock lifecycle evidence only; no real attempt, authorization, Webots process, or pilot/calibration/formal data was created.

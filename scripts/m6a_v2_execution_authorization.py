@@ -1,6 +1,6 @@
 """Verifier-neutral, explicitly unverified M6-A v2 authorization inputs."""
 from __future__ import annotations
-import json
+import base64, hashlib, json
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from typing import Protocol
@@ -12,6 +12,7 @@ from scripts.m6a_v2_fresh_preflight import load_fresh_preflight_report
 SCHEMA='m6a-v2-execution-authorization-artifact-v1'
 RECEIPT_SCHEMA='m6a-v2-verified-authorization-receipt-v1'
 CONTEXT_SCHEMA='m6a-v2-externally-validated-execution-context-v1'; _TOKEN=object()
+ED25519_DOMAIN=b'RAVC-M6A-V2-EXECUTION-AUTHORIZATION\x00'
 def _b(x): return (json.dumps(x,sort_keys=True,separators=(',',':'))+'\n').encode()
 def _time(x): return datetime.fromisoformat(x)
 def _read(path):
@@ -29,7 +30,9 @@ def validate_execution_authorization_artifact(value,*,now=None):
  payload={k:v for k,v in value.items() if k not in {'payload_digest','canonical_artifact_digest'}}
  if value.get('payload_digest')!=digest(payload) or any(not value.get(k) for k in ('authorization_id','nonce','issuer_claim','authorization_policy_version')): raise ValueError('authorization payload')
  env=value.get('authenticator_envelope',{})
- if not isinstance(env,dict) or set(env)!={'scheme','issuer_reference','key_reference','assertion_or_signature'} or any(not env[k] or 'placeholder' in str(env[k]).lower() for k in env): raise ValueError('authorization authenticator')
+ legacy=set(env)=={'scheme','issuer_reference','key_reference','assertion_or_signature'}
+ ed=set(env) in ({'scheme','key_id','signature_base64'},{'scheme','key_id','signature_base64','claimed_public_key_fingerprint'})
+ if not isinstance(env,dict) or not (legacy or ed) or any(not item or 'placeholder' in str(item).lower() for item in env.values()): raise ValueError('authorization authenticator')
  now=now or datetime.now(timezone.utc); issued,expires=_time(value['issued_at_utc']),_time(value['expires_at_utc'])
  if issued>now or expires<=issued or expires<=now or value.get('execution_authorized') is True: raise ValueError('authorization timing/semantics')
  return value
@@ -54,10 +57,48 @@ class VerifiedAuthorizationReceipt:
 class AuthorizationVerifier(Protocol):
  verifier_identity:str;verification_class:str;trust_domain:str
  def verify(self,authorization,expected_binding)->VerifiedAuthorizationReceipt: ...
+def authorization_canonical_payload_bytes(value):
+ payload={k:v for k,v in value.items() if k not in {'authenticator_envelope','payload_digest','canonical_artifact_digest'}}
+ return _b(payload)
+def authorization_signed_message(value):return ED25519_DOMAIN+authorization_canonical_payload_bytes(value)
+def ed25519_public_key_fingerprint(public_key):
+ from cryptography.hazmat.primitives.serialization import Encoding,PublicFormat
+ return hashlib.sha256(public_key.public_bytes(Encoding.Raw,PublicFormat.Raw)).hexdigest()
+def _receipt(authorization,binding,verifier_identity,verification_class,trust_domain):
+ d={'schema_version':RECEIPT_SCHEMA,'verifier_identity':verifier_identity,'verification_class':verification_class,'trust_domain':trust_domain,'authorization_id':authorization['authorization_id'],'issuer_claim':authorization['issuer_claim'],'authorization_payload_digest':authorization['payload_digest'],'authenticator_digest':digest(authorization['authenticator_envelope']),**asdict(binding),'issued_at_utc':authorization['issued_at_utc'],'expires_at_utc':authorization['expires_at_utc'],'verified_at_utc':datetime.now(timezone.utc).isoformat(),'nonce':authorization['nonce'],'authorization_policy_version':authorization['authorization_policy_version']};d['canonical_receipt_digest']=digest(d);return VerifiedAuthorizationReceipt(d)
+class Ed25519AuthorizationVerifier:
+ verification_class='external'
+ def __init__(self,*,public_key_bytes=None,public_key_path=None,expected_public_key_fingerprint,expected_key_id,expected_issuer,expected_policy_version,verifier_identity,trust_domain):
+  if (public_key_bytes is None)==(public_key_path is None):raise ValueError('exactly one trusted public key source required')
+  required=(expected_public_key_fingerprint,expected_key_id,expected_issuer,expected_policy_version,verifier_identity,trust_domain)
+  if any(not isinstance(item,str) or not item or 'placeholder' in item.lower() for item in required):raise ValueError('complete non-placeholder verifier configuration required')
+  raw=bytes(public_key_bytes) if public_key_bytes is not None else Path(public_key_path).read_bytes()
+  try:
+   from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+   from cryptography.hazmat.primitives.serialization import load_pem_public_key,load_der_public_key
+   if len(raw)==32:key=Ed25519PublicKey.from_public_bytes(raw)
+   else:
+    try:key=load_pem_public_key(raw)
+    except ValueError:key=load_der_public_key(raw)
+   if not isinstance(key,Ed25519PublicKey):raise ValueError('trusted key is not Ed25519')
+  except (TypeError,ValueError) as exc:raise ValueError('invalid trusted Ed25519 public key') from exc
+  fingerprint=ed25519_public_key_fingerprint(key)
+  if len(expected_public_key_fingerprint)!=64 or fingerprint!=expected_public_key_fingerprint.lower():raise ValueError('trusted public key fingerprint mismatch')
+  self._public_key=key;self.public_key_fingerprint=fingerprint;self.expected_key_id=expected_key_id;self.expected_issuer=expected_issuer;self.expected_policy_version=expected_policy_version;self.verifier_identity=verifier_identity;self.trust_domain=trust_domain
+ def verify(self,authorization,expected_binding):
+  validate_authorization_binding(authorization,expected_binding);env=authorization['authenticator_envelope']
+  if set(env) not in ({'scheme','key_id','signature_base64'},{'scheme','key_id','signature_base64','claimed_public_key_fingerprint'}) or env.get('scheme')!='ed25519' or env.get('key_id')!=self.expected_key_id or authorization.get('issuer_claim')!=self.expected_issuer or authorization.get('authorization_policy_version')!=self.expected_policy_version:raise PermissionError('authorization signer policy mismatch')
+  if 'claimed_public_key_fingerprint' in env and env['claimed_public_key_fingerprint'].lower()!=self.public_key_fingerprint:raise PermissionError('claimed fingerprint mismatch')
+  try:signature=base64.b64decode(env['signature_base64'],validate=True)
+  except Exception as exc:raise PermissionError('invalid Ed25519 signature encoding') from exc
+  if len(signature)!=64:raise PermissionError('invalid Ed25519 signature length')
+  try:self._public_key.verify(signature,authorization_signed_message(authorization))
+  except Exception as exc:raise PermissionError('invalid Ed25519 authorization signature') from exc
+  return _receipt(authorization,expected_binding,self.verifier_identity,self.verification_class,self.trust_domain)
 class TestOnlyAuthorizationVerifier:
  verifier_identity='m6a-v2-test-verifier';verification_class='test';trust_domain='test-only'
  def verify(self,authorization,expected_binding):
-  validate_authorization_binding(authorization,expected_binding); d={'schema_version':RECEIPT_SCHEMA,'verifier_identity':self.verifier_identity,'verification_class':self.verification_class,'trust_domain':self.trust_domain,'authorization_id':authorization['authorization_id'],'issuer_claim':authorization['issuer_claim'],'authorization_payload_digest':authorization['payload_digest'],'authenticator_digest':digest(authorization['authenticator_envelope']),**asdict(expected_binding),'issued_at_utc':authorization['issued_at_utc'],'expires_at_utc':authorization['expires_at_utc'],'verified_at_utc':datetime.now(timezone.utc).isoformat(),'nonce':authorization['nonce'],'authorization_policy_version':authorization['authorization_policy_version']};d['canonical_receipt_digest']=digest(d);return VerifiedAuthorizationReceipt(d)
+  validate_authorization_binding(authorization,expected_binding);return _receipt(authorization,expected_binding,self.verifier_identity,self.verification_class,self.trust_domain)
 def verify_execution_authorization(package_path,preflight_path,authorization_path,verifier,*,mode='production'):
  if verifier is None:raise ValueError('trusted authorization verifier is not configured')
  if mode!='test' and getattr(verifier,'verification_class',None)=='test':raise PermissionError('test verifier rejected in production mode')
