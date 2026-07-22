@@ -76,6 +76,36 @@ def run_fresh_preflight_for_prepared_launch(package_path, *, now=None):
     return persist_fresh_preflight_report(report_path,package_path,now=now)
 
 
+def refresh_fresh_preflight_for_prepared_launch(package_path, *, now=None):
+    """Return a current report, archiving only a validated expired predecessor."""
+    package = load_prepared_launch_package(package_path)
+    report_path = Path(package["preflight_report_path"]).resolve()
+    workspace = Path(package["preflight_workspace_root"]).resolve()
+    if not report_path.is_relative_to(workspace):
+        raise ValueError("unsafe preflight report path")
+    current = now or _utc_now()
+    if report_path.exists():
+        raw = report_path.read_bytes()
+        existing = json.loads(raw)
+        if raw != _canonical(existing):
+            raise ValueError("noncanonical existing preflight report")
+        checked = _parse(existing["checked_at_utc"])
+        validate_fresh_preflight_report(existing, package_path, now=checked)
+        if _parse(existing["valid_until_utc"]) > current:
+            return load_fresh_preflight_report(report_path, package_path, now=current)
+        history = workspace / "fresh_preflight_history"
+        history.mkdir(parents=True, exist_ok=True)
+        stamp = existing["checked_at_utc"].replace(":", "").replace("+", "_")
+        archive = history / f"fresh_preflight_report.{stamp}.{existing['canonical_digest']}.json"
+        if archive.exists():
+            if archive.read_bytes() != raw:
+                raise FileExistsError("conflicting archived preflight evidence")
+            report_path.unlink()
+        else:
+            report_path.rename(archive)
+    return run_fresh_preflight_for_prepared_launch(package_path, now=current)
+
+
 def _temporary_spec(manifest: Path, lock: Path, executable: Path) -> tuple[dict, bool]:
     """Build twice in one disposable temp root and prove canonical spec stability."""
     with tempfile.TemporaryDirectory(prefix="m6a-v2-fresh-preflight-") as directory:

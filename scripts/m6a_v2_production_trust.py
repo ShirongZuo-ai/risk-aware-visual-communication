@@ -121,7 +121,7 @@ def validate_execution_authorization_signing_request(value, *, package_path, pre
         raise ValueError("unsigned signing request schema")
     if value.get("canonical_request_digest") != digest({key: item for key, item in value.items() if key != "canonical_request_digest"}):
         raise ValueError("unsigned signing request digest")
-    if value.get("signature_absent") is not True or value.get("trust_root_loaded") is not True or any(value.get(key) is not False for key in ("execution_authorized", "materialization_allowed")) or "signature" in value:
+    if value.get("signature_absent") is not True or value.get("signature_present") is not False or value.get("trust_root_loaded") is not True or any(value.get(key) is not False for key in ("authorization_verified", "execution_authorized", "materialization_allowed")) or "signature" in value:
         raise ValueError("unsigned signing request semantics")
     trust = load_production_authorization_trust_config(trust_config_path, repository_root=repository_root)
     binding = build_expected_authorization_binding(package_path, preflight_path)
@@ -199,7 +199,9 @@ def export_execution_authorization_signing_request(package_path, preflight_path,
         "signed_message_base64": base64.b64encode(signed_message).decode("ascii"),
         "signed_message_sha256": __import__("hashlib").sha256(signed_message).hexdigest(),
         "signature_absent": True,
+        "signature_present": False,
         "trust_root_loaded": True,
+        "authorization_verified": False,
         "execution_authorized": False,
         "materialization_allowed": False,
     }
@@ -207,9 +209,25 @@ def export_execution_authorization_signing_request(package_path, preflight_path,
     return persist_execution_authorization_signing_request(output_path, request, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root, now=now)
 
 
-def run_production_authorization_readiness(package_path, preflight_path, trust_config_path, signing_request_path, *, repository_root=PROJECT_ROOT):
+def authoritative_signing_request_path(package_path):
+    from scripts.m6a_v2_prepared_launch import load_prepared_launch_package
+    package = load_prepared_launch_package(package_path)
+    workspace = Path(package["preflight_workspace_root"]).resolve()
+    if workspace != Path(package_path).resolve().parent:
+        raise ValueError("prepared package workspace mismatch")
+    return workspace / "unsigned_authorization_signing_request.json"
+
+
+def run_production_authorization_readiness(package_path, preflight_path, trust_config_path, signing_request_path=None, *, repository_root=PROJECT_ROOT):
     trust = load_production_authorization_trust_config(trust_config_path, repository_root=repository_root)
     verifier = build_production_authorization_verifier_from_config(trust_config_path, repository_root=repository_root)
-    request = export_execution_authorization_signing_request(package_path, preflight_path, trust_config_path, signing_request_path, repository_root=repository_root)
+    authoritative_path = authoritative_signing_request_path(package_path)
+    if signing_request_path is not None and Path(signing_request_path).resolve() != authoritative_path:
+        raise ValueError("signing request path is not package-authoritative")
+    signing_request_path = authoritative_path
+    if signing_request_path.exists():
+        request = load_execution_authorization_signing_request(signing_request_path, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root)
+    else:
+        request = export_execution_authorization_signing_request(package_path, preflight_path, trust_config_path, signing_request_path, repository_root=repository_root)
     load_execution_authorization_signing_request(signing_request_path, package_path=package_path, preflight_path=preflight_path, trust_config_path=trust_config_path, repository_root=repository_root)
-    return {"schema_version": "m6a-v2-production-authorization-readiness-v1", "verifier_identity": verifier.verifier_identity, "trust_config_digest": trust["config_digest"], "signing_request_digest": request["canonical_request_digest"], "trust_root_loaded": True, "public_key_fingerprint_verified": True, "signing_request_valid": True, "signature_present": False, "authorization_verified": False, "execution_authorized": False, "attempt_materialized": False, "process_launched": False}
+    return {"schema_version": "m6a-v2-production-authorization-readiness-v1", "verifier_identity": verifier.verifier_identity, "trust_config_digest": trust["config_digest"], "signing_request_path": str(signing_request_path), "signing_request_digest": request["canonical_request_digest"], "trust_root_loaded": True, "public_key_fingerprint_verified": True, "signing_request_valid": True, "signature_present": False, "authorization_verified": False, "execution_authorized": False, "attempt_materialized": False, "process_launched": False}

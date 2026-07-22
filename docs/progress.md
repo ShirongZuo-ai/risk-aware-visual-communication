@@ -4,6 +4,8 @@ Last updated: 2026-07-21 (Asia/Shanghai)
 
 ## Completed
 
+- Made M6-A v2 authorization-request export renewable without changing prepared-package or scientific identity. Expired validated preflight evidence is retained in immutable workspace history, current evidence is safely renewed, and the production readiness path derives and validates one authoritative unsigned-request location with explicit non-authorization state.
+
 - Provisioned the pinned M6-A v2 production public trust root and an unsigned authorization-signing-request export/readiness path. The repository reloads and fingerprints the public Ed25519 key, reconstructs the package/preflight binding, persists and reloads exact domain-separated bytes, and remains explicitly unauthorized. No private key, signature, real authorization, receipt, context, attempt, process, consumption, final marker, or pilot data was created.
 
 - Added an explicitly configured Ed25519 production authorization verifier adapter. It verifies a domain-separated canonical authorization payload with an externally supplied public key, pins SHA-256 over canonical raw Ed25519 public-key bytes, and returns the existing bound receipt type. Tests use ephemeral keys only. The repository can verify an externally signed authorization, but it does not generate, store, or possess the production private key, and no production trust root is configured.
