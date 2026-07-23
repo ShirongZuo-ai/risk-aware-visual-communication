@@ -43,12 +43,20 @@ from scripts.m6a_v2_production_trust import (
     authoritative_signing_request_path,
     build_production_authorization_verifier_from_config,
     load_execution_authorization_signing_request,
+    load_production_authorization_trust_config,
     run_production_authorization_readiness,
 )
 
 PRODUCTION_PACKAGE = PROJECT_ROOT / "results" / "m6a_v2_control" / "prepared" / "m6a-prod-pilot-001" / "package.json"
 PRODUCTION_TRUST_CONFIG = PROJECT_ROOT / "config" / "m6a_v2" / "production_authorization_trust.json"
 REQUEST_HISTORY_DIRECTORY = "unsigned_authorization_request_history"
+AUTHORIZATION_GENERATION_HISTORY_DIRECTORY = "authorization_generation_history"
+AUTHORIZATION_GENERATION_ARCHIVE_SCHEMA = "m6a-v2-verified-authorization-generation-archive-v1"
+_GENERATION_ARCHIVE_FILENAMES = {
+    "detached_signature_bundle": "bundle.json",
+    "authorization_artifact": "artifact.json",
+    "verified_receipt": "receipt.json",
+}
 
 
 def _canonical_bytes(value: dict) -> bytes:
@@ -118,7 +126,7 @@ def _validate_historical_request(
     trust_config_path,
     *,
     repository_root,
-) -> tuple[bytes, dict]:
+) -> tuple[bytes, dict, Path]:
     raw, request = _load_request_shape(request_path)
     target_preflight_digest = request["authorization_payload"]["fresh_preflight_report_digest"]
     historical_now = _parse_time(request["issued_at_utc"])
@@ -137,7 +145,7 @@ def _validate_historical_request(
             repository_root=repository_root,
             now=historical_now,
         )
-        return raw, request
+        return raw, request, candidate
     raise ValueError("existing unsigned request has no validated bound preflight evidence")
 
 
@@ -153,7 +161,7 @@ def archive_existing_unsigned_request(
     request_path = authoritative_signing_request_path(package_path)
     workspace = Path(package["preflight_workspace_root"]).resolve()
     if request_path.exists():
-        raw, request = _validate_historical_request(
+        raw, request, _ = _validate_historical_request(
             request_path,
             package_path,
             package,
@@ -170,7 +178,7 @@ def archive_existing_unsigned_request(
         archive = _request_archive_path(workspace, request_digest)
         if not archive.is_file():
             raise FileNotFoundError("unsigned request source and expected archive are both absent")
-        raw, request = _validate_historical_request(
+        raw, request, _ = _validate_historical_request(
             archive,
             package_path,
             package,
@@ -194,6 +202,381 @@ def archive_existing_unsigned_request(
     return archive
 
 
+def _validated_digest(value, description: str) -> str:
+    if not isinstance(value, str) or len(value) != 64:
+        raise ValueError(f"invalid {description}")
+    try:
+        int(value, 16)
+    except ValueError as exc:
+        raise ValueError(f"invalid {description}") from exc
+    return value.lower()
+
+
+def _read_canonical_mapping(path: Path, description: str) -> tuple[bytes, dict]:
+    if path.is_symlink() or not path.is_file():
+        raise ValueError(f"unsafe or missing {description}")
+    raw = path.read_bytes()
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid {description} JSON") from exc
+    if not isinstance(value, dict) or raw != _canonical_bytes(value):
+        raise ValueError(f"noncanonical {description}")
+    return raw, value
+
+
+def _generation_history_directory(workspace: Path) -> Path:
+    history = workspace / AUTHORIZATION_GENERATION_HISTORY_DIRECTORY
+    resolved = history.resolve()
+    if resolved.parent != workspace or not resolved.is_relative_to(workspace):
+        raise ValueError("authorization-generation history escaped prepared workspace")
+    if history.is_symlink() or history.exists() and not history.is_dir():
+        raise ValueError("unsafe authorization-generation history directory")
+    history.mkdir(parents=True, exist_ok=True)
+    return history
+
+
+def _generation_archive_directory(workspace: Path, request_digest: str) -> Path:
+    request_digest = _validated_digest(request_digest, "generation request digest")
+    history = _generation_history_directory(workspace)
+    archive = history / f"g.{request_digest[:16]}"
+    if archive.resolve().parent != history.resolve() or archive.is_symlink():
+        raise ValueError("unsafe authorization-generation archive path")
+    if archive.exists() and not archive.is_dir():
+        raise ValueError("authorization-generation archive path is not a directory")
+    archive.mkdir(exist_ok=True)
+    return archive
+
+
+def _request_candidates(package: dict) -> list[Path]:
+    workspace = Path(package["preflight_workspace_root"]).resolve()
+    current = workspace / "unsigned_authorization_signing_request.json"
+    history = workspace / REQUEST_HISTORY_DIRECTORY
+    candidates = [current]
+    if history.is_dir() and not history.is_symlink():
+        candidates.extend(sorted(history.glob("request.*.json")))
+    if any(candidate.is_symlink() or not candidate.resolve().is_relative_to(workspace) for candidate in candidates):
+        raise ValueError("unsigned-request candidate escaped prepared workspace")
+    return candidates
+
+
+def _find_historical_request(
+    package_path,
+    package: dict,
+    trust_config_path,
+    *,
+    repository_root,
+    request_digest: str | None = None,
+    authorization_id: str | None = None,
+) -> tuple[bytes, dict, Path, Path]:
+    if (request_digest is None) == (authorization_id is None):
+        raise ValueError("exactly one historical request selector is required")
+    matches = []
+    for candidate in _request_candidates(package):
+        if not candidate.is_file():
+            continue
+        try:
+            _, shape = _load_request_shape(candidate)
+        except (ValueError, json.JSONDecodeError):
+            continue
+        if request_digest is not None and shape.get("canonical_request_digest") == request_digest:
+            matches.append(candidate)
+        if authorization_id is not None and shape.get("authorization_id") == authorization_id:
+            matches.append(candidate)
+    unique = list(dict.fromkeys(path.resolve() for path in matches))
+    if len(unique) != 1:
+        raise ValueError("historical authorization request was not found uniquely")
+    request_path = unique[0]
+    raw, request, preflight_path = _validate_historical_request(
+        request_path,
+        package_path,
+        package,
+        trust_config_path,
+        repository_root=repository_root,
+    )
+    if request_digest is not None and request["canonical_request_digest"] != request_digest:
+        raise ValueError("historical request digest mismatch")
+    if authorization_id is not None and request["authorization_id"] != authorization_id:
+        raise ValueError("historical request authorization ID mismatch")
+    return raw, request, request_path, preflight_path
+
+
+def _generation_source_paths(package_path) -> tuple[dict, dict[str, Path]]:
+    package = load_prepared_launch_package(package_path)
+    authoritative = authoritative_detached_authorization_paths(package_path)
+    return package, {
+        "detached_signature_bundle": authoritative["detached_signature_bundle"],
+        "authorization_artifact": authoritative["authorization_artifact"],
+        "verified_receipt": authoritative["verified_receipt"],
+    }
+
+
+def _validate_verified_generation_files(
+    package_path,
+    trust_config_path,
+    paths: dict[str, Path],
+    *,
+    repository_root,
+    expected_request_digest: str | None = None,
+) -> dict:
+    package = load_prepared_launch_package(package_path)
+    raw_bundle, bundle_shape = _read_canonical_mapping(paths["detached_signature_bundle"], "detached signature bundle")
+    raw_artifact, artifact_shape = _read_canonical_mapping(paths["authorization_artifact"], "authorization artifact")
+    raw_receipt, receipt_shape = _read_canonical_mapping(paths["verified_receipt"], "verified receipt")
+    request_digest = _validated_digest(bundle_shape.get("unsigned_request_digest"), "bundle request digest")
+    if expected_request_digest is not None and request_digest != expected_request_digest:
+        raise ValueError("verification-generation request digest mismatch")
+    _, request, request_path, preflight_path = _find_historical_request(
+        package_path,
+        package,
+        trust_config_path,
+        repository_root=repository_root,
+        request_digest=request_digest,
+    )
+    authorization_id = request["authorization_id"]
+    if any(value.get("authorization_id") != authorization_id for value in (bundle_shape, artifact_shape, receipt_shape)):
+        raise ValueError("verification-generation authorization ID mismatch")
+    historical_now = _parse_time(receipt_shape.get("verified_at_utc", ""))
+    bundle = load_detached_signature_bundle(
+        paths["detached_signature_bundle"], request=request, now=historical_now
+    )
+    artifact = load_execution_authorization_artifact(paths["authorization_artifact"], now=historical_now)
+    binding = build_expected_authorization_binding(package_path, preflight_path, now=historical_now)
+    validate_authorization_binding(artifact, binding, now=historical_now)
+    if authorization_signed_message(artifact) != base64.b64decode(request["signed_message_base64"], validate=True):
+        raise ValueError("verification-generation signed message mismatch")
+    envelope = artifact["authenticator_envelope"]
+    if (
+        envelope.get("scheme") != bundle["signature_scheme"]
+        or envelope.get("key_id") != bundle["key_id"]
+        or envelope.get("signature_base64") != bundle["signature_base64"]
+    ):
+        raise ValueError("verification-generation bundle/artifact mismatch")
+    trust = load_production_authorization_trust_config(trust_config_path, repository_root=repository_root)
+    if (
+        bundle["key_id"] != trust["expected_key_id"]
+        or request["trust_config_digest"] != trust["config_digest"]
+        or request["public_key_fingerprint"] != trust["expected_public_key_fingerprint"]
+        or request["trust_domain"] != trust["trust_domain"]
+    ):
+        raise ValueError("verification-generation production trust mismatch")
+    persisted_receipt = load_verified_authorization_receipt(
+        paths["verified_receipt"], binding, now=historical_now
+    )
+    verifier = build_production_authorization_verifier_from_config(
+        trust_config_path, repository_root=repository_root
+    )
+    reverified = verifier.verify(artifact, binding, now=historical_now).validate(
+        binding, now=historical_now
+    )
+    if reverified.data != persisted_receipt.data:
+        raise ValueError("persisted receipt does not match historical public-key verification")
+    canonical_digests = {
+        "detached_signature_bundle": bundle["canonical_bundle_digest"],
+        "authorization_artifact": artifact["canonical_artifact_digest"],
+        "verified_receipt": persisted_receipt.data["canonical_receipt_digest"],
+    }
+    return {
+        "authorization_id": authorization_id,
+        "unsigned_request_digest": request_digest,
+        "signed_message_sha256": request["signed_message_sha256"],
+        "key_id": bundle["key_id"],
+        "launch_id": request["launch_id"],
+        "attempt_id": request["attempt_id"],
+        "identity_id": request["identity_id"],
+        "prepared_package_digest": request["authorization_payload"]["prepared_package_digest"],
+        "fresh_preflight_report_digest": request["authorization_payload"]["fresh_preflight_report_digest"],
+        "trust_config_digest": trust["config_digest"],
+        "public_key_fingerprint": trust["expected_public_key_fingerprint"],
+        "trust_domain": trust["trust_domain"],
+        "historical_request_path": str(request_path),
+        "historical_preflight_path": str(preflight_path),
+        "raw": {
+            "detached_signature_bundle": raw_bundle,
+            "authorization_artifact": raw_artifact,
+            "verified_receipt": raw_receipt,
+        },
+        "canonical_digests": canonical_digests,
+    }
+
+
+def _generation_manifest(validation: dict) -> dict:
+    manifest = {
+        "schema_version": AUTHORIZATION_GENERATION_ARCHIVE_SCHEMA,
+        "authorization_id": validation["authorization_id"],
+        "unsigned_request_digest": validation["unsigned_request_digest"],
+        "signed_message_sha256": validation["signed_message_sha256"],
+        "key_id": validation["key_id"],
+        "launch_id": validation["launch_id"],
+        "attempt_id": validation["attempt_id"],
+        "identity_id": validation["identity_id"],
+        "prepared_package_digest": validation["prepared_package_digest"],
+        "fresh_preflight_report_digest": validation["fresh_preflight_report_digest"],
+        "trust_config_digest": validation["trust_config_digest"],
+        "public_key_fingerprint": validation["public_key_fingerprint"],
+        "trust_domain": validation["trust_domain"],
+        "files": {},
+    }
+    for key, filename in _GENERATION_ARCHIVE_FILENAMES.items():
+        raw = validation["raw"][key]
+        manifest["files"][key] = {
+            "filename": filename,
+            "byte_length": len(raw),
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "canonical_digest": validation["canonical_digests"][key],
+        }
+    manifest["canonical_manifest_digest"] = digest(manifest)
+    return manifest
+
+
+def _persist_exact_bytes(path: Path, raw: bytes, description: str) -> None:
+    if path.is_symlink():
+        raise ValueError(f"unsafe {description} archive path")
+    if path.exists():
+        if not path.is_file() or path.read_bytes() != raw:
+            raise FileExistsError(f"conflicting {description} archive")
+        return
+    with path.open("xb") as stream:
+        stream.write(raw)
+    if path.read_bytes() != raw:
+        raise OSError(f"{description} archive bytes changed")
+
+
+def _archive_paths(archive_directory: Path) -> dict[str, Path]:
+    paths = {key: archive_directory / filename for key, filename in _GENERATION_ARCHIVE_FILENAMES.items()}
+    paths["manifest"] = archive_directory / "manifest.json"
+    if any(path.resolve().parent != archive_directory.resolve() or path.is_symlink() for path in paths.values()):
+        raise ValueError("authorization-generation file escaped archive directory")
+    return paths
+
+
+def _load_completed_generation_archive(
+    package_path,
+    trust_config_path,
+    request_digest: str,
+    *,
+    repository_root,
+) -> dict:
+    package = load_prepared_launch_package(package_path)
+    workspace = Path(package["preflight_workspace_root"]).resolve()
+    archive_directory = _generation_archive_directory(workspace, request_digest)
+    paths = _archive_paths(archive_directory)
+    if not all(path.is_file() for path in paths.values()):
+        raise ValueError("authorization-generation archive is incomplete")
+    validation = _validate_verified_generation_files(
+        package_path,
+        trust_config_path,
+        {key: paths[key] for key in _GENERATION_ARCHIVE_FILENAMES},
+        repository_root=repository_root,
+        expected_request_digest=request_digest,
+    )
+    _, manifest = _read_canonical_mapping(paths["manifest"], "authorization-generation manifest")
+    if manifest != _generation_manifest(validation):
+        raise ValueError("authorization-generation archive manifest mismatch")
+    return {
+        "archive_directory": str(archive_directory),
+        "manifest_path": str(paths["manifest"]),
+        "manifest_digest": manifest["canonical_manifest_digest"],
+        "authorization_id": validation["authorization_id"],
+        "unsigned_request_digest": validation["unsigned_request_digest"],
+        "files": manifest["files"],
+    }
+
+
+def archive_existing_verified_authorization_generation(
+    package_path,
+    trust_config_path,
+    *,
+    repository_root=PROJECT_ROOT,
+    expected_request_digest: str | None = None,
+) -> dict | None:
+    """Archive one verified bundle/artifact/receipt generation as an immutable unit."""
+    package, source_paths = _generation_source_paths(package_path)
+    present = {key: path.exists() for key, path in source_paths.items()}
+    if not any(present.values()):
+        if expected_request_digest is None:
+            return None
+        return _load_completed_generation_archive(
+            package_path,
+            trust_config_path,
+            expected_request_digest,
+            repository_root=repository_root,
+        )
+    for key, exists in present.items():
+        if exists and (source_paths[key].is_symlink() or not source_paths[key].is_file()):
+            raise ValueError(f"unsafe current {key}")
+    if present["detached_signature_bundle"]:
+        _, selector = _read_canonical_mapping(source_paths["detached_signature_bundle"], "detached signature bundle")
+        request_digest = _validated_digest(selector.get("unsigned_request_digest"), "bundle request digest")
+    else:
+        selector_key = "authorization_artifact" if present["authorization_artifact"] else "verified_receipt"
+        _, selector = _read_canonical_mapping(source_paths[selector_key], selector_key.replace("_", " "))
+        authorization_id = _validated_digest(selector.get("authorization_id"), "authorization ID")
+        _, request, _, _ = _find_historical_request(
+            package_path,
+            package,
+            trust_config_path,
+            repository_root=repository_root,
+            authorization_id=authorization_id,
+        )
+        request_digest = request["canonical_request_digest"]
+    if expected_request_digest is not None and request_digest != expected_request_digest:
+        raise ValueError("current verification generation does not match expected request digest")
+    workspace = Path(package["preflight_workspace_root"]).resolve()
+    archive_directory = _generation_archive_directory(workspace, request_digest)
+    archive_paths = _archive_paths(archive_directory)
+    if archive_paths["manifest"].is_file():
+        completed = _load_completed_generation_archive(
+            package_path,
+            trust_config_path,
+            request_digest,
+            repository_root=repository_root,
+        )
+        for key, exists in present.items():
+            if exists and source_paths[key].read_bytes() != archive_paths[key].read_bytes():
+                raise FileExistsError(f"current {key} conflicts with completed generation archive")
+        for key, exists in present.items():
+            if exists:
+                source_paths[key].unlink()
+        return completed
+    if not all(present.values()):
+        raise ValueError("incomplete current verification generation without completed archive")
+    validation = _validate_verified_generation_files(
+        package_path,
+        trust_config_path,
+        source_paths,
+        repository_root=repository_root,
+        expected_request_digest=request_digest,
+    )
+    for key, raw in validation["raw"].items():
+        _persist_exact_bytes(archive_paths[key], raw, key.replace("_", " "))
+    archived_validation = _validate_verified_generation_files(
+        package_path,
+        trust_config_path,
+        {key: archive_paths[key] for key in _GENERATION_ARCHIVE_FILENAMES},
+        repository_root=repository_root,
+        expected_request_digest=request_digest,
+    )
+    manifest = _generation_manifest(archived_validation)
+    _persist_exact_bytes(
+        archive_paths["manifest"],
+        _canonical_bytes(manifest),
+        "authorization-generation manifest",
+    )
+    completed = _load_completed_generation_archive(
+        package_path,
+        trust_config_path,
+        request_digest,
+        repository_root=repository_root,
+    )
+    for key in source_paths:
+        if source_paths[key].read_bytes() != archive_paths[key].read_bytes():
+            raise OSError(f"current {key} changed before archive release")
+    for key in source_paths:
+        source_paths[key].unlink()
+    return completed
+
+
 def refresh_and_export_current_request(
     package_path=PRODUCTION_PACKAGE,
     trust_config_path=PRODUCTION_TRUST_CONFIG,
@@ -206,6 +589,11 @@ def refresh_and_export_current_request(
     package = load_prepared_launch_package(package_path)
     preflight_path = Path(package["preflight_report_path"]).resolve()
     request_path = authoritative_signing_request_path(package_path)
+    archived_generation = archive_existing_verified_authorization_generation(
+        package_path,
+        trust_config_path,
+        repository_root=repository_root,
+    )
     archived_request = None
     if request_path.exists():
         try:
@@ -218,7 +606,9 @@ def refresh_and_export_current_request(
                 now=current,
             )
             report = load_fresh_preflight_report(preflight_path, package_path, now=current)
-            return _command_a_result(package, report, request, request_path, archived_request)
+            return _command_a_result(
+                package, report, request, request_path, archived_request, archived_generation
+            )
         except ValueError:
             archived_request = archive_existing_unsigned_request(
                 package_path, trust_config_path, repository_root=repository_root
@@ -239,10 +629,14 @@ def refresh_and_export_current_request(
         repository_root=repository_root,
         now=current,
     )
-    return _command_a_result(package, report, request, request_path, archived_request)
+    return _command_a_result(
+        package, report, request, request_path, archived_request, archived_generation
+    )
 
 
-def _command_a_result(package, report, request, request_path, archived_request) -> dict:
+def _command_a_result(
+    package, report, request, request_path, archived_request, archived_generation
+) -> dict:
     effective = min(_parse_time(report["valid_until_utc"]), _parse_time(request["expires_at_utc"]))
     return {
         "command": "refresh-export",
@@ -258,8 +652,11 @@ def _command_a_result(package, report, request, request_path, archived_request) 
         "request_expires_at_utc": request["expires_at_utc"],
         "effective_deadline_utc": effective.isoformat(),
         "archived_unsigned_request_path": str(archived_request) if archived_request else None,
+        "archived_verification_generation": archived_generation,
         "signature_present": False,
+        "authorization_verified": False,
         "execution_authorized": False,
+        "materialization_allowed": False,
         "stop_after_export": True,
     }
 

@@ -1,8 +1,10 @@
 # Progress
 
-Last updated: 2026-07-22 (Asia/Shanghai)
+Last updated: 2026-07-23 (Asia/Shanghai)
 
 ## Completed
+
+- Added fail-closed M6-A v2 verified-authorization generation renewal. Before `refresh-export` can issue a new request, the operator historically revalidates one retained request/preflight/bundle/artifact/receipt chain with pinned public trust, preserves the three verification files byte-for-byte in a short generation archive plus canonical manifest, reloads it, and only then releases the authoritative paths. Temporary-directory rehearsals cover interruption recovery, idempotence, conflicting history, tampering, partial sources, request-generation separation, path escape, and symlinks; no private key, production attempt, process, consumption, final marker, or pilot data was created by the tests.
 
 - Added and fully rehearsed the M6-A v2 `materialize-only` operator boundary in temporary directories with ephemeral Ed25519 trust. The command reloads and revalidates the full authorization chain, repeats public-key verification, creates the existing external context, calls the existing production materializer, and reloads persisted ownership. Success stops with one owned root and no process, consumption, completion, final marker, or pilot data; no real production materialization was performed.
 

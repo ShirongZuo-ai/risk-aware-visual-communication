@@ -1,5 +1,11 @@
 # Decision log
 
+## 2026-07-23 - M6-A v2 verified-authorization generation archival
+
+- **Decision:** Treat the authoritative detached bundle, authorization artifact, and verified receipt as one immutable generation. Archive exact bytes under `authorization_generation_history/g.<request-digest-prefix>/` with a canonical manifest binding the full request digest, authorization ID, signed-message digest, production trust, per-file SHA-256, and canonical digests before releasing any authoritative source path.
+- **Reason:** Independent file histories could admit partial or mixed generations, while deleting stale verification evidence would destroy auditability. A short generation directory avoids Windows path-length failures and reuses the retained request/preflight plus the pinned Ed25519 verifier instead of duplicating trust logic.
+- **Impact:** `refresh-export` now fails closed before renewal on incomplete, conflicting, tampered, escaped, or unverified generation state. Copy interruption resumes while sources remain intact; source-release interruption resumes only from a complete identical manifest. A new request cannot inherit an old bundle, artifact, or receipt.
+
 ## 2026-07-22 - M6-A v2 materialization-only operator boundary
 
 - **Decision:** Extend the fixed-path operator CLI with one `materialize-only` command that revalidates the full persisted authorization chain, repeats pinned-public-key verification, builds the existing external context type, calls the existing production materializer, and reloads the existing owned-context/ownership contract.

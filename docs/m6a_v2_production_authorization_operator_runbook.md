@@ -21,17 +21,20 @@ Set-Location 'C:\Users\ROG\Documents\risk-aware-visual-communication'
 .\.venv\Scripts\python.exe -m scripts.m6a_v2_authorization_operator refresh-export
 ```
 
-The command reloads the prepared package, validates and immutably archives an expired request, renews package-bound preflight evidence, exports/reloads the current unsigned request, and prints:
+Before renewing a request, the command treats any authoritative detached bundle, authorization artifact, and verified receipt as one verification generation. It reloads the generation's retained request and preflight, repeats pinned-public-key verification at the receipt's recorded verification time, archives the three exact files plus a canonical manifest, and releases the three authoritative paths only after the complete archive reloads successfully. It then validates and immutably archives an expired request, renews package-bound preflight evidence, exports/reloads the current unsigned request, and prints:
 
 - `unsigned_request_path`
 - `authorization_id`
 - `fresh_preflight_valid_until_utc`
 - `request_expires_at_utc`
 - `effective_deadline_utc`
+- `archived_verification_generation`
 
 It stops with `signature_present=false`, `execution_authorized=false`, and `stop_after_export=true`. Copy these printed values into the operator record. Do not run tests, Git commands, or further Codex analysis before Command C.
 
 Expired requests are archived under `unsigned_authorization_request_history/request.<canonical_request_digest>.json`. The short digest-only filename avoids Windows legacy path-length failures while remaining deterministic and content-addressed. Archival validates the original canonical bytes and package/preflight/trust binding at the request's issue time; it never relaxes freshness checks for a current request. Repeated calls recover safely if an identical archive already exists, reject conflicting archive bytes, and can resume after either the request move or preflight renewal completed before a crash.
+
+Verified generations are archived under `authorization_generation_history/g.<first-16-hex-of-request-digest>/`. Each directory contains exact-byte `bundle.json`, `artifact.json`, and `receipt.json` files plus `manifest.json`, which records the full request digest, authorization ID, signed-message digest, trust identity, per-file SHA-256, and canonical digests. The short directory is only a locator: the full digest in the validated manifest resolves collisions fail closed. Archive files are copied and revalidated before the manifest is written; source paths are released only after the complete manifest and all archived evidence reload successfully. An interrupted copy can resume with intact sources, and an interrupted source release can resume from an already-complete identical archive. Partial sources without a complete archive, changed bytes, symlinks, path escape, or conflicting history are terminal and do not produce a new request.
 
 ## Immediately after T0 — Command B: repository-external signing
 

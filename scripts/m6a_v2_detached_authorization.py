@@ -196,9 +196,11 @@ def persist_verified_authorization_receipt(path, receipt: VerifiedAuthorizationR
     return load_verified_authorization_receipt(path, binding)
 
 
-def load_verified_authorization_receipt(path, binding: ExpectedAuthorizationBinding) -> VerifiedAuthorizationReceipt:
+def load_verified_authorization_receipt(
+    path, binding: ExpectedAuthorizationBinding, *, now: datetime | None = None
+) -> VerifiedAuthorizationReceipt:
     value = _read_canonical(Path(path), "verified authorization receipt")
-    return VerifiedAuthorizationReceipt(value).validate(binding)
+    return VerifiedAuthorizationReceipt(value).validate(binding, now=now)
 
 
 def run_detached_authorization_verification_only(
