@@ -57,10 +57,23 @@ def authoritative_detached_authorization_paths(package_path) -> dict[str, Path]:
     """Derive every import/verification path from the prepared-package workspace."""
     package_path = Path(package_path).resolve()
     package = load_prepared_launch_package(package_path)
+    return _detached_authorization_paths(package_path, package)
+
+
+def authoritative_detached_authorization_paths_for_audit(package_path) -> dict[str, Path]:
+    """Derive the same paths after materialization without granting preflight authority."""
+    from scripts.m6a_v2_prepared_launch import load_prepared_launch_package_for_audit
+
+    package_path = Path(package_path).resolve()
+    package = load_prepared_launch_package_for_audit(package_path)
+    return _detached_authorization_paths(package_path, package)
+
+
+def _detached_authorization_paths(package_path: Path, package: dict) -> dict[str, Path]:
     workspace = Path(package["preflight_workspace_root"]).resolve()
     if workspace != package_path.parent:
         raise ValueError("prepared package workspace mismatch")
-    request_path = authoritative_signing_request_path(package_path)
+    request_path = workspace / "unsigned_authorization_signing_request.json"
     paths = {
         "unsigned_request": request_path,
         "detached_signature_bundle": workspace / BUNDLE_FILENAME,

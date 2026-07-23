@@ -38,7 +38,7 @@ from scripts.m6a_v2_fresh_preflight import (
     load_fresh_preflight_report,
     refresh_fresh_preflight_for_prepared_launch,
 )
-from scripts.m6a_v2_prepared_launch import load_prepared_launch_package
+from scripts.m6a_v2_prepared_launch import current_repository_head, load_prepared_launch_package
 from scripts.m6a_v2_production_trust import (
     authoritative_signing_request_path,
     build_production_authorization_verifier_from_config,
@@ -691,9 +691,11 @@ def materialize_current_verified_authorization(
     *,
     repository_root=PROJECT_ROOT,
     now: datetime | None = None,
+    current_head: str | None = None,
 ) -> dict:
     """Command D: create/reload ownership and stop before process launch."""
-    package = load_prepared_launch_package(package_path)
+    current_head = current_head or current_repository_head(repository_root)
+    package = load_prepared_launch_package(package_path, expected_head=current_head)
     preflight_path = Path(package["preflight_report_path"]).resolve()
     current = now or datetime.now(timezone.utc)
     load_fresh_preflight_report(preflight_path, package_path, now=current)
@@ -734,20 +736,35 @@ def materialize_current_verified_authorization(
         package_path,
         preflight_path,
         paths["authorization_artifact"],
-        reverified_receipt,
+        persisted_receipt,
     )
     plan = attempt_path_plan(
         package["launch_id"], package["attempt_id"], package["identity_id"], package["scene_id"], package["seed"]
     )["artifacts"]
-    if any(Path(plan[key]).exists() for key in ("ownership_marker", "consumption_record", "process_evidence", "final_marker")):
+    if any(
+        Path(plan[key]).exists()
+        for key in (
+            "ownership_marker",
+            "owned_context",
+            "ownership_terminal",
+            "consumption_record",
+            "process_evidence",
+            "final_marker",
+        )
+    ):
         raise ValueError("execution evidence already exists before materialization")
     owned = materialize_authorized_attempt(
         package,
         context,
         mode="production",
         prepared_package_path=package_path,
+        repository_head=current_head,
     )
-    loaded = load_owned_attempt_context(owned, mode="production")
+    loaded = load_owned_attempt_context(
+        plan["owned_context"], expected_head=current_head, mode="production"
+    )
+    if loaded.data != owned.data:
+        raise ValueError("persisted owned context differs after materialization reload")
     if any(Path(plan[key]).exists() for key in ("consumption_record", "process_evidence", "final_marker")):
         raise ValueError("materialize-only produced forbidden execution evidence")
     return {
@@ -758,7 +775,8 @@ def materialize_current_verified_authorization(
         "authorization_id": loaded["authorization_id"],
         "attempt_root": loaded["attempt_root"],
         "ownership_path": plan["ownership_marker"],
-        "ownership_digest": loaded["ownership"]["sha256"],
+        "owned_context_path": plan["owned_context"],
+        "ownership_digest": loaded["ownership_digest"],
         "owned_context_digest": loaded["canonical_digest"],
         "trust_verified": True,
         "receipt_valid": True,
@@ -775,14 +793,29 @@ def materialize_current_verified_authorization(
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("refresh-export", "verify-only", "materialize-only"))
+    parser.add_argument(
+        "command",
+        choices=("refresh-export", "verify-only", "materialize-only", "run-pilot", "retire-pre-spawn"),
+    )
+    parser.add_argument("--package", type=Path, default=PRODUCTION_PACKAGE)
     args = parser.parse_args(argv)
+    from scripts.m6a_v2_pilot_operator import authoritative_operator_package_path
+
+    package_path = authoritative_operator_package_path(args.package)
     if args.command == "refresh-export":
-        result = refresh_and_export_current_request()
+        result = refresh_and_export_current_request(package_path)
     elif args.command == "verify-only":
-        result = verify_current_detached_signature()
+        result = verify_current_detached_signature(package_path)
+    elif args.command == "materialize-only":
+        result = materialize_current_verified_authorization(package_path)
+    elif args.command == "run-pilot":
+        from scripts.m6a_v2_pilot_operator import run_production_pilot
+
+        result = run_production_pilot(package_path)
     else:
-        result = materialize_current_verified_authorization()
+        from scripts.m6a_v2_pilot_operator import retire_superseded_pre_spawn_package
+
+        result = retire_superseded_pre_spawn_package(package_path)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 

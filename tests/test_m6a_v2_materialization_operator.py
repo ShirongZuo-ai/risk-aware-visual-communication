@@ -81,14 +81,17 @@ class MaterializationOperatorTests(unittest.TestCase):
                 "subprocess.Popen"
             ) as process_spawn:
                 result = materialize_current_verified_authorization(
-                    package_path, trust, repository_root=root
+                    package_path, trust, repository_root=root, current_head=package["head"]
                 )
                 for prohibited in (runner, consume, final_marker, process_spawn):
                     prohibited.assert_not_called()
             attempt_root = Path(result["attempt_root"])
             ownership_path = Path(result["ownership_path"])
             self.assertTrue(attempt_root.is_dir())
-            self.assertEqual(list(attempt_root.iterdir()), [ownership_path])
+            self.assertEqual(
+                set(attempt_root.iterdir()),
+                {ownership_path, Path(result["owned_context_path"])},
+            )
             ownership = json.loads(ownership_path.read_text(encoding="utf-8"))
             self.assertEqual(ownership["sha256"], result["ownership_digest"])
             self.assertEqual(ownership["state"], "owned_pre_spawn")
@@ -104,7 +107,9 @@ class MaterializationOperatorTests(unittest.TestCase):
             self.assertFalse(Path(plan["process_evidence"]).exists())
             self.assertFalse(Path(plan["final_marker"]).exists())
             with self.assertRaises(ValueError):
-                materialize_current_verified_authorization(package_path, trust, repository_root=root)
+                materialize_current_verified_authorization(
+                    package_path, trust, repository_root=root, current_head=package["head"]
+                )
 
     def test_expired_preflight_and_request_fail_before_root_creation(self):
         for label, request_minutes, delta in (("request", 1, 2), ("preflight", 15, 6)):
@@ -115,7 +120,11 @@ class MaterializationOperatorTests(unittest.TestCase):
                 )
                 with self.assertRaises(ValueError):
                     materialize_current_verified_authorization(
-                        package_path, trust, repository_root=root, now=now + timedelta(minutes=delta)
+                        package_path,
+                        trust,
+                        repository_root=root,
+                        now=now + timedelta(minutes=delta),
+                        current_head=package["head"],
                     )
                 self.assertFalse(Path(package["prospective_attempt_root"]).exists())
 
@@ -153,7 +162,9 @@ class MaterializationOperatorTests(unittest.TestCase):
                         )
                     canonical_write(paths["verified_receipt"], receipt)
                 with self.assertRaises((ValueError, PermissionError)):
-                    materialize_current_verified_authorization(package_path, trust, repository_root=root)
+                    materialize_current_verified_authorization(
+                        package_path, trust, repository_root=root, current_head=package["head"]
+                    )
                 self.assertFalse(Path(package["prospective_attempt_root"]).exists())
 
     def test_wrong_package_arbitrary_context_and_root_escape_fail(self):
@@ -161,15 +172,25 @@ class MaterializationOperatorTests(unittest.TestCase):
             root = Path(directory)
             trust, package_path, package, _, _, _ = self.prepare_verified(root, attempt_id="wrong-boundary")
             with self.assertRaises(TypeError):
-                materialize_authorized_attempt(package, {}, mode="production", prepared_package_path=package_path)
+                materialize_authorized_attempt(
+                    package,
+                    {},
+                    mode="production",
+                    prepared_package_path=package_path,
+                    repository_head=package["head"],
+                )
             wrong_package_path, _ = build_prepared_launch_package(
                 head="other", branch="main", attempt_id="other-package", package_root=root / "other-control"
             )
             with self.assertRaises((ValueError, FileNotFoundError)):
-                materialize_current_verified_authorization(wrong_package_path, trust, repository_root=root)
+                materialize_current_verified_authorization(
+                    wrong_package_path, trust, repository_root=root, current_head=package["head"]
+                )
             with patch("scripts.m6a_v2_execution_safety.PILOT_ROOT", root / "other-pilot"):
                 with self.assertRaises(ValueError):
-                    materialize_current_verified_authorization(package_path, trust, repository_root=root)
+                    materialize_current_verified_authorization(
+                        package_path, trust, repository_root=root, current_head=package["head"]
+                    )
             self.assertFalse(Path(package["prospective_attempt_root"]).exists())
 
     def test_existing_execution_evidence_and_ownership_write_failure_fail_closed(self):
@@ -186,14 +207,18 @@ class MaterializationOperatorTests(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text("preexisting", encoding="utf-8")
                 with self.assertRaises((ValueError, FileNotFoundError, json.JSONDecodeError)):
-                    materialize_current_verified_authorization(package_path, trust, repository_root=root)
+                    materialize_current_verified_authorization(
+                        package_path, trust, repository_root=root, current_head=package["head"]
+                    )
 
         with tempfile.TemporaryDirectory() as directory, isolated_execution_roots(directory):
             root = Path(directory)
             trust, package_path, package, _, _, _ = self.prepare_verified(root, attempt_id="ownership-write-fail")
             with patch("scripts.m6a_v2_execution_safety._new", side_effect=OSError("simulated ownership write failure")):
                 with self.assertRaises(OSError):
-                    materialize_current_verified_authorization(package_path, trust, repository_root=root)
+                    materialize_current_verified_authorization(
+                        package_path, trust, repository_root=root, current_head=package["head"]
+                    )
             self.assertFalse(Path(package["prospective_attempt_root"]).exists())
 
 

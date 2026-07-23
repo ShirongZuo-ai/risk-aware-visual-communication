@@ -1,6 +1,6 @@
 # M6-A v2 production authorization operator runbook
 
-Commands A through C perform public-evidence preparation and signature verification only. The separately invoked Command D creates exactly one validated execution context, prospective attempt root, and ownership marker, then stops. No command in this runbook launches Webots or another process, consumes authorization, creates process evidence, runs completion, or writes a final marker.
+Commands A through C perform public-evidence preparation and signature verification only. Command D creates one durable owned attempt and stops before launch. Command E is the separately approved one-shot production launch/recovery boundary. Command F retires only a superseded, evidence-free pre-spawn legacy attempt. Never run E or F without explicit approval for the named package.
 
 ## Fixed production inputs
 
@@ -10,7 +10,7 @@ Commands A through C perform public-evidence preparation and signature verificat
 - Expected identity: `m6a-prod-pilot-001` / `m6ac31cb4657ae813d7e35387acc28583fd` / `m6a_pilot_s1_seed600100`
 - Expected public-key fingerprint: `327b50d78e9f965ce7e8a10ed12bb14483ca7120325add9dbfd6d86c22f50ef4`
 
-The repository commands accept no path or private-key options. Production paths are derived from the fixed prepared package and repository root.
+The repository commands accept no private-key options. `--package` may select only an existing `results\m6a_v2_control\prepared\<attempt-id>\package.json`; attempt roots and evidence paths are always derived from that package.
 
 ## T0 — Command A: refresh and export
 
@@ -113,7 +113,7 @@ Set-Location 'C:\Users\ROG\Documents\risk-aware-visual-communication'
 .\.venv\Scripts\python.exe -m scripts.m6a_v2_authorization_operator materialize-only
 ```
 
-The command derives every path from the prepared package and reloads the package, current preflight, unsigned request, detached bundle, authorization artifact, and persisted receipt. It repeats pinned-public-key verification and requires the persisted receipt to match that fresh verification before constructing `ExternallyValidatedExecutionContext`. It then calls the existing `materialize_authorized_attempt(..., mode="production")`, atomically creates the attempt root and ownership marker once, reloads the ownership marker through the owned-context validator, and stops.
+The command derives every path from the prepared package and reloads the package, current preflight, unsigned request, detached bundle, authorization artifact, and persisted receipt. It repeats pinned-public-key verification and requires the persisted receipt to match that fresh verification before constructing `ExternallyValidatedExecutionContext`. It then calls the existing `materialize_authorized_attempt(..., mode="production")`, atomically creates the attempt root and ownership marker once, persists `.m6a_v2_owned_context.json`, reloads and rebinds that artifact to the package/receipt/ownership, and stops.
 
 Success must report:
 
@@ -130,7 +130,42 @@ final_marker_written=false
 stop_before_launch=true
 ```
 
-The command rejects a reused root, second materialization, arbitrary context, test receipt, stale or tampered evidence, identity/path drift, or any pre-existing ownership, consumption, process, or final-marker evidence. It does not accept path or private-key parameters.
+The command rejects a reused root, second materialization, arbitrary context, test receipt, stale or tampered evidence, identity/path drift, or any pre-existing ownership, consumption, process, or final-marker evidence. It accepts only the authoritative prepared-package selector; it never accepts an attempt root or private-key parameter.
+
+## Command E: run-pilot
+
+Run only after Command D succeeds for a package whose recorded HEAD equals the current `git rev-parse HEAD`:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.m6a_v2_authorization_operator run-pilot `
+  --package results\m6a_v2_control\prepared\m6a-prod-pilot-002\package.json
+```
+
+The operator reloads the durable owned context, package, receipt, and ownership. With no consumption or process evidence it invokes `ProductionOwnedProcessRunner` exactly once. The runner revalidates launch-spec v3 and input hashes, uses `OwnedPopenBackend.start(...)`, waits once, and persists the declared stdout/stderr. The existing launch boundary then writes single-use consumption and process evidence. A zero-exit, non-timeout process enters the existing B5 completion and finalization path.
+
+Recovery rules are fail closed: a complete consumption/process pair skips the runner and resumes completion/finalization; a completed terminal returns idempotently; exactly one of consumption/process rejects retry; retired or failed terminal evidence rejects launch. A nonzero exit or timeout remains consumed process evidence and is never retried automatically.
+
+## Command F: retire-pre-spawn
+
+For the superseded attempt-001, run only after separately checking and approving the unchanged old package and ownership evidence:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.m6a_v2_authorization_operator retire-pre-spawn `
+  --package results\m6a_v2_control\prepared\m6a-prod-pilot-001\package.json
+```
+
+The command requires the package HEAD to differ from the current HEAD, ownership state `owned_pre_spawn`, and absence of durable context, consumption, process/runtime/completion evidence, final marker, and unknown attempt-root content. It writes only immutable `.m6a_v2_ownership_terminal.json` with state `retired_pre_spawn` and reason `package_head_superseded_before_launch`. It never modifies the original ownership marker, consumes authorization, creates a success marker, or reports a scientific result.
+
+## Preparing the replacement attempt-002
+
+After attempt-001 retirement is separately approved and completed, create the new package from the then-current committed HEAD:
+
+```powershell
+$head = (& 'C:\Program Files\Git\cmd\git.exe' rev-parse HEAD).Trim()
+.\.venv\Scripts\python.exe -c "from scripts.m6a_v2_prepared_launch import build_prepared_launch_package; print(build_prepared_launch_package(head='$head', branch='main', attempt_id='m6a-prod-pilot-002')[0])"
+```
+
+Run Commands A, B, C, and D for the `m6a-prod-pilot-002` package, passing the same `--package` path to repository commands. Only after all four gates succeed and a separate launch approval is recorded should Command E be run. Never copy authorization, receipt, owned context, or ownership from attempt-001.
 
 ## Time-window rule
 
