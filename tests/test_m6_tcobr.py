@@ -46,4 +46,3 @@ class TCOBRTests(unittest.TestCase):
     def test_invalid_camera_context_rejected(self):
         image,state,schedule,_=self.fixture()
         with self.assertRaises(ValueError):evaluate_tcobr_case(scene="S1",seed=620100,snapshot_id="0",method="state_only_risk_roi",budget="severe",original=image,reconstruction=image,state=state,schedule=schedule,snapshot_time_s=1.216,camera_context={},original_sha256="a",reconstruction_sha256="b")
-

@@ -47,4 +47,3 @@ class StudyTests(unittest.TestCase):
         run.return_value={"state":"process_failed","runner_invoked":True}
         with self.assertRaises(RuntimeError):run_registered_batch(package_root="Z:/packages")
         self.assertEqual(run.call_count,1)
-
