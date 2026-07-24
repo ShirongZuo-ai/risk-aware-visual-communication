@@ -4,6 +4,8 @@ Last updated: 2026-07-25 (Asia/Shanghai)
 
 ## Completed
 
+- Fixed the M6 runtime-summary split validator exposed by the first formal launch: summary identity is now matched exactly to the already manifest-validated runtime `{split, scene, episode_id, seed}`. Pilot/formal acceptance and split-tamper regression tests pass; the full suite is 457 tests. A replacement 32-episode study was not registered or launched because the immutable v2 manifest contains exactly 32 formal records, all using the explicitly excluded seeds `620100`-`620803`; zero authoritative unused formal identities remain. The next priority is a separately reviewed, versioned manifest expansion with 32 new disjoint formal records before any new launch approval.
+
 - Pre-launch M6 multi-scene work is in progress: TCOBR, exact frozen formal-identity selection, deterministic batch orchestration/analysis, and the complete 32-episode pre-registration are being implemented. No formal identity may launch until these changes are committed after focused and full validation.
 
 - Fixed the cross-platform M6 runtime-config canonicalization defect exposed by disposable smoke-002. The authoritative materializer now writes exact UTF-8 canonical bytes with LF endings, avoiding Windows newline translation while keeping completion validation strict; completion regression coverage now consumes the real materializer output. Ten focused tests and the complete 445-test suite passed without launching Webots or modifying prior attempt evidence or frozen scientific artifacts.
