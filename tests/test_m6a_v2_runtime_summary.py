@@ -1,6 +1,8 @@
+import io
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stderr
 from pathlib import Path
 from unittest.mock import patch
 
@@ -27,5 +29,5 @@ class T(unittest.TestCase):
   with self.assertRaises(ValueError):validate_episode_runtime_summary(summary,cfg)
   with self.assertRaises(ValueError):build_episode_runtime_summary(cfg,evidence,records[:3],life)
   def fail_devices(supervisor,config):raise ValueError('device failure')
-  with patch('scripts.m6a_v2_runtime_summary.initialize_v2_scene_before_motion',lambda supervisor,config:evidence):code,lifecycle=run_v2_controller_lifecycle(path,supervisor_factory=object,devices_initializer=fail_devices,episode_runner=lambda *_:records,summary_path=root/'failure_summary.json',status_path=root/'failure_status.json')
+  with patch('scripts.m6a_v2_runtime_summary.initialize_v2_scene_before_motion',lambda supervisor,config:evidence),redirect_stderr(io.StringIO()):code,lifecycle=run_v2_controller_lifecycle(path,supervisor_factory=object,devices_initializer=fail_devices,episode_runner=lambda *_:records,summary_path=root/'failure_summary.json',status_path=root/'failure_status.json')
   self.assertEqual(code,1);self.assertEqual(lifecycle.state,LifecycleState.FAILED);self.assertFalse((root/'failure_summary.json').exists());self.assertFalse(json.loads((root/'failure_status.json').read_text())['success'])

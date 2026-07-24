@@ -9,6 +9,10 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 import json
 from pathlib import Path
+import re
+import sys
+import tempfile
+import traceback
 
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
@@ -18,8 +22,42 @@ from scripts.m6a_v2_runtime_evidence import persist_runtime_diagnostic, load_run
 
 
 SUMMARY_SCHEMA = "m6a-v2-episode-runtime-summary-v1"
-FAILURE_SCHEMA = "m6a-v2-episode-runtime-failure-v1"
+FAILURE_SCHEMA = "m6a-v2-episode-runtime-failure-v2"
 METHODS = ("command_conditioned_risk_roi", "state_only_risk_roi")
+
+
+class FailureStage(str, Enum):
+    CONFIG_LOADING = "CONFIG_LOADING"
+    RUNTIME_OUTPUT_PATH_VALIDATION = "RUNTIME_OUTPUT_PATH_VALIDATION"
+    SUPERVISOR_INITIALIZATION = "SUPERVISOR_INITIALIZATION"
+    SCENE_INITIALIZATION = "SCENE_INITIALIZATION"
+    STATE_READER_SETUP = "STATE_READER_SETUP"
+    ACTUATOR_SCHEDULE_SETUP = "ACTUATOR_SCHEDULE_SETUP"
+    CAMERA_SETUP = "CAMERA_SETUP"
+    EPISODE_EXECUTION = "EPISODE_EXECUTION"
+    SUMMARY_BUILD = "SUMMARY_BUILD"
+    SUMMARY_PERSISTENCE = "SUMMARY_PERSISTENCE"
+    RUNTIME_EVIDENCE_PERSISTENCE = "RUNTIME_EVIDENCE_PERSISTENCE"
+    LIFECYCLE_COMMIT = "LIFECYCLE_COMMIT"
+    CONTROLLED_SHUTDOWN = "CONTROLLED_SHUTDOWN"
+
+
+class StagedControllerError(Exception):
+    """Internal carrier that retains the original exception and precise stage."""
+
+    def __init__(self, stage: FailureStage, original: Exception):
+        super().__init__(str(original))
+        self.stage = stage
+        self.original = original
+
+
+def run_controller_stage(stage: FailureStage, operation):
+    try:
+        return operation()
+    except StagedControllerError:
+        raise
+    except Exception as error:
+        raise StagedControllerError(stage, error) from error
 
 
 class LifecycleState(str, Enum):
@@ -170,19 +208,127 @@ def load_and_validate_episode_runtime_summary(summary_path: str | Path, expected
     return validate_episode_runtime_summary(summary, expected_runtime_config, require_paths=require_paths)
 
 
-def write_runtime_failure_status(status_path: str | Path, lifecycle: Lifecycle, error: Exception, *, authoritative_root: Path | None = None) -> None:
+def _redact_failure_message(error: Exception, authoritative_root: Path | None) -> str:
+    message = str(error).replace("\r", " ").replace("\n", " ").strip() or "<no message>"
+    replacements = {
+        str(PROJECT_ROOT.resolve()): "<PROJECT_ROOT>",
+        str(Path.home().resolve()): "<HOME>",
+        str(Path(tempfile.gettempdir()).resolve()): "<TEMP_ROOT>",
+    }
+    if authoritative_root is not None:
+        replacements[str(Path(authoritative_root).resolve())] = "<ATTEMPT_ROOT>"
+    for source, target in sorted(replacements.items(), key=lambda item: len(item[0]), reverse=True):
+        message = re.sub(re.escape(source), target, message, flags=re.IGNORECASE)
+        message = re.sub(re.escape(source.replace("\\", "/")), target, message, flags=re.IGNORECASE)
+    return message[:1000]
+
+
+def _failure_frames(error: Exception) -> list[dict]:
+    return [
+        {
+            "module": Path(frame.filename).stem,
+            "file": Path(frame.filename).name,
+            "function": frame.name,
+            "line": frame.lineno,
+        }
+        for frame in traceback.extract_tb(error.__traceback__)
+    ]
+
+
+def validate_runtime_failure_status(value: dict) -> dict:
+    allowed = {
+        "schema_version", "success", "lifecycle_final_state", "failure_stage",
+        "last_completed_state", "transitions", "runtime_identity", "exception",
+        "producer_identity", "sha256",
+    }
+    if set(value) != allowed or value.get("schema_version") != FAILURE_SCHEMA or value.get("sha256") != digest({key: item for key, item in value.items() if key != "sha256"}):
+        raise ValueError("invalid runtime failure status digest or schema")
+    if value.get("success") is not False or value.get("lifecycle_final_state") != LifecycleState.FAILED.value or value.get("failure_stage") not in {stage.value for stage in FailureStage} or value.get("producer_identity") != "m6a_v2_runtime_summary":
+        raise ValueError("invalid runtime failure status semantics")
+    transitions = value.get("transitions")
+    normal = [state.value for state in LifecycleState if state != LifecycleState.FAILED]
+    if not isinstance(transitions, list) or not transitions or transitions[-1] != LifecycleState.FAILED.value or transitions[:-1] != normal[:len(transitions) - 1]:
+        raise ValueError("invalid runtime failure transition evidence")
+    expected_last = transitions[-2] if len(transitions) > 1 else None
+    if value.get("last_completed_state") != expected_last:
+        raise ValueError("invalid runtime failure completed stage")
+    identity = value.get("runtime_identity")
+    if identity is not None and (set(identity) != {"scene", "episode_id", "seed"} or not identity["scene"] or not identity["episode_id"] or not isinstance(identity["seed"], int)):
+        raise ValueError("invalid runtime failure identity")
+    exception = value.get("exception")
+    if not isinstance(exception, dict) or set(exception) != {"type", "message", "frames"} or not exception["type"] or not exception["message"] or not isinstance(exception["frames"], list):
+        raise ValueError("invalid runtime failure exception")
+    for frame in exception["frames"]:
+        if set(frame) != {"module", "file", "function", "line"} or not all(frame[key] for key in ("module", "file", "function")) or not isinstance(frame["line"], int) or frame["line"] <= 0 or Path(frame["file"]).name != frame["file"]:
+            raise ValueError("invalid runtime failure frame")
+    return value
+
+
+def load_runtime_failure_status(status_path: str | Path) -> dict:
+    raw = Path(status_path).read_bytes()
+    value = json.loads(raw)
+    if raw != _canonical(value):
+        raise ValueError("runtime failure status is not canonical JSON")
+    return validate_runtime_failure_status(value)
+
+
+def build_runtime_failure_status(lifecycle: Lifecycle, error: Exception, *, failure_stage: FailureStage, last_completed_state: LifecycleState | None, runtime_config: dict | None = None, authoritative_root: Path | None = None) -> dict:
+    if isinstance(error, StagedControllerError):
+        failure_stage, error = error.stage, error.original
+    identity_values = None if runtime_config is None else {
+        "scene": runtime_config.get("scene"),
+        "episode_id": runtime_config.get("episode_id"),
+        "seed": runtime_config.get("seed"),
+    }
+    identity = identity_values if identity_values and identity_values["scene"] and identity_values["episode_id"] and isinstance(identity_values["seed"], int) else None
+    payload = {
+        "schema_version": FAILURE_SCHEMA,
+        "success": False,
+        "lifecycle_final_state": LifecycleState.FAILED.value,
+        "failure_stage": failure_stage.value,
+        "last_completed_state": last_completed_state.value if last_completed_state else None,
+        "transitions": list(lifecycle.transitions),
+        "runtime_identity": identity,
+        "exception": {
+            "type": type(error).__name__,
+            "message": _redact_failure_message(error, authoritative_root),
+            "frames": _failure_frames(error),
+        },
+        "producer_identity": "m6a_v2_runtime_summary",
+    }
+    payload["sha256"] = digest(payload)
+    return validate_runtime_failure_status(payload)
+
+
+def emit_runtime_failure_status(payload: dict) -> None:
+    validate_runtime_failure_status(payload)
+    print("M6A_CONTROLLER_FAILURE " + json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True), file=sys.stderr, flush=True)
+
+
+def write_runtime_failure_status(status_path: str | Path, lifecycle: Lifecycle, error: Exception, *, failure_stage: FailureStage, last_completed_state: LifecycleState | None, runtime_config: dict | None = None, authoritative_root: Path | None = None) -> dict:
     path = Path(status_path)
     _safe_path(path, authoritative_root=authoritative_root)
     path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {"schema_version": FAILURE_SCHEMA, "success": False, "lifecycle_final_state": lifecycle.state.value if lifecycle.state else LifecycleState.FAILED.value, "error_type": type(error).__name__}
-    path.write_bytes(_canonical(payload))
+    payload = build_runtime_failure_status(lifecycle, error, failure_stage=failure_stage, last_completed_state=last_completed_state, runtime_config=runtime_config, authoritative_root=authoritative_root)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    try:
+        temporary.write_bytes(_canonical(payload))
+        temporary.replace(path)
+    except Exception:
+        if temporary.exists():
+            temporary.unlink()
+        raise
+    return load_runtime_failure_status(path)
 
 
 def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_factory, devices_initializer, episode_runner, summary_path: str | Path, status_path: str | Path, diagnostic_path: str | Path | None = None, runtime_manifest_path: str | Path | None = None, manifest_identity: dict | None = None) -> tuple[int, Lifecycle]:
     lifecycle = Lifecycle()
     authoritative_root = None
+    runtime_config = None
+    failure_stage = FailureStage.CONFIG_LOADING
     try:
         runtime_config = json.loads(Path(runtime_config_path).read_text(encoding="utf-8")); load_v2_runtime_config(runtime_config)
+        failure_stage = FailureStage.RUNTIME_OUTPUT_PATH_VALIDATION
         authoritative_root = validate_runtime_attempt_paths(runtime_config)
         if authoritative_root is not None:
             paths = runtime_config["attempt_paths"]
@@ -195,23 +341,37 @@ def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_f
             if any(paths[key] != value for key, value in expected.items()):
                 raise ValueError("controller output path does not match authoritative runtime configuration")
         lifecycle.transition(LifecycleState.CONFIG_VALIDATED)
-        supervisor = supervisor_factory(); scene = initialize_v2_scene_before_motion(runtime_config, supervisor); lifecycle.transition(LifecycleState.SCENE_INITIALIZED)
+        failure_stage = FailureStage.SUPERVISOR_INITIALIZATION
+        supervisor = supervisor_factory()
+        failure_stage = FailureStage.SCENE_INITIALIZATION
+        scene = initialize_v2_scene_before_motion(runtime_config, supervisor); lifecycle.transition(LifecycleState.SCENE_INITIALIZED)
         if runtime_config["robot_def"] != "ROBOT": raise ValueError("unexpected robot DEF")
+        failure_stage = FailureStage.STATE_READER_SETUP
         devices_initializer(supervisor, runtime_config); lifecycle.transition(LifecycleState.DEVICES_READY)
-        lifecycle.transition(LifecycleState.EPISODE_RUNNING); snapshots = episode_runner(supervisor, runtime_config); lifecycle.transition(LifecycleState.EPISODE_COMPLETED)
-        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"}); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config, authoritative_root=authoritative_root)
+        lifecycle.transition(LifecycleState.EPISODE_RUNNING); failure_stage = FailureStage.EPISODE_EXECUTION
+        snapshots = episode_runner(supervisor, runtime_config); lifecycle.transition(LifecycleState.EPISODE_COMPLETED)
+        failure_stage = FailureStage.SUMMARY_BUILD
+        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"})
+        failure_stage = FailureStage.SUMMARY_PERSISTENCE
+        persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config, authoritative_root=authoritative_root)
         if (diagnostic_path is None) != (runtime_manifest_path is None): raise ValueError("runtime diagnostic and manifest must be paired")
         if runtime_manifest_path is not None:
+            failure_stage = FailureStage.RUNTIME_EVIDENCE_PERSISTENCE
             identity = manifest_identity or {"launch_id":"runtime-local","attempt_id":"runtime-local","identity_id":runtime_config["episode_id"],"scene_id":runtime_config["scene"],"seed":runtime_config["seed"]}
             root = Path(summary_path).parent.resolve()
             if Path(status_path).parent.resolve() != root or Path(diagnostic_path).parent.resolve() != root or Path(runtime_manifest_path).parent.resolve() != root: raise ValueError("runtime evidence must share one authoritative root")
             persist_runtime_diagnostic(diagnostic_path,identity,"success",[]);load_runtime_diagnostic(diagnostic_path,identity,root)
             persist_runtime_manifest(runtime_manifest_path,identity,root,runtime_config=runtime_config,summary_path=summary_path,status_path=status_path,diagnostic_path=diagnostic_path)
             load_runtime_manifest(runtime_manifest_path,identity,root,runtime_config)
+        failure_stage = FailureStage.LIFECYCLE_COMMIT
         lifecycle.transition(LifecycleState.SUMMARY_COMMITTED)
         return 0, lifecycle
     except Exception as error:
+        last_completed_state = lifecycle.state
         lifecycle.fail()
-        try: write_runtime_failure_status(status_path, lifecycle, error, authoritative_root=authoritative_root)
-        except Exception: pass
+        try:
+            failure = write_runtime_failure_status(status_path, lifecycle, error, failure_stage=failure_stage, last_completed_state=last_completed_state, runtime_config=runtime_config, authoritative_root=authoritative_root)
+        except Exception:
+            failure = build_runtime_failure_status(lifecycle, error, failure_stage=failure_stage, last_completed_state=last_completed_state, runtime_config=runtime_config, authoritative_root=authoritative_root)
+        emit_runtime_failure_status(failure)
         return 1, lifecycle

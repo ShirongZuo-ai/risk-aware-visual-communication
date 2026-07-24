@@ -8,6 +8,8 @@ from pathlib import Path
 from scripts.m6a_dual_roi import CurrentState,ScheduleEvidence,SnapshotInput,process_m6a_snapshot,serialize_snapshot
 from scripts.m6a_trusted_artifacts import M6AProjectionConfig,digest
 from scripts.m6a_common import VERSION
+from scripts.m6a_v2_runtime_summary import (FailureStage,Lifecycle,LifecycleState,
+ build_runtime_failure_status,emit_runtime_failure_status,run_controller_stage)
 def build_snapshot(*,manifest_hash,scene,episode_id,seed,snapshot_id,timestamp_s,state_reader,frame_reference,schedule):
  state=CurrentState(**state_reader())
  return SnapshotInput('m6a-byte-fair-v1',manifest_hash,scene,episode_id,seed,snapshot_id,timestamp_s,state,frame_reference,schedule)
@@ -101,17 +103,16 @@ class WebotsCurrentStateReader:
  def __init__(self,supervisor,*,robot_def='EPUCK',left_motor='left wheel motor',right_motor='right wheel motor'):
   self.supervisor=supervisor;self.node=supervisor.getFromDef(robot_def)
   if self.node is None:raise ValueError('M6-A robot DEF not found')
-  self.translation=self.node.getField('translation');self.rotation=self.node.getField('rotation');self.left=supervisor.getDevice(left_motor);self.right=supervisor.getDevice(right_motor)
-  if None in (self.translation,self.rotation,self.left,self.right):raise ValueError('M6-A pose or wheel device unavailable')
+  self.left=supervisor.getDevice(left_motor);self.right=supervisor.getDevice(right_motor)
+  if self.left is None or self.right is None or not callable(getattr(self.node,'getPosition',None)) or not callable(getattr(self.node,'getOrientation',None)):raise ValueError('M6-A pose or wheel device unavailable')
   self.last_time=None
  def __call__(self):
   t=self.supervisor.getTime()
   if self.last_time is not None and t<=self.last_time:raise ValueError('non-increasing current state timestamp')
-  p=self.translation.getSFVec3f();r=self.rotation.getSFRotation()
-  if len(p)!=3 or len(r)!=4 or not all(math.isfinite(x) for x in (*p,*r,t)):raise ValueError('invalid current pose')
-  # Existing worlds use z-up; the axis-angle yaw is signed only for the z axis.
-  if abs(r[0])>1e-9 or abs(r[1])>1e-9:raise ValueError('unsupported non-z-up robot rotation')
-  yaw=r[3] if r[2]>=0 else -r[3];left=self.left.getVelocity();right=self.right.getVelocity()
+  p=self.node.getPosition();orientation=self.node.getOrientation()
+  if len(p)!=3 or len(orientation)!=9 or not all(math.isfinite(x) for x in (*p,*orientation,t)):raise ValueError('invalid current pose')
+  # Use the same z-up orientation-matrix yaw extraction as the accepted M2-M5 controllers.
+  yaw=math.atan2(orientation[3],orientation[0]);left=self.left.getVelocity();right=self.right.getVelocity()
   if not all(math.isfinite(x) for x in (left,right)):raise ValueError('invalid current wheel velocity')
   self.last_time=t;linear=self.WHEEL_RADIUS_M*(left+right)/2;angular=self.WHEEL_RADIUS_M*(right-left)/self.AXLE_LENGTH_M
   return StateSample(CurrentState(p[0],p[1],yaw,linear,angular),t)
@@ -159,18 +160,27 @@ def initialize_m6a_v2_scene_from_runtime_config(path,supervisor):
 def _schedule_from_runtime(cfg):
  from navigation.trajectory_prediction import CommandSegment
  return ScheduleEvidence(cfg['schedule']['schedule_id'],cfg['schedule']['available_time_s'],tuple(CommandSegment(x['start_s'],x['end_s'],x['left_rad_s'],x['right_rad_s']) for x in cfg['schedule']['segments']))
+def _emit_unpersisted_controller_failure(stage,error,*,lifecycle=None,runtime=None,authoritative_root=None):
+ transitions=list(lifecycle.transitions) if lifecycle is not None else []
+ already_failed=bool(transitions and transitions[-1]==LifecycleState.FAILED.value)
+ previous=LifecycleState(transitions[-2]) if already_failed and len(transitions)>1 else (None if already_failed else (lifecycle.state if lifecycle is not None else None))
+ failed=Lifecycle(LifecycleState.FAILED,transitions+([] if already_failed else [LifecycleState.FAILED.value]))
+ payload=build_runtime_failure_status(failed,error,failure_stage=stage,last_completed_state=previous,runtime_config=runtime,authoritative_root=authoritative_root)
+ emit_runtime_failure_status(payload)
 def run_configured_m6a_controller(config_path,*,supervisor_factory,lifecycle_runner=None):
  """Run one bound controller lifecycle, then request Webots process exit."""
  from scripts.m6a_v2_runtime_summary import run_v2_controller_lifecycle
- supervisor=supervisor_factory();holder={'supervisor':supervisor};code=1
+ supervisor=None;runtime=None;lifecycle=None;outer_stage=FailureStage.SUPERVISOR_INITIALIZATION;code=1
  try:
+  supervisor=supervisor_factory();holder={'supervisor':supervisor};outer_stage=FailureStage.CONFIG_LOADING
   runtime=json.loads(Path(config_path).read_text(encoding='utf-8'));schedule=_schedule_from_runtime(runtime)
   lifecycle_runner=lifecycle_runner or run_v2_controller_lifecycle
   def make_supervisor():return supervisor
   def devices(supervisor,cfg):
-   reader=WebotsCurrentStateReader(supervisor,robot_def='ROBOT',left_motor=cfg['left_motor'],right_motor=cfg['right_motor'])
-   actuator=WebotsScheduleActuator(supervisor,schedule,left_motor=cfg['left_motor'],right_motor=cfg['right_motor'],required_until_s=cfg['snapshots'][-1]['timestamp_s'])
-   holder['reader']=reader;holder['facade']=WebotsRobotFacade(supervisor,pose_reader=lambda:asdict(reader().state),command_actuator=actuator)
+   reader=run_controller_stage(FailureStage.STATE_READER_SETUP,lambda:WebotsCurrentStateReader(supervisor,robot_def='ROBOT',left_motor=cfg['left_motor'],right_motor=cfg['right_motor']))
+   actuator=run_controller_stage(FailureStage.ACTUATOR_SCHEDULE_SETUP,lambda:WebotsScheduleActuator(supervisor,schedule,left_motor=cfg['left_motor'],right_motor=cfg['right_motor'],required_until_s=cfg['snapshots'][-1]['timestamp_s']))
+   facade=run_controller_stage(FailureStage.CAMERA_SETUP,lambda:WebotsRobotFacade(supervisor,pose_reader=lambda:asdict(reader().state),command_actuator=actuator))
+   holder['reader']=reader;holder['facade']=facade
   def episode(supervisor,cfg):
    root=Path(cfg['output_root']);root.mkdir(parents=True,exist_ok=True)
    legacy=M6ARuntimeConfig(cfg['v2_manifest_sha256'],cfg['scene'],cfg['episode_id'],cfg['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in cfg['snapshots']),root,M6AProjectionConfig(**cfg['projection_config']))
@@ -178,11 +188,17 @@ def run_configured_m6a_controller(config_path,*,supervisor_factory,lifecycle_run
    return [{'snapshot_id':item['snapshot_id'],'timestamp_s':item['timestamp_s'],'path':record['serialized_snapshot_path'],'snapshot_record':record,'methods':list(result.method_set),'actual_future_usage':0,'combined_usage':0,'raw_mask_usage':0,'fallback':0,'replacement':0} for item,record in zip(cfg['snapshots'],result.snapshot_records)]
   paths=runtime.get('attempt_paths')
   if not isinstance(paths,dict):raise ValueError('authoritative runtime paths required')
-  code,_=lifecycle_runner(config_path,supervisor_factory=make_supervisor,devices_initializer=devices,episode_runner=episode,summary_path=paths['runtime_summary'],status_path=paths['runtime_status'],diagnostic_path=paths['runtime_diagnostic'],runtime_manifest_path=paths['runtime_manifest'])
- except Exception:
-  import traceback;traceback.print_exc();code=1
+  outer_stage=FailureStage.RUNTIME_OUTPUT_PATH_VALIDATION
+  code,lifecycle=lifecycle_runner(config_path,supervisor_factory=make_supervisor,devices_initializer=devices,episode_runner=episode,summary_path=paths['runtime_summary'],status_path=paths['runtime_status'],diagnostic_path=paths['runtime_diagnostic'],runtime_manifest_path=paths['runtime_manifest'])
+ except Exception as error:
+  root=Path(runtime['output_root']) if isinstance(runtime,dict) and runtime.get('output_root') else None
+  _emit_unpersisted_controller_failure(outer_stage,error,lifecycle=lifecycle,runtime=runtime,authoritative_root=root);code=1
  finally:
-  supervisor.simulationQuit(code)
+  if supervisor is not None:
+   try:supervisor.simulationQuit(code)
+   except Exception as error:
+    root=Path(runtime['output_root']) if isinstance(runtime,dict) and runtime.get('output_root') else None
+    _emit_unpersisted_controller_failure(FailureStage.CONTROLLED_SHUTDOWN,error,lifecycle=lifecycle,runtime=runtime,authoritative_root=root);code=1
  return code
 def main_m6a_webots_controller():
  """Webots-only entry: host passes bound config/project paths; no fallback."""
@@ -191,4 +207,5 @@ def main_m6a_webots_controller():
  try:
   from controller import Supervisor
   return run_configured_m6a_controller(config_path,supervisor_factory=Supervisor)
- except Exception:return 1
+ except Exception as error:
+  _emit_unpersisted_controller_failure(FailureStage.SUPERVISOR_INITIALIZATION,error);return 1

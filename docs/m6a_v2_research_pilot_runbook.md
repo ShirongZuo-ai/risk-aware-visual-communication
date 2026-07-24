@@ -1,8 +1,10 @@
 # M6-A v2 local research-pilot runbook
 
-Status: attempt-002 launched once and is permanently `failed_process`; it must
-not be reused. The corrected lifecycle is validated without Webots and requires
-a new package plus separate launch approval.
+Status: attempt-002 and disposable smoke-001 are permanently `failed_process`
+and must not be reused. Smoke-001 verified v4 controller discovery and normal
+non-timeout process termination, then failed before snapshot 0. Failure status
+v2 and the offline state-reader correction require a new package plus separate
+smoke-002 launch approval.
 
 ## Purpose and boundary
 
@@ -19,13 +21,13 @@ only after the existing scientific completion and joint validators pass.
 
 ## Separately approved disposable diagnostic smoke
 
-After preparing `m6a-research-lifecycle-smoke-001` from the exact executing HEAD,
+After preparing `m6a-research-lifecycle-smoke-002` from the exact executing HEAD,
 the one permitted diagnostic command from the repository root is:
 
 ```powershell
 .\.venv\Scripts\python.exe -m scripts.m6a_v2_research_pilot run `
-  --package results\m6a_v2_control\prepared\m6a-research-lifecycle-smoke-001\package.json `
-  --confirm-attempt m6a-research-lifecycle-smoke-001
+  --package results\m6a_v2_control\prepared\m6a-research-lifecycle-smoke-002\package.json `
+  --confirm-attempt m6a-research-lifecycle-smoke-002
 ```
 
 Do not run this command without explicit approval to create that disposable

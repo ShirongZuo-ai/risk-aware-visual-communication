@@ -12,7 +12,7 @@ from scripts.m6a_v2_prepared_launch import (
     build_prepared_launch_package,
     load_prepared_launch_package_for_audit,
 )
-from scripts.m6a_v2_runtime_summary import write_runtime_failure_status, Lifecycle
+from scripts.m6a_v2_runtime_summary import FailureStage, write_runtime_failure_status, Lifecycle
 from scripts.m6a_webots_adapter import (
     WebotsScheduleActuator,
     run_configured_m6a_controller,
@@ -168,13 +168,16 @@ class WebotsLifecycleContractTests(unittest.TestCase):
             root = Path(directory) / "attempt"
             root.mkdir()
             status = root / "episode_runtime_status.json"
-            write_runtime_failure_status(status, Lifecycle(), RuntimeError("failure"), authoritative_root=root)
+            lifecycle = Lifecycle(); lifecycle.fail()
+            write_runtime_failure_status(status, lifecycle, RuntimeError("failure"), failure_stage=FailureStage.CONFIG_LOADING, last_completed_state=None, authoritative_root=root)
             self.assertTrue(status.is_file())
             with self.assertRaises(ValueError):
                 write_runtime_failure_status(
                     Path(directory) / "escaped.json",
-                    Lifecycle(),
+                    lifecycle,
                     RuntimeError("failure"),
+                    failure_stage=FailureStage.CONFIG_LOADING,
+                    last_completed_state=None,
                     authoritative_root=root,
                 )
 

@@ -1,5 +1,13 @@
 # Decision log
 
+## 2026-07-24 - M6-A v2 controller failure evidence
+
+- **Decision:** Persist controller failures as canonical `m6a-v2-episode-runtime-failure-v2` records with a stable operation stage, last completed lifecycle state, original exception type, redacted actionable message, basename/function/line frames, runtime identity, transition history, producer identity, and digest. Reload verifies canonical bytes, schema, semantics, transitions, frames, and digest; the same structured payload is emitted to controller stderr.
+- **Decision:** Read current e-puck position and orientation from the Supervisor Node APIs and derive z-up yaw from the orientation matrix, matching accepted M2-M5 controllers. Continue deriving causal linear/angular velocity from current wheel device values.
+- **Reason:** Disposable smoke-001 proved controller discovery but its v1 status discarded the only information capable of separating scene, device, actuator, episode, and shutdown failures. Offline tracing also found that the prior strict axis-angle check could reject ordinary dynamic roll/pitch before snapshot persistence.
+- **Rejected:** Retrying smoke-001, weakening runtime validators, treating return code zero as scientific success, persisting absolute host paths or environment values, overwriting immutable success/failure evidence, or changing scene/schedule/snapshot/scientific definitions.
+- **Impact:** Existing v1 smoke evidence remains immutable. A separately approved smoke-002 can determine whether the state-reader defect was smoke-001's actual cause; if anything else fails, its exact stage and sanitized traceback will be retained without another protocol.
+
 ## 2026-07-24 - M6-A v2 Webots project and termination contract
 
 - **Decision:** Newly prepared packages are complete Webots projects with the world under `worlds/` and the trusted wrapper under `controllers/m6a_trusted_runtime/`. The package binds the copied/source hashes, repository import root, forwarded controller output, and the existing attempt path plan.

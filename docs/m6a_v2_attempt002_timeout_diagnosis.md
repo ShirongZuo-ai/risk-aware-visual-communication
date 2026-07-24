@@ -83,3 +83,33 @@ real-time pacing. Repository evidence does not show that a valid run needs more
 than 75 wall-clock seconds. A separately approved disposable Webots smoke is
 still required to confirm R2025a controller discovery, camera/device names,
 wall-clock performance, and normal main-process termination on this machine.
+
+## Disposable smoke-001 follow-up
+
+`m6a-research-lifecycle-smoke-001` subsequently verified the v4 project fix:
+Webots discovered and started `m6a_trusted_runtime`, exited without timeout, and
+left no Webots process. The controller returned 1 before its first snapshot and
+wrote the historical v1 failure status, which retained only `ValueError` and
+discarded the stage, message, and traceback. The smoke is permanently
+`failed_process` and is not a scientific result.
+
+The strongest evidence-supported boundary is therefore: runtime config and its
+authoritative output-root schema passed far enough to write the bound status;
+no `raw/` or `snapshots/` directory was ever created, so failure occurred during
+scene/device setup, stepping, or the pre-write validation of snapshot 0. The
+exact smoke-001 exception cannot be recovered from the immutable evidence.
+
+Offline tracing did expose one concrete first-snapshot defect. The M6 state
+reader used the dynamic Robot's axis-angle `rotation` field and rejected any
+nonzero x/y axis component. A physical e-puck can have small roll/pitch, while
+all previously accepted M2-M5 Webots controllers compute planar yaw from
+`Node.getOrientation()`. The reader now reuses that orientation-matrix method
+without changing current wheel-derived velocity or any frozen identity.
+
+Future controller failures use canonical failure status v2. It records the
+stable lifecycle stage, last completed state, original exception type and
+redacted message, basename/function/line traceback frames, runtime identity,
+transitions, producer identity, and canonical SHA-256. It is immediately
+reloaded, rejects tampering, and emits the same structured record to controller
+stderr. Controlled-shutdown failures are emitted to stderr even when an
+immutable success status already exists.
