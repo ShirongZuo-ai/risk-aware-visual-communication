@@ -91,3 +91,6 @@ The first formal multi-scene experiment is limited to static AABB obstacles and 
 5. Constant-speed dynamic obstacle crossing the trajectory.
 
 Phase 1 begins with scenarios 1–3.
+# M6 formal multi-scene amendment (2026-07-25)
+
+The M6 primary downstream measure is TCOBR as operationally frozen in `docs/m6_followup_evaluation_protocol.md`. The complete 32-episode S1-S8 matrix, paired contrast, exclusions, bootstrap seed/replicates, and support gate are committed in `docs/results/m6_multiscene_preregistration.json`. Pilot and disposable-smoke identities are never analysis eligible.

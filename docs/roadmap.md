@@ -232,3 +232,6 @@ M5 is formally frozen after M5E-F acceptance. M6 remains planned and does not au
 The M5E-D closeout audit and [M6 follow-up baseline/ablation protocol](m6_followup_evaluation_protocol.md) are complete design artifacts. The first M6 execution candidate is independent-data byte-fairness validation plus the command-conditioned versus state-only trajectory ablation; no M5 formal evidence may be retuned or reused for training.
 
 The post-M5E-E [Risk-conditioned Visual VoI plan](m6_risk_voi_experiment_plan.md) is a future experiment-design artifact, not authorization to train a model or start M6 before M5E-F acceptance.
+# M6 formal multi-scene execution gate (2026-07-25)
+
+Implement and validate TCOBR and exact formal identity selection; commit the 32-episode pre-registration; require full tests, clean tracked state, and unchanged frozen manifest/lock; then prepare and launch only the registered identities once each with no retry. Analyze only completed, strictly validated formal episodes with the pre-registered episode-level procedure.

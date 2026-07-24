@@ -62,7 +62,7 @@ def _require_package_head(package: dict, expected_head: str) -> None:
         raise ValueError("launch specification HEAD mismatch")
 
 
-def build_prepared_launch_package(*, head, branch, attempt_id, package_root=CONTROL_ROOT / "prepared"):
+def build_prepared_launch_package(*, head, branch, attempt_id, episode_id="m6a_pilot_s1_seed600100", package_root=CONTROL_ROOT / "prepared"):
     # Production packages must bind the exact code that creates them. Explicit
     # temporary package roots remain available to isolated tests.
     package_root = Path(package_root).resolve()
@@ -73,12 +73,12 @@ def build_prepared_launch_package(*, head, branch, attempt_id, package_root=CONT
     if base.exists() or base.is_symlink():
         raise ValueError("unsafe package path")
     provisional = "m6a" + digest(
-        {"head": head, "attempt": attempt_id, "identity": "m6a_pilot_s1_seed600100"}
+        {"head": head, "attempt": attempt_id, "identity": episode_id}
     )[:32]
     root = attempt_root(provisional, attempt_id)
     validate_prospective_root(root, launch_id=provisional, attempt_id=attempt_id)
-    paths = attempt_path_plan(provisional, attempt_id, "m6a_pilot_s1_seed600100", "S1", 600100)
-    runtime = build_one_identity_runtime_config(MANIFEST_PATH, LOCK_PATH, output_root=root)
+    runtime = build_one_identity_runtime_config(MANIFEST_PATH, LOCK_PATH, output_root=root, episode_id=episode_id)
+    paths = attempt_path_plan(provisional, attempt_id, runtime["episode_id"], runtime["scene"], runtime["seed"])
     host_only = {
         "consumption_record",
         "ownership_marker",

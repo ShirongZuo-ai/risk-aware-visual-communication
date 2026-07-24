@@ -17,6 +17,7 @@ from evaluation.image_quality import compute_error_metrics, compute_ssim
 from scripts.m6a_dual_roi import CurrentState, ScheduleEvidence
 from scripts.m6a_mask_generation import generate_command_conditioned_risk_mask, generate_state_only_risk_mask
 from scripts.m6a_trusted_artifacts import M6AProjectionConfig, digest
+from scripts.m6_tcobr import evaluate_tcobr_case, validate_tcobr_evidence
 from scripts.run_m6a_one_identity import load_v2_runtime_config
 
 
@@ -29,17 +30,18 @@ def _sha(payload: bytes) -> str: return hashlib.sha256(payload).hexdigest()
 
 @dataclass(frozen=True)
 class SnapshotCodecInput:
-    snapshot_id: str; timestamp_s: float; image: np.ndarray; state: CurrentState; schedule: ScheduleEvidence; raw_image_sha256: str; source_digest: str; synthetic_fixture: bool = False
+    snapshot_id: str; timestamp_s: float; image: np.ndarray; state: CurrentState; schedule: ScheduleEvidence; raw_image_sha256: str; source_digest: str; synthetic_fixture: bool = False; camera_context: dict | None = None
 
     @classmethod
-    def create(cls, *, runtime_config: dict, snapshot_id: str, timestamp_s: float, image: np.ndarray, state: CurrentState, schedule: ScheduleEvidence, synthetic_fixture: bool = False, **forbidden):
+    def create(cls, *, runtime_config: dict, snapshot_id: str, timestamp_s: float, image: np.ndarray, state: CurrentState, schedule: ScheduleEvidence, synthetic_fixture: bool = False, camera_context: dict | None = None, **forbidden):
         if forbidden: raise ValueError("unknown or prohibited SnapshotCodecInput field")
         load_v2_runtime_config(runtime_config)
         expected = next((item for item in runtime_config["snapshots"] if item["snapshot_id"] == snapshot_id), None)
         if expected is None or timestamp_s != expected["timestamp_s"] or not isinstance(image, np.ndarray) or image.dtype != np.uint8 or image.shape != (120, 160, 3) or not np.isfinite(image).all() or not isinstance(state, CurrentState) or not isinstance(schedule, ScheduleEvidence): raise ValueError("invalid frozen snapshot input")
         if schedule.available_time_s > timestamp_s or not schedule.segments: raise ValueError("unavailable predefined schedule")
         raw = image.tobytes(); source = digest({"snapshot_id": snapshot_id, "timestamp_s": timestamp_s, "state": asdict(state), "schedule": asdict(schedule), "raw_image_sha256": _sha(raw)})
-        return cls(snapshot_id, timestamp_s, image.copy(), state, schedule, _sha(raw), source, synthetic_fixture)
+        if runtime_config.get("split") == "formal" and camera_context is None: raise ValueError("formal TCOBR camera context required")
+        return cls(snapshot_id, timestamp_s, image.copy(), state, schedule, _sha(raw), source, synthetic_fixture, camera_context)
 
 
 @dataclass(frozen=True)
@@ -91,15 +93,20 @@ def encode_reconstruct_case(runtime_config: dict, snapshot: SnapshotCodecInput, 
 
 @dataclass(frozen=True)
 class CaseEvaluation:
-    case_sha256: str; reconstruction_sha256: str; full_mse: float; full_psnr_db: float; full_ssim: float; evaluation_sha256: str
+    case_sha256: str; reconstruction_sha256: str; full_mse: float; full_psnr_db: float; full_ssim: float; tcobr_evidence: dict | None; evaluation_sha256: str
 
 
 def evaluate_codec_case(runtime_config: dict, snapshot: SnapshotCodecInput, case: CodecCaseResult) -> CaseEvaluation:
     load_v2_runtime_config(runtime_config)
     if case.snapshot_id != snapshot.snapshot_id or case.timestamp_s != snapshot.timestamp_s or case.raw_image_sha256 != snapshot.raw_image_sha256 or case.reconstruction_sha256 != _sha(case.reconstruction.tobytes()) or case.charged_bytes > case.budget_bytes: raise ValueError("invalid frozen codec output")
     metrics = compute_error_metrics(snapshot.image, case.reconstruction); ssim = compute_ssim(snapshot.image, case.reconstruction)
-    base = {"case_sha256":case.case_sha256,"reconstruction_sha256":case.reconstruction_sha256,"full_mse":metrics.mse,"full_psnr_db":metrics.psnr_db,"full_ssim":ssim,"metric_version":"m5-image-quality-v1"}
-    return CaseEvaluation(case.case_sha256,case.reconstruction_sha256,metrics.mse,metrics.psnr_db,ssim,digest(base))
+    tcobr = None
+    if snapshot.camera_context is not None:
+        tcobr = asdict(evaluate_tcobr_case(scene=runtime_config["scene"],seed=runtime_config["seed"],snapshot_id=snapshot.snapshot_id,method=case.method,budget=case.budget_label,original=snapshot.image,reconstruction=case.reconstruction,state=snapshot.state,schedule=snapshot.schedule,snapshot_time_s=snapshot.timestamp_s,camera_context=snapshot.camera_context,original_sha256=snapshot.raw_image_sha256,reconstruction_sha256=case.reconstruction_sha256))
+        validate_tcobr_evidence(tcobr)
+    if runtime_config.get("split") == "formal" and tcobr is None: raise ValueError("formal TCOBR evidence missing")
+    base = {"case_sha256":case.case_sha256,"reconstruction_sha256":case.reconstruction_sha256,"full_mse":metrics.mse,"full_psnr_db":metrics.psnr_db,"full_ssim":ssim,"tcobr_evidence":tcobr,"metric_version":"m6-tcobr-plus-m5-image-quality-v1"}
+    return CaseEvaluation(case.case_sha256,case.reconstruction_sha256,metrics.mse,metrics.psnr_db,ssim,tcobr,digest(base))
 
 
 def audit_codec_case(runtime_config: dict, snapshot: SnapshotCodecInput, mask: MethodMaskEvidence, mask_payload: tuple[float, ...], case: CodecCaseResult, evaluation: CaseEvaluation) -> dict:
@@ -107,6 +114,7 @@ def audit_codec_case(runtime_config: dict, snapshot: SnapshotCodecInput, mask: M
     if case.method != mask.method or case.mask_sha256 != mask.mask_sha256 or case.raw_image_sha256 != snapshot.raw_image_sha256 or case.reconstruction_sha256 != _sha(case.reconstruction.tobytes()) or case.charged_bytes != case.payload_bytes + case.mask_signal_bytes + case.metadata_bytes or case.charged_bytes > case.budget_bytes or any((mask.actual_future_usage,mask.combined_usage,mask.oracle_usage,mask.fallback,case.fallback,case.replacement)) or evaluation.case_sha256 != case.case_sha256 or evaluation.reconstruction_sha256 != case.reconstruction_sha256: raise ValueError("case audit failed")
     expected = encode_reconstruct_case(runtime_config,snapshot,mask,mask_payload,case.budget_label)
     if expected.case_sha256 != case.case_sha256: raise ValueError("codec evidence is not deterministic")
+    if evaluate_codec_case(runtime_config,snapshot,expected).evaluation_sha256 != evaluation.evaluation_sha256: raise ValueError("evaluation evidence is not deterministic")
     return {"case_sha256":case.case_sha256,"evaluation_sha256":evaluation.evaluation_sha256,"audit_sha256":digest({"case":case.case_sha256,"evaluation":evaluation.evaluation_sha256}),"passed":True}
 
 

@@ -30,8 +30,8 @@ def _sha256(path: Path) -> str:
 def _record(config: dict) -> dict:
     payload = load_and_validate_m6a_v2_manifest(Path(config["v2_manifest_path"]), Path(config["v2_lock_path"]))
     matches = [item for item in payload["records"] if item["source_record_sha256"] == config["source_record_sha256"]]
-    if len(matches) != 1 or matches[0]["identity"]["split"] != "pilot":
-        raise ValueError("runtime config does not identify one frozen pilot source")
+    if len(matches) != 1 or matches[0]["identity"]["split"] not in {"pilot", "calibration", "formal"}:
+        raise ValueError("runtime config does not identify one frozen source")
     return matches[0]
 
 

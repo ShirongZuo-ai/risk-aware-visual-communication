@@ -16,10 +16,10 @@ def build_snapshot(*,manifest_hash,scene,episode_id,seed,snapshot_id,timestamp_s
 @dataclass(frozen=True)
 class StateSample: state:CurrentState;timestamp_s:float
 @dataclass(frozen=True)
-class CameraFrame: rgb:bytes;timestamp_s:float;width_px:int=160;height_px:int=120
+class CameraFrame: rgb:bytes;timestamp_s:float;width_px:int=160;height_px:int=120;camera_context:dict|None=None
 @dataclass(frozen=True)
 class M6ARuntimeConfig:
- manifest_hash:str;scene:str;episode_id:str;seed:int;snapshots:tuple[tuple[str,float],...];output_root:Path;projection_config:M6AProjectionConfig;alignment_tolerance_s:float=.032;protocol_version:str=VERSION
+ manifest_hash:str;scene:str;episode_id:str;seed:int;snapshots:tuple[tuple[str,float],...];output_root:Path;projection_config:M6AProjectionConfig;alignment_tolerance_s:float=.032;protocol_version:str=VERSION;split:str='pilot'
  def validate(self):
   if self.protocol_version!=VERSION or not self.manifest_hash or not self.scene or not self.episode_id or len(self.snapshots)!=4:raise ValueError('invalid M6-A runtime identity')
   times=[x[1] for x in self.snapshots]
@@ -48,7 +48,8 @@ class M6AWebotsRuntimeAdapter:
   if raw_path.exists() or meta_path.exists() or snapshot_dir.exists():raise FileExistsError('refusing snapshot overwrite')
   try:
    raw_path.write_bytes(frame.rgb);frame_hash=hashlib.sha256(frame.rgb).hexdigest();reference=str(raw_path.relative_to(self.root)).replace('\\','/')
-   self._canonical_write(meta_path,{'schema_version':'m6a-v2-raw-snapshot-metadata-v1','snapshot_id':snapshot_id,'snapshot_index':len(self.done),'scene':self.config.scene,'seed':self.config.seed,'frame_reference':reference,'frame_sha256':frame_hash,'width_px':160,'height_px':120,'simulation_timestamp_s':simulation_time,'state_timestamp_s':state.timestamp_s,'frame_timestamp_s':frame.timestamp_s,'target_timestamp_s':target_time,'state':asdict(state.state),'schedule_id':self.schedule.schedule_id,'schedule_available_time_s':self.schedule.available_time_s,'schedule_segments':[asdict(x) for x in self.schedule.segments],'schedule_sha256':digest(asdict(self.schedule))})
+   if self.config.split=='formal' and frame.camera_context is None:raise ValueError('formal snapshot requires authoritative camera context')
+   self._canonical_write(meta_path,{'schema_version':'m6a-v2-raw-snapshot-metadata-v2','snapshot_id':snapshot_id,'snapshot_index':len(self.done),'scene':self.config.scene,'seed':self.config.seed,'frame_reference':reference,'frame_sha256':frame_hash,'width_px':160,'height_px':120,'simulation_timestamp_s':simulation_time,'state_timestamp_s':state.timestamp_s,'frame_timestamp_s':frame.timestamp_s,'target_timestamp_s':target_time,'state':asdict(state.state),'schedule_id':self.schedule.schedule_id,'schedule_available_time_s':self.schedule.available_time_s,'schedule_segments':[asdict(x) for x in self.schedule.segments],'schedule_sha256':digest(asdict(self.schedule)),'camera_context':frame.camera_context})
    item=SnapshotInput(VERSION,self.config.manifest_hash,self.config.scene,self.config.episode_id,self.config.seed,snapshot_id,target_time,state.state,reference,self.schedule)
    output=process_m6a_snapshot(item,self.config.projection_config);serialize_snapshot(output,snapshot_dir,manifest_hash=self.config.manifest_hash,protocol_version=VERSION)
   except Exception:
@@ -96,7 +97,12 @@ class WebotsRobotFacade:
  def state_sample(self):
   pose=self.pose_reader();return StateSample(CurrentState(**pose),self.robot.getTime())
  def frame_sample(self):
-  raw=self.camera.getImage();return CameraFrame(webots_bgra_to_rgb(raw,160,120),self.robot.getTime())
+  from simulator.adapters.webots_camera_adapter import read_camera_snapshot
+  from scripts.m6_tcobr import camera_context_from_snapshot
+  raw=self.camera.getImage();context=None
+  if all(hasattr(self.camera,name) for name in ('getWidth','getHeight','getFov','getNear')):
+   context=camera_context_from_snapshot(read_camera_snapshot(self.robot,self.camera))
+  return CameraFrame(webots_bgra_to_rgb(raw,160,120),self.robot.getTime(),camera_context=context)
 class WebotsCurrentStateReader:
  """Supervisor-only, current-timestep e-puck state source; never reads a trace."""
  WHEEL_RADIUS_M=.02;AXLE_LENGTH_M=.052
@@ -183,7 +189,7 @@ def run_configured_m6a_controller(config_path,*,supervisor_factory,lifecycle_run
    holder['reader']=reader;holder['facade']=facade
   def episode(supervisor,cfg):
    root=Path(cfg['output_root']);root.mkdir(parents=True,exist_ok=True)
-   legacy=M6ARuntimeConfig(cfg['v2_manifest_sha256'],cfg['scene'],cfg['episode_id'],cfg['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in cfg['snapshots']),root,M6AProjectionConfig(**cfg['projection_config']))
+   legacy=M6ARuntimeConfig(cfg['v2_manifest_sha256'],cfg['scene'],cfg['episode_id'],cfg['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in cfg['snapshots']),root,M6AProjectionConfig(**cfg['projection_config']),split=cfg['split'])
    result=run_m6a_webots_episode(legacy,holder['facade'],state_reader=holder['reader'],frame_reader=holder['facade'].frame_sample,predefined_schedule=schedule)
    return [{'snapshot_id':item['snapshot_id'],'timestamp_s':item['timestamp_s'],'path':record['serialized_snapshot_path'],'snapshot_record':record,'methods':list(result.method_set),'actual_future_usage':0,'combined_usage':0,'raw_mask_usage':0,'fallback':0,'replacement':0} for item,record in zip(cfg['snapshots'],result.snapshot_records)]
   paths=runtime.get('attempt_paths')

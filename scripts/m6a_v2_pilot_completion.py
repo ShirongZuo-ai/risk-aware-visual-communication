@@ -1,6 +1,6 @@
 """Owned post-runtime B5 completion evidence; never starts Webots or writes pilot data itself."""
 from __future__ import annotations
-import hashlib, json
+import hashlib, json, math
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -12,6 +12,7 @@ from scripts.m6a_v2_codec_audit import (SnapshotCodecInput, METHODS, BUDGET_ORDE
     build_method_mask, encode_reconstruct_case, evaluate_codec_case, audit_codec_case)
 from scripts.m6a_v2_runtime_evidence import file_entry, load_runtime_manifest
 from scripts.run_m6a_one_identity import load_v2_runtime_config
+from scripts.m6_tcobr import validate_tcobr_evidence
 
 
 AGGREGATE_SCHEMA = "m6a-v2-codec-aggregate-v2"
@@ -49,7 +50,7 @@ def build_snapshot_codec_input_from_runtime_artifact(runtime_config, snapshot_re
     state = CurrentState(**metadata["state"])
     segments = tuple(CommandSegment(item.get("start_offset_s", item.get("start_s")), item.get("end_offset_s", item.get("end_s")), item.get("left_wheel_command_rad_s", item.get("left_rad_s")), item.get("right_wheel_command_rad_s", item.get("right_rad_s"))) for item in metadata["schedule_segments"])
     schedule = ScheduleEvidence(metadata["schedule_id"], metadata["schedule_available_time_s"], segments)
-    return SnapshotCodecInput.create(runtime_config=runtime_config, snapshot_id=sid, timestamp_s=expected["timestamp_s"], image=np.frombuffer(data, dtype=np.uint8).reshape(120, 160, 3), state=state, schedule=schedule, synthetic_fixture=bool(metadata.get("synthetic_fixture", False)))
+    return SnapshotCodecInput.create(runtime_config=runtime_config, snapshot_id=sid, timestamp_s=expected["timestamp_s"], image=np.frombuffer(data, dtype=np.uint8).reshape(120, 160, 3), state=state, schedule=schedule, synthetic_fixture=bool(metadata.get("synthetic_fixture", False)), camera_context=metadata.get("camera_context"))
 
 
 def process_and_audit_runtime_snapshot(runtime_config, snapshot_record, *, owned_output_root, ownership_marker):
@@ -58,7 +59,7 @@ def process_and_audit_runtime_snapshot(runtime_config, snapshot_record, *, owned
         mask, payload = build_method_mask(runtime_config, input_, method)
         for budget in BUDGET_ORDER:
             case = encode_reconstruct_case(runtime_config, input_, mask, payload, budget); evaluation = evaluate_codec_case(runtime_config, input_, case); audit = audit_codec_case(runtime_config, input_, mask, payload, case, evaluation)
-            cases.append({"snapshot_id": input_.snapshot_id, "method": method, "budget": budget, "case_sha256": case.case_sha256, "evaluation_sha256": evaluation.evaluation_sha256, "charged_bytes": case.charged_bytes, "audit_sha256": audit["audit_sha256"]})
+            cases.append({"snapshot_id": input_.snapshot_id, "method": method, "budget": budget, "case_sha256": case.case_sha256, "evaluation_sha256": evaluation.evaluation_sha256, "charged_bytes": case.charged_bytes, "budget_bytes": case.budget_bytes, "full_mse": evaluation.full_mse, "full_psnr_db": evaluation.full_psnr_db, "full_ssim": evaluation.full_ssim, "roi_pixel_count": mask.selected_pixel_count, "roi_area_ratio": mask.selected_area_ratio, "tcobr_evidence": evaluation.tcobr_evidence, "audit_sha256": audit["audit_sha256"]})
     if len(cases) != 8: raise ValueError("incomplete snapshot cases")
     path = Path(owned_output_root) / "codec" / f"{input_.snapshot_id}.json"; payload = {"snapshot_id": input_.snapshot_id, "raw_image_sha256": input_.raw_image_sha256, "cases": cases, "synthetic_fixture": input_.synthetic_fixture}; payload["sha256"] = digest(payload); _write(path, payload)
     payload["artifact_path"] = str(path.resolve()); payload["artifact_bytes"] = path.stat().st_size; payload["artifact_sha256"] = _sha(path); return payload
@@ -75,6 +76,11 @@ def validate_codec_aggregate(aggregate, runtime_config, *, root):
     cases = [case for snapshot in snapshots for case in snapshot.get("cases", [])]
     actual = {(case.get("snapshot_id"), case.get("method"), case.get("budget")) for case in cases}
     if actual != _expected_cases(runtime_config) or len(cases) != len(actual) or any(not all(case.get(key) for key in ("case_sha256", "evaluation_sha256", "audit_sha256")) or not isinstance(case.get("charged_bytes"), int) or case["charged_bytes"] < 0 for case in cases): raise ValueError("aggregate case coverage")
+    for case in cases:
+        if case.get("budget_bytes") != runtime_config["budgets"][case["budget"]] or case["charged_bytes"] > case["budget_bytes"]: raise ValueError("aggregate byte fairness")
+        if not all(isinstance(case.get(key), (int, float)) and math.isfinite(case[key]) for key in ("full_mse", "full_ssim", "roi_area_ratio")) or not isinstance(case.get("full_psnr_db"),(int,float)) or math.isnan(case["full_psnr_db"]): raise ValueError("aggregate quality metrics")
+        if not isinstance(case.get("roi_pixel_count"), int) or case["roi_pixel_count"] < 0 or not 0 <= case["roi_area_ratio"] <= 1: raise ValueError("aggregate ROI metrics")
+        if runtime_config.get("split") == "formal": validate_tcobr_evidence(case.get("tcobr_evidence"))
     if aggregate.get("per_method_count") != {method: 16 for method in METHODS} or aggregate.get("per_budget_count") != {budget: 8 for budget in BUDGET_ORDER} or aggregate.get("charged_bytes_total") != sum(case["charged_bytes"] for case in cases) or any(aggregate.get(key) != 0 for key in ("prohibited_usage", "fallback", "replacement")): raise ValueError("aggregate numeric consistency")
     if aggregate.get("synthetic_fixture") != all(snapshot.get("synthetic_fixture") is True for snapshot in snapshots): raise ValueError("aggregate synthetic state")
     return aggregate

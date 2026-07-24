@@ -365,3 +365,6 @@
 - **Reason:** Local simulation research needs a reviewable at-most-once boundary but does not require the operational complexity or private trust material of a production deployment. The narrow HEAD bridge keeps the scientific package immutable while binding the only implementation commit introduced after package preparation.
 - **Rejected:** Weakening the production authorization workflow, silently accepting arbitrary descendant HEADs, rewriting the prepared package, retrying after ambiguous spawn, creating a second scientific validation stack, or treating exit code zero as a valid pilot result.
 - **Impact:** A separately approved command can create and run the first local closed-loop attempt once. No Webots launch or real attempt was performed while implementing this capability; production execution semantics remain unchanged.
+# 2026-07-25 - Freeze TCOBR as the M6 primary outcome
+
+Use the method-independent union of the frozen planned and state corridors to define critical obstacles, frozen M4 projection and deterministic boundary-edge matching to measure recall, and episode-level scene-stratified inference. This resolves the earlier ambiguous trajectory-critical recall placeholder without changing scenes, identities, methods, budgets, byte accounting, manifest, or lock.
