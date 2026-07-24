@@ -51,7 +51,7 @@ def materialize_runtime_config(config,target):
  if target.exists() or not root.is_dir() or 'm5' in target.parts or 'pilot' in target.parts:raise ValueError('unsafe config target')
  text=json.dumps(config,sort_keys=True,separators=(',',':'))+'\n';tmp=target.with_suffix(target.suffix+'.tmp')
  try:
-  tmp.write_text(text,encoding='utf-8');tmp.replace(target)
+  tmp.write_bytes(text.encode('utf-8'));tmp.replace(target)
   load_v2_runtime_config(json.loads(target.read_text(encoding='utf-8')))
  except Exception:
   if tmp.exists():tmp.unlink()

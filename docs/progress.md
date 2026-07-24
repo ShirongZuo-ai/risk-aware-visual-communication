@@ -1,8 +1,10 @@
 # Progress
 
-Last updated: 2026-07-24 (Asia/Shanghai)
+Last updated: 2026-07-25 (Asia/Shanghai)
 
 ## Completed
+
+- Fixed the cross-platform M6 runtime-config canonicalization defect exposed by disposable smoke-002. The authoritative materializer now writes exact UTF-8 canonical bytes with LF endings, avoiding Windows newline translation while keeping completion validation strict; completion regression coverage now consumes the real materializer output. Ten focused tests and the complete 445-test suite passed without launching Webots or modifying prior attempt evidence or frozen scientific artifacts.
 
 - Preserved actionable M6 controller failure diagnostics after disposable smoke-001 verified controller discovery but failed before snapshot 0. Failure status v2 now canonically records and reloads a stable stage, last completed lifecycle state, original type/message, redacted structured traceback frames, identity, transitions, producer, and digest; the same record is emitted to controller stderr, including controlled-shutdown failures. Offline tracing also replaced the M6 reader's overly strict dynamic axis-angle check with the orientation-matrix yaw source already accepted by M2-M5, while retaining current wheel-derived velocities. Smoke-001 and attempts 001/002 remain immutable; no Webots process or new attempt was started during this repair.
 

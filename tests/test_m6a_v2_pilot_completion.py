@@ -1,6 +1,6 @@
 import tempfile,json,unittest
 from pathlib import Path
-from scripts.run_m6a_one_identity import build_one_identity_runtime_config
+from scripts.run_m6a_one_identity import build_one_identity_runtime_config,materialize_runtime_config
 from scripts.m6a_v2_pilot_completion import *
 from scripts.m6a_v2_runtime_evidence import persist_runtime_manifest
 from tests.test_m6a_v2_runtime_evidence import RuntimeManifestTests
@@ -24,6 +24,6 @@ class T(unittest.TestCase):
  def test_completion_persists_and_reloads_joint_report(self):
   helper=RuntimeManifestTests();temporary,root,cfg,identity=helper.fixture();self.addCleanup(temporary.cleanup)
   persist_runtime_manifest(root/'runtime_artifacts.json',identity,root,runtime_config=cfg,summary_path=root/'summary.json',status_path=root/'status.json',diagnostic_path=root/'diagnostic.json')
-  marker=root/'.owner';marker.write_text('owned');runtime_path=root/'runtime.json';runtime_path.write_bytes((json.dumps(cfg,sort_keys=True,separators=(',',':'))+'\n').encode());spec={'runtime_config':{'path':str(runtime_path)},'summary_path':str(root/'summary.json'),'runtime_manifest_path':str(root/'runtime_artifacts.json'),'aggregate_validation_path':str(root/'codec_aggregate_validation.json'),'joint_report_path':str(root/'joint_validation.json'),'owner_marker':str(marker)}
+  marker=root/'.owner';marker.write_text('owned');runtime_path=materialize_runtime_config(cfg,root/'runtime.json');spec={'runtime_config':{'path':str(runtime_path)},'summary_path':str(root/'summary.json'),'runtime_manifest_path':str(root/'runtime_artifacts.json'),'aggregate_validation_path':str(root/'codec_aggregate_validation.json'),'joint_report_path':str(root/'joint_validation.json'),'owner_marker':str(marker)}
   result=process_completed_pilot_launch(spec,{'started':True,'timed_out':False,'interrupted':False},owned_output_root=root)
   self.assertTrue(result['integration_valid']);self.assertTrue((root/'joint_validation.json').is_file());self.assertTrue(load_joint_validation_report(root/'joint_validation.json',cfg,root=root)['joint_sha256'])
