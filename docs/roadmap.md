@@ -1,5 +1,15 @@
 # Roadmap
 
+## M6 v3 formal multi-scene study
+
+- [x] Define an additive immutable 32-episode S1-S8 manifest extension using seeds 630100-630803.
+- [x] Preserve and bind the v2 manifest/lock without modification.
+- [x] Freeze the unchanged TCOBR paired analysis in a versioned pre-registration.
+- [ ] Pass all pre-launch validation, commit, prepare/audit all packages, then execute each registered identity at most once with no retries.
+- [ ] Persist and validate episode-level TCOBR inference, budget/scene heterogeneity, and secondary quality/byte/ROI results.
+
+Acceptance: only committed v3 identities may launch; a shared defect stops the batch; null and negative results remain; v2 and all historical evidence remain immutable.
+
 ## Milestone 0 — Repository and environment baseline
 
 - [x] Create repository structure and durable project documents.

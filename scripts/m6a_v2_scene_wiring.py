@@ -13,7 +13,7 @@ from pathlib import Path
 
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
-from scripts.m6a_v2_episode_source import LOCK_PATH, MANIFEST_PATH, load_and_validate_m6a_v2_manifest
+from scripts.m6a_manifest_authority import load_and_validate_m6a_manifest
 from scripts.run_m6a_one_identity import load_v2_runtime_config
 from simulator.m5e_scenarios import generate_scenario
 
@@ -28,7 +28,7 @@ def _sha256(path: Path) -> str:
 
 
 def _record(config: dict) -> dict:
-    payload = load_and_validate_m6a_v2_manifest(Path(config["v2_manifest_path"]), Path(config["v2_lock_path"]))
+    _, payload = load_and_validate_m6a_manifest(Path(config["v2_manifest_path"]), Path(config["v2_lock_path"]))
     matches = [item for item in payload["records"] if item["source_record_sha256"] == config["source_record_sha256"]]
     if len(matches) != 1 or matches[0]["identity"]["split"] not in {"pilot", "calibration", "formal"}:
         raise ValueError("runtime config does not identify one frozen source")

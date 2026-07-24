@@ -18,7 +18,7 @@ from scripts.m6a_v2_execution_safety import (
 )
 from scripts.m6a_v2_launch_spec import CONTROLLER_PATH, _sha256, resolve_webots_executable
 from scripts.m6a_v2_scene_wiring import materialize_m6a_temporary_world
-from scripts.run_m6a_one_identity import build_one_identity_runtime_config, materialize_runtime_config
+from scripts.run_m6a_one_identity import build_one_identity_runtime_config, load_v2_runtime_config, materialize_runtime_config
 
 
 def _canonical(value: dict) -> bytes:
@@ -62,7 +62,7 @@ def _require_package_head(package: dict, expected_head: str) -> None:
         raise ValueError("launch specification HEAD mismatch")
 
 
-def build_prepared_launch_package(*, head, branch, attempt_id, episode_id="m6a_pilot_s1_seed600100", package_root=CONTROL_ROOT / "prepared"):
+def build_prepared_launch_package(*, head, branch, attempt_id, episode_id="m6a_pilot_s1_seed600100", package_root=CONTROL_ROOT / "prepared", manifest_path=MANIFEST_PATH, lock_path=LOCK_PATH):
     # Production packages must bind the exact code that creates them. Explicit
     # temporary package roots remain available to isolated tests.
     package_root = Path(package_root).resolve()
@@ -77,7 +77,7 @@ def build_prepared_launch_package(*, head, branch, attempt_id, episode_id="m6a_p
     )[:32]
     root = attempt_root(provisional, attempt_id)
     validate_prospective_root(root, launch_id=provisional, attempt_id=attempt_id)
-    runtime = build_one_identity_runtime_config(MANIFEST_PATH, LOCK_PATH, output_root=root, episode_id=episode_id)
+    runtime = build_one_identity_runtime_config(manifest_path, lock_path, output_root=root, episode_id=episode_id)
     paths = attempt_path_plan(provisional, attempt_id, runtime["episode_id"], runtime["scene"], runtime["seed"])
     host_only = {
         "consumption_record",
@@ -149,6 +149,7 @@ def build_prepared_launch_package(*, head, branch, attempt_id, episode_id="m6a_p
         "expected": {"episodes": 1, "snapshots": 4, "methods": 2, "budgets": 4, "future_cases": 32},
         "manifest_sha256": runtime["v2_manifest_sha256"],
         "lock_sha256": runtime["v2_lock_sha256"],
+        "manifest_authority_version": runtime["manifest_authority_version"],
         "execution_authorized": False,
         "webots_started": False,
     }
@@ -181,6 +182,7 @@ def build_prepared_launch_package(*, head, branch, attempt_id, episode_id="m6a_p
         "argv_sha256": digest(spec["argv"]),
         "manifest_sha256": runtime["v2_manifest_sha256"],
         "lock_sha256": runtime["v2_lock_sha256"],
+        "manifest_authority_version": runtime["manifest_authority_version"],
         "planned_output_root": str(root),
         "authorization_generated": False,
         "launch_performed": False,
@@ -290,6 +292,18 @@ def load_prepared_launch_package_for_audit(path):
         source = Path(spec[field]["path"])
         if not source.is_file() or _sha256(source) != spec[field]["sha256"]:
             raise ValueError("package input hash")
+    runtime = json.loads(Path(spec["runtime_config"]["path"]).read_text(encoding="utf-8"))
+    load_v2_runtime_config(runtime)
+    authority = runtime.get("manifest_authority_version", "v2")
+    if (
+        package.get("manifest_authority_version", "v2") != authority
+        or spec.get("manifest_authority_version", "v2") != authority
+        or package.get("manifest_sha256") != runtime["v2_manifest_sha256"]
+        or spec.get("manifest_sha256") != runtime["v2_manifest_sha256"]
+        or package.get("lock_sha256") != runtime["v2_lock_sha256"]
+        or spec.get("lock_sha256") != runtime["v2_lock_sha256"]
+    ):
+        raise ValueError("package manifest authority binding")
     executable = Path(spec.get("webots", {}).get("path", ""))
     if not executable.is_file() or _sha256(executable) != spec["webots"].get("executable_sha256"):
         raise ValueError("package executable hash")

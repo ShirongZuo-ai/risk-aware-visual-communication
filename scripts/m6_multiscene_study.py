@@ -12,15 +12,16 @@ import numpy as np
 
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
-from scripts.m6a_v2_episode_source import LOCK_PATH, MANIFEST_PATH, load_and_validate_m6a_v2_manifest
+from scripts.m6a_v3_episode_source import LOCK_PATH, MANIFEST_PATH, load_and_validate_m6a_v3_manifest
+from scripts.m6a_v2_episode_source import LOCK_PATH as V2_LOCK_PATH, MANIFEST_PATH as V2_MANIFEST_PATH, load_and_validate_m6a_v2_manifest
 from scripts.m6a_v2_pilot_completion import load_codec_aggregate, load_codec_aggregate_validation, load_joint_validation_report
 from scripts.m6a_v2_prepared_launch import build_prepared_launch_package, current_repository_head, load_prepared_launch_package_for_audit
 from scripts.m6a_v2_research_pilot import run_research_pilot
 from scripts.run_m6a_one_identity import load_v2_runtime_config
 
 
-PREREGISTRATION_PATH = PROJECT_ROOT / "docs/results/m6_multiscene_preregistration.json"
-RESULT_ROOT = PROJECT_ROOT / "results/m6_multiscene_formal"
+PREREGISTRATION_PATH = PROJECT_ROOT / "docs/results/m6_multiscene_v3_preregistration.json"
+RESULT_ROOT = PROJECT_ROOT / "results/m6_multiscene_formal_v3"
 SCENES = tuple(f"S{i}" for i in range(1, 9))
 BUDGETS = ("severe", "low", "medium", "high")
 METHODS = ("state_only_risk_roi", "command_conditioned_risk_roi")
@@ -34,23 +35,73 @@ def _git(*args) -> bytes:
     return subprocess.run(["git", *args], cwd=PROJECT_ROOT, check=True, capture_output=True).stdout
 
 
+def preregistration_payload() -> dict:
+    manifest = load_and_validate_m6a_v3_manifest(MANIFEST_PATH, LOCK_PATH)
+    v2 = load_and_validate_m6a_v2_manifest(V2_MANIFEST_PATH, V2_LOCK_PATH)
+    records = manifest["records"]
+    new_ids = {item["identity"]["episode_id"] for item in records}
+    new_seeds = {item["identity"]["seed"] for item in records}
+    old_ids = {item["identity"]["episode_id"] for item in v2["records"]}
+    old_seeds = {item["identity"]["seed"] for item in v2["records"]}
+    if new_ids & old_ids or new_seeds & old_seeds:
+        raise ValueError("v3 study overlaps frozen v2 identities")
+    matrix = [{
+        "attempt_id": f"m6v3f-{item['identity']['scenario_id'].lower()}-{item['identity']['seed']}",
+        "episode_id": item["identity"]["episode_id"],
+        "scene": item["identity"]["scenario_id"],
+        "seed": item["identity"]["seed"],
+        "source_record_sha256": item["source_record_sha256"],
+    } for item in records]
+    return {
+        "schema_version": "m6-multiscene-v3-preregistration-v1",
+        "status": "frozen-before-data-generation",
+        "manifest_sha256": hashlib.sha256(Path(MANIFEST_PATH).read_bytes()).hexdigest(),
+        "lock_sha256": hashlib.sha256(Path(LOCK_PATH).read_bytes()).hexdigest(),
+        "parent_v2_manifest_sha256": hashlib.sha256(Path(V2_MANIFEST_PATH).read_bytes()).hexdigest(),
+        "parent_v2_lock_sha256": hashlib.sha256(Path(V2_LOCK_PATH).read_bytes()).hexdigest(),
+        "data_separation": {
+            "registered_identity_overlap_with_v2": 0,
+            "registered_seed_overlap_with_v2": 0,
+            "v2_identity_count": len(old_ids),
+            "v2_seed_count": len(old_seeds),
+            "registered_identity_count": len(new_ids),
+            "registered_seed_count": len(new_seeds),
+            "prior_pilot_smoke_and_failed_formal_are_v2_bound": True,
+        },
+        "analysis": {
+            "bootstrap_replicates": 10000, "bootstrap_seed": 20260724, "ci": 0.95,
+            "primary_budgets": ["severe", "low"],
+            "primary_contrast": "command_conditioned_risk_roi-minus-state_only_risk_roi",
+            "primary_metric": "trajectory_critical_obstacle_boundary_recall",
+            "support_gate": "primary_ci_lower_bound_gt_zero",
+            "statistical_unit": "episode", "stratification": "scene",
+        },
+        "exclusions": ["invalid_evidence", "no_eligible_critical_obstacles", "missing_paired_result"],
+        "matrix": matrix,
+    }
+
+
 def load_preregistration(path=PREREGISTRATION_PATH) -> dict:
     path = Path(path)
     raw = path.read_bytes()
     value = json.loads(raw)
     if raw != _canonical(value):
         raise ValueError("noncanonical M6 pre-registration")
-    manifest = load_and_validate_m6a_v2_manifest(MANIFEST_PATH, LOCK_PATH)
+    manifest = load_and_validate_m6a_v3_manifest(MANIFEST_PATH, LOCK_PATH)
+    if value != preregistration_payload():
+        raise ValueError("nonreproducible M6 v3 pre-registration")
     records = {item["identity"]["episode_id"]: item for item in manifest["records"] if item["identity"]["split"] == "formal"}
     matrix = value.get("matrix")
-    if value.get("schema_version") != "m6-multiscene-preregistration-v1" or not isinstance(matrix, list) or len(matrix) != 32:
+    if value.get("schema_version") != "m6-multiscene-v3-preregistration-v1" or not isinstance(matrix, list) or len(matrix) != 32:
         raise ValueError("invalid M6 study matrix")
+    if value.get("manifest_sha256") != hashlib.sha256(Path(MANIFEST_PATH).read_bytes()).hexdigest() or value.get("lock_sha256") != hashlib.sha256(Path(LOCK_PATH).read_bytes()).hexdigest():
+        raise ValueError("M6 v3 pre-registration authority binding")
     if len({item["episode_id"] for item in matrix}) != 32 or len({item["attempt_id"] for item in matrix}) != 32:
         raise ValueError("duplicate M6 study identity")
     for item in matrix:
         record = records.get(item.get("episode_id"))
         if record is None or item != {
-            "attempt_id": f"m6f-{record['identity']['scenario_id'].lower()}-{record['identity']['seed']}",
+            "attempt_id": f"m6v3f-{record['identity']['scenario_id'].lower()}-{record['identity']['seed']}",
             "episode_id": record["identity"]["episode_id"], "scene": record["identity"]["scenario_id"],
             "seed": record["identity"]["seed"], "source_record_sha256": record["source_record_sha256"],
         }:
@@ -83,9 +134,9 @@ def prepare_registered_packages(*, preregistration_path=PREREGISTRATION_PATH, pa
     packages = []
     for row in prereg["matrix"]:
         kwargs = {} if package_root is None else {"package_root": Path(package_root)}
-        path, package = build_prepared_launch_package(head=head, branch="main", attempt_id=row["attempt_id"], episode_id=row["episode_id"], **kwargs)
+        path, package = build_prepared_launch_package(head=head, branch="main", attempt_id=row["attempt_id"], episode_id=row["episode_id"], manifest_path=MANIFEST_PATH, lock_path=LOCK_PATH, **kwargs)
         loaded = load_prepared_launch_package_for_audit(path)
-        if loaded != package or package["identity_id"] != row["episode_id"] or Path(package["prospective_attempt_root"]).exists():
+        if loaded != package or package["identity_id"] != row["episode_id"] or package.get("manifest_authority_version") != "v3" or Path(package["prospective_attempt_root"]).exists():
             raise ValueError("prepared formal package validation failed")
         packages.append({"attempt_id": row["attempt_id"], "episode_id": row["episode_id"], "package_path": str(Path(path).resolve()), "package_sha256": package["package_sha256"]})
     return packages

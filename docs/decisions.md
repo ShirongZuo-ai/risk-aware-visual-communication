@@ -368,3 +368,6 @@
 # 2026-07-25 - Freeze TCOBR as the M6 primary outcome
 
 Use the method-independent union of the frozen planned and state corridors to define critical obstacles, frozen M4 projection and deterministic boundary-edge matching to measure recall, and episode-level scene-stratified inference. This resolves the earlier ambiguous trajectory-critical recall placeholder without changing scenes, identities, methods, budgets, byte accounting, manifest, or lock.
+# M6 v3 additive authority (2026-07-25)
+
+The exhausted v2 authority remains immutable. The final formal study uses a separate v3 manifest/lock with exactly 32 new S1-S8 records at seeds 630100-630803. Production routing selects either strict v2 or strict v3 validation from the declared manifest schema; it does not merge manifests or introduce a second runner. TCOBR, methods, budgets, byte accounting, exclusions, bootstrap and support gate are unchanged.
