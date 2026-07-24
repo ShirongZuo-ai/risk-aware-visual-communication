@@ -29,7 +29,7 @@ class RuntimeManifestTests(unittest.TestCase):
         config = build_one_identity_runtime_config(output_root=root / "episode_output")
         source = next(item for item in load_and_validate_m6a_v2_manifest()["records"] if item["source_record_sha256"] == config["source_record_sha256"])
         evidence = SceneInitializationEvidence(config["source_record_sha256"], config["seed"], source["scene_config_sha256"], source["scene_config_sha256"], "obstacle", "pose", True)
-        now = [0.0]; facade = _Facade([item["timestamp_s"] for item in config["snapshots"]]); original = facade.step
+        now = [0.0]; facade = _Facade([item["timestamp_s"] for item in config["snapshots"]] + [config["schedule"]["segments"][-1]["end_s"]]); original = facade.step
         def step(): now[0] = original(); return now[0]
         facade.step = step
         legacy = M6ARuntimeConfig(config["v2_manifest_sha256"], config["scene"], config["episode_id"], config["seed"], tuple((item["snapshot_id"], item["timestamp_s"]) for item in config["snapshots"]), root, M6AProjectionConfig())

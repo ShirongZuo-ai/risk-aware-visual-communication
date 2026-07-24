@@ -117,6 +117,9 @@ class ResearchPilotTests(unittest.TestCase):
             self.assertEqual(result["state"], "finalized")
             self.assertTrue(result["runner_invoked"])
             self.assertEqual(result["process"]["return_code"], 0)
+            self.assertFalse(result["process"]["timed_out"])
+            self.assertEqual(result["process"]["termination_state"], "exited")
+            self.assertEqual(result["terminal"]["state"], "completed")
             self.assertIn("research-child-ok", Path(result["process"]["stdout"]["path"]).read_text())
             paths = attempt_path_plan(
                 package["launch_id"], package["attempt_id"], package["identity_id"], package["scene_id"], package["seed"]

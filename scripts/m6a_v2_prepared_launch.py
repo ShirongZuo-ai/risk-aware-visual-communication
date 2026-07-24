@@ -97,13 +97,17 @@ def build_prepared_launch_package(*, head, branch, attempt_id, package_root=CONT
     )
     base.mkdir(parents=True)
     config = materialize_runtime_config(runtime, base / "runtime_config.json")
+    world = base / "worlds" / "prepared.wbt"
+    controller = base / "controllers" / "m6a_trusted_runtime" / "m6a_trusted_runtime.py"
+    world.parent.mkdir()
+    controller.parent.mkdir(parents=True)
     with tempfile.TemporaryDirectory(prefix="m6a-package-world-") as directory:
         temporary = materialize_m6a_temporary_world(runtime, Path(directory) / "prepared.wbt")
-        world = base / "prepared.wbt"
         shutil.copyfile(temporary.temporary_world_path, world)
+    shutil.copyfile(CONTROLLER_PATH, controller)
     executable = resolve_webots_executable()
     spec = {
-        "schema_version": "m6a-v2-production-launch-spec-v3",
+        "schema_version": "m6a-v2-production-launch-spec-v4",
         "head": head,
         "branch": branch,
         "launch_id": provisional,
@@ -121,10 +125,25 @@ def build_prepared_launch_package(*, head, branch, attempt_id, package_root=CONT
         "working_directory": str(PROJECT_ROOT.resolve()),
         "runtime_config": {"path": str(config.resolve()), "sha256": _sha256(config)},
         "temporary_world": {"path": str(world.resolve()), "sha256": _sha256(world)},
-        "controller": {"path": str(CONTROLLER_PATH.resolve()), "sha256": _sha256(CONTROLLER_PATH)},
+        "controller": {
+            "path": str(controller.resolve()),
+            "sha256": _sha256(controller),
+            "source_path": str(CONTROLLER_PATH.resolve()),
+            "source_sha256": _sha256(CONTROLLER_PATH),
+        },
         "webots": executable.__dict__,
-        "argv": [executable.path, "--batch", "--mode=fast", str(world.resolve())],
-        "environment": {"M6A_RUNTIME_CONFIG": str(config.resolve())},
+        "argv": [executable.path, "--batch", "--mode=fast", "--stdout", "--stderr", str(world.resolve())],
+        "environment": {
+            "M6A_RUNTIME_CONFIG": str(config.resolve()),
+            "PYTHONPATH": str(PROJECT_ROOT.resolve()),
+        },
+        "summary_path": paths["artifacts"]["runtime_summary"],
+        "status_path": paths["artifacts"]["runtime_status"],
+        "diagnostic_path": paths["artifacts"]["runtime_diagnostic"],
+        "runtime_manifest_path": paths["artifacts"]["runtime_manifest"],
+        "aggregate_validation_path": paths["artifacts"]["aggregate_validation"],
+        "joint_report_path": paths["artifacts"]["joint_report"],
+        "owner_marker": paths["artifacts"]["ownership_marker"],
         "timeout_s": 75,
         "graceful_termination_s": 10,
         "expected": {"episodes": 1, "snapshots": 4, "methods": 2, "budgets": 4, "future_cases": 32},
@@ -185,7 +204,10 @@ def load_prepared_launch_package_for_audit(path):
     spec = package.get("launch_spec", {})
     if (
         package.get("schema_version") != "m6a-v2-prepared-launch-package-v2"
-        or spec.get("schema_version") != "m6a-v2-production-launch-spec-v3"
+        or spec.get("schema_version") not in {
+            "m6a-v2-production-launch-spec-v3",
+            "m6a-v2-production-launch-spec-v4",
+        }
         or spec.get("launch_spec_sha256") != digest(
             {key: value for key, value in spec.items() if key != "launch_spec_sha256"}
         )
@@ -216,6 +238,54 @@ def load_prepared_launch_package_for_audit(path):
         or spec.get("head") != package.get("head")
     ):
         raise ValueError("package identity mismatch")
+    artifacts = package.get("path_plan", {}).get("artifacts", {})
+    output_fields = {
+        "summary_path": "runtime_summary",
+        "status_path": "runtime_status",
+        "diagnostic_path": "runtime_diagnostic",
+        "runtime_manifest_path": "runtime_manifest",
+        "aggregate_validation_path": "aggregate_validation",
+        "joint_report_path": "joint_report",
+        "owner_marker": "ownership_marker",
+    }
+    if spec.get("schema_version") == "m6a-v2-production-launch-spec-v4":
+        expected_project = path.parent
+        expected_world = expected_project / "worlds" / "prepared.wbt"
+        expected_controller = expected_project / "controllers" / "m6a_trusted_runtime" / "m6a_trusted_runtime.py"
+        expected_environment = {
+            "M6A_RUNTIME_CONFIG": spec.get("runtime_config", {}).get("path"),
+            "PYTHONPATH": str(PROJECT_ROOT.resolve()),
+        }
+        expected_argv = [
+            spec.get("webots", {}).get("path"),
+            "--batch",
+            "--mode=fast",
+            "--stdout",
+            "--stderr",
+            str(expected_world.resolve()),
+        ]
+        fixture = (
+            spec.get("webots", {}).get("source") == "temporary-harmless-child"
+            and Path(tempfile.gettempdir()).resolve() in path.parents
+        )
+        actual_argv = spec.get("argv")
+        argv_valid = actual_argv == expected_argv or (
+            fixture
+            and isinstance(actual_argv, list)
+            and len(actual_argv) == 3
+            and actual_argv[0] == spec.get("webots", {}).get("path")
+            and actual_argv[1] == "-c"
+        )
+        if (
+            Path(spec.get("temporary_world", {}).get("path", "")).resolve() != expected_world.resolve()
+            or Path(spec.get("controller", {}).get("path", "")).resolve() != expected_controller.resolve()
+            or spec.get("controller", {}).get("source_path") != str(CONTROLLER_PATH.resolve())
+            or spec.get("controller", {}).get("source_sha256") != _sha256(CONTROLLER_PATH)
+            or spec.get("environment") != expected_environment
+            or not argv_valid
+            or any(spec.get(field) != artifacts.get(role) for field, role in output_fields.items())
+        ):
+            raise ValueError("prepared Webots project or runtime output binding")
     for field in ("runtime_config", "temporary_world", "controller"):
         source = Path(spec[field]["path"])
         if not source.is_file() or _sha256(source) != spec[field]["sha256"]:

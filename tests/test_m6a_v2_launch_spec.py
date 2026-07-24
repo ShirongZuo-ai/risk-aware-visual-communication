@@ -24,7 +24,7 @@ class T(unittest.TestCase):
   with patch('scripts.m6a_v2_launch_spec.resolve_webots_executable',return_value=evidence):spec=build_one_identity_launch_spec(MANIFEST_PATH,LOCK_PATH,preflight_root=root,webots_executable=exe)
   return d,spec
  def test_launch_spec_is_preflight_only_and_owned(self):
-  d,spec=self.spec();self.addCleanup(d.cleanup);self.assertFalse(spec['execution_authorized']);self.assertFalse(spec['webots_started']);self.assertIsInstance(spec['argv'],list);self.assertEqual(spec['argv'][0],spec['webots']['path']);self.assertEqual(spec['environment_keys'],['M6A_RUNTIME_CONFIG']);self.assertEqual(spec['expected'],{'episodes':1,'snapshots':4,'methods':2,'budgets':4,'future_cases':32});self.assertTrue(all(str(path).startswith(spec['owned_root']) for path in owned_cleanup_plan(spec)))
+  d,spec=self.spec();self.addCleanup(d.cleanup);self.assertFalse(spec['execution_authorized']);self.assertFalse(spec['webots_started']);self.assertIsInstance(spec['argv'],list);self.assertEqual(spec['argv'][0],spec['webots']['path']);self.assertEqual(spec['environment_keys'],['M6A_RUNTIME_CONFIG','PYTHONPATH']);self.assertEqual(spec['expected'],{'episodes':1,'snapshots':4,'methods':2,'budgets':4,'future_cases':32});self.assertTrue(all(str(path).startswith(spec['owned_root']) for path in owned_cleanup_plan(spec)))
  def test_synthetic_success_requires_summary_and_rejects_host_code_alone(self):
   d,spec=self.spec();self.addCleanup(d.cleanup)
   with self.assertRaises(ValueError):validate_one_identity_launch_result(spec,{'started':True,'returncode':0,'timed_out':False,'interrupted':False})

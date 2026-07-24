@@ -1,6 +1,6 @@
 """Controlled host orchestration.  Real execution is rejected unless separately authorized."""
 from __future__ import annotations
-import hashlib,json,subprocess,sys
+import hashlib,json,subprocess,sys,tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from scripts.m6a_trusted_artifacts import digest
@@ -38,14 +38,18 @@ class ProductionOwnedProcessRunner:
   from scripts.m6a_v2_prepared_launch import load_prepared_launch_package_for_audit
   package=load_prepared_launch_package_for_audit(self.package_path);spec=package['launch_spec']
   if package.get('head')!=self.repository_head or spec.get('head')!=self.repository_head:raise ValueError('launch package HEAD mismatch')
-  if spec.get('schema_version')!='m6a-v2-production-launch-spec-v3' or spec.get('launch_spec_sha256')!=digest({k:v for k,v in spec.items() if k!='launch_spec_sha256'}):raise ValueError('invalid production launch specification')
+  if spec.get('schema_version')!='m6a-v2-production-launch-spec-v4' or spec.get('launch_spec_sha256')!=digest({k:v for k,v in spec.items() if k!='launch_spec_sha256'}):raise ValueError('invalid production launch specification')
   identity=spec.get('identity',{})
   if any((package.get('launch_id')!=owned_attempt_context['launch_id'],package.get('attempt_id')!=owned_attempt_context['attempt_id'],package.get('identity_id')!=owned_attempt_context['identity_id'],identity.get('episode_id')!=owned_attempt_context['identity_id'])):raise ValueError('launch package/owned context mismatch')
   if Path(spec.get('owned_root','')).resolve()!=Path(root).resolve() or spec.get('path_plan',{}).get('artifacts')!=path_plan:raise ValueError('launch path plan mismatch')
   executable=Path(spec.get('webots',{}).get('path',''))
   argv=spec.get('argv');environment=spec.get('environment');working=Path(spec.get('working_directory',''))
   if not executable.is_absolute() or not executable.is_file() or self._sha(executable)!=spec['webots'].get('executable_sha256'):raise ValueError('launch executable binding')
-  if not isinstance(argv,list) or not argv or Path(argv[0]).resolve()!=executable.resolve() or set(environment or {})!={'M6A_RUNTIME_CONFIG'}:raise ValueError('unsafe launch argv/environment')
+  expected_argv=[str(executable.resolve()),'--batch','--mode=fast','--stdout','--stderr',spec['temporary_world']['path']]
+  fixture=(spec['webots'].get('source')=='temporary-harmless-child' and Path(tempfile.gettempdir()).resolve() in self.package_path.parents)
+  safe_argv=(fixture and isinstance(argv,list) and len(argv)==3 and Path(argv[0]).resolve()==executable.resolve() and argv[1]=='-c') or argv==expected_argv
+  safe_environment=(set(environment or {})=={'M6A_RUNTIME_CONFIG','PYTHONPATH'} and (fixture or Path(environment['PYTHONPATH']).resolve()==working.resolve()))
+  if not safe_argv or not safe_environment:raise ValueError('unsafe launch argv/environment')
   if not working.is_absolute() or not working.is_dir():raise ValueError('unsafe launch working directory')
   if not isinstance(spec.get('timeout_s'),(int,float)) or spec['timeout_s']<=0 or not isinstance(spec.get('graceful_termination_s'),(int,float)) or spec['graceful_termination_s']<=0:raise ValueError('invalid process timeout')
   for name in ('runtime_config','temporary_world','controller'):
@@ -96,7 +100,7 @@ def execute_pilot_launch(launch_spec,*,process_backend=None,authorization=None):
   if process_backend is None:raise PermissionError('real process execution is not authorized')
   if isinstance(process_backend,OwnedPopenBackend):validate_launch_authorization(launch_spec,authorization)
   env=launch_spec['environment']
-  if set(env)!={'M6A_RUNTIME_CONFIG'} or not isinstance(launch_spec['argv'],list):raise ValueError('unsafe process inputs')
+  if set(env)!={'M6A_RUNTIME_CONFIG','PYTHONPATH'} or not isinstance(launch_spec['argv'],list):raise ValueError('unsafe process inputs')
   proc=process_backend.start(launch_spec['argv'],env,launch_spec['working_directory']);result['started']=True;result['pid']=getattr(proc,'pid',None)
   try:out,err=proc.communicate(timeout=launch_spec['timeout_s'])
   except TimeoutError:

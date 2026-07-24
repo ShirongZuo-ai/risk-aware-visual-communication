@@ -13,7 +13,7 @@ from pathlib import Path
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
 from scripts.m6a_v2_scene_wiring import BASE_WORLD_SHA256, SceneInitializationEvidence, initialize_v2_scene_before_motion
-from scripts.run_m6a_one_identity import load_v2_runtime_config
+from scripts.run_m6a_one_identity import load_v2_runtime_config, validate_runtime_attempt_paths
 from scripts.m6a_v2_runtime_evidence import persist_runtime_diagnostic, load_runtime_diagnostic, persist_runtime_manifest, load_runtime_manifest
 
 
@@ -65,8 +65,20 @@ def _canonical(value: dict) -> bytes:
     return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n").encode("utf-8")
 
 
-def _safe_path(path: Path) -> None:
+def _safe_path(path: Path, *, authoritative_root: Path | None = None) -> None:
     resolved = path.resolve()
+    if authoritative_root is not None:
+        root = Path(authoritative_root).resolve()
+        if (
+            not Path(path).is_absolute()
+            or resolved.parent != root
+            or resolved.exists()
+            or resolved.is_symlink()
+            or not root.is_dir()
+            or root.is_symlink()
+        ):
+            raise ValueError("runtime evidence path is not a new file in the authoritative root")
+        return
     lowered = {part.lower() for part in resolved.parts}
     if resolved.exists() or PROJECT_ROOT in resolved.parents or {"m5", "v1", "pilot", "formal", "calibration", "data"} & lowered:
         raise ValueError("runtime summary path is not a new safe temporary path")
@@ -133,9 +145,9 @@ def validate_episode_runtime_summary(summary: dict, expected_runtime_config: dic
     return summary
 
 
-def persist_episode_runtime_summary(summary: dict, summary_path: str | Path, status_path: str | Path, expected_runtime_config: dict) -> None:
+def persist_episode_runtime_summary(summary: dict, summary_path: str | Path, status_path: str | Path, expected_runtime_config: dict, *, authoritative_root: Path | None = None) -> None:
     summary_path, status_path = Path(summary_path), Path(status_path)
-    _safe_path(summary_path); _safe_path(status_path)
+    _safe_path(summary_path, authoritative_root=authoritative_root); _safe_path(status_path, authoritative_root=authoritative_root)
     if summary_path.parent != status_path.parent:
         raise ValueError("summary and status must share one safe directory")
     validate_episode_runtime_summary(summary, expected_runtime_config)
@@ -158,9 +170,9 @@ def load_and_validate_episode_runtime_summary(summary_path: str | Path, expected
     return validate_episode_runtime_summary(summary, expected_runtime_config, require_paths=require_paths)
 
 
-def write_runtime_failure_status(status_path: str | Path, lifecycle: Lifecycle, error: Exception) -> None:
+def write_runtime_failure_status(status_path: str | Path, lifecycle: Lifecycle, error: Exception, *, authoritative_root: Path | None = None) -> None:
     path = Path(status_path)
-    _safe_path(path)
+    _safe_path(path, authoritative_root=authoritative_root)
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"schema_version": FAILURE_SCHEMA, "success": False, "lifecycle_final_state": lifecycle.state.value if lifecycle.state else LifecycleState.FAILED.value, "error_type": type(error).__name__}
     path.write_bytes(_canonical(payload))
@@ -168,13 +180,26 @@ def write_runtime_failure_status(status_path: str | Path, lifecycle: Lifecycle, 
 
 def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_factory, devices_initializer, episode_runner, summary_path: str | Path, status_path: str | Path, diagnostic_path: str | Path | None = None, runtime_manifest_path: str | Path | None = None, manifest_identity: dict | None = None) -> tuple[int, Lifecycle]:
     lifecycle = Lifecycle()
+    authoritative_root = None
     try:
-        runtime_config = json.loads(Path(runtime_config_path).read_text(encoding="utf-8")); load_v2_runtime_config(runtime_config); lifecycle.transition(LifecycleState.CONFIG_VALIDATED)
+        runtime_config = json.loads(Path(runtime_config_path).read_text(encoding="utf-8")); load_v2_runtime_config(runtime_config)
+        authoritative_root = validate_runtime_attempt_paths(runtime_config)
+        if authoritative_root is not None:
+            paths = runtime_config["attempt_paths"]
+            expected = {
+                "runtime_summary": str(Path(summary_path).resolve()),
+                "runtime_status": str(Path(status_path).resolve()),
+                "runtime_diagnostic": str(Path(diagnostic_path).resolve()) if diagnostic_path is not None else None,
+                "runtime_manifest": str(Path(runtime_manifest_path).resolve()) if runtime_manifest_path is not None else None,
+            }
+            if any(paths[key] != value for key, value in expected.items()):
+                raise ValueError("controller output path does not match authoritative runtime configuration")
+        lifecycle.transition(LifecycleState.CONFIG_VALIDATED)
         supervisor = supervisor_factory(); scene = initialize_v2_scene_before_motion(runtime_config, supervisor); lifecycle.transition(LifecycleState.SCENE_INITIALIZED)
         if runtime_config["robot_def"] != "ROBOT": raise ValueError("unexpected robot DEF")
         devices_initializer(supervisor, runtime_config); lifecycle.transition(LifecycleState.DEVICES_READY)
         lifecycle.transition(LifecycleState.EPISODE_RUNNING); snapshots = episode_runner(supervisor, runtime_config); lifecycle.transition(LifecycleState.EPISODE_COMPLETED)
-        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"}); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config)
+        summary = build_episode_runtime_summary(runtime_config, scene, snapshots, lifecycle); summary["lifecycle_final_state"] = LifecycleState.SUMMARY_COMMITTED.value; summary["summary_sha256"] = digest({key: value for key, value in summary.items() if key != "summary_sha256"}); persist_episode_runtime_summary(summary, summary_path, status_path, runtime_config, authoritative_root=authoritative_root)
         if (diagnostic_path is None) != (runtime_manifest_path is None): raise ValueError("runtime diagnostic and manifest must be paired")
         if runtime_manifest_path is not None:
             identity = manifest_identity or {"launch_id":"runtime-local","attempt_id":"runtime-local","identity_id":runtime_config["episode_id"],"scene_id":runtime_config["scene"],"seed":runtime_config["seed"]}
@@ -187,6 +212,6 @@ def run_v2_controller_lifecycle(runtime_config_path: str | Path, *, supervisor_f
         return 0, lifecycle
     except Exception as error:
         lifecycle.fail()
-        try: write_runtime_failure_status(status_path, lifecycle, error)
+        try: write_runtime_failure_status(status_path, lifecycle, error, authoritative_root=authoritative_root)
         except Exception: pass
         return 1, lifecycle

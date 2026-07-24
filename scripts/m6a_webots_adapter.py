@@ -29,7 +29,7 @@ class EpisodeRuntimeSummary:
 class M6AWebotsRuntimeAdapter:
  def __init__(self,config,facade,*,state_reader,frame_reader,schedule):
   config.validate();self.config=config;self.facade=facade;self.state_reader=state_reader;self.frame_reader=frame_reader;self.schedule=schedule;self.done=[]
-  if schedule.available_time_s>config.snapshots[0][1]:raise ValueError('schedule unavailable at first snapshot')
+  if schedule.available_time_s>config.snapshots[0][1] or not schedule.segments or schedule.segments[-1].end_offset_s<config.snapshots[-1][1]:raise ValueError('schedule unavailable or incomplete')
   root=Path(config.output_root).resolve()
   if not root.is_dir() or any(part.lower().startswith('m5') for part in root.parts):raise ValueError('unsafe output root')
   self.root=root
@@ -59,13 +59,22 @@ class M6AWebotsRuntimeAdapter:
   self.done.append((snapshot_id,str(snapshot_dir),frame_hash,output,record))
  def run(self):
   pending=list(self.config.snapshots)
-  while pending:
-   simulation_time=self.facade.step()
-   if simulation_time is None:break
-   ident,target=pending[0]
-   if simulation_time>target+self.config.alignment_tolerance_s:raise ValueError('missing snapshot')
-   if simulation_time>=target:self._capture(ident,target,simulation_time);pending.pop(0)
+  try:
+   simulation_time=None
+   while pending:
+    simulation_time=self.facade.step()
+    if simulation_time is None:break
+    ident,target=pending[0]
+    if simulation_time>target+self.config.alignment_tolerance_s:raise ValueError('missing snapshot')
+    if simulation_time>=target:self._capture(ident,target,simulation_time);pending.pop(0)
+   episode_end=self.schedule.segments[-1].end_offset_s
+   while not pending and simulation_time is not None and simulation_time<episode_end:
+    simulation_time=self.facade.step()
+    if simulation_time is None:break
+  finally:
+   if hasattr(self.facade,'stop'):self.facade.stop()
   if pending:raise ValueError('episode finalized before all snapshots')
+  if simulation_time is None or simulation_time+self.config.alignment_tolerance_s<self.schedule.segments[-1].end_offset_s:raise ValueError('episode finalized before frozen schedule end')
   outputs=[x[3] for x in self.done]
   records=tuple(x[4] for x in self.done)
   return EpisodeRuntimeSummary({'manifest_hash':self.config.manifest_hash,'scene':self.config.scene,'episode_id':self.config.episode_id,'seed':self.config.seed},len(self.config.snapshots),len(self.done),tuple(x['serialized_snapshot_path'] for x in records),tuple(x['producer_frame_hash'] for x in records),tuple(sorted(outputs[0].methods)),0,0,0,0,0,True,records)
@@ -73,12 +82,15 @@ def run_m6a_webots_episode(runtime_config,robot_facade,*,state_reader,frame_read
  return M6AWebotsRuntimeAdapter(runtime_config,robot_facade,state_reader=state_reader,frame_reader=frame_reader,schedule=predefined_schedule).run()
 class WebotsRobotFacade:
  """Concrete Webots wrapper; constructed only after the controller's delayed import."""
- def __init__(self,robot,*,pose_reader):
-  self.robot=robot;self.pose_reader=pose_reader;self.timestep_ms=robot.getBasicTimeStep();self.camera=robot.getDevice('camera')
+ def __init__(self,robot,*,pose_reader,command_actuator=None):
+  self.robot=robot;self.pose_reader=pose_reader;self.command_actuator=command_actuator;self.timestep_ms=robot.getBasicTimeStep();self.camera=robot.getDevice('camera')
   if not self.timestep_ms or self.camera is None:raise ValueError('required Webots devices unavailable')
   self.camera.enable(int(self.timestep_ms))
  def step(self):
+  if self.command_actuator is not None:self.command_actuator.apply(self.robot.getTime())
   return None if self.robot.step(int(self.timestep_ms))==-1 else self.robot.getTime()
+ def stop(self):
+  if self.command_actuator is not None:self.command_actuator.stop()
  def state_sample(self):
   pose=self.pose_reader();return StateSample(CurrentState(**pose),self.robot.getTime())
  def frame_sample(self):
@@ -103,6 +115,25 @@ class WebotsCurrentStateReader:
   if not all(math.isfinite(x) for x in (left,right)):raise ValueError('invalid current wheel velocity')
   self.last_time=t;linear=self.WHEEL_RADIUS_M*(left+right)/2;angular=self.WHEEL_RADIUS_M*(right-left)/self.AXLE_LENGTH_M
   return StateSample(CurrentState(p[0],p[1],yaw,linear,angular),t)
+class WebotsScheduleActuator:
+ """Apply the frozen predefined schedule before each Webots step."""
+ def __init__(self,supervisor,schedule,*,left_motor,right_motor,required_until_s):
+  self.left=supervisor.getDevice(left_motor);self.right=supervisor.getDevice(right_motor);self.schedule=schedule
+  if self.left is None or self.right is None or not schedule.segments or schedule.available_time_s>0:raise ValueError('unavailable schedule actuator inputs')
+  previous=0.0
+  for segment in schedule.segments:
+   values=(segment.start_offset_s,segment.end_offset_s,segment.left_wheel_command_rad_s,segment.right_wheel_command_rad_s)
+   if not all(math.isfinite(x) for x in values) or abs(segment.start_offset_s-previous)>1e-9 or segment.end_offset_s<=segment.start_offset_s:raise ValueError('invalid schedule actuator coverage')
+   previous=segment.end_offset_s
+  if previous+1e-9<required_until_s:raise ValueError('schedule does not cover final snapshot')
+  self.left.setPosition(float('inf'));self.right.setPosition(float('inf'));self.left.setVelocity(0.0);self.right.setVelocity(0.0)
+ def apply(self,simulation_time_s):
+  if not math.isfinite(simulation_time_s):raise ValueError('invalid actuation time')
+  segment=next((item for item in self.schedule.segments if item.start_offset_s<=simulation_time_s<item.end_offset_s),None)
+  if segment is None:raise ValueError('no frozen command at simulation time')
+  self.left.setVelocity(segment.left_wheel_command_rad_s);self.right.setVelocity(segment.right_wheel_command_rad_s)
+ def stop(self):
+  self.left.setVelocity(0.0);self.right.setVelocity(0.0)
 def webots_bgra_to_rgb(raw,width=160,height=120):
  if not isinstance(raw,(bytes,bytearray)) or len(raw)!=width*height*4:raise ValueError('invalid Webots BGRA frame')
  out=bytearray(width*height*3)
@@ -125,23 +156,39 @@ def initialize_m6a_v2_scene_from_runtime_config(path,supervisor):
  from scripts.run_m6a_one_identity import load_v2_runtime_config
  data=json.loads(Path(path).read_text(encoding='utf-8'));load_v2_runtime_config(data)
  return initialize_v2_scene_before_motion(data,supervisor)
-def main_m6a_webots_controller():
- """Webots-only entry: host passes M6A_RUNTIME_CONFIG; no defaults or fallback."""
- config_path=os.environ.get('M6A_RUNTIME_CONFIG')
- if not config_path:return 2
+def _schedule_from_runtime(cfg):
+ from navigation.trajectory_prediction import CommandSegment
+ return ScheduleEvidence(cfg['schedule']['schedule_id'],cfg['schedule']['available_time_s'],tuple(CommandSegment(x['start_s'],x['end_s'],x['left_rad_s'],x['right_rad_s']) for x in cfg['schedule']['segments']))
+def run_configured_m6a_controller(config_path,*,supervisor_factory,lifecycle_runner=None):
+ """Run one bound controller lifecycle, then request Webots process exit."""
+ from scripts.m6a_v2_runtime_summary import run_v2_controller_lifecycle
+ supervisor=supervisor_factory();holder={'supervisor':supervisor};code=1
  try:
-  from controller import Supervisor
-  from navigation.trajectory_prediction import CommandSegment
-  from scripts.m6a_v2_runtime_summary import run_v2_controller_lifecycle
-  runtime=json.loads(Path(config_path).read_text(encoding='utf-8'));holder={}
+  runtime=json.loads(Path(config_path).read_text(encoding='utf-8'));schedule=_schedule_from_runtime(runtime)
+  lifecycle_runner=lifecycle_runner or run_v2_controller_lifecycle
+  def make_supervisor():return supervisor
   def devices(supervisor,cfg):
-   reader=WebotsCurrentStateReader(supervisor,robot_def='ROBOT',left_motor=cfg['left_motor'],right_motor=cfg['right_motor']);holder['reader']=reader;holder['facade']=WebotsRobotFacade(supervisor,pose_reader=lambda:asdict(reader().state))
+   reader=WebotsCurrentStateReader(supervisor,robot_def='ROBOT',left_motor=cfg['left_motor'],right_motor=cfg['right_motor'])
+   actuator=WebotsScheduleActuator(supervisor,schedule,left_motor=cfg['left_motor'],right_motor=cfg['right_motor'],required_until_s=cfg['snapshots'][-1]['timestamp_s'])
+   holder['reader']=reader;holder['facade']=WebotsRobotFacade(supervisor,pose_reader=lambda:asdict(reader().state),command_actuator=actuator)
   def episode(supervisor,cfg):
-   from scripts.m6a_dual_roi import ScheduleEvidence
-   schedule=ScheduleEvidence(cfg['schedule']['schedule_id'],cfg['schedule']['available_time_s'],tuple(CommandSegment(x['start_s'],x['end_s'],x['left_rad_s'],x['right_rad_s']) for x in cfg['schedule']['segments']))
    root=Path(cfg['output_root']);root.mkdir(parents=True,exist_ok=True)
    legacy=M6ARuntimeConfig(cfg['v2_manifest_sha256'],cfg['scene'],cfg['episode_id'],cfg['seed'],tuple((x['snapshot_id'],x['timestamp_s']) for x in cfg['snapshots']),root,M6AProjectionConfig(**cfg['projection_config']))
    result=run_m6a_webots_episode(legacy,holder['facade'],state_reader=holder['reader'],frame_reader=holder['facade'].frame_sample,predefined_schedule=schedule)
    return [{'snapshot_id':item['snapshot_id'],'timestamp_s':item['timestamp_s'],'path':record['serialized_snapshot_path'],'snapshot_record':record,'methods':list(result.method_set),'actual_future_usage':0,'combined_usage':0,'raw_mask_usage':0,'fallback':0,'replacement':0} for item,record in zip(cfg['snapshots'],result.snapshot_records)]
-  root=Path(runtime['output_root']);code,_=run_v2_controller_lifecycle(config_path,supervisor_factory=Supervisor,devices_initializer=devices,episode_runner=episode,summary_path=root/'episode_runtime_summary.json',status_path=root/'episode_runtime_status.json',diagnostic_path=root/'episode_runtime_diagnostic.json',runtime_manifest_path=root/'runtime_artifacts.json');return code
+  paths=runtime.get('attempt_paths')
+  if not isinstance(paths,dict):raise ValueError('authoritative runtime paths required')
+  code,_=lifecycle_runner(config_path,supervisor_factory=make_supervisor,devices_initializer=devices,episode_runner=episode,summary_path=paths['runtime_summary'],status_path=paths['runtime_status'],diagnostic_path=paths['runtime_diagnostic'],runtime_manifest_path=paths['runtime_manifest'])
+ except Exception:
+  import traceback;traceback.print_exc();code=1
+ finally:
+  supervisor.simulationQuit(code)
+ return code
+def main_m6a_webots_controller():
+ """Webots-only entry: host passes bound config/project paths; no fallback."""
+ config_path=os.environ.get('M6A_RUNTIME_CONFIG')
+ if not config_path:return 2
+ try:
+  from controller import Supervisor
+  return run_configured_m6a_controller(config_path,supervisor_factory=Supervisor)
  except Exception:return 1

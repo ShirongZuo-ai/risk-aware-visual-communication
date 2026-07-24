@@ -6,13 +6,14 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import tempfile
 
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
 from scripts.m6a_v2_scene_wiring import CONTROLLER_NAME, materialize_m6a_temporary_world
 from scripts.m6a_v2_runtime_summary import load_and_validate_episode_runtime_summary
-from scripts.run_m6a_one_identity import build_one_identity_runtime_config, materialize_runtime_config
+from scripts.run_m6a_one_identity import RUNTIME_PATH_NAMES, build_one_identity_runtime_config, materialize_runtime_config
 
 
 WEBOTS_VERSION = "R2025a"
@@ -96,21 +97,28 @@ def _owner(root: Path) -> dict:
 
 def build_one_identity_launch_spec(v2_manifest_path, v2_lock_path, *, preflight_root, webots_executable=None) -> dict:
     root = _safe_root(Path(preflight_root)); owner = _owner(root)
-    runtime = build_one_identity_runtime_config(v2_manifest_path, v2_lock_path, output_root=root / "episode_output")
+    output_root=root / "episode_output"
+    runtime = build_one_identity_runtime_config(v2_manifest_path, v2_lock_path, output_root=output_root)
+    runtime["attempt_paths"]={key:str((output_root/name).resolve()) for key,name in RUNTIME_PATH_NAMES.items()}
+    runtime["config_sha256"]=digest({key:value for key,value in runtime.items() if key!="config_sha256"})
     config_path = materialize_runtime_config(runtime, root / "runtime_config.json")
-    world = materialize_m6a_temporary_world(runtime, root / "m6a_temporary.wbt")
+    world = materialize_m6a_temporary_world(runtime, root / "worlds" / "m6a_temporary.wbt")
     executable = resolve_webots_executable(webots_executable)
     if not CONTROLLER_PATH.is_file():
         raise FileNotFoundError("trusted controller wrapper is missing")
+    controller_path=root / "controllers" / CONTROLLER_NAME / f"{CONTROLLER_NAME}.py"
+    controller_path.parent.mkdir(parents=True)
+    shutil.copyfile(CONTROLLER_PATH,controller_path)
+    environment={"M6A_RUNTIME_CONFIG":str(config_path.resolve()),"PYTHONPATH":str(PROJECT_ROOT.resolve())}
     spec = {
-        "schema_version": "m6a-v2-webots-launch-spec-v1", "protocol_version": runtime["protocol_version"],
+        "schema_version": "m6a-v2-webots-launch-spec-v2", "protocol_version": runtime["protocol_version"],
         "v2_manifest_sha256": runtime["v2_manifest_sha256"], "v2_lock_sha256": runtime["v2_lock_sha256"], "source_record_sha256": runtime["source_record_sha256"],
         "identity": {"split": runtime["split"], "scene": runtime["scene"], "episode_id": runtime["episode_id"], "seed": runtime["seed"]},
-        "webots": asdict(executable), "temporary_world": asdict(world), "controller": {"name": CONTROLLER_NAME, "path": str(CONTROLLER_PATH), "sha256": _sha256(CONTROLLER_PATH)},
+        "webots": asdict(executable), "temporary_world": asdict(world), "controller": {"name": CONTROLLER_NAME, "path": str(controller_path.resolve()), "sha256": _sha256(controller_path), "source_path":str(CONTROLLER_PATH.resolve()), "source_sha256":_sha256(CONTROLLER_PATH)},
         "runtime_config": {"path": str(config_path.resolve()), "sha256": _sha256(config_path)},
-        "environment": {"M6A_RUNTIME_CONFIG": str(config_path.resolve())}, "environment_keys": ["M6A_RUNTIME_CONFIG"], "environment_sha256": digest({"M6A_RUNTIME_CONFIG": str(config_path.resolve())}),
-        "working_directory": str(PROJECT_ROOT), "summary_path": str(root / "episode_runtime_summary.json"), "status_path": str(root / "episode_runtime_status.json"), "diagnostic_path": str(root / "episode_runtime_diagnostic.json"), "runtime_manifest_path": str(root / "runtime_artifacts.json"), "aggregate_validation_path": str(root / "codec_aggregate_validation.json"), "joint_report_path": str(root / "joint_validation.json"),
-        "argv": [executable.path, "--batch", "--mode=fast", world.temporary_world_path], "timeout_s": 75, "graceful_termination_s": 10, "forced_termination": "terminate-owned-process-only",
+        "environment": environment, "environment_keys": sorted(environment), "environment_sha256": digest(environment),
+        "working_directory": str(PROJECT_ROOT), "summary_path": runtime["attempt_paths"]["runtime_summary"], "status_path": runtime["attempt_paths"]["runtime_status"], "diagnostic_path": runtime["attempt_paths"]["runtime_diagnostic"], "runtime_manifest_path": runtime["attempt_paths"]["runtime_manifest"], "aggregate_validation_path": runtime["attempt_paths"]["aggregate_validation"], "joint_report_path": runtime["attempt_paths"]["joint_report"],
+        "argv": [executable.path, "--batch", "--mode=fast", "--stdout", "--stderr", world.temporary_world_path], "timeout_s": 75, "graceful_termination_s": 10, "forced_termination": "terminate-owned-process-only",
         "owned_root": str(root), "owner_marker": str(root / OWNER_NAME), "owner_sha256": owner["owner_sha256"], "expected": {"episodes": 1, "snapshots": 4, "methods": 2, "budgets": 4, "future_cases": 32}, "execution_authorized": False, "webots_started": False,
     }
     spec["launch_spec_sha256"] = digest(spec); validate_launch_spec(spec); return spec
@@ -119,12 +127,14 @@ def build_one_identity_launch_spec(v2_manifest_path, v2_lock_path, *, preflight_
 def validate_launch_spec(spec: dict) -> dict:
     if spec.get("launch_spec_sha256") != digest({key: value for key, value in spec.items() if key != "launch_spec_sha256"}):
         raise ValueError("launch spec digest mismatch")
-    if spec.get("protocol_version") != "m6a-byte-fair-v2" or spec.get("identity", {}).get("episode_id") != "m6a_pilot_s1_seed600100" or spec.get("identity", {}).get("split") != "pilot" or spec.get("controller", {}).get("name") != CONTROLLER_NAME or spec.get("expected") != {"episodes": 1, "snapshots": 4, "methods": 2, "budgets": 4, "future_cases": 32} or spec.get("execution_authorized") or spec.get("webots_started"):
+    if spec.get("schema_version") != "m6a-v2-webots-launch-spec-v2" or spec.get("protocol_version") != "m6a-byte-fair-v2" or spec.get("identity", {}).get("episode_id") != "m6a_pilot_s1_seed600100" or spec.get("identity", {}).get("split") != "pilot" or spec.get("controller", {}).get("name") != CONTROLLER_NAME or spec.get("expected") != {"episodes": 1, "snapshots": 4, "methods": 2, "budgets": 4, "future_cases": 32} or spec.get("execution_authorized") or spec.get("webots_started"):
         raise ValueError("unsafe launch specification")
     root = _safe_root(Path(spec["owned_root"])); marker = Path(spec["owner_marker"])
     if marker != root / OWNER_NAME or not marker.is_file() or json.loads(marker.read_text(encoding="utf-8")).get("owner_sha256") != spec["owner_sha256"]:
         raise ValueError("launch ownership marker mismatch")
-    if not isinstance(spec.get("argv"), list) or spec["argv"] != [spec["webots"]["path"], "--batch", "--mode=fast", spec["temporary_world"]["temporary_world_path"]] or spec.get("environment") != {"M6A_RUNTIME_CONFIG": spec["runtime_config"]["path"]}:
+    expected_environment={"M6A_RUNTIME_CONFIG":spec["runtime_config"]["path"],"PYTHONPATH":str(PROJECT_ROOT.resolve())}
+    expected_argv=[spec["webots"]["path"],"--batch","--mode=fast","--stdout","--stderr",spec["temporary_world"]["temporary_world_path"]]
+    if not isinstance(spec.get("argv"), list) or spec["argv"] != expected_argv or spec.get("environment") != expected_environment:
         raise ValueError("unsafe argv or environment")
     for key in ("runtime_config", "temporary_world", "controller"):
         path = Path(spec[key]["path"] if key != "temporary_world" else spec[key]["temporary_world_path"])
@@ -152,4 +162,4 @@ def validate_one_identity_launch_result(launch_spec: dict, process_result: dict)
 def owned_cleanup_plan(launch_spec: dict) -> tuple[Path, ...]:
     validate_launch_spec(launch_spec)
     root = Path(launch_spec["owned_root"]).resolve()
-    return tuple(path for path in (Path(launch_spec["runtime_config"]["path"]), Path(launch_spec["temporary_world"]["temporary_world_path"]), Path(launch_spec["summary_path"]), Path(launch_spec["status_path"]), Path(launch_spec["diagnostic_path"]), Path(launch_spec["runtime_manifest_path"]), Path(launch_spec["aggregate_validation_path"]), Path(launch_spec["joint_report_path"]), Path(launch_spec["owner_marker"])) if root in path.resolve().parents)
+    return tuple(path for path in (Path(launch_spec["runtime_config"]["path"]), Path(launch_spec["temporary_world"]["temporary_world_path"]), Path(launch_spec["controller"]["path"]), Path(launch_spec["summary_path"]), Path(launch_spec["status_path"]), Path(launch_spec["diagnostic_path"]), Path(launch_spec["runtime_manifest_path"]), Path(launch_spec["aggregate_validation_path"]), Path(launch_spec["joint_report_path"]), Path(launch_spec["owner_marker"])) if root in path.resolve().parents)

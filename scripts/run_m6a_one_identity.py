@@ -7,6 +7,28 @@ if str(PROJECT_ROOT) not in sys.path:sys.path.insert(0,str(PROJECT_ROOT))
 from scripts.m6a_common import PROJECT_ROOT
 from scripts.m6a_trusted_artifacts import digest
 from scripts.m6a_v2_episode_source import MANIFEST_PATH,LOCK_PATH,load_and_validate_m6a_v2_manifest
+
+RUNTIME_PATH_NAMES={
+ 'runtime_summary':'episode_runtime_summary.json',
+ 'runtime_status':'episode_runtime_status.json',
+ 'runtime_diagnostic':'episode_runtime_failure.json',
+ 'runtime_manifest':'runtime_artifacts.json',
+ 'snapshot_root':'snapshots',
+ 'codec_root':'codec',
+ 'codec_aggregate':'codec_aggregate.json',
+ 'aggregate_validation':'codec_aggregate_validation.json',
+ 'joint_report':'joint_validation.json',
+}
+
+def validate_runtime_attempt_paths(config):
+ root=Path(config.get('output_root',''))
+ paths=config.get('attempt_paths')
+ if paths is None:return None
+ if not root.is_absolute() or not isinstance(paths,dict) or set(paths)!=set(RUNTIME_PATH_NAMES):raise ValueError('invalid runtime attempt path schema')
+ root=root.resolve()
+ expected={key:str((root/name).resolve()) for key,name in RUNTIME_PATH_NAMES.items()}
+ if paths!=expected or len({value.lower() for value in paths.values()})!=len(paths):raise ValueError('runtime attempt path binding')
+ return root
 def first_pilot(manifest_path=MANIFEST_PATH,lock_path=LOCK_PATH):
  data=load_and_validate_m6a_v2_manifest(manifest_path,lock_path);return data,next(x for x in data['records'] if x['identity']['split']=='pilot')
 def plan(manifest_path=MANIFEST_PATH,lock_path=LOCK_PATH):
@@ -22,6 +44,7 @@ def load_v2_runtime_config(config):
  data,record=first_pilot(Path(config['v2_manifest_path']),Path(config['v2_lock_path']))
  expected_snapshots=[{'snapshot_id':str(i),'timestamp_s':float(t)} for i,t in enumerate(record['snapshot_aligned_times_s'])]
  if (config.get('v2_manifest_sha256')!=hashlib.sha256(Path(config['v2_manifest_path']).read_bytes()).hexdigest() or config.get('v2_lock_sha256')!=hashlib.sha256(Path(config['v2_lock_path']).read_bytes()).hexdigest() or config.get('source_record_sha256')!=record['source_record_sha256'] or config.get('identity') is not None or config.get('split')!='pilot' or config.get('scene')!=record['identity']['scenario_id'] or config.get('episode_id')!=record['identity']['episode_id'] or config.get('seed')!=record['identity']['seed'] or config.get('snapshots')!=expected_snapshots or config.get('schedule')!={'schedule_id':record['identity']['episode_id']+'-pre-run','available_time_s':0.0,'segments':record['schedule']} or config.get('schedule_sha256')!=digest(config['schedule']) or config.get('projection_config')!=record['projection_config'] or config.get('projection_config_sha256')!=record['projection_config_sha256'] or config.get('source_world')!=record['source_world_path'] or config.get('source_world_sha256')!=record['source_world_sha256'] or config.get('methods')!=record['methods'] or config.get('budgets')!=record['budgets'] or config.get('actual_future_prohibited') is not True or config.get('combined_mask_prohibited') is not True):raise ValueError('v2 source mismatch')
+ validate_runtime_attempt_paths(config)
  return config
 def materialize_runtime_config(config,target):
  target=Path(target);root=target.parent

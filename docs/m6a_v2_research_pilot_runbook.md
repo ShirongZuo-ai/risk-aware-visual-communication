@@ -1,7 +1,8 @@
 # M6-A v2 local research-pilot runbook
 
-Status: implemented and validated with harmless child processes only. The real
-Webots command below has **not** been run and requires separate launch approval.
+Status: attempt-002 launched once and is permanently `failed_process`; it must
+not be reused. The corrected lifecycle is validated without Webots and requires
+a new package plus separate launch approval.
 
 ## Purpose and boundary
 
@@ -16,18 +17,21 @@ production consumption record. It does not alter the production-audited path.
 A zero process exit is only a process success; the command reports final success
 only after the existing scientific completion and joint validators pass.
 
-## Separately approved real command
+## Separately approved disposable diagnostic smoke
 
-From the repository root:
+After preparing `m6a-research-lifecycle-smoke-001` from the exact executing HEAD,
+the one permitted diagnostic command from the repository root is:
 
 ```powershell
 .\.venv\Scripts\python.exe -m scripts.m6a_v2_research_pilot run `
-  --package results\m6a_v2_control\prepared\m6a-prod-pilot-002\package.json `
-  --confirm-attempt m6a-prod-pilot-002
+  --package results\m6a_v2_control\prepared\m6a-research-lifecycle-smoke-001\package.json `
+  --confirm-attempt m6a-research-lifecycle-smoke-001
 ```
 
-Do not run this command without explicit approval to create attempt-002 and
-start Webots. It creates the authoritative attempt root exactly once.
+Do not run this command without explicit approval to create that disposable
+attempt and start Webots exactly once. Never point it at attempt-001 or
+attempt-002. A new package must be produced by the authoritative package
+producer; the JSON must not be copied or edited.
 
 ## Fail-closed lifecycle
 

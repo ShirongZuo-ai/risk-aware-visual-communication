@@ -1,5 +1,13 @@
 # Decision log
 
+## 2026-07-24 - M6-A v2 Webots project and termination contract
+
+- **Decision:** Newly prepared packages are complete Webots projects with the world under `worlds/` and the trusted wrapper under `controllers/m6a_trusted_runtime/`. The package binds the copied/source hashes, repository import root, forwarded controller output, and the existing attempt path plan.
+- **Decision:** The runtime adapter applies the frozen predefined wheel schedule before every step, continues through its 6.0 s end, stops the motors, and the Supervisor requests `simulationQuit(0)` only after the runtime lifecycle returns success. Controlled failures request `simulationQuit(1)`.
+- **Reason:** Attempt-002's retained Webots context proves its selected project excluded the named controller. Independent code tracing also showed missing actuation, rejected authoritative output paths, and no Webots exit request. These are lifecycle defects, not evidence that the frozen six-second episode requires more than 75 seconds.
+- **Rejected:** Increasing the timeout, changing the scientific schedule, adding a second output-path protocol, accepting exit/timeout as scientific success, modifying attempt-002, or retrying it.
+- **Impact:** The timeout stays at 75 seconds, historical v3 packages remain audit-readable but cannot launch through the v4 production runner, and a new package plus separately approved disposable Webots smoke is required before attempt-003.
+
 ## 2026-07-23 - M6-A v2 verified-authorization generation archival
 
 - **Decision:** Treat the authoritative detached bundle, authorization artifact, and verified receipt as one immutable generation. Archive exact bytes under `authorization_generation_history/g.<request-digest-prefix>/` with a canonical manifest binding the full request digest, authorization ID, signed-message digest, production trust, per-file SHA-256, and canonical digests before releasing any authoritative source path.
