@@ -897,7 +897,6 @@ def write_final_marker(root, evidence):
         "attempt_id",
         "authorization_id",
         "ownership_sha256",
-        "consumption_sha256",
         "process_sha256",
         "runtime_sha256",
         "snapshot_validation_sha256",
@@ -907,6 +906,17 @@ def write_final_marker(root, evidence):
         "manifest_sha256",
         "lock_sha256",
     }
+    mode = evidence.get("execution_mode", "production")
+    if mode == "production":
+        required.add("consumption_sha256")
+        if "research_launch_claim_sha256" in evidence:
+            raise ValueError("research evidence is forbidden in production finalization")
+    elif mode == "research":
+        required.add("research_launch_claim_sha256")
+        if "consumption_sha256" in evidence:
+            raise ValueError("production consumption is forbidden in research finalization")
+    else:
+        raise ValueError("unsupported finalization mode")
     if not required <= set(evidence) or evidence.get("joint_pass") is not True:
         raise ValueError("joint validation required")
     return _new(
@@ -947,10 +957,50 @@ def _completed_terminal(path, launched, ownership, final):
     )
 
 
+def write_completed_ownership_terminal(path, launched, ownership, final):
+    """Public immutable writer shared by production and research finalizers."""
+    return _completed_terminal(path, launched, ownership, final)
+
+
+def write_failed_process_terminal(path, launched, ownership, process):
+    """Persist an immutable terminal failure after a research process ran once."""
+    if (
+        launched.get("execution_mode") != "research"
+        or process.get("sha256") != launched.get("process_evidence_digest")
+        or (
+            process.get("return_code") == 0
+            and process.get("timed_out") is False
+            and process.get("termination_state") == "exited"
+        )
+    ):
+        raise ValueError("process is not an eligible research failure")
+    return _new(
+        path,
+        {
+            "schema_version": "m6a-v2-ownership-terminal-v1",
+            "launch_id": launched["launch_id"],
+            "attempt_id": launched["attempt_id"],
+            "authorization_id": launched["authorization_id"],
+            "owner_identity": ownership["launcher_identity"],
+            "ownership_sha256": ownership["sha256"],
+            "process_sha256": process["sha256"],
+            "return_code": process["return_code"],
+            "timed_out": process["timed_out"],
+            "termination_state": process["termination_state"],
+            "state": "failed_process",
+            "launch_performed": True,
+            "authorization_consumed": False,
+            "scientific_result": False,
+            "completed_at_utc": _utc(),
+        },
+    )
+
+
 def load_ownership_terminal(path, *, ownership=None):
     value = _read_canonical(path)
     if value.get("schema_version") != "m6a-v2-ownership-terminal-v1" or value.get("state") not in {
         "completed",
+        "failed_process",
         "retired_pre_spawn",
     }:
         raise ValueError("invalid ownership terminal")
@@ -969,6 +1019,21 @@ def load_ownership_terminal(path, *, ownership=None):
         or value.get("scientific_result") is not False
     ):
         raise ValueError("invalid pre-spawn retirement semantics")
+    if value["state"] == "failed_process" and (
+        value.get("launch_performed") is not True
+        or value.get("authorization_consumed") is not False
+        or value.get("scientific_result") is not False
+        or not isinstance(value.get("return_code"), int)
+        or not isinstance(value.get("timed_out"), bool)
+        or not value.get("termination_state")
+        or not value.get("process_sha256")
+        or (
+            value["return_code"] == 0
+            and value["timed_out"] is False
+            and value["termination_state"] == "exited"
+        )
+    ):
+        raise ValueError("invalid failed-process terminal semantics")
     return value
 
 

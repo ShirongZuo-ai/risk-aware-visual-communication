@@ -1,8 +1,10 @@
 # Progress
 
-Last updated: 2026-07-23 (Asia/Shanghai)
+Last updated: 2026-07-24 (Asia/Shanghai)
 
 ## Completed
+
+- Added the minimal M6-A v2 local research-pilot runner. It reloads the frozen prepared package, persists separate research context and claim-before-spawn evidence, executes the package command at most once, captures canonical process evidence, preserves process failures, and reuses the existing scientific completion/joint/final validators without production signatures, receipts, or authorization consumption. Harmless-child tests cover success, nonzero exit, timeout, no-overwrite, tamper/partial rejection, launch uncertainty, no retry, and recovery. The real Webots pilot was not started and attempt-002 was not materialized.
 
 - Added the final fail-closed M6-A v2 production launch bridge. Production materialization now persists and reloads a canonical package/receipt/ownership-bound `OwnedAttemptContext`; pre-materialization and owned-package validation are separate; launch requires the prepared package HEAD to equal the executing Git HEAD. The one-shot `run-pilot` operator reuses the existing ownership, consumption, process-evidence, B5 completion, and final-marker primitives and recovers complete launch evidence without relaunching. A separate immutable `retired_pre_spawn` terminal safely closes superseded legacy owned roots without fabricating context or scientific results. Temporary-directory rehearsals used harmless Python children for success, nonzero exit, and timeout; no real Webots process or production attempt was launched or retired.
 
