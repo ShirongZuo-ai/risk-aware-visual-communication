@@ -4,6 +4,8 @@ Last updated: 2026-07-25 (Asia/Shanghai)
 
 ## Completed
 
+- Authorized the M6 v3 pre-analysis identity correction after all 32 immutable episodes finalized. The correction reads the already authoritative runtime-local identity instead of reconstructing package launch/attempt values, while retaining strict package, v3 manifest/lock, formal split, episode, scene, seed, path, canonical digest and joint-evidence validation. No result is calculated until this correction and its regressions are committed.
+
 - Registered the additive M6 v3 formal-study extension: 32 new formal identities span S1-S8 at seeds 630100-630803 while the v2 manifest/lock remain byte-identical. Runtime/package selection now routes through the strict version-specific authority and the replacement TCOBR analysis contract is frozen before data generation. Formal execution remains gated on focused/full tests, a clean commit, package audit, and zero pre-existing attempt roots.
 
 - Fixed the M6 runtime-summary split validator exposed by the first formal launch: summary identity is now matched exactly to the already manifest-validated runtime `{split, scene, episode_id, seed}`. Pilot/formal acceptance and split-tamper regression tests pass; the full suite is 457 tests. A replacement 32-episode study was not registered or launched because the immutable v2 manifest contains exactly 32 formal records, all using the explicitly excluded seeds `620100`-`620803`; zero authoritative unused formal identities remain. The next priority is a separately reviewed, versioned manifest expansion with 32 new disjoint formal records before any new launch approval.

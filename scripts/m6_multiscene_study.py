@@ -15,6 +15,7 @@ from scripts.m6a_trusted_artifacts import digest
 from scripts.m6a_v3_episode_source import LOCK_PATH, MANIFEST_PATH, load_and_validate_m6a_v3_manifest
 from scripts.m6a_v2_episode_source import LOCK_PATH as V2_LOCK_PATH, MANIFEST_PATH as V2_MANIFEST_PATH, load_and_validate_m6a_v2_manifest
 from scripts.m6a_v2_pilot_completion import load_codec_aggregate, load_codec_aggregate_validation, load_joint_validation_report
+from scripts.m6a_v2_runtime_evidence import load_runtime_manifest
 from scripts.m6a_v2_prepared_launch import build_prepared_launch_package, current_repository_head, load_prepared_launch_package_for_audit
 from scripts.m6a_v2_research_pilot import run_research_pilot
 from scripts.run_m6a_one_identity import load_v2_runtime_config
@@ -204,6 +205,50 @@ def analyze_episode_cases(episodes: list[dict]) -> dict:
     return {"included": included, "exclusions": exclusions, "primary": primary, "budgets": budgets, "scenes": scenes, "secondary": secondary, "support_gate_passed": primary["ci_low"] > 0.0}
 
 
+def validate_analysis_identity_binding(identity: dict, package: dict, runtime: dict, row: dict, attempt: Path) -> dict:
+    """Bind persisted runtime-local validation identity to one registered package."""
+    required = {"launch_id", "attempt_id", "identity_id", "scene_id", "seed"}
+    if set(identity) != required or identity["launch_id"] != "runtime-local" or identity["attempt_id"] != "runtime-local":
+        raise ValueError("unexpected persisted analysis identity")
+    if (
+        package.get("attempt_id") != row["attempt_id"]
+        or package.get("identity_id") != row["episode_id"]
+        or package.get("scene_id") != row["scene"]
+        or package.get("seed") != row["seed"]
+        or identity["identity_id"] != row["episode_id"]
+        or identity["scene_id"] != row["scene"]
+        or identity["seed"] != row["seed"]
+        or runtime.get("split") != "formal"
+        or runtime.get("episode_id") != row["episode_id"]
+        or runtime.get("scene") != row["scene"]
+        or runtime.get("seed") != row["seed"]
+        or runtime.get("manifest_authority_version") != "v3"
+        or package.get("manifest_authority_version") != "v3"
+        or package.get("manifest_sha256") != runtime.get("v2_manifest_sha256")
+        or package.get("lock_sha256") != runtime.get("v2_lock_sha256")
+        or Path(package.get("prospective_attempt_root", "")).resolve() != Path(attempt).resolve()
+    ):
+        raise ValueError("persisted analysis identity is not bound to the registered package")
+    return identity
+
+
+def load_bound_completion_evidence(package: dict, runtime: dict, row: dict, attempt: Path) -> tuple[dict, dict, dict]:
+    manifest_path = Path(attempt) / "runtime_artifacts.json"
+    raw = manifest_path.read_bytes(); manifest_value = json.loads(raw)
+    if raw != _canonical(manifest_value):
+        raise ValueError("noncanonical runtime manifest")
+    identity = validate_analysis_identity_binding(manifest_value.get("identity"), package, runtime, row, attempt)
+    manifest = load_runtime_manifest(manifest_path, identity, attempt, runtime)
+    validation_path = Path(attempt) / "codec_aggregate_validation.json"
+    validation = load_codec_aggregate_validation(validation_path, runtime, root=attempt, identity=identity)
+    if Path(validation.get("aggregate_path", "")).resolve() != (Path(attempt) / "codec_aggregate.json").resolve():
+        raise ValueError("analysis aggregate path binding")
+    joint = load_joint_validation_report(Path(attempt) / "joint_validation.json", runtime, root=attempt)
+    if joint.get("identity") != identity:
+        raise ValueError("analysis joint identity binding")
+    return manifest, validation, joint
+
+
 def load_completed_episodes(*, preregistration_path=PREREGISTRATION_PATH, package_root=None) -> list[dict]:
     _, prereg = verify_prelaunch_gate(preregistration_path)
     root = Path(package_root) if package_root is not None else PROJECT_ROOT / "results/m6a_v2_control/prepared"
@@ -213,9 +258,7 @@ def load_completed_episodes(*, preregistration_path=PREREGISTRATION_PATH, packag
         attempt = Path(package["prospective_attempt_root"])
         runtime = json.loads(Path(package["launch_spec"]["runtime_config"]["path"]).read_text(encoding="utf-8")); load_v2_runtime_config(runtime)
         aggregate = load_codec_aggregate(attempt / "codec_aggregate.json", runtime, root=attempt)
-        identity = {"launch_id":package["launch_id"],"attempt_id":package["attempt_id"],"identity_id":package["identity_id"],"scene_id":package["scene_id"],"seed":package["seed"]}
-        load_codec_aggregate_validation(attempt / "codec_aggregate_validation.json", runtime, root=attempt, identity=identity)
-        load_joint_validation_report(attempt / "joint_validation.json", runtime, root=attempt)
+        load_bound_completion_evidence(package, runtime, row, attempt)
         pooled = {}
         for snapshot in aggregate["snapshot_evidence"]:
             for case in snapshot["cases"]:
