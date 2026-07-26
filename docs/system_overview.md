@@ -1,6 +1,21 @@
 # System Overview
 
-Last updated: 2026-07-19 (Asia/Shanghai)
+Last updated: 2026-07-26 (Asia/Shanghai)
+
+## M6 completed research pipeline
+
+M6 closes the end-to-end Webots-to-analysis loop with two trusted geometric allocation baselines:
+
+1. `state_only_risk_roi` predicts constant-twist motion from the current state.
+2. `command_conditioned_risk_roi` uses the same state plus only the predefined command schedule available at decision time.
+3. Both paths share the frozen 2 s horizon, e-puck footprint, uncertainty corridor, camera projection, rasterization, tiled-JPEG codec, and four byte budgets.
+4. Method-specific artifacts bind predictor inputs, trajectories, corridors, masks, configuration digests, and zero actual-future/combined/fallback usage.
+5. The Webots lifecycle records four synchronized snapshots, 32 codec cases per episode, runtime manifests, aggregate validation, joint validation, and an immutable completion terminal.
+6. The additive v3 formal study contains 32 episodes across S1-S8 and 1,024 validated method-budget-snapshot cases.
+7. TCOBR is pooled within episode and analyzed with paired episode-level inference; PSNR, SSIM, charged bytes, and ROI area remain secondary.
+8. The original eight-scene TCOBR gate is `NOT EVALUATED` because S1, S7, and S8 have no eligible episodes. The frozen S2-S6 conditional gate is `FAIL`: effect `0.000000`, 95% CI `[0.000000, 0.000000]`, `n=17`.
+
+M6 is an interpretable negative-result baseline, not a learned allocator or a navigation-safety result. The next architecture target is a separately generated, budget-conditioned value-of-information layer that combines risk, visible coverage, and task utility per actual byte.
 
 ## Completed Pipeline
 

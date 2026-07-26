@@ -5,10 +5,24 @@
 - [x] Define an additive immutable 32-episode S1-S8 manifest extension using seeds 630100-630803.
 - [x] Preserve and bind the v2 manifest/lock without modification.
 - [x] Freeze the unchanged TCOBR paired analysis in a versioned pre-registration.
-- [ ] Pass all pre-launch validation, commit, prepare/audit all packages, then execute each registered identity at most once with no retries.
-- [ ] Persist and validate episode-level TCOBR inference, budget/scene heterogeneity, and secondary quality/byte/ROI results.
+- [x] Pass all pre-launch validation, commit, prepare/audit all packages, then execute each registered identity at most once with no retries.
+- [x] Persist and validate episode-level TCOBR inference, budget/scene heterogeneity, and secondary quality/byte/ROI results.
+- [x] Preserve the original eight-scene gate as `NOT EVALUATED` and freeze the preregistered eligibility-conditional result as `FAIL` with effect `0.000000`, 95% CI `[0.000000, 0.000000]`.
+- [x] Publish deterministic source tables, figures, and a final report without changing formal evidence.
 
 Acceptance: only committed v3 identities may launch; a shared defect stops the batch; null and negative results remain; v2 and all historical evidence remain immutable.
+
+M6 is complete and frozen as a negative-result baseline.
+
+## Milestone 7 - Budget-conditioned visual value of information
+
+- [ ] Freeze a method-independent utility combining trajectory risk, visible coverage, and downstream task value.
+- [ ] Design eligibility-rich, held-out scenes without tuning against M6 outcomes.
+- [ ] Generate an independent counterfactual tile-quality dataset with actual complete-container byte increments.
+- [ ] Implement an offline oracle and deterministic greedy marginal-utility-per-byte baseline before any learned allocator.
+- [ ] Pre-register episode/scene splits, byte fairness, failure handling, task metrics, and support gates.
+
+Acceptance: the new study uses identities and evidence disjoint from M5/M6, reports all null and adverse outcomes, and makes no navigation-safety claim without a separately frozen closed-loop task protocol.
 
 ## Milestone 0 — Repository and environment baseline
 

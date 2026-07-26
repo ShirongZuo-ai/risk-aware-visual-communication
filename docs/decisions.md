@@ -371,3 +371,11 @@ Use the method-independent union of the frozen planned and state corridors to de
 # M6 v3 additive authority (2026-07-25)
 
 The exhausted v2 authority remains immutable. The final formal study uses a separate v3 manifest/lock with exactly 32 new S1-S8 records at seeds 630100-630803. Production routing selects either strict v2 or strict v3 validation from the declared manifest schema; it does not merge manifests or introduce a second runner. TCOBR, methods, budgets, byte accounting, exclusions, bootstrap and support gate are unchanged.
+
+## 2026-07-26 - Freeze M6 as a negative baseline and enter budget-conditioned VoI
+
+- **Decision:** Freeze the completed M6 v3 study as a negative-result baseline. The original S1-S8 support gate remains `NOT EVALUATED`; the committed eligibility-conditional S2-S6 gate remains `FAIL`, with command-conditioned minus state-only TCOBR `0.000000` and 95% CI `[0.000000, 0.000000]`.
+- **Reason:** Fifteen episodes have undefined TCOBR and three scene strata are empty; among all 17 eligible episodes, both methods have identical TCOBR at every budget. Replacing scenes, imputing undefined episodes, or tuning against this evidence would invalidate the preregistered boundary.
+- **Decision:** Define the next milestone as budget-conditioned visual value of information combining trajectory risk, visible coverage, downstream task utility, and actual incremental bytes. Require new disjoint, eligibility-rich data and deterministic oracle/greedy baselines before learned allocation.
+- **Rejected:** Reinterpreting the zero interval as universal method equivalence, claiming command schedules have no value outside the frozen study, modifying TCOBR eligibility, or immediately training on M6 formal evidence.
+- **Impact:** M6 artifacts, protocols, manifests, locks, and outcomes remain immutable. Publication figures are presentation-only derivatives with checked JSON/CSV source tables and may not alter scientific results.

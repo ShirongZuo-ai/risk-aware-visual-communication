@@ -1,8 +1,10 @@
 # Progress
 
-Last updated: 2026-07-25 (Asia/Shanghai)
+Last updated: 2026-07-26 (Asia/Shanghai)
 
 ## Completed
+
+- Completed the M6 publication release from frozen evidence only. The 32-episode v3 study is frozen as a negative-result baseline: the original eight-scene gate is `NOT EVALUATED`, the 17-episode S2-S6 eligibility-conditional gate is `FAIL`, and command-conditioned minus state-only TCOBR is `0.000000` with 95% CI `[0.000000, 0.000000]`. Deterministic SVG/360-dpi PNG figures and checked JSON/CSV source tables preserve eligibility, null TCOBR, negative Low-budget PSNR/SSIM, byte, ROI-area, and non-cherry-picked qualitative evidence. The next priority is a new budget-conditioned visual value-of-information study combining risk, coverage, and task utility; M6 evidence must not be tuned or regenerated.
 
 - Froze the M6 v3 eligibility-conditional pre-analysis amendment before outcome calculation. The original eight-scene gate remains `NOT EVALUATED`; the amended gate uses all 17 eligible S2-S6 episodes, equal weights across the five non-empty scenes, 10,000 within-scene bootstrap replicates at seed 20260724, and the unchanged positive-lower-bound rule. PSNR, SSIM, actual bytes and ROI area use all 32 validated episodes independently of TCOBR eligibility. No imputation or evidence change is permitted.
 

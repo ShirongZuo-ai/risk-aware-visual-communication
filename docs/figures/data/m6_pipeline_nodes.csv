@@ -1,0 +1,8 @@
+order,node_id,label,stage
+1,webots,Webots scene / e-puck + camera,Simulation
+2,capture,RGB + state / command schedule,Evidence
+3,predict,Independent / trajectory predictors,Prediction
+4,project,Corridor projection / and ROI masks,Allocation
+5,codec,Byte-fair tiled JPEG / 4 budgets,Communication
+6,metrics,TCOBR + quality / bytes + ROI area,Evaluation
+7,analysis,Episode pairing / scene bootstrap,Inference

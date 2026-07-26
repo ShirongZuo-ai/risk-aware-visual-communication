@@ -1,0 +1,6 @@
+contrast,label,budget,n_episodes,estimate,ci_low,ci_high
+primary_severe_low,Primary: Severe + Low,primary,17,0.0,0.0,0.0
+severe,Severe,severe,17,0.0,0.0,0.0
+low,Low,low,17,0.0,0.0,0.0
+medium,Medium,medium,17,0.0,0.0,0.0
+high,High,high,17,0.0,0.0,0.0

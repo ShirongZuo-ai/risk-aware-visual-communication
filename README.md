@@ -1,114 +1,165 @@
-# Risk-Aware Task-Oriented Visual Communication for Mobile Robots
+# Risk-Aware Visual Communication for Mobile Robots
 
-This repository studies trajectory-conditioned, geometry-grounded, image-space collision-risk-aware visual resource allocation for remote mobile-robot navigation. All evidence is from controlled Cyberbotics Webots R2025a simulation with a simulated e-puck; it is not real-robot, deployed-system, or physical-network evidence.
+An interpretable Webots research pipeline for asking a narrow question: **when visual communication is byte-constrained, does knowledge of a robot's predefined future command improve which image regions should receive quality?**
 
-## Research Question
+The project converts predicted motion and geometric collision risk into image-space regions of interest (ROIs), applies deterministic byte-fair tiled JPEG allocation, and evaluates reconstructions at the episode level. The final M6 result is a useful negative baseline: command conditioning did **not** improve the preregistered downstream recall measure in the eligible subset.
 
-At a matched communication budget, can allocating visual quality to projected trajectory-relevant collision-risk regions preserve risk-weighted image information better than Uniform compression, a fixed Center ROI, or an Object ROI?
+> **M6 result.** The original eight-scene support gate is **NOT EVALUATED** because three scene strata contain no eligible trajectory-critical obstacles. Under the committed eligibility-conditional amendment, the gate is **FAIL**: command-conditioned minus state-only TCOBR is **0.000**, with a 95% CI of **[0.000, 0.000]** (`n=17` eligible episodes). At Low budget, command conditioning also reduces full-frame PSNR by **0.169 dB** and SSIM by **0.00318** on average (`n=32`).
 
-## System Overview
+All claims are limited to controlled Cyberbotics Webots R2025a simulation with a simulated e-puck. They are not real-robot, physical-network, collision-reduction, or navigation-safety claims.
 
-`RGB frame + robot state + command schedule → predicted trajectories → geometry-based obstacle risk → projected image-risk mask → tiled-JPEG allocation → matched-byte reconstruction → offline episode-level evaluation`
+## Research question
 
-The four frozen allocation methods are **Uniform**, **Center ROI**, **Object ROI**, and **Risk ROI**. Risk ROI is an interpretable heuristic baseline, not a learned policy or calibrated collision-probability model.
+The M6 study isolates one causal comparison under shared geometry, codec, budgets, and evidence:
 
-## Current Status
+- **State-only risk ROI:** predicts a 2 s constant-twist trajectory from the current robot state.
+- **Command-conditioned risk ROI:** uses the same current state plus the predefined wheel-command schedule already available at the decision time.
 
-Milestone 5E-E formal statistical analysis is complete, and Milestone 5E-F independently reproduced and formally accepted the frozen evaluation. Milestone 5 is closed: its formal data, statistical outputs, and conclusions are frozen.
+Both methods share the frozen e-puck footprint, uncertainty corridor, camera projection, rasterization, tiled-JPEG codec, and four actual-byte budgets. Actual future trajectories, combined masks, oracle masks, fallback, and replacement are prohibited from both allocation paths.
 
-M6 may now prepare its protocol and counterfactual data, but model training has not started. The detailed [M5E-E statistical report](docs/m5e_statistical_analysis_report.md) and [M5E-F acceptance report](docs/m5e_f_independent_acceptance_report.md) define the supported claims and acceptance checks.
+## End-to-end architecture
 
-## Formal Evaluation
+![M6 Webots-to-analysis pipeline](docs/figures/m6_pipeline.png)
 
-| Item | Frozen formal evaluation |
+*Figure 1. Trusted evidence path from the Webots scene to episode-level inference. Allocation uses predicted trajectories only; actual-future motion never enters either method. The corresponding vector figure and source table are in [`docs/figures/`](docs/figures/).*
+
+The implementation provides:
+
+1. deterministic scene initialization and synchronized RGB/state capture;
+2. method-specific predictor-to-mask provenance with leakage checks;
+3. complete-container byte accounting and matched frozen budgets;
+4. canonical runtime, aggregate, joint-validation, and completion evidence;
+5. strict identity binding across manifest, package, scene, seed, episode, and split;
+6. episode-level paired inference with preregistered bootstrap settings.
+
+## Formal M6 study
+
+| Item | Frozen definition |
 | --- | --- |
-| Statistical unit | Episode; four snapshots are aggregated before inference |
-| Coverage | 64 episodes, 256 formal frames, 8 scenes |
-| Reconstructions | 4,096 method-budget reconstructions |
-| Methods | Uniform, Center ROI, Object ROI, Risk ROI |
-| Budgets | 4 matched communication budgets |
-| Replacements | 0 |
-| Inference | Paired, scenario-stratified bootstrap; 10,000 replicates |
-| Fairness | 0.5% complete-container-byte tolerance |
+| Dataset | 32 independent formal episodes, 8 scenes, 4 episodes per scene |
+| Seeds | 630100–630803 in the immutable v3 extension |
+| Snapshots | 4 per episode; 128 total |
+| Codec cases | 2 methods × 4 budgets × 4 snapshots = 32 per episode; 1,024 total |
+| Budgets | Severe, Low, Medium, High; actual complete-container bytes |
+| Statistical unit | Episode; snapshots are pooled before TCOBR inference |
+| Primary measure | Trajectory-Critical Obstacle Boundary Recall (TCOBR) |
+| Primary contrast | Command-conditioned minus state-only, Severe and Low equally weighted |
+| Inference | Within-scene episode bootstrap, 10,000 replicates, seed `20260724` |
+| Support rule | PASS only when the 95% percentile-CI lower bound is above zero |
 
-Frames are not treated as independent statistical samples. The primary metric is episode-level, equal-scenario mean risk-weighted PSNR (RW-PSNR); positive paired differences favor Risk ROI.
+TCOBR uses the method-independent union of the frozen planned and state trajectory corridors to identify critical obstacles. Eligibility requires a sufficiently large clipped projection and enough original-image Canny boundary edges. An episode with no eligible obstacle instance remains undefined; it is never imputed as zero or one.
 
-## Main Findings
+The complete scientific definition is in the [M6 follow-up protocol](docs/m6_followup_evaluation_protocol.md), and the exact matrix is in the [v3 preregistration](docs/results/m6_multiscene_v3_preregistration.json).
 
-| Budget | Risk ROI − comparator | Effect (dB) | 95% CI |
-| --- | --- | ---: | --- |
-| Severe | Uniform | -1.122 | [-1.326, -0.919] |
-| Severe | Center ROI | +0.520 | [+0.219, +0.820] |
-| Severe | Object ROI | -0.883 | [-1.108, -0.660] |
-| Low | Uniform | +1.798 | [+1.422, +2.194] |
-| Low | Center ROI | +2.964 | [+2.511, +3.400] |
-| Low | Object ROI | +0.191 | [-0.219, +0.606] |
+## Results
 
-Risk ROI is **not universally superior**: its outcome depends on budget and scenario. It shows positive primary effects relative to Center ROI at both primary budgets, but does not consistently outperform Object ROI. Severe-budget negative results expose a failure mode of overly concentrated risk allocation. Risk-region gains also carry full-frame and background-quality costs.
+### Eligibility and support gates
 
-Substantial scene heterogeneity is retained in the formal analysis: S7 contains unfavorable paired results, whereas S8 has unusually large low-budget effects. No scene was deleted or down-weighted. See the [formal statistical report](docs/m5e_statistical_analysis_report.md) for all scenes, budgets, failure modes, and exploratory diagnostics.
+![M6 episode eligibility](docs/figures/m6_episode_eligibility.png)
 
-## Key Figures
+*Figure 2. Eligibility for all 32 registered episodes. S1, S7, and S8 contain no eligible episodes; S4 contributes two and S5 contributes three. The original eight-scene gate therefore remains NOT EVALUATED. The amended analysis includes all 17 eligible episodes from S2–S6 and weights those five scenes equally.*
 
-![World-coordinate risk overview](docs/assets/m3_world_risk_overview.png)
+![M6 TCOBR forest plot](docs/figures/m6_tcobr_budget_forest.png)
 
-*World-coordinate risk overview from the accepted Webots validation snapshot. It visualizes projected trajectory/risk geometry in controlled simulation; it is not a robot-safety or navigation-success result.*
+*Figure 3. Eligibility-conditional TCOBR paired effects. Every budget and the Severe/Low primary contrast are exactly zero, with 95% CIs [0, 0]. The amended gate fails because its lower confidence bound is not above zero.*
 
-![Trajectory prediction ADE comparison](docs/assets/m2_method_comparison_ade.png)
+| TCOBR contrast | Episodes | Effect | 95% CI | Decision |
+| --- | ---: | ---: | ---: | --- |
+| Original S1–S8 gate | — | — | — | **NOT EVALUATED** |
+| Conditional Severe + Low | 17 | 0.000 | [0.000, 0.000] | **FAIL** |
+| Severe | 17 | 0.000 | [0.000, 0.000] | Secondary |
+| Low | 17 | 0.000 | [0.000, 0.000] | Secondary |
+| Medium | 17 | 0.000 | [0.000, 0.000] | Secondary |
+| High | 17 | 0.000 | [0.000, 0.000] | Secondary |
 
-*Stable-window 2.0 s trajectory-prediction ADE from controlled Webots simulation. The log y-axis reports metres; the public CSV contains only this retained method/horizon comparison.*
+### Secondary image, byte, and ROI effects
 
-![Risk ROI paired effects](docs/assets/m5e_primary_paired_effects.png)
+![M6 secondary paired effects](docs/figures/m6_secondary_budget_effects.png)
 
-*Primary M5E-E episode-level RW-PSNR paired effects. Points are equal-scenario means and bars are 95% scenario-stratified bootstrap CIs (`n=64` episodes); positive values favor Risk ROI. Simulation-only offline image-quality evidence.*
+*Figure 4. Mean episode-level differences across all 32 validated episodes; positive values favor command conditioning. Severe and Low budgets retain the observed full-frame quality degradation. Actual bytes and ROI area are reported rather than treated as benefits.*
 
-![All-scene M5E effects](docs/assets/m5e_scene_budget_effects.png)
+| Budget | PSNR (dB) | SSIM | Charged bytes/frame | ROI area (percentage points) |
+| --- | ---: | ---: | ---: | ---: |
+| Severe | -0.2949 | -0.00537 | +0.3 | +0.003825 |
+| Low | -0.1692 | -0.00318 | -12.5 | +0.003825 |
+| Medium | +0.0053 | +0.00007 | +14.5 | +0.003825 |
+| High | +0.0081 | +0.00010 | +20.4 | +0.003825 |
 
-*All eight formal scenes across four budgets. Each cell is an episode-level RW-PSNR difference in dB; the symmetric scale and numeric labels retain both unfavorable S7 and large S8 effects without changing their weight.*
+### Deterministic qualitative comparison
 
-Additional diagnostic figures, including full-frame/background trade-offs, are available through the [M5E-E report](docs/m5e_statistical_analysis_report.md).
+![M6 qualitative comparison](docs/figures/m6_qualitative_comparison.png)
+
+*Figure 5. Original, state-only, and command-conditioned Low-budget reconstructions for the lexicographically first eligible episode (S2, seed 630200), then snapshot 0. This rule was fixed without inspecting effect magnitude. The two reconstructions are pixel-identical for this sample, although container metadata produces a 9-byte charged-size difference.*
+
+## What this project contributes
+
+- An interpretable framework that converts predicted robot-motion risk into visual communication priority.
+- A strict dual-ROI boundary that proves which decision-time inputs each predictor may consume.
+- Canonical, tamper-checked provenance from synchronized Webots capture through reconstruction and analysis.
+- A byte-fair, episode-paired evaluation that preserves null, negative, and undefined outcomes.
+- A reproducible negative baseline showing that adding a known command schedule is not sufficient, by itself, to improve TCOBR in this study.
+
+These are engineering and experimental contributions. The repository does **not** establish a novel learned allocator, calibrated collision probability, state-of-the-art performance, or improved robot safety.
+
+## Limitations
+
+- Only 17 of 32 formal episodes are TCOBR-eligible, and three complete scene strata are empty.
+- TCOBR is an edge-based reconstruction measure, not detector accuracy, navigation success, collision rate, or human teleoperation quality.
+- The 160×120 camera, static AABB scenes, deterministic command schedules, and tiled JPEG prototype limit external validity.
+- Both methods are heuristic geometric baselines; neither learns budget-dependent task utility.
+- The zero TCOBR difference may reflect identical decisions at the frozen operating points, metric saturation, insufficiently discriminative scenes, or genuinely absent command value. The current evidence does not distinguish these mechanisms.
+- Simulation evidence has not been validated on physical networks or real robots.
 
 ## Reproducibility
 
-Use Python 3.11 and Webots R2025a from the repository root:
+Use Python 3.11 from the repository root:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests
-.\.venv\Scripts\python.exe .\scripts\plot_m5e_publication_figures.py
-.\.venv\Scripts\python.exe .\scripts\validate_m5e_statistical_analysis.py
+.\.venv\Scripts\python.exe -m scripts.plot_m6_publication_figures
 ```
 
-The formal M5 data are intentionally held out and frozen. Full formal-validation and isolated-reproduction commands are documented in the [acceptance report](docs/m5e_f_independent_acceptance_report.md); generated evidence remains under ignored `data/` and `results/` paths.
+The plotting command reads only the checked JSON/CSV publication sources in [`docs/figures/data/`](docs/figures/data/) and regenerates all five SVG/PNG pairs. Maintainers with the immutable local formal evidence can additionally audit those source tables using:
 
-The read-only [M5E-D closeout](docs/m5e_d_closeout_report.md) records the engineering audit and its reproducible descriptive summary. The next experiment-design step is the [M6 baseline and ablation protocol](docs/m6_followup_evaluation_protocol.md); it requires independent data and does not authorize immediate Risk-VoI training.
+```powershell
+.\.venv\Scripts\python.exe -m scripts.plot_m6_publication_figures --refresh-source-data
+```
 
-M6-A has a frozen independent manifest and [preflight](docs/m6a_preflight_report.md), but no Webots pilot or formal M6 outcome. Actual future trajectories remain evaluation ground truth only.
+That audit operation reconstructs the deterministic qualitative sample and requires its image SHA-256 values to match the frozen codec evidence. It does not launch Webots or write experimental data.
 
-## Limitations
+Large runtime evidence remains intentionally ignored under `data/m6a/`, and the frozen analysis remains under `results/m6_multiscene_formal_v3/`. The compact publication source tables and figures are tracked so the landing page is reproducible without redistributing the complete runtime corpus.
 
-- Controlled Webots simulation and offline evaluation only.
-- No real-world robot validation, closed-loop navigation safety result, or physical-network evaluation.
-- The current allocator is heuristic; its risk score is not a calibrated collision probability.
-- Risk ROI can sacrifice full-frame and background quality.
-- Results are budget- and scenario-dependent.
-- Formal M5 frames cannot be reused for M6 model development.
+## Key artifacts
 
-## Next Research Stage
+- [Final M6 report](docs/m6_final_report.md)
+- [M6 scientific protocol](docs/m6_followup_evaluation_protocol.md)
+- [Frozen v3 preregistration](docs/results/m6_multiscene_v3_preregistration.json)
+- [Eligibility-conditional amendment](docs/results/m6_v3_eligibility_conditional_analysis_amendment.json)
+- [Pre-analysis identity correction](docs/results/m6_v3_preanalysis_identity_correction.md)
+- [Publication source data](docs/figures/data/)
+- Local frozen analysis: `results/m6_multiscene_formal_v3/analysis_summary.json`
+- Local eligible effects: `results/m6_multiscene_formal_v3/episode_effects.csv`
+- Local all-episode secondary effects: `results/m6_multiscene_formal_v3/secondary_episode_effects.csv`
 
-**Budget-Conditioned Risk-Visual Value-of-Information Allocation** asks: for each tile and candidate quality, what marginal task or safety utility is gained per additional actual encoded byte?
+### Prior milestone evidence
 
-Before any model training, M6 requires frozen utility definitions, independent train/validation/test episode splits, new counterfactual tile-quality data, and trajectory-critical obstacle recall as its first downstream task. The M5 formal data remain held out. See the [M6 experiment plan](docs/m6_risk_voi_experiment_plan.md).
+M6 builds on the accepted M2–M5 geometry, projection, and matched-byte pipeline. The retained public figures are the [trajectory ADE comparison](docs/assets/m2_method_comparison_ade.png), [world-risk geometry](docs/assets/m3_world_risk_overview.png), [M5 primary paired effects](docs/assets/m5e_primary_paired_effects.png), and [M5 scene/budget heterogeneity](docs/assets/m5e_scene_budget_effects.png). Scientific definitions and acceptance evidence remain in the [M5 multi-scene protocol](docs/m5e_multiscene_offline_evaluation_protocol.md), [M5 statistical report](docs/m5e_statistical_analysis_report.md), and [independent M5 acceptance report](docs/m5e_f_independent_acceptance_report.md).
 
-## Repository Structure
+## Repository structure
 
-- `simulator/`: Webots worlds, controllers, scenarios, and adapters.
-- `navigation/`, `risk_map/`, `perception/`: trajectory, risk, and projection components.
-- `compression/`, `evaluation/`: tiled-JPEG allocation and matched-budget image-quality evaluation.
-- `scripts/`: reproducible generation, validation, analysis, and figure commands.
-- `tests/`: unit and regression tests.
-- `docs/`: protocols, reports, decisions, curated public figures, and compact public summaries.
+| Path | Purpose |
+| --- | --- |
+| `simulator/` | Webots worlds, trusted controller, and runtime adapters |
+| `navigation/`, `risk_map/`, `perception/` | Trajectory prediction, risk geometry, and camera projection |
+| `compression/`, `evaluation/` | Byte-fair tiled JPEG and image-quality metrics |
+| `scripts/` | Evidence production, validation, analysis, and plotting entry points |
+| `tests/` | Unit, integration, tamper, lifecycle, and statistical regressions |
+| `docs/` | Protocols, decisions, reports, roadmap, and publication figures |
+| `data/`, `results/` | Ignored local runtime evidence and frozen generated analyses |
 
-## Quick Start
+## Next milestone
 
-The project is not a one-command reproduction package because large generated Webots evidence is intentionally ignored. Start with the tests and curated publication figures above; consult [research protocol](docs/research_protocol.md), [M5E evaluation protocol](docs/m5e_multiscene_offline_evaluation_protocol.md), and [progress](docs/progress.md) before generating new data.
+The next research milestone is **budget-conditioned visual value of information**: jointly model risk, visible coverage, and downstream task utility per additional actual encoded byte. The next study should first create more discriminative, eligibility-rich scenes and an offline counterfactual tile-quality dataset; it should then compare a deterministic greedy value-per-byte allocator with the current state-only and command-conditioned heuristics. No claim of improved safety should be made until a separate closed-loop task protocol measures it.
+
+See the [Risk-VoI experiment plan](docs/m6_risk_voi_experiment_plan.md) for the existing design boundary.
