@@ -4,6 +4,8 @@ Last updated: 2026-07-25 (Asia/Shanghai)
 
 ## Completed
 
+- Froze the M6 v3 eligibility-conditional pre-analysis amendment before outcome calculation. The original eight-scene gate remains `NOT EVALUATED`; the amended gate uses all 17 eligible S2-S6 episodes, equal weights across the five non-empty scenes, 10,000 within-scene bootstrap replicates at seed 20260724, and the unchanged positive-lower-bound rule. PSNR, SSIM, actual bytes and ROI area use all 32 validated episodes independently of TCOBR eligibility. No imputation or evidence change is permitted.
+
 - Authorized the M6 v3 pre-analysis identity correction after all 32 immutable episodes finalized. The correction reads the already authoritative runtime-local identity instead of reconstructing package launch/attempt values, while retaining strict package, v3 manifest/lock, formal split, episode, scene, seed, path, canonical digest and joint-evidence validation. No result is calculated until this correction and its regressions are committed.
 
 - Registered the additive M6 v3 formal-study extension: 32 new formal identities span S1-S8 at seeds 630100-630803 while the v2 manifest/lock remain byte-identical. Runtime/package selection now routes through the strict version-specific authority and the replacement TCOBR analysis contract is frozen before data generation. Formal execution remains gated on focused/full tests, a clean commit, package audit, and zero pre-existing attempt roots.

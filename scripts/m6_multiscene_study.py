@@ -22,8 +22,10 @@ from scripts.run_m6a_one_identity import load_v2_runtime_config
 
 
 PREREGISTRATION_PATH = PROJECT_ROOT / "docs/results/m6_multiscene_v3_preregistration.json"
+ANALYSIS_AMENDMENT_PATH = PROJECT_ROOT / "docs/results/m6_v3_eligibility_conditional_analysis_amendment.json"
 RESULT_ROOT = PROJECT_ROOT / "results/m6_multiscene_formal_v3"
 SCENES = tuple(f"S{i}" for i in range(1, 9))
+ELIGIBLE_SCENES = ("S2", "S3", "S4", "S5", "S6")
 BUDGETS = ("severe", "low", "medium", "high")
 METHODS = ("state_only_risk_roi", "command_conditioned_risk_roi")
 
@@ -120,6 +122,41 @@ def load_preregistration(path=PREREGISTRATION_PATH) -> dict:
     return value
 
 
+def load_analysis_amendment(path=ANALYSIS_AMENDMENT_PATH) -> dict:
+    path = Path(path); raw = path.read_bytes(); value = json.loads(raw)
+    if raw != _canonical(value) or value.get("amendment_sha256") != digest({key: item for key, item in value.items() if key != "amendment_sha256"}):
+        raise ValueError("noncanonical M6 v3 analysis amendment")
+    expected_ids = [
+        *[f"m6a_v3_formal_s2_seed{seed}" for seed in range(630200, 630204)],
+        *[f"m6a_v3_formal_s3_seed{seed}" for seed in range(630300, 630304)],
+        "m6a_v3_formal_s4_seed630400", "m6a_v3_formal_s4_seed630402",
+        "m6a_v3_formal_s5_seed630500", "m6a_v3_formal_s5_seed630502", "m6a_v3_formal_s5_seed630503",
+        *[f"m6a_v3_formal_s6_seed{seed}" for seed in range(630600, 630604)],
+    ]
+    if (
+        value.get("schema_version") != "m6-v3-eligibility-conditional-amendment-v1"
+        or value.get("status") != "frozen-before-outcome-calculation"
+        or value.get("original_eight_scene_gate") != {"status": "NOT_EVALUATED", "reason": "empty_scene_strata_after_preregistered_eligibility_exclusions"}
+        or value.get("conditional_analysis") != {
+            "bootstrap_replicates": 10000, "bootstrap_seed": 20260724, "ci": 0.95,
+            "eligible_episode_count": 17, "eligible_episode_ids": expected_ids,
+            "eligible_scenes": list(ELIGIBLE_SCENES), "scene_weighting": "equal",
+            "resampling_unit": "episode_within_scene", "support_gate": "conditional_ci_lower_bound_gt_zero",
+            "undefined_episode_rule": "exclude_without_imputation",
+        }
+        or value.get("secondary_analysis") != {"episode_count": 32, "eligibility_filter": "none", "metrics": ["full_psnr_db", "full_ssim", "charged_bytes", "roi_area_ratio"]}
+    ):
+        raise ValueError("M6 v3 analysis amendment mismatch")
+    return value
+
+
+def verify_analysis_amendment(path=ANALYSIS_AMENDMENT_PATH) -> dict:
+    relative = str(Path(path).resolve().relative_to(PROJECT_ROOT)).replace("\\", "/")
+    if _git("show", f"HEAD:{relative}") != Path(path).read_bytes():
+        raise ValueError("analysis amendment is not committed at HEAD")
+    return load_analysis_amendment(path)
+
+
 def verify_prelaunch_gate(path=PREREGISTRATION_PATH) -> tuple[str, dict]:
     head = current_repository_head()
     if _git("diff", "--quiet") or _git("diff", "--cached", "--quiet"):
@@ -165,8 +202,9 @@ def _percentile(values: np.ndarray) -> tuple[float, float]:
     return float(np.percentile(values, 2.5)), float(np.percentile(values, 97.5))
 
 
-def stratified_bootstrap(rows: list[dict], value_key: str, *, replicates=10000, seed=20260724) -> dict:
-    groups = {scene: np.asarray([row[value_key] for row in rows if row["scene"] == scene], dtype=float) for scene in SCENES}
+def stratified_bootstrap(rows: list[dict], value_key: str, *, replicates=10000, seed=20260724, scenes=SCENES) -> dict:
+    scenes = tuple(scenes)
+    groups = {scene: np.asarray([row[value_key] for row in rows if row["scene"] == scene], dtype=float) for scene in scenes}
     if any(len(values) == 0 for values in groups.values()):
         raise ValueError("bootstrap requires every scene")
     rng = np.random.default_rng(seed)
@@ -174,35 +212,52 @@ def stratified_bootstrap(rows: list[dict], value_key: str, *, replicates=10000, 
     for index in range(replicates):
         samples[index] = np.mean([np.mean(rng.choice(values, size=len(values), replace=True)) for values in groups.values()])
     low, high = _percentile(samples)
-    return {"estimate": float(np.mean([np.mean(values) for values in groups.values()])), "ci_low": low, "ci_high": high, "replicates": replicates, "seed": seed}
+    return {"estimate": float(np.mean([np.mean(values) for values in groups.values()])), "ci_low": low, "ci_high": high, "replicates": replicates, "seed": seed, "scenes": list(scenes), "scene_weighting": "equal"}
 
 
 def analyze_episode_cases(episodes: list[dict]) -> dict:
-    included = []
+    amendment = load_analysis_amendment()
+    included = []; secondary_rows = []
     exclusions = []
+    if len(episodes) != 32 or len({episode["episode_id"] for episode in episodes}) != 32:
+        raise ValueError("conditional analysis requires 32 unique validated episodes")
     for episode in episodes:
         case_map = {(case["method"], case["budget"]): case for case in episode["cases"]}
-        effects = {}
-        valid = True
+        effects = {}; secondary_effects = {}; valid = True
         for budget in BUDGETS:
             left = case_map.get((METHODS[0], budget)); right = case_map.get((METHODS[1], budget))
             if left is None or right is None:
                 exclusions.append({"episode_id": episode["episode_id"], "reason": "missing_paired_result"}); valid = False; break
-            if left["eligible_count"] == 0 or right["eligible_count"] == 0:
-                exclusions.append({"episode_id": episode["episode_id"], "reason": "no_eligible_critical_obstacles"}); valid = False; break
-            effects[f"tcobr_effect_{budget}"] = right["tcobr"] - left["tcobr"]
             for metric in ("full_psnr_db", "full_ssim", "charged_bytes", "roi_area_ratio"):
-                effects[f"{metric}_effect_{budget}"] = right[metric] - left[metric]
+                secondary_effects[f"{metric}_effect_{budget}"] = right[metric] - left[metric]
+            if left["eligible_count"] == 0 or right["eligible_count"] == 0:
+                valid = False
+                continue
+            effects[f"tcobr_effect_{budget}"] = right["tcobr"] - left["tcobr"]
+        if len(secondary_effects) != 16:
+            raise ValueError("secondary paired result missing from validated episode")
+        secondary_rows.append({"episode_id": episode["episode_id"], "scene": episode["scene"], "seed": episode["seed"], **secondary_effects})
         if valid:
             effects["primary_effect"] = (effects["tcobr_effect_severe"] + effects["tcobr_effect_low"]) / 2.0
             included.append({"episode_id": episode["episode_id"], "scene": episode["scene"], "seed": episode["seed"], **effects})
-    if not included:
-        raise ValueError("no analysis-eligible episodes")
-    primary = stratified_bootstrap(included, "primary_effect")
-    budgets = {budget: stratified_bootstrap(included, f"tcobr_effect_{budget}") for budget in BUDGETS}
-    scenes = {scene: float(np.mean([row["primary_effect"] for row in included if row["scene"] == scene])) for scene in SCENES}
-    secondary = {metric: {budget: float(np.mean([row[f"{metric}_effect_{budget}"] for row in included])) for budget in BUDGETS} for metric in ("full_psnr_db", "full_ssim", "charged_bytes", "roi_area_ratio")}
-    return {"included": included, "exclusions": exclusions, "primary": primary, "budgets": budgets, "scenes": scenes, "secondary": secondary, "support_gate_passed": primary["ci_low"] > 0.0}
+        else:
+            exclusions.append({"episode_id": episode["episode_id"], "reason": "no_eligible_critical_obstacles"})
+    expected_ids = amendment["conditional_analysis"]["eligible_episode_ids"]
+    if [row["episode_id"] for row in included] != expected_ids or len(secondary_rows) != 32:
+        raise ValueError("observed eligibility does not match frozen conditional amendment")
+    primary = stratified_bootstrap(included, "primary_effect", scenes=ELIGIBLE_SCENES)
+    budgets = {budget: stratified_bootstrap(included, f"tcobr_effect_{budget}", scenes=ELIGIBLE_SCENES) for budget in BUDGETS}
+    scene_primary = {scene: float(np.mean([row["primary_effect"] for row in included if row["scene"] == scene])) for scene in ELIGIBLE_SCENES}
+    scene_budgets = {scene: {budget: float(np.mean([row[f"tcobr_effect_{budget}"] for row in included if row["scene"] == scene])) for budget in BUDGETS} for scene in ELIGIBLE_SCENES}
+    secondary = {metric: {budget: float(np.mean([row[f"{metric}_effect_{budget}"] for row in secondary_rows])) for budget in BUDGETS} for metric in ("full_psnr_db", "full_ssim", "charged_bytes", "roi_area_ratio")}
+    method_means = {metric: {budget: {method: float(np.mean([next(case[metric] for case in episode["cases"] if case["method"] == method and case["budget"] == budget) for episode in episodes])) for method in METHODS} for budget in BUDGETS} for metric in ("full_psnr_db", "full_ssim", "charged_bytes", "roi_area_ratio")}
+    return {
+        "original_eight_scene_gate": amendment["original_eight_scene_gate"],
+        "conditional_analysis": {"primary": primary, "budgets": budgets, "scene_primary": scene_primary, "scene_budgets": scene_budgets, "support_gate_passed": primary["ci_low"] > 0.0, "eligible_scenes": list(ELIGIBLE_SCENES)},
+        "included": included, "exclusions": exclusions,
+        "secondary_episode_count": 32, "secondary_rows": secondary_rows,
+        "secondary": secondary, "secondary_method_means": method_means,
+    }
 
 
 def validate_analysis_identity_binding(identity: dict, package: dict, runtime: dict, row: dict, attempt: Path) -> dict:
@@ -273,14 +328,18 @@ def load_completed_episodes(*, preregistration_path=PREREGISTRATION_PATH, packag
 
 
 def persist_analysis(analysis: dict, *, output_root=RESULT_ROOT) -> dict:
-    root = Path(output_root); root.mkdir(parents=True, exist_ok=True)
-    summary = {"schema_version":"m6-multiscene-analysis-v1", **analysis}
+    root = Path(output_root)
+    if root.exists(): raise FileExistsError("refusing to overwrite frozen M6 v3 analysis")
+    root.mkdir(parents=True)
+    summary = {"schema_version":"m6-multiscene-eligibility-conditional-analysis-v1", **analysis}
     summary["analysis_sha256"] = digest(summary)
     (root / "analysis_summary.json").write_bytes(_canonical(summary))
     with (root / "episode_effects.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(analysis["included"][0])); writer.writeheader(); writer.writerows(analysis["included"])
-    decision = "PASS" if analysis["support_gate_passed"] else "FAIL"
-    report = f"# M6 Multi-scene Formal Study\n\nSupport gate: **{decision}**.\n\nPrimary command-conditioned minus state-only TCOBR effect: {analysis['primary']['estimate']:.6f}, 95% CI [{analysis['primary']['ci_low']:.6f}, {analysis['primary']['ci_high']:.6f}].\n\nEligible episodes: {len(analysis['included'])}; exclusions: {len(analysis['exclusions'])}.\n"
+    with (root / "secondary_episode_effects.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(analysis["secondary_rows"][0])); writer.writeheader(); writer.writerows(analysis["secondary_rows"])
+    primary=analysis["conditional_analysis"]["primary"];decision="PASS" if analysis["conditional_analysis"]["support_gate_passed"] else "FAIL"
+    report = f"# M6 v3 Eligibility-Conditional Formal Analysis\n\nOriginal eight-scene support gate: **NOT EVALUATED**.\n\nAmended eligibility-conditional gate: **{decision}**.\n\nPrimary command-conditioned minus state-only TCOBR effect: {primary['estimate']:.6f}, 95% CI [{primary['ci_low']:.6f}, {primary['ci_high']:.6f}].\n\nEligible episodes: {len(analysis['included'])}; exclusions: {len(analysis['exclusions'])}; secondary episodes: {analysis['secondary_episode_count']}.\n"
     (root / "study_report.md").write_text(report, encoding="utf-8", newline="\n")
     return summary
 
@@ -291,7 +350,7 @@ def main(argv=None):
     args=parser.parse_args(argv)
     if args.command=="prepare": result=prepare_registered_packages()
     elif args.command=="run": result=run_registered_batch()
-    else: result=persist_analysis(analyze_episode_cases(load_completed_episodes()))
+    else: verify_analysis_amendment(); result=persist_analysis(analyze_episode_cases(load_completed_episodes()))
     print(json.dumps(result,sort_keys=True,indent=2)); return 0
 
 

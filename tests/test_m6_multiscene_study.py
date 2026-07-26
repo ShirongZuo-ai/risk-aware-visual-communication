@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.m6_multiscene_study import analyze_episode_cases, load_preregistration, run_registered_batch, stratified_bootstrap, validate_analysis_identity_binding
+from scripts.m6_multiscene_study import analyze_episode_cases, load_analysis_amendment, load_preregistration, run_registered_batch, stratified_bootstrap, validate_analysis_identity_binding
 from scripts.run_m6a_one_identity import build_one_identity_runtime_config, load_v2_runtime_config
 from scripts.m6a_v3_episode_source import LOCK_PATH, MANIFEST_PATH
 from scripts.m6a_trusted_artifacts import digest
@@ -18,6 +18,17 @@ def episode(scene,index,effect=.1):
         for method,value in (("state_only_risk_roi",.4),("command_conditioned_risk_roi",.4+effect)):
             cases.append({"method":method,"budget":budget,"eligible_count":5,"recalled_count":round(value*5),"tcobr":value,"full_psnr_db":30+(method.startswith("command")),"full_ssim":.8,"charged_bytes":31000,"roi_area_ratio":.1+(method.startswith("command"))*.01})
     return {"episode_id":f"{scene}-{index}","scene":scene,"seed":index,"cases":cases}
+
+
+def conditional_episodes(effect=.1):
+    amendment=load_analysis_amendment();eligible=set(amendment["conditional_analysis"]["eligible_episode_ids"]);episodes=[]
+    for scene in range(1,9):
+        for offset in range(4):
+            seed=630000+scene*100+offset;item=episode(f"S{scene}",seed,effect);item["episode_id"]=f"m6a_v3_formal_s{scene}_seed{seed}"
+            if item["episode_id"] not in eligible:
+                for case in item["cases"]:case["eligible_count"]=0;case["recalled_count"]=0;case["tcobr"]=None
+            episodes.append(item)
+    return episodes
 
 
 class StudyTests(unittest.TestCase):
@@ -68,14 +79,19 @@ class StudyTests(unittest.TestCase):
         self.assertEqual(stratified_bootstrap(rows,"value",replicates=100,seed=7),stratified_bootstrap(rows,"value",replicates=100,seed=7))
 
     def test_episode_analysis_and_support_gate(self):
-        analysis=analyze_episode_cases([episode(f"S{s}",i,.2) for s in range(1,9) for i in range(4)])
-        self.assertEqual(len(analysis["included"]),32);self.assertTrue(analysis["support_gate_passed"]);self.assertGreater(analysis["primary"]["ci_low"],0)
+        analysis=analyze_episode_cases(conditional_episodes(.2))
+        self.assertEqual(analysis["original_eight_scene_gate"]["status"],"NOT_EVALUATED");self.assertEqual(len(analysis["included"]),17);self.assertTrue(analysis["conditional_analysis"]["support_gate_passed"]);self.assertGreater(analysis["conditional_analysis"]["primary"]["ci_low"],0);self.assertEqual(analysis["secondary_episode_count"],32)
 
     def test_no_eligible_episode_excluded_only_by_registered_rule(self):
-        episodes=[episode(f"S{s}",i,.2) for s in range(1,9) for i in range(4)]
-        episodes[0]["cases"][0]["eligible_count"]=0
-        analysis=analyze_episode_cases(episodes)
-        self.assertEqual(analysis["exclusions"],[{"episode_id":"S1-0","reason":"no_eligible_critical_obstacles"}])
+        analysis=analyze_episode_cases(conditional_episodes(.2))
+        self.assertEqual(len(analysis["exclusions"]),15);self.assertEqual({item["reason"] for item in analysis["exclusions"]},{"no_eligible_critical_obstacles"});self.assertEqual(len(analysis["secondary_rows"]),32)
+
+    def test_conditional_bootstrap_uses_five_equal_scene_strata(self):
+        analysis=analyze_episode_cases(conditional_episodes(.1));primary=analysis["conditional_analysis"]["primary"]
+        self.assertEqual(primary["scenes"],["S2","S3","S4","S5","S6"]);self.assertEqual(primary["scene_weighting"],"equal");self.assertAlmostEqual(primary["estimate"],.1)
+
+    def test_conditional_null_or_negative_finding_is_retained(self):
+        analysis=analyze_episode_cases(conditional_episodes(-.1));self.assertFalse(analysis["conditional_analysis"]["support_gate_passed"]);self.assertLess(analysis["conditional_analysis"]["primary"]["estimate"],0)
 
     @patch("scripts.m6_multiscene_study.run_research_pilot")
     @patch("scripts.m6_multiscene_study.load_prepared_launch_package_for_audit")
