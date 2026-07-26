@@ -9,6 +9,7 @@
 - [x] Persist and validate episode-level TCOBR inference, budget/scene heterogeneity, and secondary quality/byte/ROI results.
 - [x] Preserve the original eight-scene gate as `NOT EVALUATED` and freeze the preregistered eligibility-conditional result as `FAIL` with effect `0.000000`, 95% CI `[0.000000, 0.000000]`.
 - [x] Publish deterministic source tables, figures, and a final report without changing formal evidence.
+- [x] Reorder the publication landing page to separate project capability, lifecycle validation, absolute budget-quality behavior, and method-level scientific findings while retaining all null and adverse results.
 
 Acceptance: only committed v3 identities may launch; a shared defect stops the batch; null and negative results remain; v2 and all historical evidence remain immutable.
 

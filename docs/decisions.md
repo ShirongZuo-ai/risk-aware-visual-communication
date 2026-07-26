@@ -379,3 +379,10 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Decision:** Define the next milestone as budget-conditioned visual value of information combining trajectory risk, visible coverage, downstream task utility, and actual incremental bytes. Require new disjoint, eligibility-rich data and deterministic oracle/greedy baselines before learned allocation.
 - **Rejected:** Reinterpreting the zero interval as universal method equivalence, claiming command schedules have no value outside the frozen study, modifying TCOBR eligibility, or immediately training on M6 formal evidence.
 - **Impact:** M6 artifacts, protocols, manifests, locks, and outcomes remain immutable. Publication figures are presentation-only derivatives with checked JSON/CSV source tables and may not alter scientific results.
+
+## 2026-07-27 - Separate publication progress from scientific method effects
+
+- **Decision:** Lead the repository landing page with verified M1-M6 capability evolution, formal lifecycle scale, and absolute budget-quality behavior; place the unchanged zero-effect TCOBR forest under scientific findings and limitations.
+- **Reason:** Project-level engineering progress and budget-quality improvement are distinct from whether command conditioning improves the preregistered TCOBR endpoint. Presenting them in one visual hierarchy prevents the null method result from obscuring verified system capabilities without diminishing the negative finding.
+- **Decision:** Retain one narrowly scoped M5 context figure only because frozen evidence supports it, showing all three baselines at both Severe and Low budgets, including adverse and null-compatible effects.
+- **Impact:** Quantitative publication figures remain deterministic derivatives of documented frozen paths. No protocol, evidence, gate, or interpretation boundary changes.

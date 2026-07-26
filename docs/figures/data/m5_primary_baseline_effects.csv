@@ -1,0 +1,7 @@
+budget,baseline,baseline_label,n_episodes,risk_minus_baseline_rw_psnr_db,ci_low,ci_high,source_path
+severe,uniform,Uniform,64,-1.1220193547447121,-1.325551182514364,-0.9191240322913549,docs/results/m5e_publication_figure_snapshot.json
+severe,center_roi,Center ROI,64,0.5203346036803809,0.21914459168474845,0.819931567085895,docs/results/m5e_publication_figure_snapshot.json
+severe,object_roi,Object ROI,64,-0.8831735704736349,-1.108028745348574,-0.6601124677312038,docs/results/m5e_publication_figure_snapshot.json
+low,uniform,Uniform,64,1.7978625401129522,1.4222168987587853,2.194321631145383,docs/results/m5e_publication_figure_snapshot.json
+low,center_roi,Center ROI,64,2.9642030404201005,2.51146348240396,3.3995614530255773,docs/results/m5e_publication_figure_snapshot.json
+low,object_roi,Object ROI,64,0.1912824025865233,-0.21874209116442483,0.6057084111795156,docs/results/m5e_publication_figure_snapshot.json

@@ -1,0 +1,9 @@
+budget,target_bytes,method,n_episodes,mean_full_psnr_db,mean_full_ssim,mean_charged_bytes,source_path,budget_source_path
+severe,31466,state_only_risk_roi,32,24.67705901929302,0.7644837659548116,31396.3671875,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+severe,31466,command_conditioned_risk_roi,32,24.38219116642974,0.7591151988233541,31396.6328125,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+low,32374,state_only_risk_roi,32,32.13209783238132,0.8912574393388193,32165.2734375,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+low,32374,command_conditioned_risk_roi,32,31.962918614147235,0.8880752627427941,32152.7265625,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+medium,33509,state_only_risk_roi,32,34.89422582674324,0.9290885885577433,32982.703125,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+medium,33509,command_conditioned_risk_roi,32,34.89953236380647,0.9291556929303247,32997.15625,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+high,34871,state_only_risk_roi,32,36.23363490401241,0.943903233291551,33622.71875,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json
+high,34871,command_conditioned_risk_roi,32,36.24174000716522,0.9439987895667477,33643.078125,results/m6_multiscene_formal_v3/analysis_summary.json,docs/results/m6a_v3_episode_source_manifest.json

@@ -1,0 +1,7 @@
+metric,label,value,unit,source_path
+scenes,Scenes,8,scenes,docs/results/m6_multiscene_v3_preregistration.json
+episodes,Episodes,32,episodes,docs/results/m6_multiscene_v3_preregistration.json
+snapshots,Snapshots,128,snapshots,data/m6a/pilot/<launch>/<attempt>/episode_runtime_summary.json
+codec_cases,Codec cases,1024,cases,data/m6a/pilot/<launch>/<attempt>/codec_aggregate.json
+finalized,Finalized,32,of 32,data/m6a/pilot/<launch>/<attempt>/m6a_v2_final_success.json
+retries,Retries,0,retries,data/m6a/pilot/<launch>/<attempt>/host_process_result.json

@@ -94,13 +94,13 @@ PSNR, SSIM, charged bytes, and ROI area are defined independently of TCOBR eligi
 
 The Low-budget result is adverse in both full-frame measures despite slightly fewer charged bytes. The Severe result is more adverse in full-frame quality while charged bytes are effectively matched. Medium and High differences are small and positive.
 
-## Qualitative audit sample
+## Qualitative budget audit sample
 
 ![Deterministic reconstruction comparison](figures/m6_qualitative_comparison.png)
 
-*Figure 5. The sample rule is independent of effect: lexicographically first eligible episode, then snapshot 0 and Low budget. State-only and command-conditioned reconstructions are pixel-identical in this example; the plotted images were reconstructed from frozen evidence and verified against recorded SHA-256 digests.*
+*Figure 5. The sample rule is independent of effect: lexicographically first eligible episode, then snapshot 0, the fixed State-only method, and the Severe/High budget endpoints. The plotted images were reconstructed from frozen evidence and verified against recorded SHA-256 digests.*
 
-The selected sample is S2 seed 630200, snapshot 0. State-only uses 32,231 charged bytes and command-conditioned uses 32,240; both have PSNR 32.12 dB and SSIM 0.883. It is illustrative evidence only and does not replace the episode-level analysis.
+The selected sample is S2 seed 630200, snapshot 0. Under State-only allocation, the Severe reconstruction uses 31,428 charged bytes with PSNR 24.89 dB and SSIM 0.756; the High reconstruction uses 33,779 bytes with PSNR 35.89 dB and SSIM 0.933. This demonstrates the frozen budget-quality progression, not a command-conditioning benefit, and does not replace episode-level analysis.
 
 ## Engineering contributions
 

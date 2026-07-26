@@ -1,0 +1,7 @@
+order,milestone,capability,verified_output,source_path
+1,M1,Synchronized capture,"RGB, pose, and motion evidence",docs/progress.md
+2,M2,Trajectory prediction,State-only and command-conditioned,docs/results/m2_in_place_summary_metrics.csv
+3,M3,Risk geometry,Footprint and uncertainty corridors,docs/m3_world_risk_validation_report.md
+4,M4,Image projection,World risk to camera-space ROI,docs/m4_camera_projection_validation_report.md
+5,M5,Byte-fair evaluation,"4 methods, 4 budgets, 64 episodes",docs/m5e_f_independent_acceptance_report.md
+6,M6,Closed-loop formal study,Trusted evidence and paired inference,docs/m6_final_report.md
