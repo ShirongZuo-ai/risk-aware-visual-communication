@@ -1,0 +1,157 @@
+{
+  "absolute_tcobr": {
+    "high": {
+      "command_conditioned_risk_roi": {
+        "at_one": 17,
+        "at_zero": 0,
+        "mean": 1.0,
+        "n_episodes": 17
+      },
+      "state_only_risk_roi": {
+        "at_one": 17,
+        "at_zero": 0,
+        "mean": 1.0,
+        "n_episodes": 17
+      }
+    },
+    "low": {
+      "command_conditioned_risk_roi": {
+        "at_one": 17,
+        "at_zero": 0,
+        "mean": 1.0,
+        "n_episodes": 17
+      },
+      "state_only_risk_roi": {
+        "at_one": 17,
+        "at_zero": 0,
+        "mean": 1.0,
+        "n_episodes": 17
+      }
+    },
+    "medium": {
+      "command_conditioned_risk_roi": {
+        "at_one": 16,
+        "at_zero": 1,
+        "mean": 0.9411764705882353,
+        "n_episodes": 17
+      },
+      "state_only_risk_roi": {
+        "at_one": 16,
+        "at_zero": 1,
+        "mean": 0.9411764705882353,
+        "n_episodes": 17
+      }
+    },
+    "severe": {
+      "command_conditioned_risk_roi": {
+        "at_one": 16,
+        "at_zero": 1,
+        "mean": 0.9411764705882353,
+        "n_episodes": 17
+      },
+      "state_only_risk_roi": {
+        "at_one": 16,
+        "at_zero": 1,
+        "mean": 0.9411764705882353,
+        "n_episodes": 17
+      }
+    }
+  },
+  "allocation_divergence": {
+    "identical_reconstruction_fraction_by_budget": {
+      "high": 0.9375,
+      "low": 0.90625,
+      "medium": 0.9375,
+      "severe": 0.8515625
+    },
+    "mean_command_roi_pixels": 9.578125,
+    "mean_pixel_change_fraction": 0.00019694010416666682,
+    "mean_roi_jaccard": 0.753914203902715,
+    "mean_state_roi_pixels": 8.84375,
+    "mean_tile_change_fraction": 0.0013020833333333333,
+    "mean_tile_jaccard": 0.96875,
+    "quality_allocation_change_fraction_by_budget": {
+      "high": 0.0013020833333333333,
+      "low": 0.03255208333333334,
+      "medium": 0.0013020833333333333,
+      "severe": 0.08723958333333334
+    }
+  },
+  "critical_region": {
+    "high": {
+      "command_conditioned_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.1250097950572634,
+        "mean_region_psnr_db": 38.65969019890005,
+        "mean_tile_payload_bytes": 12793.181818181818
+      },
+      "state_only_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.11905929776974081,
+        "mean_region_psnr_db": 38.64322663800035,
+        "mean_tile_payload_bytes": 12785.545454545454
+      }
+    },
+    "low": {
+      "command_conditioned_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.1250097950572634,
+        "mean_region_psnr_db": 34.07067954017513,
+        "mean_tile_payload_bytes": 12413.318181818182
+      },
+      "state_only_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.11905929776974081,
+        "mean_region_psnr_db": 34.18974987851824,
+        "mean_tile_payload_bytes": 12415.34090909091
+      }
+    },
+    "medium": {
+      "command_conditioned_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.1250097950572634,
+        "mean_region_psnr_db": 37.52147934420648,
+        "mean_tile_payload_bytes": 12696.295454545454
+      },
+      "state_only_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.11905929776974081,
+        "mean_region_psnr_db": 37.50501578330679,
+        "mean_tile_payload_bytes": 12688.65909090909
+      }
+    },
+    "severe": {
+      "command_conditioned_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.1250097950572634,
+        "mean_region_psnr_db": 25.820967115934465,
+        "mean_tile_payload_bytes": 12154.0
+      },
+      "state_only_risk_roi": {
+        "mean_boundary_high_quality_coverage": 0.11905929776974081,
+        "mean_region_psnr_db": 25.866130046727292,
+        "mean_tile_payload_bytes": 12152.977272727272
+      }
+    }
+  },
+  "empty_scene_diagnosis": {
+    "S1": {
+      "not_trajectory_critical": 8,
+      "original_boundary_edges_below_16": 8
+    },
+    "S7": {
+      "not_trajectory_critical": 24,
+      "original_boundary_edges_below_16": 8
+    },
+    "S8": {
+      "not_trajectory_critical": 16
+    }
+  },
+  "interpretation": {
+    "causal_status": "descriptive mechanism diagnosis from frozen evidence; no new method is evaluated",
+    "confirmed_cause": "sparse trajectory-point masks plus coarse 8x6 tile quantization made the two allocations nearly identical; TCOBR was also saturated on eligible episodes"
+  },
+  "schema_version": "m7-frozen-m6-diagnostic-summary-v1",
+  "source": {
+    "codec_cases": 1024,
+    "episodes": 32,
+    "evidence_binding_sha256": "0ccbb0574d3f80c15236c8c7248b4a701202a49e3d5bc52a5d7115916e600d41",
+    "preregistration_sha256": "9b3e145bd5fe3a40bea972c67f44988482c4430d684460335f498f7d79055941",
+    "snapshots": 128,
+    "study": "frozen M6 v3 formal study"
+  },
+  "summary_sha256": "21ab718bd50f795b76bbb23595e974f884f4b1215d5bc61fa384cd375b947ba0"
+}

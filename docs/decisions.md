@@ -386,3 +386,11 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Reason:** Project-level engineering progress and budget-quality improvement are distinct from whether command conditioning improves the preregistered TCOBR endpoint. Presenting them in one visual hierarchy prevents the null method result from obscuring verified system capabilities without diminishing the negative finding.
 - **Decision:** Retain one narrowly scoped M5 context figure only because frozen evidence supports it, showing all three baselines at both Severe and Low budgets, including adverse and null-compatible effects.
 - **Impact:** Quantitative publication figures remain deterministic derivatives of documented frozen paths. No protocol, evidence, gate, or interpretation boundary changes.
+
+## 2026-07-28 - Diagnose allocation collapse before implementing M7 VoI
+
+- **Decision:** Treat the frozen M6 null effect as a measured allocation-actuation failure plus TCOBR saturation, not as evidence that future commands are intrinsically useless. Preserve both M6 methods unchanged.
+- **Evidence:** Trusted masks average fewer than ten active pixels; only 0.0197% of pixels and 0.1302% of selected tiles differ. Depending on budget, 85.16%-93.75% of paired reconstructions are identical, critical-region byte/coverage/PSNR differences are negligible, and both methods share near-ceiling absolute TCOBR.
+- **Decision:** Start M7 with an offline deterministic marginal-benefit-per-exact-byte allocator using equally weighted risk, trajectory coverage, visibility gain, and uncertainty, multiplied by measured marginal reconstruction benefit. Require explicit actuation, eligibility, byte-fairness, critical-coverage, task-utility, quality, heterogeneity, and reproducibility gates before proposing Webots.
+- **Rejected:** Retuning the frozen masks, changing TCOBR eligibility, interpreting undefined scenes as zero/one, immediately learning from M6, merely increasing ROI size without byte-cost evidence, or launching another Webots experiment before offline actuation is demonstrated.
+- **Impact:** The next implementation must use new disjoint offline development/evaluation identities. M6 remains the immutable negative baseline and no new experiment is authorized.

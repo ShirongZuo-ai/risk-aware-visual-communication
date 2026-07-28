@@ -16,6 +16,14 @@ Release maintainers with the immutable local evidence can re-extract, validate, 
 
 The refresh path never runs Webots or modifies experimental evidence. It fails closed if frozen coverage, lifecycle completion, budgets, gates, effects, sample hashes, or codec reconstruction hashes differ.
 
+M7 diagnostic figures regenerate from checked derived sources with:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.m7_m6_diagnostics
+```
+
+Maintainers with the immutable local M6 corpus may add `--refresh-source-data` to reproduce all 1,024 frozen codec/evaluation cases before rendering. The extractor writes only `docs/` derivatives and fails closed on any evidence mismatch.
+
 | Figure | Checked source data | Frozen upstream source | Scope |
 | --- | --- | --- | --- |
 | `m6_capability_evolution.{svg,png}` | `data/m6_capability_evolution.csv` | milestone reports listed per row | Verified M1-M6 capability progression; not a method-effect claim |
@@ -27,6 +35,11 @@ The refresh path never runs Webots or modifies experimental evidence. It fails c
 | `m6_episode_eligibility.{svg,png}` | `data/m6_episode_eligibility.csv` | v3 preregistration and frozen analysis summary | 32 episodes; 17 eligible and 15 undefined |
 | `m6_tcobr_budget_forest.{svg,png}` | `data/m6_tcobr_budget_effects.csv` | frozen eligibility-conditional analysis summary | TCOBR effects and 95% CIs, `n=17` |
 | `m6_secondary_budget_effects.{svg,png}` | `data/m6_secondary_effects.csv` | frozen analysis summary | Paired PSNR, SSIM, bytes, and ROI-area effects, `n=32` |
+| `m7_allocation_divergence.{svg,png}` | `data/m7_allocation_overlap.csv` | frozen v3 mask and codec evidence | Pixel/tile/final-quality divergence and identical reconstructions, 128 snapshots |
+| `m7_absolute_tcobr.{svg,png}` | `data/m7_episode_absolute_tcobr.csv` | frozen v3 TCOBR evidence | Absolute episode TCOBR by method and budget, 17 defined episodes |
+| `m7_critical_region_diagnostics.{svg,png}` | `data/m7_case_diagnostics.csv` | hash-reproduced frozen reconstructions and method-independent TCOBR geometry | Critical tile bytes, boundary high-quality coverage, and masked PSNR |
+| `m7_empty_scene_diagnosis.{svg,png}` | `data/m7_empty_scene_reasons.csv` | frozen TCOBR instance eligibility | Method-independent reason counts for S1-S8 |
+| `m7_scene_budget_failure_patterns.{svg,png}` | `data/m7_scene_budget_patterns.csv` | derived from frozen overlap/case/episode tables | Quality-map divergence and reconstruction identity by scene/budget |
 
 ## Deterministic qualitative rule
 

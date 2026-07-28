@@ -1,8 +1,10 @@
 # Progress
 
-Last updated: 2026-07-26 (Asia/Shanghai)
+Last updated: 2026-07-28 (Asia/Shanghai)
 
 ## Completed
+
+- Started M7 with a read-only diagnostic reproduction of all 32 frozen M6 v3 episodes, 128 snapshots, and 1,024 codec cases. Command conditioning changed only 0.0197% of image pixels and 0.1302% of selected tiles; 85.16%-93.75% of paired reconstructions were identical by budget. Both methods have identical absolute episode TCOBR (0.9412 Severe, 1.0 Low, 0.9412 Medium, 1.0 High; n=17), confirming that sparse trajectory-point masks, coarse tile quantization, and endpoint saturation jointly explain the zero effect. S1/S7 fail boundary-edge eligibility and S8 has no trajectory-critical obstacle. Five deterministic SVG/360-dpi PNG diagnostics, checked sources, strict tests, and the M7 design/go-no-go memo were added without Webots or experimental evidence changes. Next priority: implement the deterministic allocator on a new disjoint offline development split; no Webots launch is authorized.
 
 - Revised the publication landing page around verified research progress rather than a null-result hero: a checked M1-M6 capability evolution, formal scale/lifecycle summary (8 scenes, 32 episodes, 128 snapshots, 1,024 codec cases, 32/32 finalized, 0 retries), absolute budget-quality operating points, and deterministic Severe-to-High reconstruction audit now precede method-level findings. A narrowly scoped M5 figure shows all Uniform/Center/Object baselines and retains adverse Severe effects. The unchanged zero-effect TCOBR forest remains under scientific findings and limitations. All quantitative inputs are frozen-source derivatives; 8 focused publication tests and the complete 473-test suite passed, with no Webots run or experimental data change.
 

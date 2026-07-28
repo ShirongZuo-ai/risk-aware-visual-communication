@@ -17,13 +17,15 @@ M6 is complete and frozen as a negative-result baseline.
 
 ## Milestone 7 - Budget-conditioned visual value of information
 
-- [ ] Freeze a method-independent utility combining trajectory risk, visible coverage, and downstream task value.
+- [x] Diagnose the frozen M6 zero effect using ROI/pixel/tile divergence, critical-region allocation, absolute TCOBR, reconstruction quality, and empty-scene mechanisms.
+- [x] Freeze an offline design target and go/no-go gates for a deterministic byte-cost-aware allocator combining risk, trajectory coverage, visibility gain, uncertainty, and marginal reconstruction benefit.
+- [ ] Implement the deterministic allocator and provenance contract on new disjoint offline data; keep both M6 methods unchanged as baselines.
 - [ ] Design eligibility-rich, held-out scenes without tuning against M6 outcomes.
 - [ ] Generate an independent counterfactual tile-quality dataset with actual complete-container byte increments.
 - [ ] Implement an offline oracle and deterministic greedy marginal-utility-per-byte baseline before any learned allocator.
 - [ ] Pre-register episode/scene splits, byte fairness, failure handling, task metrics, and support gates.
 
-Acceptance: the new study uses identities and evidence disjoint from M5/M6, reports all null and adverse outcomes, and makes no navigation-safety claim without a separately frozen closed-loop task protocol.
+Acceptance: the new study uses identities and evidence disjoint from M5/M6, passes every offline go/no-go gate in `docs/m7_budget_conditioned_voi_design.md`, reports all null and adverse outcomes, and makes no navigation-safety claim without a separately frozen closed-loop task protocol.
 
 ## Milestone 0 — Repository and environment baseline
 

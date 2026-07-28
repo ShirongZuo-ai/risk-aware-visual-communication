@@ -94,3 +94,9 @@ Phase 1 begins with scenarios 1–3.
 # M6 formal multi-scene amendment (2026-07-25)
 
 The M6 primary downstream measure is TCOBR as operationally frozen in `docs/m6_followup_evaluation_protocol.md`. The complete 32-episode S1-S8 matrix, paired contrast, exclusions, bootstrap seed/replicates, and support gate are committed in `docs/results/m6_multiscene_preregistration.json`. Pilot and disposable-smoke identities are never analysis eligible.
+
+# M7 diagnostic and offline allocation gate (2026-07-28)
+
+M7 begins with a descriptive, read-only diagnosis of the frozen M6 v3 evidence. ROI/pixel/tile overlap, final JPEG-quality divergence, critical-region tile payload, critical-boundary high-quality coverage, critical-region PSNR, absolute episode TCOBR, and eligibility reasons use the definitions in `docs/m7_m6_zero_effect_diagnostic.md`. These derived diagnostics do not amend M6 outcomes.
+
+The first M7 allocator is a deterministic marginal visual-value-per-exact-byte baseline, not a learned policy. Its allowed causal inputs, equal-weight risk/coverage/visibility/uncertainty term, counterfactual marginal reconstruction benefit, exact byte cost, tie breaks, provenance, and offline gates are frozen in `docs/m7_budget_conditioned_voi_design.md`. M5/M6 evidence cannot be used for weight or threshold tuning. A new Webots proposal requires new disjoint, eligibility-rich data and all offline gates; passing the gates is not launch approval.
