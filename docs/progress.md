@@ -2057,3 +2057,14 @@ Milestone 5E-E episode statistics and diagnostics are complete. The next priorit
 - TCOBR eligibility is limited to 9/16 episodes in 5/8 scenes; undefined observations remain unimputed. No Webots or 720xxx formal split was created.
 - Reproducible evidence and figures are documented in `docs/m7_visual_voi_evaluation_report.md`.
 - Next priority: offline-only redesign review of reconstruction benefit, byte utilization, TCOBR saturation, and eligibility coverage before considering a new preregistration.
+
+## Milestone 7 v2 - Matched-floor offline revision (2026-07-30)
+
+- Preserved the complete M7 v1 `NO-GO` evidence and preregistered three constrained v2 candidates before outcome calculation.
+- Added a per-snapshot byte envelope derived from the exact two-baseline charged-byte midpoint, the highest feasible uniform quality floor, and deterministic residual task upgrades with complete-container recomputation.
+- Evaluated 16 episodes, 64 snapshots, three candidates, four budgets, and 768 v2 candidate cases. All allocations have zero future/evaluator leakage, fallback, and replacement.
+- Byte fairness is repaired: maximum per-case utilization gaps are 0.2982-0.3011 percentage points, below the frozen 0.5-point limit. Critical and full PSNR effects are positive at Severe and Low for all candidates.
+- Offline decision: **NO-GO**. Every candidate passes G1/G2/G3/G5/G6/G9 and fails G4/G7/G8.
+- The visible-edge ablation has the best primary continuous effect, `+0.00176`, but its 95% CI `[-0.00610, +0.00962]` crosses zero; its only nonzero scene effect is M7C2. TCOBR remains unchanged at its saturated value.
+- No candidate is selected, no 720xxx corpus is created, and no Webots study is authorized.
+- Next priority: a separately reviewed offline measurement study for a sender-available, scene-stable continuous task proxy and eligibility-rich sampling.

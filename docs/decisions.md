@@ -416,3 +416,11 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Decision:** Keep undefined TCOBR observations undefined. M7C6, M7G1, M7G2 and the ineligible M7C5 episode are not imputed or replaced. The mismatch between two registered episodes per scene and the gate requirement of three eligible episodes is reported as a failed gate, not repaired retrospectively.
 - **Rejected:** Relaxing byte fairness, redefining high-quality coverage, modifying benefit weights, treating binary coverage as task success, creating a 720xxx split, or launching Webots after a partial gate pass.
 - **Impact:** M7 v1 remains a frozen development result. A future allocator requires a separately reviewed offline redesign and new disjoint authority before any experiment proposal.
+
+## 2026-07-30 - Retain the M7 v2 matched-floor NO-GO
+
+- **Decision:** Use the exact midpoint of the two frozen baseline transmissions as a per-case cap, establish the highest feasible uniform quality floor, and compare only three preregistered residual-upgrade objectives: global MSE, visible edges, and visible edges inside the predicted corridor.
+- **Reason:** This is the smallest deterministic revision that directly addresses v1's excess utilization and quality loss while keeping the codec, baselines, task evaluator, and sender-time boundary intact.
+- **Evidence:** All candidates pass byte fairness, integrity, actuation, critical quality, TCOBR non-degradation, and determinism. None passes continuous task utility, critical-boundary fidelity, or scene balance. The best mean effect is `+0.00176`, 95% CI `[-0.00610, +0.00962]`, entirely driven by M7C2 at Severe.
+- **Rejected:** Padding bytes, weakening the 0.5-point byte tolerance, selecting the directionally positive candidate despite a nonpositive CI bound, retuning weights after seeing M7 v1/v2 results, replacing saturated TCOBR observations, or creating 720xxx/Webots evidence.
+- **Impact:** No v2 candidate is selected. Future work requires a separately reviewed sender-available utility measurement and new eligibility-rich authority, not another adjustment on this corpus.

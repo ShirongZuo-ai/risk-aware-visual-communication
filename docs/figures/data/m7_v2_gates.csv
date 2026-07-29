@@ -1,0 +1,28 @@
+candidate_id,gate,name,passed,value,threshold
+v2_global_only,1,Exact byte fairness,True,"max gaps state=0.002982, command=0.002982",every case <= budget and <=0.005 from both baselines
+v2_global_only,2,Integrity and leakage,True,"cases=256, provenance=256, prohibited=0, nonfinite=0",complete finite coverage and zero prohibited usage
+v2_global_only,3,Allocation actuation,True,severe_vs_state_only_risk_roi=1.000; severe_vs_command_conditioned_risk_roi=1.000; low_vs_state_only_risk_roi=1.000; low_vs_command_conditioned_risk_roi=1.000,>=0.75 snapshots differ by >=1 tile at Severe/Low
+v2_global_only,4,Continuous task utility,False,"effect=-0.003048780487804875, CI=-0.00609756097560975,0.0",Severe/Low scene-stratified CI lower bound >0
+v2_global_only,5,Critical quality,True,"{""critical_psnr_db"": {""low"": 0.28622432407782067, ""severe"": 0.6557207234003982}, ""full_psnr_db"": {""low"": 0.3064424268521413, ""severe"": 0.4825358774650186}}",critical-region PSNR >=-0.25 dB at Severe and Low
+v2_global_only,6,TCOBR non-degradation,True,"severe mean=0.0, min=0.0; low mean=0.0, min=0.0",no defined negative episode and nonnegative budget means
+v2_global_only,7,Critical-boundary fidelity,False,severe=-0.0067750677506775; low=0.0,positive mean continuous effect at Severe and Low
+v2_global_only,8,Scene balance,False,"min LOO=-0.003810975609756094, max positive contribution=1.0",all leave-one-scene-out effects >0 and max contribution <=0.50
+v2_global_only,9,Deterministic reproduction,True,double-run matches=256/256,all 256 allocations and derived artifacts reproduce
+v2_visible_edges,1,Exact byte fairness,True,"max gaps state=0.002982, command=0.002982",every case <= budget and <=0.005 from both baselines
+v2_visible_edges,2,Integrity and leakage,True,"cases=256, provenance=256, prohibited=0, nonfinite=0",complete finite coverage and zero prohibited usage
+v2_visible_edges,3,Allocation actuation,True,severe_vs_state_only_risk_roi=1.000; severe_vs_command_conditioned_risk_roi=1.000; low_vs_state_only_risk_roi=1.000; low_vs_command_conditioned_risk_roi=1.000,>=0.75 snapshots differ by >=1 tile at Severe/Low
+v2_visible_edges,4,Continuous task utility,False,"effect=0.001758911819887432, CI=-0.00609756097560975,0.009615384615384614",Severe/Low scene-stratified CI lower bound >0
+v2_visible_edges,5,Critical quality,True,"{""critical_psnr_db"": {""low"": 0.28716968607442145, ""severe"": 0.58740306874114}, ""full_psnr_db"": {""low"": 0.20352297381750462, ""severe"": 0.3679567566702373}}",critical-region PSNR >=-0.25 dB at Severe and Low
+v2_visible_edges,6,TCOBR non-degradation,True,"severe mean=0.0, min=0.0; low mean=0.0, min=0.0",no defined negative episode and nonnegative budget means
+v2_visible_edges,7,Critical-boundary fidelity,False,severe=0.003908692933083182; low=0.0,positive mean continuous effect at Severe and Low
+v2_visible_edges,8,Scene balance,False,"min LOO=0.0, max positive contribution=1.0",all leave-one-scene-out effects >0 and max contribution <=0.50
+v2_visible_edges,9,Deterministic reproduction,True,double-run matches=256/256,all 256 allocations and derived artifacts reproduce
+v2_corridor_edges,1,Exact byte fairness,True,"max gaps state=0.002954, command=0.003011",every case <= budget and <=0.005 from both baselines
+v2_corridor_edges,2,Integrity and leakage,True,"cases=256, provenance=256, prohibited=0, nonfinite=0",complete finite coverage and zero prohibited usage
+v2_corridor_edges,3,Allocation actuation,True,severe_vs_state_only_risk_roi=1.000; severe_vs_command_conditioned_risk_roi=1.000; low_vs_state_only_risk_roi=1.000; low_vs_command_conditioned_risk_roi=1.000,>=0.75 snapshots differ by >=1 tile at Severe/Low
+v2_corridor_edges,4,Continuous task utility,False,"effect=-0.003048780487804875, CI=-0.00609756097560975,0.0",Severe/Low scene-stratified CI lower bound >0
+v2_corridor_edges,5,Critical quality,True,"{""critical_psnr_db"": {""low"": 0.27883178267050646, ""severe"": 0.5758921015047974}, ""full_psnr_db"": {""low"": 0.2675483704492443, ""severe"": 0.42373010841031267}}",critical-region PSNR >=-0.25 dB at Severe and Low
+v2_corridor_edges,6,TCOBR non-degradation,True,"severe mean=0.0, min=0.0; low mean=0.0, min=0.0",no defined negative episode and nonnegative budget means
+v2_corridor_edges,7,Critical-boundary fidelity,False,severe=-0.0067750677506775; low=0.0,positive mean continuous effect at Severe and Low
+v2_corridor_edges,8,Scene balance,False,"min LOO=-0.003810975609756094, max positive contribution=1.0",all leave-one-scene-out effects >0 and max contribution <=0.50
+v2_corridor_edges,9,Deterministic reproduction,True,double-run matches=256/256,all 256 allocations and derived artifacts reproduce

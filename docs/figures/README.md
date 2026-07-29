@@ -52,6 +52,20 @@ Regenerate the M7 Visual-VoI evaluation, checked source tables, and figures with
 
 This command is offline-only. It reads the immutable M7 v1 corpus, rejects evaluator-only inputs at the allocator boundary, and does not start Webots.
 
+M7 v2 constrained-development figures regenerate from the same immutable corpus with:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.m7_visual_voi_v2 evaluate
+```
+
+| Figure | Checked source data | Scope |
+| --- | --- | --- |
+| `m7_v2_candidate_gates.{svg,png}` | `data/m7_v2_gates.csv` | Nine preregistered gate decisions for all three candidates |
+| `m7_v2_task_quality.{svg,png}` | `data/m7_v2_candidate_comparison.csv` | Scene-stratified continuous effect and Severe/Low critical-PSNR safeguard |
+| `m7_v2_byte_scene.{svg,png}` | candidate comparison plus `m7_v2_summary.json` scene effects | Exact-byte gap and eligible-scene dependence |
+
+All M7 v2 figures use the frozen candidate set and preserve null, adverse, and single-scene results. They are SVG plus 360-dpi PNG and do not imply formal-study eligibility.
+
 ## Deterministic qualitative rule
 
 Select the lexicographically first TCOBR-eligible episode, then snapshot `0`, the fixed `state_only_risk_roi` method, and the frozen Severe/High budget endpoints. This yields S2 seed 630200. The rule does not inspect visual quality or effect size. The JSON stores original and reconstructed RGB bytes as base64, SHA-256 values, recorded metrics, and exact source-evidence paths. High-budget PSNR and SSIM must both exceed the Severe values before rendering.

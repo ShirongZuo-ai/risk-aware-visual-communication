@@ -275,3 +275,15 @@ Implement and validate TCOBR and exact formal identity selection; commit the 32-
 - [ ] Create any 720xxx formal authority or request any Webots launch.
 
 Acceptance: **NO-GO**. The development allocator demonstrates deterministic allocation actuation and critical-boundary coverage, but fails eligibility richness, byte fairness, offline task utility, and quality safeguards. No further Webots study is permitted by this gate. The next milestone is an offline measurement-and-objective redesign, not parameter tuning on M7 v1.
+
+## M7 v2 constrained offline revision (2026-07-30)
+
+- [x] Freeze a limited three-candidate ablation set before evaluation.
+- [x] Enforce a matched two-baseline byte envelope and uniform minimum-quality floor.
+- [x] Recompute complete-container bytes for every candidate upgrade.
+- [x] Preserve zero-leakage sender-time inputs and method-independent evaluation.
+- [x] Evaluate exact-byte, actuation, continuous-utility, quality, TCOBR, scene-balance, and reproduction gates.
+- [x] Retain null, adverse, and scene-concentrated outcomes.
+- [ ] Prepare a new formal corpus or launch Webots.
+
+Acceptance: **NO-GO**. The matched-floor design fixes byte fairness and reconstruction quality, but no preregistered candidate has a positive continuous-utility CI lower bound, positive fidelity at both primary budgets, or scene-balanced gains. The next priority is a new offline measurement review; post-result candidate tuning is prohibited.
