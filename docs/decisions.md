@@ -402,3 +402,9 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Decision:** Reuse the existing v4 prepared-package and research lifecycle with exactly one launch per registered identity, no retry, and batch stop on any shared or episode failure. Corpus generation retains only the two frozen M6 methods and does not implement Visual-VoI.
 - **Rejected:** Reusing M5/M6 evidence, inventing post-outcome replacements, exposing obstacle labels to allocation, creating the 720xxx formal split, or treating development-corpus completion as an M7 go decision.
 - **Impact:** The manifest, lock, schemas, validators, tests, protocol, and complete matrix must be committed before preparation. The corpus is development-only and cannot enter formal inference.
+
+# M7 v1 corpus identity reconstruction correction (2026-07-29)
+
+- Preserve the intentional runtime-local identity in controller-produced evidence and the package identity in host process evidence.
+- Validate an explicit bridge through the exact registered M7 v1 authority, development split, episode, scene, and seed; never rewrite persisted evidence to make the identities equal.
+- This is a read-only validation correction and does not alter the M7 v1 manifest, lock, packages, scientific design, or episode data.

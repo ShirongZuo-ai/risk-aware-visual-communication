@@ -122,16 +122,54 @@ def run_registered_batch(*, head: str) -> list[dict]:
     return results
 
 
+def validate_runtime_local_identity_binding(*, item: dict, package: dict, runtime: dict, runtime_identity: dict) -> dict:
+    """Bind controller-local evidence to one authoritative package identity."""
+    package_identity = {
+        "launch_id": package.get("launch_id"),
+        "attempt_id": package.get("attempt_id"),
+        "identity_id": package.get("identity_id"),
+        "scene_id": package.get("scene_id"),
+        "seed": package.get("seed"),
+    }
+    expected_runtime_identity = {
+        "launch_id": "runtime-local",
+        "attempt_id": "runtime-local",
+        "identity_id": package_identity["identity_id"],
+        "scene_id": package_identity["scene_id"],
+        "seed": package_identity["seed"],
+    }
+    if (
+        package_identity != {
+            "launch_id": package["launch_id"],
+            "attempt_id": item["attempt_id"],
+            "identity_id": item["episode_id"],
+            "scene_id": item["scene"],
+            "seed": item["seed"],
+        }
+        or runtime.get("manifest_authority_version") != "m7v1"
+        or runtime.get("split") != "development"
+        or runtime.get("episode_id") != item["episode_id"]
+        or runtime.get("scene") != item["scene"]
+        or runtime.get("seed") != item["seed"]
+        or runtime_identity != expected_runtime_identity
+    ):
+        raise ValueError("M7 package/runtime-local identity binding")
+    return package_identity
+
+
 def validate_completed_corpus(*, head: str, persist_report: bool = False) -> dict:
     registration = load_preregistration(); packages = audit_registered_packages_after_completion(head=head); episodes = []
     for item, package in zip(registration["matrix"], packages):
         root = Path(package["prospective_attempt_root"]); runtime = json.loads(Path(package["launch_spec"]["runtime_config"]["path"]).read_text(encoding="utf-8")); load_v2_runtime_config(runtime)
-        manifest_raw = json.loads((root / "runtime_artifacts.json").read_text(encoding="utf-8")); identity = manifest_raw["identity"]
-        manifest = load_runtime_manifest(root / "runtime_artifacts.json", identity, root, runtime)
+        manifest_raw = json.loads((root / "runtime_artifacts.json").read_text(encoding="utf-8")); runtime_identity = manifest_raw["identity"]
+        package_identity = validate_runtime_local_identity_binding(
+            item=item, package=package, runtime=runtime, runtime_identity=runtime_identity,
+        )
+        manifest = load_runtime_manifest(root / "runtime_artifacts.json", runtime_identity, root, runtime)
         aggregate = load_codec_aggregate(root / "codec_aggregate.json", runtime, root=root)
         joint = load_joint_validation_report(root / "joint_validation.json", runtime, root=root)
         geometry = load_evaluator_only_geometry(root / "evaluator_only_geometry.json", runtime, root)
-        process = load_process_evidence(root / "host_process_result.json", identity)
+        process = load_process_evidence(root / "host_process_result.json", package_identity)
         final = _read_canonical(root / "m6a_v2_final_success.json"); terminal = _read_canonical(root / ".m6a_v2_ownership_terminal.json")
         cases = [case for snapshot in aggregate["snapshot_evidence"] for case in snapshot["cases"]]
         if (
