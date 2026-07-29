@@ -48,7 +48,7 @@ class M6AWebotsRuntimeAdapter:
   if raw_path.exists() or meta_path.exists() or snapshot_dir.exists():raise FileExistsError('refusing snapshot overwrite')
   try:
    raw_path.write_bytes(frame.rgb);frame_hash=hashlib.sha256(frame.rgb).hexdigest();reference=str(raw_path.relative_to(self.root)).replace('\\','/')
-   if self.config.split=='formal' and frame.camera_context is None:raise ValueError('formal snapshot requires authoritative camera context')
+   if self.config.split in {'formal','development'} and frame.camera_context is None:raise ValueError('analysis snapshot requires authoritative camera context')
    self._canonical_write(meta_path,{'schema_version':'m6a-v2-raw-snapshot-metadata-v2','snapshot_id':snapshot_id,'snapshot_index':len(self.done),'scene':self.config.scene,'seed':self.config.seed,'frame_reference':reference,'frame_sha256':frame_hash,'width_px':160,'height_px':120,'simulation_timestamp_s':simulation_time,'state_timestamp_s':state.timestamp_s,'frame_timestamp_s':frame.timestamp_s,'target_timestamp_s':target_time,'state':asdict(state.state),'schedule_id':self.schedule.schedule_id,'schedule_available_time_s':self.schedule.available_time_s,'schedule_segments':[asdict(x) for x in self.schedule.segments],'schedule_sha256':digest(asdict(self.schedule)),'camera_context':frame.camera_context})
    item=SnapshotInput(VERSION,self.config.manifest_hash,self.config.scene,self.config.episode_id,self.config.seed,snapshot_id,target_time,state.state,reference,self.schedule)
    output=process_m6a_snapshot(item,self.config.projection_config);serialize_snapshot(output,snapshot_dir,manifest_hash=self.config.manifest_hash,protocol_version=VERSION)

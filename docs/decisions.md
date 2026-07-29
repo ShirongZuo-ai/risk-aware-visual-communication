@@ -394,3 +394,11 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Decision:** Start M7 with an offline deterministic marginal-benefit-per-exact-byte allocator using equally weighted risk, trajectory coverage, visibility gain, and uncertainty, multiplied by measured marginal reconstruction benefit. Require explicit actuation, eligibility, byte-fairness, critical-coverage, task-utility, quality, heterogeneity, and reproducibility gates before proposing Webots.
 - **Rejected:** Retuning the frozen masks, changing TCOBR eligibility, interpreting undefined scenes as zero/one, immediately learning from M6, merely increasing ROI size without byte-cost evidence, or launching another Webots experiment before offline actuation is demonstrated.
 - **Impact:** The next implementation must use new disjoint offline development/evaluation identities. M6 remains the immutable negative baseline and no new experiment is authorized.
+
+## 2026-07-29 - Freeze the M7 v1 development corpus before generation
+
+- **Decision:** Register exactly 16 new development identities across M7C1-M7C6 and M7G1-M7G2 at seeds 710100-710801. Critical scenes use declared geometry-only visible corridor events; G scenes are low-risk controls. All records are fixed before RGB, codec, or task outcomes.
+- **Decision:** Keep sender-time state, schedule, trajectory/uncertainty, and projection inputs separate from evaluator-only obstacle AABBs and critical labels. Persist evaluator geometry only after runtime in a separate canonical artifact bound to final evidence.
+- **Decision:** Reuse the existing v4 prepared-package and research lifecycle with exactly one launch per registered identity, no retry, and batch stop on any shared or episode failure. Corpus generation retains only the two frozen M6 methods and does not implement Visual-VoI.
+- **Rejected:** Reusing M5/M6 evidence, inventing post-outcome replacements, exposing obstacle labels to allocation, creating the 720xxx formal split, or treating development-corpus completion as an M7 go decision.
+- **Impact:** The manifest, lock, schemas, validators, tests, protocol, and complete matrix must be committed before preparation. The corpus is development-only and cannot enter formal inference.

@@ -20,8 +20,9 @@ M6 is complete and frozen as a negative-result baseline.
 - [x] Diagnose the frozen M6 zero effect using ROI/pixel/tile divergence, critical-region allocation, absolute TCOBR, reconstruction quality, and empty-scene mechanisms.
 - [x] Freeze an offline design target and go/no-go gates for a deterministic byte-cost-aware allocator combining risk, trajectory coverage, visibility gain, uncertainty, and marginal reconstruction benefit.
 - [ ] Implement the deterministic allocator and provenance contract on new disjoint offline data; keep both M6 methods unchanged as baselines.
-- [ ] Design eligibility-rich, held-out scenes without tuning against M6 outcomes.
-- [ ] Generate an independent counterfactual tile-quality dataset with actual complete-container byte increments.
+- [x] Freeze the M7 v1 development authority: 16 disjoint M7C1-M7C6/M7G1-M7G2 episodes, outcome-blind geometric prechecks, isolated evaluator geometry, and an at-most-once generation contract.
+- [ ] Finalize the registered M7 v1 corpus and independently reload all runtime, 512 codec-case, joint, final, and ownership evidence.
+- [ ] Generate an independent counterfactual tile-quality dataset with actual complete-container byte increments from the finalized M7 v1 corpus.
 - [ ] Implement an offline oracle and deterministic greedy marginal-utility-per-byte baseline before any learned allocator.
 - [ ] Pre-register episode/scene splits, byte fairness, failure handling, task metrics, and support gates.
 

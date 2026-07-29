@@ -24,7 +24,7 @@ class Children:
  def __init__(self,supervisor):self.supervisor=supervisor;self.items=[]
  def getCount(self):return len(self.items)
  def importMFNodeFromString(self,index,text):
-  ident=re.search(r'DEF (M5E_[A-Z0-9_]+) Solid',text).group(1)
+  ident=re.search(r'DEF ((?:M5E|M7)_[A-Z0-9_]+) Solid',text).group(1)
   translation=[float(x) for x in re.search(r'translation ([^\n]+)',text).group(1).split()]
   size=[float(x) for x in re.search(r'geometry Box \{ size ([^}]+) \}',text).group(1).split()]
   self.supervisor.nodes[ident]=Node(translation,[0.,0.,1.,0.],size);shape=Node();shape.fields={'geometry':Field(Node(size=size))};self.supervisor.nodes[ident+'_SHAPE']=shape;self.items.append(ident)
@@ -34,7 +34,7 @@ class Supervisor:
   if missing:self.nodes.pop(missing,None)
  def getFromDef(self,name):
   node=self.nodes.get(name)
-  if self.corrupt and name.startswith('M5E_S') and not name.endswith('_SHAPE') and node is not None:node.getField('translation').value[0]+=0.01
+  if self.corrupt and name.startswith(('M5E_S','M7_')) and not name.endswith('_SHAPE') and node is not None:node.getField('translation').value[0]+=0.01
   return node
 class T(unittest.TestCase):
  def config(self,root):return build_one_identity_runtime_config(output_root=Path(root)/'episode_output')
@@ -56,3 +56,10 @@ class T(unittest.TestCase):
    text=target.read_text(encoding='utf-8');self.assertIn('controller "m6a_trusted_runtime"',text);self.assertIn('supervisor TRUE',text);self.assertEqual(original,hashlib.sha256(BASE_WORLD.read_bytes()).hexdigest());self.assertEqual(evidence.allowed_changes,('controller:m5e_dataset_generator->m6a_trusted_runtime','supervisor:TRUE (preserved)'))
    with self.assertRaises(ValueError):materialize_m6a_temporary_world(cfg,target)
    with self.assertRaises(ValueError):materialize_m6a_temporary_world(cfg,Path(d)/'pilot'/'unsafe.wbt')
+ def test_m7_initialization_uses_exact_registered_geometry(self):
+  from scripts.m7_v1_episode_source import MANIFEST_PATH,LOCK_PATH
+  with tempfile.TemporaryDirectory() as d:
+   cfg=build_one_identity_runtime_config(MANIFEST_PATH,LOCK_PATH,output_root=Path(d)/'m7_output',episode_id='m7_v1_development_m7c4_seed710400')
+   supervisor=Supervisor();evidence=initialize_v2_scene_before_motion(cfg,supervisor)
+   self.assertEqual(evidence.seed,710400);self.assertEqual(supervisor.children.getCount(),2)
+   self.assertTrue(all(name.startswith('M7_M7C4_') for name in supervisor.children.items))

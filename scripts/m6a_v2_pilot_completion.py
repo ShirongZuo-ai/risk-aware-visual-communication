@@ -143,6 +143,10 @@ def process_completed_pilot_launch(launch_spec, process_result, *, owned_output_
     root = Path(owned_output_root).resolve(); runtime = _read(launch_spec["runtime_config"]["path"]); summary = _read(launch_spec["summary_path"])
     if not process_result.get("started") or not summary.get("success"): raise ValueError("runtime completion unavailable")
     manifest_path = Path(launch_spec.get("runtime_manifest_path", root / "runtime_artifacts.json")); raw_manifest = _read(manifest_path); identity = raw_manifest.get("identity"); load_runtime_manifest(manifest_path, identity, root, runtime)
+    evaluator_geometry = None
+    if runtime.get("manifest_authority_version") == "m7v1":
+        from scripts.m7_v1_episode_source import persist_evaluator_only_geometry
+        evaluator_geometry = persist_evaluator_only_geometry(runtime, root)
     records = [{**record, "timestamp_s": runtime["snapshots"][record["snapshot_index"]]["timestamp_s"]} for record in summary.get("snapshots", [])]
     snapshots = [process_and_audit_runtime_snapshot(runtime, record, owned_output_root=root, ownership_marker=launch_spec["owner_marker"]) for record in records]
     aggregate = persist_codec_aggregate(runtime, snapshots, owned_output_root=root, ownership_marker=launch_spec["owner_marker"])
@@ -154,4 +158,7 @@ def process_completed_pilot_launch(launch_spec, process_result, *, owned_output_
     validation = load_codec_aggregate_validation(validation_path, runtime, root=root, identity=identity)
     completion = {"runtime_config_sha256": runtime["config_sha256"], "codec_aggregate_sha256": aggregate["aggregate_sha256"], "runtime_summary_sha256": summary["summary_sha256"], "launch_id": aggregate["launch_id"]}
     final_evidence = {"runtime_sha256": manifest["sha256"], "snapshot_validation_sha256": manifest["snapshot_validation"]["canonical_digest"], "b5_sha256": validation["report_sha256"], "aggregate_sha256": aggregate["aggregate_sha256"], "joint_validator_sha256": joint["joint_sha256"], "manifest_sha256": runtime["v2_manifest_sha256"], "lock_sha256": runtime["v2_lock_sha256"]}
+    if evaluator_geometry is not None:
+        final_evidence["evaluator_geometry_sha256"] = evaluator_geometry["canonical_digest"]
+        final_evidence["evaluator_geometry_path"] = str((root / "evaluator_only_geometry.json").resolve())
     return {**validate_pilot_completion(launch_spec, process_result, summary, aggregate, completion, owned_output_root=root), "joint_report_sha256": joint["joint_sha256"], "final_evidence": final_evidence}

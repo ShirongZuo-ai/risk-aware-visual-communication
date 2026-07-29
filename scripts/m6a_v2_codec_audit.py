@@ -101,7 +101,9 @@ def evaluate_codec_case(runtime_config: dict, snapshot: SnapshotCodecInput, case
     if case.snapshot_id != snapshot.snapshot_id or case.timestamp_s != snapshot.timestamp_s or case.raw_image_sha256 != snapshot.raw_image_sha256 or case.reconstruction_sha256 != _sha(case.reconstruction.tobytes()) or case.charged_bytes > case.budget_bytes: raise ValueError("invalid frozen codec output")
     metrics = compute_error_metrics(snapshot.image, case.reconstruction); ssim = compute_ssim(snapshot.image, case.reconstruction)
     tcobr = None
-    if snapshot.camera_context is not None:
+    # M7 development persists projection context but deliberately defers all
+    # task labels/evaluation.  Only the frozen M6 formal split computes TCOBR.
+    if runtime_config.get("split") == "formal" and snapshot.camera_context is not None:
         tcobr = asdict(evaluate_tcobr_case(scene=runtime_config["scene"],seed=runtime_config["seed"],snapshot_id=snapshot.snapshot_id,method=case.method,budget=case.budget_label,original=snapshot.image,reconstruction=case.reconstruction,state=snapshot.state,schedule=snapshot.schedule,snapshot_time_s=snapshot.timestamp_s,camera_context=snapshot.camera_context,original_sha256=snapshot.raw_image_sha256,reconstruction_sha256=case.reconstruction_sha256))
         validate_tcobr_evidence(tcobr)
     if runtime_config.get("split") == "formal" and tcobr is None: raise ValueError("formal TCOBR evidence missing")

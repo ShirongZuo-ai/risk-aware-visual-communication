@@ -30,7 +30,8 @@ def _sha256(path: Path) -> str:
 def _record(config: dict) -> dict:
     _, payload = load_and_validate_m6a_manifest(Path(config["v2_manifest_path"]), Path(config["v2_lock_path"]))
     matches = [item for item in payload["records"] if item["source_record_sha256"] == config["source_record_sha256"]]
-    if len(matches) != 1 or matches[0]["identity"]["split"] not in {"pilot", "calibration", "formal"}:
+    allowed_splits = {"development"} if config.get("manifest_authority_version") == "m7v1" else {"pilot", "calibration", "formal"}
+    if len(matches) != 1 or matches[0]["identity"]["split"] not in allowed_splits:
         raise ValueError("runtime config does not identify one frozen source")
     return matches[0]
 
@@ -44,7 +45,11 @@ def _scene_geometry(record: dict):
     no M5 data or split mapping is used.
     """
     identity = record["identity"]
-    config = generate_scenario(identity["scenario_id"], "formal", identity["seed"])
+    if record.get("protocol_version") == "m7-development-corpus-v1":
+        from simulator.m7_scenarios import generate_m7_scenario
+        config = generate_m7_scenario(identity["scenario_id"], identity["seed"])
+    else:
+        config = generate_scenario(identity["scenario_id"], "formal", identity["seed"])
     frozen = record["scene_config"]
     expected_schedule = [asdict(item) for item in config.command_schedule]
     if (frozen["scene_id"], frozen["seed"], frozen["initial_pose"], frozen["schedule"], frozen["duration_s"]) != (

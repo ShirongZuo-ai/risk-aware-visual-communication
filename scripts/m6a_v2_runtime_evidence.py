@@ -76,9 +76,9 @@ def _snapshot_evidence(record, runtime_config, root):
     allowed = required | ({"camera_context"} if meta.get("schema_version") == RAW_METADATA_SCHEMA_V2 else set())
     if set(meta) != allowed or meta["schema_version"] not in {RAW_METADATA_SCHEMA, RAW_METADATA_SCHEMA_V2} or meta["snapshot_id"] != record["snapshot_id"] or meta["snapshot_index"] != index or meta["scene"] != record["scene"] or meta["seed"] != record["seed"] or meta["frame_sha256"] != raw["sha256"] or meta["frame_sha256"] != record["producer_frame_hash"] or (meta["width_px"], meta["height_px"]) != (160, 120) or any(not _finite(meta[key]) for key in ("simulation_timestamp_s", "state_timestamp_s", "frame_timestamp_s", "target_timestamp_s", "schedule_available_time_s")):
         raise ValueError("raw metadata identity")
-    if runtime_config.get("split") == "formal":
+    if runtime_config.get("split") in {"formal", "development"}:
         from scripts.m6_tcobr import _camera_models
-        if meta["schema_version"] != RAW_METADATA_SCHEMA_V2: raise ValueError("formal camera metadata missing")
+        if meta["schema_version"] != RAW_METADATA_SCHEMA_V2: raise ValueError("analysis camera metadata missing")
         _camera_models(meta.get("camera_context"))
     raw_relative = Path(record["raw_rgb_path"]).resolve().relative_to(Path(root).resolve()).as_posix()
     if meta["frame_reference"] != raw_relative or len(Path(record["raw_rgb_path"]).read_bytes()) != 160 * 120 * 3:
