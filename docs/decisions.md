@@ -408,3 +408,11 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - Preserve the intentional runtime-local identity in controller-produced evidence and the package identity in host process evidence.
 - Validate an explicit bridge through the exact registered M7 v1 authority, development split, episode, scene, and seed; never rewrite persisted evidence to make the identities equal.
 - This is a read-only validation correction and does not alter the M7 v1 manifest, lock, packages, scientific design, or episode data.
+
+## 2026-07-29 - Retain the M7 Visual-VoI offline NO-GO
+
+- **Decision:** Evaluate the frozen Visual-VoI weights, thresholds, codec rules, and nine conjunctive gates without post-outcome adjustment. The resulting decision is `NO-GO` because gates 2, 4, 6, and 7 fail.
+- **Evidence:** Allocation actuation and critical-boundary HQ coverage improve, but TCOBR remains saturated at 1.0 in eligible episodes, continuous boundary utility declines, the exact-byte utilization gap reaches 3.323 percentage points, and critical-region PSNR falls by 2.053 dB at Severe and 8.571 dB at Low.
+- **Decision:** Keep undefined TCOBR observations undefined. M7C6, M7G1, M7G2 and the ineligible M7C5 episode are not imputed or replaced. The mismatch between two registered episodes per scene and the gate requirement of three eligible episodes is reported as a failed gate, not repaired retrospectively.
+- **Rejected:** Relaxing byte fairness, redefining high-quality coverage, modifying benefit weights, treating binary coverage as task success, creating a 720xxx split, or launching Webots after a partial gate pass.
+- **Impact:** M7 v1 remains a frozen development result. A future allocator requires a separately reviewed offline redesign and new disjoint authority before any experiment proposal.

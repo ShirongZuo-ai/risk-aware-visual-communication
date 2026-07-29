@@ -1,0 +1,10 @@
+gate,name,passed,value,threshold
+1,Integrity and leakage,True,"cases=768, prohibited=0, nonfinite=0",100% coverage; all prohibited counts zero
+2,Eligibility richness,False,"scenes=5/8, episodes=9/16, min_per_scene=1",>=6 scenes; >=75% episodes; >=3 per included scene
+3,Allocation actuation,True,severe_vs_state_only_risk_roi=1.000; severe_vs_command_conditioned_risk_roi=1.000; low_vs_state_only_risk_roi=1.000; low_vs_command_conditioned_risk_roi=1.000,>=0.75 snapshots at >=10% tiles for both baselines
+4,Byte fairness,False,max utilization delta=0.03323,<=0.005; all cases under budget; zero fallback
+5,Critical coverage,True,"Severe=0.3369530059255712, Low=0.8744683096154464, CI=0.519237227818818,0.6923124753856503",>=+0.10 at Severe/Low and primary CI low >0
+6,Offline task utility,False,"TCOBR CI=0.0,0.0; continuous CI=-0.03166489925768822,-0.0009026994510865471",both scene-stratified CI lower bounds >0
+7,Quality safeguard,False,"{""low"": {""critical_region_psnr_db"": -8.57071174152768, ""full_psnr_db"": -0.9470653752662257}, ""severe"": {""critical_region_psnr_db"": -2.0527300425830726, ""full_psnr_db"": -1.315772762630331}}",critical PSNR >=-0.25 dB; full PSNR >=-1.0 dB at Severe/Low
+8,Heterogeneity,True,"max contribution=0.000, worst scene=0.000",<=0.50 contribution; no scene loss <-0.05
+9,Reproducibility,True,allocator double-run hashes match,"byte-identical regenerated sources, provenance and figures"

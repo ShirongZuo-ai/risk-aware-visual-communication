@@ -263,3 +263,15 @@ The post-M5E-E [Risk-conditioned Visual VoI plan](m6_risk_voi_experiment_plan.md
 # M6 formal multi-scene execution gate (2026-07-25)
 
 Implement and validate TCOBR and exact formal identity selection; commit the 32-episode pre-registration; require full tests, clean tracked state, and unchanged frozen manifest/lock; then prepare and launch only the registered identities once each with no retry. Analyze only completed, strictly validated formal episodes with the pre-registered episode-level procedure.
+
+## M7 Visual-VoI offline gate (2026-07-29)
+
+- [x] Complete and validate the 16-episode disjoint M7 v1 development corpus.
+- [x] Implement the frozen equal-weight budget-conditioned Visual-VoI allocator with exact byte recomputation and strict sender-time inputs.
+- [x] Compare with both frozen M6 baselines at Severe, Low, Medium, and High budgets.
+- [x] Evaluate all nine preregistered gates without post-result tuning.
+- [x] Persist canonical case, episode, provenance, bootstrap, gate, and figure artifacts.
+- [ ] Redesign the offline allocation objective under a separately reviewed protocol.
+- [ ] Create any 720xxx formal authority or request any Webots launch.
+
+Acceptance: **NO-GO**. The development allocator demonstrates deterministic allocation actuation and critical-boundary coverage, but fails eligibility richness, byte fairness, offline task utility, and quality safeguards. No further Webots study is permitted by this gate. The next milestone is an offline measurement-and-objective redesign, not parameter tuning on M7 v1.

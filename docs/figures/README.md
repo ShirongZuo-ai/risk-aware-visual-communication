@@ -40,6 +40,17 @@ Maintainers with the immutable local M6 corpus may add `--refresh-source-data` t
 | `m7_critical_region_diagnostics.{svg,png}` | `data/m7_case_diagnostics.csv` | hash-reproduced frozen reconstructions and method-independent TCOBR geometry | Critical tile bytes, boundary high-quality coverage, and masked PSNR |
 | `m7_empty_scene_diagnosis.{svg,png}` | `data/m7_empty_scene_reasons.csv` | frozen TCOBR instance eligibility | Method-independent reason counts for S1-S8 |
 | `m7_scene_budget_failure_patterns.{svg,png}` | `data/m7_scene_budget_patterns.csv` | derived from frozen overlap/case/episode tables | Quality-map divergence and reconstruction identity by scene/budget |
+| `m7_visual_voi_gates.{svg,png}` | `data/m7_visual_voi_gates.csv` | completed M7 v1 development corpus and frozen nine-gate definitions | All nine conjunctive offline gate decisions |
+| `m7_visual_voi_allocation_divergence.{svg,png}` | `data/m7_visual_voi_cases.csv` | M7 v1 trusted snapshots plus frozen baseline and Visual-VoI quality maps | Fraction of changed tile qualities by budget and baseline |
+| `m7_visual_voi_task_effects.{svg,png}` | `data/m7_visual_voi_episodes.csv` | method-independent M7 v1 evaluator output | Critical-boundary HQ coverage and episode TCOBR effects by budget |
+
+Regenerate the M7 Visual-VoI evaluation, checked source tables, and figures with:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.m7_visual_voi evaluate
+```
+
+This command is offline-only. It reads the immutable M7 v1 corpus, rejects evaluator-only inputs at the allocator boundary, and does not start Webots.
 
 ## Deterministic qualitative rule
 

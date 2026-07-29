@@ -2045,3 +2045,15 @@ Milestone 5E-E episode statistics and diagnostics are complete. The next priorit
 - Documentation: `docs/m5e_statistical_analysis_report.md` separates engineering validity, primary outcomes, secondary trade-offs, scenario heterogeneity, negative/null findings, limitations, and unproven claims.
 - Scientific boundary: risk remains a heuristic proxy, tiled-JPEG remains a spatial allocation prototype, and no perception, collision, network, navigation, machine-learning, or real-robot claim is supported.
 - Next priority: Milestone 5E-F independent full-evidence validation and acceptance. It remains unstarted.
+
+## Milestone 7 - Frozen Visual-VoI development evaluation (2026-07-29)
+
+- Implemented the frozen deterministic 8x6 tile-quality allocator with equal risk, trajectory-coverage, visibility-gain, and uncertainty weights; exact complete-container byte recomputation; the shared JPEG ladder; and deterministic tile/quality tie-breaking.
+- Audited and enforced the sender/evaluator boundary. All 256 Visual-VoI allocations record zero actual-future, evaluator-geometry, method-specific evaluation-mask, fallback, and replacement usage.
+- Evaluated all 16 finalized M7 v1 development episodes: 64 snapshots, three methods, four budgets, and 768 validated method-budget cases.
+- Offline decision: **NO-GO**. Gates 1, 3, 5, 8, and 9 pass; gates 2, 4, 6, and 7 fail.
+- Primary task result: Visual-VoI minus the better frozen baseline has TCOBR effect `0.000`, 95% scene-stratified CI `[0.000, 0.000]`, and continuous boundary-utility effect `-0.0163`, 95% CI `[-0.0317, -0.0009]`.
+- The allocator improves critical-boundary high-quality coverage at Severe (`+0.337`) and Low (`+0.874`) but violates the 0.5-percentage-point utilization tolerance and degrades critical PSNR by `-2.053 dB` and `-8.571 dB`, respectively.
+- TCOBR eligibility is limited to 9/16 episodes in 5/8 scenes; undefined observations remain unimputed. No Webots or 720xxx formal split was created.
+- Reproducible evidence and figures are documented in `docs/m7_visual_voi_evaluation_report.md`.
+- Next priority: offline-only redesign review of reconstruction benefit, byte utilization, TCOBR saturation, and eligibility coverage before considering a new preregistration.
