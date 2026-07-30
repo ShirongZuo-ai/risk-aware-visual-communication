@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-07-28 (Asia/Shanghai)
+Last updated: 2026-07-30 (Asia/Shanghai)
 
 ## Completed
 
@@ -2068,3 +2068,15 @@ Milestone 5E-E episode statistics and diagnostics are complete. The next priorit
 - The visible-edge ablation has the best primary continuous effect, `+0.00176`, but its 95% CI `[-0.00610, +0.00962]` crosses zero; its only nonzero scene effect is M7C2. TCOBR remains unchanged at its saturated value.
 - No candidate is selected, no 720xxx corpus is created, and no Webots study is authorized.
 - Next priority: a separately reviewed offline measurement study for a sender-available, scene-stable continuous task proxy and eligibility-rich sampling.
+
+## Milestone 8-A - Measurement-first scientific design (2026-07-30)
+
+- Status: complete as design-only work. No Webots process, experimental corpus, allocator implementation, proxy outcome, or formal result was created.
+- M7 closeout: M7 v1 and v2 are frozen as completed `NO-GO` development baselines. M7 v2's matched-byte, quality-floor, exact-recomputation, determinism, and zero-leakage mechanisms are retained; its continuous task proxy and candidates are not selected.
+- Proxy candidates: FROPU is a deterministic fixed RGB obstacle-proposal fidelity score; STRCF is dense sender-time risk/uncertainty-weighted RGB and gradient fidelity. Both are unvalidated candidates.
+- Qualification strategy: a new calibration split uses method-independent perturbations and isolated evaluator-only CCORF references. Nine conjunctive gates cover integrity, range, monotonicity, task association, ranking, critical specificity, scene stability, incremental validity, and reproduction. Allocator results cannot select the proxy.
+- TCOBR status: retained as a non-degradation safety metric, not a primary optimization target.
+- Proposed corpus: 28 calibration, 40 development, and 40 formal episodes across M8C1-M8C8 and M8G1-M8G2. Proposed `810xxx/820xxx/830xxx` seeds are disjoint from current authoritative manifest seeds. This matrix is not a manifest and does not authorize data generation.
+- Read-only validator: `scripts/validate_m8a_design.py` verifies 30 split-scene rows, 108 expanded unique identities, exact split counts, prior-authority disjointness, bootstrap constants, nine gates, selection independence, and TCOBR role.
+- Documentation: `docs/m7_v1_v2_closeout.md`, `docs/m8_a_scientific_design.md`, `docs/m8_a_proxy_comparison.md`, and machine-readable design artifacts under `docs/results/`.
+- Next priority: M8-B0 offline implementation and unit validation of FROPU, STRCF, and evaluator-isolated CCORF. Do not generate a calibration corpus or implement an allocator until that implementation has a separate review.

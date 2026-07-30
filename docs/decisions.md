@@ -424,3 +424,13 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Evidence:** All candidates pass byte fairness, integrity, actuation, critical quality, TCOBR non-degradation, and determinism. None passes continuous task utility, critical-boundary fidelity, or scene balance. The best mean effect is `+0.00176`, 95% CI `[-0.00610, +0.00962]`, entirely driven by M7C2 at Severe.
 - **Rejected:** Padding bytes, weakening the 0.5-point byte tolerance, selecting the directionally positive candidate despite a nonpositive CI bound, retuning weights after seeing M7 v1/v2 results, replacing saturated TCOBR observations, or creating 720xxx/Webots evidence.
 - **Impact:** No v2 candidate is selected. Future work requires a separately reviewed sender-available utility measurement and new eligibility-rich authority, not another adjustment on this corpus.
+
+## 2026-07-30 - Freeze M7 v1/v2 and require independent proxy qualification for M8
+
+- **Decision:** Freeze M7 v1 and M7 v2 as completed development-only `NO-GO` baselines. Preserve the M7 v2 matched-byte envelope, 0.5-percentage-point utilization tolerance, uniform quality floor, deterministic residual upgrades, exact container recomputation, and zero leakage/fallback/replacement.
+- **Reason:** M7 v2 repaired the M7 v1 byte and quality defects, but all three candidates failed continuous task utility, critical-boundary fidelity, and scene balance. The best effect crossed zero and arose entirely from one scene; TCOBR remained saturated.
+- **Decision:** Qualify FROPU and STRCF on a new calibration split before allocator development. Use fixed method-independent perturbations and isolated evaluator-only CCORF references, with nine conjunctive proxy-validity gates and a selection rule fixed before allocation outcomes.
+- **Decision:** Treat TCOBR as a non-degradation safety metric. It cannot select or optimize an M8 allocator.
+- **Decision:** Propose disjoint `810xxx` calibration, `820xxx` development, and `830xxx` formal identities across eight eligibility-rich critical scenes and two low-risk generalization scenes. The proposal is not a manifest or launch approval.
+- **Rejected:** Further tuning on the M7 v1 corpus, selecting the least-negative M7 v2 candidate, choosing a proxy because it favors a baseline, weakening scene-balance or byte gates, imputing undefined TCOBR, implementing an allocator before proxy qualification, or generating a formal corpus now.
+- **Impact:** M8 proceeds measurement-first. Failure of either a proxy's prerequisite or any common gate is retained as `NO-GO`; data generation and allocator development require later, separately reviewed stages.

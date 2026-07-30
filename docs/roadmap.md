@@ -19,12 +19,12 @@ M6 is complete and frozen as a negative-result baseline.
 
 - [x] Diagnose the frozen M6 zero effect using ROI/pixel/tile divergence, critical-region allocation, absolute TCOBR, reconstruction quality, and empty-scene mechanisms.
 - [x] Freeze an offline design target and go/no-go gates for a deterministic byte-cost-aware allocator combining risk, trajectory coverage, visibility gain, uncertainty, and marginal reconstruction benefit.
-- [ ] Implement the deterministic allocator and provenance contract on new disjoint offline data; keep both M6 methods unchanged as baselines.
+- [x] Implement the deterministic allocator and provenance contract on new disjoint offline data; keep both M6 methods unchanged as baselines.
 - [x] Freeze the M7 v1 development authority: 16 disjoint M7C1-M7C6/M7G1-M7G2 episodes, outcome-blind geometric prechecks, isolated evaluator geometry, and an at-most-once generation contract.
-- [ ] Finalize the registered M7 v1 corpus and independently reload all runtime, 512 codec-case, joint, final, and ownership evidence.
-- [ ] Generate an independent counterfactual tile-quality dataset with actual complete-container byte increments from the finalized M7 v1 corpus.
+- [x] Finalize the registered M7 v1 corpus and independently reload all runtime, 512 codec-case, joint, final, and ownership evidence.
+- [x] Generate an independent counterfactual tile-quality dataset with actual complete-container byte increments from the finalized M7 v1 corpus.
 - [ ] Implement an offline oracle and deterministic greedy marginal-utility-per-byte baseline before any learned allocator.
-- [ ] Pre-register episode/scene splits, byte fairness, failure handling, task metrics, and support gates.
+- [x] Pre-register episode/scene splits, byte fairness, failure handling, task metrics, and support gates.
 
 Acceptance: the new study uses identities and evidence disjoint from M5/M6, passes every offline go/no-go gate in `docs/m7_budget_conditioned_voi_design.md`, reports all null and adverse outcomes, and makes no navigation-safety claim without a separately frozen closed-loop task protocol.
 
@@ -287,3 +287,39 @@ Acceptance: **NO-GO**. The development allocator demonstrates deterministic allo
 - [ ] Prepare a new formal corpus or launch Webots.
 
 Acceptance: **NO-GO**. The matched-floor design fixes byte fairness and reconstruction quality, but no preregistered candidate has a positive continuous-utility CI lower bound, positive fidelity at both primary budgets, or scene-balanced gains. The next priority is a new offline measurement review; post-result candidate tuning is prohibited.
+
+## Milestone 8 - Measurement-qualified budget-conditioned visual communication
+
+### M8-A - Scientific design and M7 closeout (complete)
+
+- Freeze M7 v1/v2 as immutable `NO-GO` development baselines.
+- Preserve matched actual container bytes, utilization tolerance, uniform quality floor, deterministic task upgrades, exact recomputation, and strict information boundaries.
+- Define FROPU and STRCF operationally without implementing or evaluating them.
+- Define evaluator-only CCORF calibration reference, detector prerequisite, nine proxy gates, and fixed selection rule.
+- Propose a disjoint 28-episode calibration, 40-episode development, and 40-episode formal matrix covering eight critical and two generalization scenes.
+- Validate the design matrix and rules read-only. No Webots, allocator, corpus, or experimental outcome belongs to M8-A.
+
+### M8-B0 - Proxy implementation (next; not started)
+
+- Implement FROPU, STRCF, and isolated CCORF with canonical provenance and tamper rejection.
+- Add synthetic/offline tests for sender/evaluator separation, detector determinism, score computation, empty domains, and canonical reproduction.
+- Do not generate Webots data or select a proxy.
+
+### M8-B1 - Independent calibration corpus and proxy qualification (planned)
+
+- Under separate review and launch approval, freeze an immutable calibration manifest/lock from the proposed `810xxx` identities.
+- Execute only the registered calibration identities once, with no replacements.
+- Apply the frozen perturbation panel and all proxy gates. Select a proxy only by the preregistered rule.
+- Stop with `NO-GO` if eligibility or any applicable proxy gate fails.
+
+### M8-C - Allocator development (blocked on M8-B1)
+
+- Freeze the qualified proxy before using the disjoint `820xxx` development split.
+- Retain all M7 v2 byte, quality, determinism, and leakage mechanisms.
+- Preregister a limited allocator candidate set; do not tune on calibration or formal evidence.
+
+### M8-D - Formal evaluation (blocked)
+
+- Freeze one allocator and a separate `830xxx` formal manifest before data generation.
+- Use episode-level, scene-stratified inference and retain null, adverse, and undefined outcomes.
+- No formal corpus is authorized by this roadmap entry.

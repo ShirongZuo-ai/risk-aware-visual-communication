@@ -1,0 +1,85 @@
+{
+  "schema_version": "m8-a-proxy-validation-rules-v1",
+  "status": "proposed_not_executed",
+  "calibration_split": "calibration",
+  "statistical_unit": "episode",
+  "scene_weighting": "equal_weight_across_critical_scenes",
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20260724,
+    "confidence_level": 0.95,
+    "interval": "percentile",
+    "resampling": "episodes_within_scene"
+  },
+  "forbidden_allocator_inputs": [
+    "actual_future_trajectory",
+    "future_frame",
+    "ground_truth_obstacle_geometry",
+    "tcobr",
+    "eligibility_label",
+    "ccorf",
+    "evaluator_mask",
+    "navigation_outcome"
+  ],
+  "perception_prerequisite": {
+    "candidate": "fropu",
+    "overall_visible_critical_recall_min": 0.85,
+    "per_scene_visible_critical_recall_min": 0.70,
+    "mean_false_positives_per_frame_max": 2.0,
+    "median_matched_iou_min": 0.50,
+    "p10_matched_iou_min": 0.30,
+    "deterministic_repeat_required": true
+  },
+  "gates": [
+    {
+      "id": "G1_integrity_boundary",
+      "criterion": "complete_finite_zero_prohibited_inputs_tamper_rejected"
+    },
+    {
+      "id": "G2_dynamic_range",
+      "endpoint_fraction_max": 0.10,
+      "median_within_episode_range_min": 0.15
+    },
+    {
+      "id": "G3_monotonicity",
+      "episode_spearman_min": 0.80,
+      "critical_episode_fraction_min": 0.80
+    },
+    {
+      "id": "G4_ccorf_association",
+      "equal_scene_spearman_min": 0.60,
+      "bootstrap_ci_lower_strictly_above": 0.40
+    },
+    {
+      "id": "G5_pairwise_ranking",
+      "concordance_min": 0.75,
+      "bootstrap_ci_lower_min": 0.65
+    },
+    {
+      "id": "G6_critical_specificity",
+      "critical_minus_noncritical_mean_strictly_above": 0.0,
+      "bootstrap_ci_lower_strictly_above": 0.0
+    },
+    {
+      "id": "G7_scene_stability",
+      "per_critical_scene_association_min": 0.40,
+      "max_positive_covariance_scene_fraction": 0.35
+    },
+    {
+      "id": "G8_incremental_validity",
+      "ccorf_association_advantage_over_full_psnr_min": 0.05,
+      "bootstrap_ci_lower_strictly_above": 0.0
+    },
+    {
+      "id": "G9_reproduction",
+      "byte_identical_artifacts_required": true
+    }
+  ],
+  "tcobr_role": "non_degradation_safety_metric",
+  "selection_rule": {
+    "both_pass": "fropu_primary_strcf_safeguard",
+    "exactly_one_passes": "select_only_passing_candidate",
+    "neither_passes": "no_go_no_allocator_development",
+    "allocator_outcomes_may_select_proxy": false
+  }
+}
