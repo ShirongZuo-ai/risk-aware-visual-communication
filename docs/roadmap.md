@@ -299,11 +299,12 @@ Acceptance: **NO-GO**. The matched-floor design fixes byte fairness and reconstr
 - Propose a disjoint 28-episode calibration, 40-episode development, and 40-episode formal matrix covering eight critical and two generalization scenes.
 - Validate the design matrix and rules read-only. No Webots, allocator, corpus, or experimental outcome belongs to M8-A.
 
-### M8-B0 - Proxy implementation (next; not started)
+### M8-B0 - Proxy implementation (complete offline)
 
-- Implement FROPU, STRCF, and isolated CCORF with canonical provenance and tamper rejection.
-- Add synthetic/offline tests for sender/evaluator separation, detector determinism, score computation, empty domains, and canonical reproduction.
-- Do not generate Webots data or select a proxy.
+- [x] Implement FROPU, STRCF, and isolated CCORF with canonical provenance and tamper rejection.
+- [x] Add synthetic/offline tests for sender/evaluator separation, detector determinism, score computation, empty domains, perturbations, and canonical reproduction.
+- [x] Persist a deterministic unit-validation report that explicitly withholds scientific qualification and proxy selection.
+- [x] Do not generate Webots data or select a proxy.
 
 ### M8-B1 - Independent calibration corpus and proxy qualification (planned)
 

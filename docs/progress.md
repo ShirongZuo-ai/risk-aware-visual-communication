@@ -2080,3 +2080,13 @@ Milestone 5E-E episode statistics and diagnostics are complete. The next priorit
 - Read-only validator: `scripts/validate_m8a_design.py` verifies 30 split-scene rows, 108 expanded unique identities, exact split counts, prior-authority disjointness, bootstrap constants, nine gates, selection independence, and TCOBR role.
 - Documentation: `docs/m7_v1_v2_closeout.md`, `docs/m8_a_scientific_design.md`, `docs/m8_a_proxy_comparison.md`, and machine-readable design artifacts under `docs/results/`.
 - Next priority: M8-B0 offline implementation and unit validation of FROPU, STRCF, and evaluator-isolated CCORF. Do not generate a calibration corpus or implement an allocator until that implementation has a separate review.
+
+## Milestone 8-B0 - Offline proxy primitives (2026-07-30)
+
+- Status: implemented and unit-validated offline. FROPU, STRCF, and evaluator-isolated CCORF have canonical input/evidence schemas, exact frozen computations, strict identity binding, deterministic serialization, source recomputation, and tamper rejection.
+- Boundary: the sender module has no CCORF/evaluator import and rejects actual future, ground-truth geometry, TCOBR, eligibility, evaluator masks/outcomes, missing/unknown fields, leakage, fallback, and replacement. CCORF alone records evaluator input usage.
+- Synthetic validation covers blur, JPEG compression, contrast loss, localization shift, internal occlusion, irrelevant-background degradation, a six-level JPEG ladder, canonical reload, recomputed-digest tampering, invalid shapes/non-finite fields, and identity mismatch.
+- Limitation retained: FROPU is insensitive to the fixture's blur and internal occlusion and has JPEG range `0.0843` with endpoint fraction `0.50`; STRCF is monotone on the fixture but has range `0.1248`. These are diagnostics, not calibration gate decisions.
+- Machine report: `docs/results/m8_b0_unit_validation.json` explicitly records no scientific qualification and no proxy selection.
+- No Webots, M8 corpus, allocator, M7 outcome use, scientific result, or candidate selection occurred.
+- Next priority: review and freeze an M8-B1 810xxx calibration manifest/lock only after the B0 implementation is independently accepted. Allocator development remains blocked.
