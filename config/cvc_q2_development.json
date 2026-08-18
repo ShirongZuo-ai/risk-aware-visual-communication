@@ -1,0 +1,51 @@
+{
+  "study_id": "cvc-q2-risk-arm-safety-value-spend-v1",
+  "development_only": true,
+  "formal": false,
+  "q1_support_grid": "config/cvc_q1_support_grid.json",
+  "q1_planner_config": "config/cvc_q1_planner_v2.json",
+  "duration_s": 10.0,
+  "total_steps": 312,
+  "policies": ["U0", "A0", "A1"],
+  "risk": {
+    "threshold": 0.14,
+    "A0": "current decoded sender-frame red-component apparent proximity",
+    "A1": "causal constant-growth predictive_risk(current_r0, previous_r0, bearing)",
+    "crossing": "previous risk < 0.14 <= current risk",
+    "separate_thresholds_forbidden": true
+  },
+  "safety_decision_value": {
+    "safe_set_contraction_fraction": 0.3333333333333333,
+    "matched_margin_deterioration_m": 0.01,
+    "numerical_tolerance": 1e-9,
+    "priority_1": ["safety_class_deterioration", "moving_safe_set_collapse"],
+    "priority_2": ["held_selected_action_removed_from_current_safe_set_and_action_changes"],
+    "priority_3": ["safe_set_contraction_at_least_one_third_and_matched_margin_deterioration_at_least_0.01_m"],
+    "efficiency_only_action_change_triggers": false
+  },
+  "communication": {
+    "packet_count": 3,
+    "packet_bytes": 24000,
+    "episode_wire_bytes": 72000,
+    "jpeg_quality": 45,
+    "u0_schedule": [0, 156, 311],
+    "adaptive_startup_step": 0,
+    "deadline_steps_after_arm": 47,
+    "unarmed_fallback_step": 248,
+    "protected_reserve_step": 249,
+    "future_debt_allowed": false
+  },
+  "physical_labels": {
+    "collision": "bilateral Webots contact",
+    "near": "no collision and episode minimum clearance <= 0.12 m",
+    "safe": "no collision and episode minimum clearance > 0.12 m"
+  },
+  "development_success": {
+    "mechanism": "offline gate passes; at least 2 safety-value adaptive spends; at least 1 priority-1 spend; distractor has no safety-value spend; narrow passage has at least 1 safety-value spend; deadline plus fallback is at most 75 percent of adaptive episodes",
+    "predictive_value": "A1 arms earlier than A0 in at least 2 paired cells and has at least 1 earlier safety-value spend or safety-value spend where A0 uses deadline/fallback",
+    "safety_path_1": "A1 has at least 1 fewer near+collision episode than both A0 and U0, median minimum clearance is no more than 0.005 m worse than either, and task successes are at most 1 below the best comparator",
+    "safety_path_2": "A1 near+collision is no worse than both, median and suite-minimum clearance each exceed both by at least 0.01 m, and task successes are at most 1 below the best comparator",
+    "classification": "D if mechanism fails; A if mechanism, predictive value, and either safety path pass; B if mechanism passes, predictive value fails, and A0/A1 are safety-tied; otherwise C"
+  },
+  "selection_boundary": "Frozen from Q1 signal semantics, Q1 neutral support, Q1 planner diagnostics, the existing CVC risk threshold, and one planner-horizon deadline before Q2 policy outcomes. No post-outcome retuning."
+}

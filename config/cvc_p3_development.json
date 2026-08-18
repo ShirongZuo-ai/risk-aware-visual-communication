@@ -1,0 +1,38 @@
+{
+  "development_only": true,
+  "formal": false,
+  "source_episode_wire_bytes": 72000,
+  "packetizations": [
+    {"transmissions": 3, "packet_bytes": 24000},
+    {"transmissions": 4, "packet_bytes": 18000},
+    {"transmissions": 6, "packet_bytes": 12000}
+  ],
+  "candidate_specs": [
+    {"family": "threshold", "threshold": 0.12},
+    {"family": "threshold", "threshold": 0.14},
+    {"family": "threshold", "threshold": 0.16},
+    {"family": "threshold", "threshold": 0.18},
+    {"family": "threshold", "threshold": 0.20},
+    {"family": "derivative", "derivative_threshold": 0.01},
+    {"family": "derivative", "derivative_threshold": 0.02},
+    {"family": "derivative", "derivative_threshold": 0.04},
+    {"family": "integral", "integral_threshold": 0.08},
+    {"family": "integral", "integral_threshold": 0.16},
+    {"family": "integral", "integral_threshold": 0.32},
+    {"family": "hazard_bucket", "hazard_thresholds": [0.12, 0.16, 0.20]},
+    {"family": "hazard_bucket", "hazard_thresholds": [0.14, 0.18, 0.24]}
+  ],
+  "qualification_gate": {
+    "minimum_positive_lead_support_fraction": 0.5,
+    "required_conversion_fraction": 1.0,
+    "minimum_median_conversion_efficiency": 0.8,
+    "minimum_qualified_packetizations": 2,
+    "rationale": "A mechanistically identifiable allocator must preserve every finite positive trigger lead when tokens are available, demonstrate that behavior on at least half of distinct causal risk trajectories, and reproduce it at multiple packet granularities. This gate uses no task outcome."
+  },
+  "selection_rule": "Maximize positive-lead trace coverage, then qualified packetizations, then median communication lead, then prefer the simplest family in threshold/derivative/integral/hazard order and the smallest deviation from the prior 0.16 risk threshold. Select the smallest qualified packet count to minimize the change from P2.",
+  "webots": {
+    "duration_s": 14.0,
+    "cruise_rad_s": 5.0,
+    "jpeg_quality": 45
+  }
+}

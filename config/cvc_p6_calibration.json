@@ -1,0 +1,26 @@
+{
+  "development_only": true,
+  "formal": false,
+  "risk_threshold": 0.14,
+  "packet_bytes": 24000,
+  "packet_count": 3,
+  "episode_wire_bytes": 72000,
+  "jpeg_quality": 45,
+  "reserve_step": 218,
+  "deadline_steps": 96,
+  "deadline_rationale": "First 32-step multiple at or above the P5 median R1-to-perception-q25 gap of 91 steps; chosen without navigation outcomes.",
+  "candidate_panel": [
+    {"id": "resolution_4px", "bearing": 0.05, "proximity": 0.025, "area_relative": 0.25},
+    {"id": "task_8px", "bearing": 0.10, "proximity": 0.05, "area_relative": 0.40},
+    {"id": "coarse_12px", "bearing": 0.15, "proximity": 0.075, "area_relative": 0.50}
+  ],
+  "candidate_rationale": "Finite detector-resolution anchors: 4, 8, or 12 horizontal pixels at 160x120; corresponding absolute area/proximity and relative-area innovations. This is a bounded signal-only calibration, not a navigation-outcome sweep.",
+  "selection_gate": {
+    "minimum_a1_non_immediate_fraction": 0.6666666666666666,
+    "minimum_median_arm_to_spend_steps": 16,
+    "minimum_perception_q25_closer_fraction": 0.6666666666666666,
+    "require_all_spends_before_reserve": true,
+    "require_exact_three_packets": true
+  },
+  "selection_rule": "Choose the first listed candidate passing all signal-only gates. Navigation outcomes, clearance, contact, collision, and task success are forbidden inputs."
+}

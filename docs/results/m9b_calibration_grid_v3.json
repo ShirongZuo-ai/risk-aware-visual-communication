@@ -1,0 +1,5341 @@
+{
+  "cells": [
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-collision-01",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14295684696896022,
+        "center_y_m": 0.053543022936769755,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 950000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-collision-02",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1431942295862609,
+        "center_y_m": 0.053559902347204265,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 950010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-collision-03",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14343181854136536,
+        "center_y_m": 0.05357699748769376,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 950020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-collision-04",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14366961597771843,
+        "center_y_m": 0.05359430596757554,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 950030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-collision-05",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14390762399291632,
+        "center_y_m": 0.05361182538118618,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 950040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-collision-06",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1441458446386183,
+        "center_y_m": 0.05362955330868428,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 950050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-buffered_near-01",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14554001092667082,
+        "center_y_m": 0.06320362664293558,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 950060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-buffered_near-02",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1458165294204805,
+        "center_y_m": 0.06320995641852696,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 950070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-buffered_near-03",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14609312529092602,
+        "center_y_m": 0.06321636709284652,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 950080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-buffered_near-04",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14636979934179878,
+        "center_y_m": 0.06322285776939619,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 950090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-buffered_near-05",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14664655235969687,
+        "center_y_m": 0.06322942754605268,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 950100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-buffered_near-06",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14692338511399217,
+        "center_y_m": 0.06323607551537594,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 950110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-safe-01",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.147089915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 950120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-safe-02",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14738991499999998,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 950130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-safe-03",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14768991499999998,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 950140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-safe-04",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.147989915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 950150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-safe-05",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.148289915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 950160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f1-safe-06",
+      "family_id": "F1",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.148589915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 950170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-collision-01",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05183235046307454,
+        "center_y_m": -0.031826300887933576,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 951000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-collision-02",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05156555553085252,
+        "center_y_m": -0.03169037539923432,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 951010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-collision-03",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.051298788824290266,
+        "center_y_m": -0.03155440880519046,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 951020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-collision-04",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05103205069906387,
+        "center_y_m": -0.03141840064087435,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 951030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-collision-05",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.050765341516794724,
+        "center_y_m": -0.03128235043437057,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 951040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-collision-06",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05049866164517312,
+        "center_y_m": -0.031146257706645187,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 951050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-buffered_near-01",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.060354105312447746,
+        "center_y_m": -0.037058861856253414,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 951060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-buffered_near-02",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.060085254766414666,
+        "center_y_m": -0.03692628266880679,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 951070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-buffered_near-03",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05981641507029794,
+        "center_y_m": -0.036793687680505394,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 951080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-buffered_near-04",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.0595475863608191,
+        "center_y_m": -0.03666107671263149,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 951090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-buffered_near-05",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.059278768776985104,
+        "center_y_m": -0.036528449583781236,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 951100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-buffered_near-06",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05900996246013571,
+        "center_y_m": -0.036395806109814466,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 951110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-safe-01",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4493246646732355,
+        "center_y_m": -0.05032622415058342,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 951120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-safe-02",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4495947988039413,
+        "center_y_m": -0.05019573449035006,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 951130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-safe-03",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.44986493293464713,
+        "center_y_m": -0.050065244830116686,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 951140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-safe-04",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4501350670653529,
+        "center_y_m": -0.04993475516988332,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 951150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-safe-05",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4504052011960587,
+        "center_y_m": -0.04980426550964995,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 951160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 2.2,
+          "right_rad_s": 3.8,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f2-safe-06",
+      "family_id": "F2",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4506753353267645,
+        "center_y_m": -0.04967377584941658,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 951170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-collision-01",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.0518046724488721,
+        "center_y_m": -0.03187864817684925,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 952000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-collision-02",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05154896961404551,
+        "center_y_m": -0.03172175340769806,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 952010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-collision-03",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.051293267207572664,
+        "center_y_m": -0.03156485794373817,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 952020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-collision-04",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05103756523452155,
+        "center_y_m": -0.03140796177676434,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 952030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-collision-05",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.050781863700040376,
+        "center_y_m": -0.031251064898441594,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 952040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-collision-06",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05052616260935926,
+        "center_y_m": -0.031094167300302733,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 952050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-buffered_near-01",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.06032134002048704,
+        "center_y_m": -0.037119485273592726,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 952060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-buffered_near-02",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.06006560362199309,
+        "center_y_m": -0.03696264504697765,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 952070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-buffered_near-03",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05980986738815792,
+        "center_y_m": -0.03680580455327878,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 952080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-buffered_near-04",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05955413132092965,
+        "center_y_m": -0.036648963789342036,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 952090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-buffered_near-05",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05929839542228723,
+        "center_y_m": -0.03649212275196345,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 952100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-buffered_near-06",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05904265969424112,
+        "center_y_m": -0.036335281437888244,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 952110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-safe-01",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4493606066084554,
+        "center_y_m": -0.050392015421697994,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 952120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-safe-02",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4496163639650732,
+        "center_y_m": -0.050235209253018796,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 952130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-safe-03",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4498721213216911,
+        "center_y_m": -0.0500784030843396,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 952140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-safe-04",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.45012787867830895,
+        "center_y_m": -0.04992159691566041,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 952150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-safe-05",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4503836360349268,
+        "center_y_m": -0.04976479074698121,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 952160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f3-safe-06",
+      "family_id": "F3",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.45063939339154463,
+        "center_y_m": -0.04960798457830201,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 952170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-collision-01",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.0518046724488721,
+        "center_y_m": -0.03187864817684925,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 953000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-collision-02",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05154896961404551,
+        "center_y_m": -0.03172175340769806,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 953010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-collision-03",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.051293267207572664,
+        "center_y_m": -0.03156485794373817,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 953020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-collision-04",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05103756523452155,
+        "center_y_m": -0.03140796177676434,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 953030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-collision-05",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.050781863700040376,
+        "center_y_m": -0.031251064898441594,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 953040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-collision-06",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05052616260935926,
+        "center_y_m": -0.031094167300302733,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 953050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-buffered_near-01",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.06032134002048704,
+        "center_y_m": -0.037119485273592726,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 953060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-buffered_near-02",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.06006560362199309,
+        "center_y_m": -0.03696264504697765,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 953070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-buffered_near-03",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05980986738815792,
+        "center_y_m": -0.03680580455327878,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 953080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-buffered_near-04",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05955413132092965,
+        "center_y_m": -0.036648963789342036,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 953090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-buffered_near-05",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05929839542228723,
+        "center_y_m": -0.03649212275196345,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 953100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-buffered_near-06",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.05904265969424112,
+        "center_y_m": -0.036335281437888244,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 953110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-safe-01",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4493606066084554,
+        "center_y_m": -0.050392015421697994,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 953120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-safe-02",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4496163639650732,
+        "center_y_m": -0.050235209253018796,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 953130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-safe-03",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4498721213216911,
+        "center_y_m": -0.0500784030843396,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 953140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-safe-04",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.45012787867830895,
+        "center_y_m": -0.04992159691566041,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 953150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-safe-05",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.4503836360349268,
+        "center_y_m": -0.04976479074698121,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 953160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f4-safe-06",
+      "family_id": "F4",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.45063939339154463,
+        "center_y_m": -0.04960798457830201,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 953170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-collision-01",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14282348342214696,
+        "center_y_m": 0.05357926279282896,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 954000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-collision-02",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14306130877083062,
+        "center_y_m": 0.053596599633535684,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 954010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-collision-03",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1432993449754771,
+        "center_y_m": 0.053614147085633085,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 954020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-collision-04",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14353759408160235,
+        "center_y_m": 0.05363190272744533,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 954030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-collision-05",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14377605808870972,
+        "center_y_m": 0.053649864124046334,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 954040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-collision-06",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14401473895024489,
+        "center_y_m": 0.05366802882807342,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 954050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-buffered_near-01",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.145489993464728,
+        "center_y_m": 0.06321719432365104,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 954060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-buffered_near-02",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14576667789297668,
+        "center_y_m": 0.06322369566052838,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 954070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-buffered_near-03",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1460434413924743,
+        "center_y_m": 0.06323027597693978,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 954080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-buffered_near-04",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14632028473029185,
+        "center_y_m": 0.06323693436475376,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 954090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-buffered_near-05",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1465972086562456,
+        "center_y_m": 0.06324366991087005,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 954100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-buffered_near-06",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14687421390288008,
+        "center_y_m": 0.06325048169752454,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 954110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-safe-01",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.147089915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 954120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-safe-02",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14738991499999998,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 954130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-safe-03",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14768991499999998,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 954140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-safe-04",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.147989915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 954150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-safe-05",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.148289915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 954160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.5,
+          "left_rad_s": 4.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 0.0,
+          "right_rad_s": 0.0,
+          "start_s": 2.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f5-safe-06",
+      "family_id": "F5",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.148589915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 954170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-collision-01",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.13950652417349713,
+        "center_y_m": 0.05750952379097951,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 955000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-collision-02",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.13977196658385904,
+        "center_y_m": 0.05758609418870621,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 955010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-collision-03",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1400375869906161,
+        "center_y_m": 0.05766275031277812,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 955020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-collision-04",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1403033838014862,
+        "center_y_m": 0.05773949283786442,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 955030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-collision-05",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14056935542763466,
+        "center_y_m": 0.057816322412643686,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 955040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-collision-06",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1408355002840445,
+        "center_y_m": 0.05789323966022663,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 955050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-buffered_near-01",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.15222748659783158,
+        "center_y_m": 0.049561120492286684,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 955060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-buffered_near-02",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.15252022467644857,
+        "center_y_m": 0.04968154387861735,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 955070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-buffered_near-03",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.15281284394586508,
+        "center_y_m": 0.04980191004424687,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 955080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-buffered_near-04",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.15310534546889923,
+        "center_y_m": 0.049922218538846444,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 955090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-buffered_near-05",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.15339773030606768,
+        "center_y_m": 0.050042468929435494,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 955100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-buffered_near-06",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1536899995153392,
+        "center_y_m": 0.050162660800099505,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 955110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-safe-01",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14713534846536447,
+        "center_y_m": -0.05325718935559159,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 955120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": -1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-safe-02",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1474171602792187,
+        "center_y_m": -0.05315432001335495,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 955130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": -1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-safe-03",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1476989720930729,
+        "center_y_m": -0.053051450671118314,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 955140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": -1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-safe-04",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14798078390692712,
+        "center_y_m": -0.05294858132888168,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 955150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": -1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-safe-05",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14826259572078132,
+        "center_y_m": -0.05284571198664505,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 955160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": -1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 2.0,
+          "left_rad_s": 2.0,
+          "right_rad_s": 4.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 4.0,
+          "right_rad_s": 2.0,
+          "start_s": 2.0
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f6-safe-06",
+      "family_id": "F6",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14854440753463555,
+        "center_y_m": -0.05274284264440841,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 955170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": -1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-collision-01",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14295684696896022,
+        "center_y_m": 0.053543022936769755,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-01",
+      "purpose": "m9b_calibration",
+      "seed": 956000,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-collision-02",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1431942295862609,
+        "center_y_m": 0.053559902347204265,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-02",
+      "purpose": "m9b_calibration",
+      "seed": 956010,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-collision-03",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14343181854136536,
+        "center_y_m": 0.05357699748769376,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-03",
+      "purpose": "m9b_calibration",
+      "seed": 956020,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-collision-04",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14366961597771843,
+        "center_y_m": 0.05359430596757554,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-04",
+      "purpose": "m9b_calibration",
+      "seed": 956030,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-collision-05",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14390762399291632,
+        "center_y_m": 0.05361182538118618,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-05",
+      "purpose": "m9b_calibration",
+      "seed": 956040,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-collision-06",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1441458446386183,
+        "center_y_m": 0.05362955330868428,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "COLLISION-06",
+      "purpose": "m9b_calibration",
+      "seed": 956050,
+      "split": "calibration",
+      "structural_role": "collision",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-buffered_near-01",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14554001092667082,
+        "center_y_m": 0.06320362664293558,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-01",
+      "purpose": "m9b_calibration",
+      "seed": 956060,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-buffered_near-02",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.1458165294204805,
+        "center_y_m": 0.06320995641852696,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-02",
+      "purpose": "m9b_calibration",
+      "seed": 956070,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-buffered_near-03",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14609312529092602,
+        "center_y_m": 0.06321636709284652,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-03",
+      "purpose": "m9b_calibration",
+      "seed": 956080,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-buffered_near-04",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14636979934179878,
+        "center_y_m": 0.06322285776939619,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-04",
+      "purpose": "m9b_calibration",
+      "seed": 956090,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-buffered_near-05",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14664655235969687,
+        "center_y_m": 0.06322942754605268,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-05",
+      "purpose": "m9b_calibration",
+      "seed": 956100,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-buffered_near-06",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14692338511399217,
+        "center_y_m": 0.06323607551537594,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "BUFFERED_NEAR-06",
+      "purpose": "m9b_calibration",
+      "seed": 956110,
+      "split": "calibration",
+      "structural_role": "buffered_near",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-safe-01",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.147089915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "purpose": "m9b_calibration",
+      "seed": 956120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-safe-02",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14738991499999998,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "purpose": "m9b_calibration",
+      "seed": 956130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-safe-03",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.14768991499999998,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "purpose": "m9b_calibration",
+      "seed": 956140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-safe-04",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.147989915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "purpose": "m9b_calibration",
+      "seed": 956150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-safe-05",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.148289915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "purpose": "m9b_calibration",
+      "seed": 956160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 6.0,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        }
+      ],
+      "distractors": [
+        {
+          "center_x_m": 0.12,
+          "center_y_m": -0.28,
+          "id": "DISTRACTOR",
+          "kind": "obstacle",
+          "size_x_m": 0.05,
+          "size_y_m": 0.05
+        }
+      ],
+      "episode_id": "m9b-calibration-f7-safe-06",
+      "family_id": "F7",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": 0.148589915,
+        "center_y_m": 0.096999984,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "purpose": "m9b_calibration",
+      "seed": 956170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-01",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.120978885,
+        "center_y_m": 0.156999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-01",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957000,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-02",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.11897888499999999,
+        "center_y_m": 0.159999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-02",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957010,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-03",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.11697888499999999,
+        "center_y_m": 0.162999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-03",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957020,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-04",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.11497888499999999,
+        "center_y_m": 0.156999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-04",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957030,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-05",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.112978885,
+        "center_y_m": 0.159999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-05",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957040,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-06",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.110978885,
+        "center_y_m": 0.162999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-06",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957050,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-07",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.108978885,
+        "center_y_m": 0.156999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-07",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957060,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-08",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.106978885,
+        "center_y_m": 0.159999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-08",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957070,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-09",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.104978885,
+        "center_y_m": 0.162999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-09",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957080,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-10",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.10297888499999999,
+        "center_y_m": 0.156999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-10",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957090,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-11",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.10097888499999999,
+        "center_y_m": 0.159999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-11",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957100,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-12",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.09897888499999999,
+        "center_y_m": 0.162999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-12",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957110,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-13",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.09697888499999999,
+        "center_y_m": 0.156999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-13",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957120,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-14",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.09497888499999999,
+        "center_y_m": 0.159999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-14",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957130,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-15",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.092978885,
+        "center_y_m": 0.162999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-15",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957140,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-16",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.090978885,
+        "center_y_m": 0.156999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-16",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957150,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-17",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.088978885,
+        "center_y_m": 0.159999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-17",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957160,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    },
+    {
+      "command_schedule": [
+        {
+          "end_s": 1.5,
+          "left_rad_s": 3.0,
+          "right_rad_s": 3.0,
+          "start_s": 0.0
+        },
+        {
+          "end_s": 6.0,
+          "left_rad_s": 1.5,
+          "right_rad_s": 4.5,
+          "start_s": 1.5
+        }
+      ],
+      "distractors": [],
+      "episode_id": "m9b-calibration-f8-safe-18",
+      "family_id": "F8",
+      "initial_robot_pose": {
+        "x_m": 0.0,
+        "y_m": 0.0,
+        "yaw_rad": 0.0
+      },
+      "obstacle": {
+        "center_x_m": -0.08697888499999999,
+        "center_y_m": 0.162999107,
+        "id": "TARGET",
+        "kind": "obstacle",
+        "size_x_m": 0.04,
+        "size_y_m": 0.04
+      },
+      "parameter_set_id": "SAFE-18",
+      "placement_reference_clearance_m": 0.10023953225611562,
+      "purpose": "m9b_calibration",
+      "seed": 957170,
+      "split": "calibration",
+      "structural_role": "safe",
+      "turn_direction": 1
+    }
+  ],
+  "construction_inputs": [
+    "M9-A physical contact",
+    "M9-A actual clearance"
+  ],
+  "method_independent": true,
+  "predictor_outputs_used": false,
+  "schema_version": "m9b-literal-grid-v3",
+  "split": "calibration",
+  "study": "m9b-confirmatory-v1"
+}

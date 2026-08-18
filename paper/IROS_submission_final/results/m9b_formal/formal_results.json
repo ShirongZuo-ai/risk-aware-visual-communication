@@ -1,0 +1,104 @@
+{
+  "authorization_id": "M9B-FORMAL20260814ZS01",
+  "clearance_and_warning": {
+    "R0": {
+      "mae_m": 0.021084751449825655,
+      "pearson": 0.9505367391866888,
+      "rmse_m": 0.03753215261595804,
+      "spearman": 0.8836821918450666,
+      "warning_events": 138
+    },
+    "R1": {
+      "mae_m": 0.0036184904437030515,
+      "pearson": 0.9911827471374067,
+      "rmse_m": 0.012222982274377143,
+      "spearman": 0.9880153266358819,
+      "warning_events": 138
+    },
+    "R2": {
+      "mae_m": 0.001829369489203666,
+      "pearson": 0.9992007595840078,
+      "rmse_m": 0.0039048911319257726,
+      "spearman": 0.9978475037424475,
+      "warning_events": 138
+    }
+  },
+  "composition": {
+    "buffered_near": 70,
+    "collision": 70,
+    "safe": 100
+  },
+  "contrasts": {
+    "primary_R1_minus_R0": {
+      "ci95": {
+        "lower": 0.07718078476424133,
+        "upper": 0.09853406543813094,
+        "valid_replicates": 10000
+      },
+      "decision": "PASS",
+      "delta": 0.08741890925076201
+    },
+    "secondary_R2_minus_R1": {
+      "ci95": {
+        "lower": 0.0049671831262606825,
+        "upper": 0.007508791434985792,
+        "valid_replicates": 10000
+      },
+      "decision": "descriptive_only",
+      "delta": 0.006047656085014341
+    }
+  },
+  "excluded_episodes": [],
+  "family_support": {
+    "F1": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F2": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F3": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F4": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F5": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F6": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F7": {
+      "buffered_near": 10,
+      "collision": 10,
+      "safe": 10
+    },
+    "F8": {
+      "buffered_near": 0,
+      "collision": 0,
+      "safe": 30
+    }
+  },
+  "manifest_sha256": "e0862424642a7ede6616a5984a6008aa64dba2cc0cb0345e170ef1b4110b81b5",
+  "primary_2s_auprc": {
+    "R0": 0.9063111357271314,
+    "R1": 0.9937300449778934,
+    "R2": 0.9997777010629078
+  },
+  "schema_version": "m9b-formal-results-v1",
+  "study": "m9b-confirmatory-v1",
+  "support_pass": true,
+  "valid_episodes": 240
+}

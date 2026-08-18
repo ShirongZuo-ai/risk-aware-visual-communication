@@ -1,0 +1,22 @@
+{
+  "development_only": true,
+  "formal": false,
+  "new_allocator_implemented": false,
+  "source_policy": "CVC-P4 fixed_late_050",
+  "policies": ["A0", "A1"],
+  "jpeg_quality": 45,
+  "packet_bytes": 24000,
+  "changed_pixel_absolute_channel_threshold": 10,
+  "cumulative_signal_quantiles": [0.25, 0.5, 0.75],
+  "cross_correlation_max_lag_steps": 100,
+  "timing_category_rule": {
+    "before": "trigger step < cumulative 25% step",
+    "during": "cumulative 25% step <= trigger step <= cumulative 75% step",
+    "after": "trigger step > cumulative 75% step"
+  },
+  "primary_visual_signal": "decoded held-versus-current pixel_mae",
+  "primary_perception_signal": "equal-scale L2 of existence, bearing, proximity, confidence, centroid, bbox, and component-count changes",
+  "primary_control_signal": "Euclidean norm of held-versus-current left/right wheel commands",
+  "representative_scenarios_frozen": ["center_large", "left_offset", "two_component"],
+  "analysis_boundary": "Timing definitions use diagnostic signals only. Clearance, contact, collision, and task success enter only the later P4 trade-off diagnosis."
+}

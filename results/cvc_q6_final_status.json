@@ -1,0 +1,196 @@
+{
+  "artifact_sha256": {
+    "docs/cvc_simulation_program_master_report.md": "e5f3ffa7181c9b34a5633f692c8e5df53bd16c6957d285a22a335878ad59eba4",
+    "figures/cvc_q6/q6_family_safety.png": "3b2782a62c6b0ac9ec44ca58ca8f70592c2dbbafc36a5603eee318c27ef4312f",
+    "results/cvc_q6_analysis/q6-g2-opportunity-confirmed.json": "5a861a4c5f6b609cbbab5578cd6967d2b1acb5240286cf25695a9bef764e9ad2",
+    "results/cvc_q6_analysis/q6-g3-opportunity-persistent.json": "0cc36c05534fd7f585211012077c0ded8f7073c4600410d399e66aabbfc1f743",
+    "results/cvc_q6_analysis/q6-v1-value-confirmed.json": "ae374787c23c2c56ceeb06cd4ce348ea823d17fcca9c776c2dad36ea374dec50",
+    "results/cvc_q6_development/development_ledger.json": "26b01a0b4a1a6d9492719a661e52f11430d85fc75d57c5dad1bee6063637f571",
+    "results/cvc_q6_generation2_readiness_v2/manifest.json": "ed5d04fdb7cc19b7e90f7dccc275881db6ee11938782aa60945cecfee3644714",
+    "results/cvc_q6_generation3_readiness/manifest.json": "3b9ed080089b08f9a0a29e3f9cee187c2d39761801bb375c2bae4789e8d2aab7",
+    "results/cvc_q6_learned_precursor/model.joblib": "1d14de4b52255d34e8c891666a4a539926ad8c5a68edbe54e288f16f89040466",
+    "results/cvc_q6_learned_precursor/training_report.json": "541c99f268d5afddbce3b5e840496bfb936b2d83d701b0200a272c384a90f3c1",
+    "results/cvc_q6_readiness/manifest.json": "b14ab05e6a248b0b22835449aafc50b5d6055cc7b8e0815654139dd6558bafb4",
+    "results/m9a_formal/formal_access_ledger.jsonl": "efd873be3adf726d10e5a3b84d98244a3adcffc3b49d0b8f2277afb43a2950ca",
+    "results/m9a_formal/formal_manifest.json": "52b33b0778f52870f867688d16ce8d32ac086c58a30689ea97672b533a702e8f",
+    "results/m9a_formal/formal_results.json": "efaea55013747f3cedc408817ced79139f2a6654ebe0bf24269de265ef041715",
+    "results/m9b_formal/formal_results.json": "59bfd8c579daa04b65d34f0b24b6e1f6d478c673b11be2f5047e8f27d96f8b11",
+    "results/m9b_readiness_v3/formal_access_ledger.jsonl": "bd9b6fd3bd16c3d648c4b8897cef4a66621cc6bc8eeac57d0a3f12f8b5c73bc4"
+  },
+  "classification": "Q6-C",
+  "date": "2026-08-16",
+  "final_regression": {
+    "duration_s": 9.38,
+    "failed": 0,
+    "passed": 193
+  },
+  "formal_authorized": false,
+  "method_selected": false,
+  "ml_models": {
+    "hist_gradient_boosting": {
+      "active_fraction": 0.02403846153846154,
+      "event_free_episodes": 53,
+      "event_recall": 0.8421052631578947,
+      "events": 19,
+      "false_warning_episode_fraction": 0.8301886792452831,
+      "false_warning_episodes": 44,
+      "family_folds": [
+        {
+          "auprc": null,
+          "held_family": "asymmetric_route_collapse",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": null,
+          "held_family": "late_turn_reveal",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": null,
+          "held_family": "off_axis_size_growth",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": 0.21722453641176218,
+          "held_family": "opposed_gate_contraction",
+          "positive_rows": 64,
+          "rows": 3120
+        },
+        {
+          "auprc": null,
+          "held_family": "progressive_offset_closure",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": 0.5153905212678478,
+          "held_family": "reverse_diagonal_chicane",
+          "positive_rows": 96,
+          "rows": 3120
+        },
+        {
+          "auprc": 0.4866904017952593,
+          "held_family": "staggered_slalom_constraint",
+          "positive_rows": 64,
+          "rows": 2496
+        },
+        {
+          "auprc": 0.5591380286537775,
+          "held_family": "three_stage_weave",
+          "positive_rows": 80,
+          "rows": 3120
+        }
+      ],
+      "oof_auprc": 0.28912004063586033,
+      "positive_family_macro_auprc": 0.4446108720321617,
+      "threshold_from_oof_development": 0.8690427894215239
+    },
+    "logistic": {
+      "active_fraction": 0.028021978021978023,
+      "event_free_episodes": 53,
+      "event_recall": 0.9473684210526315,
+      "events": 19,
+      "false_warning_episode_fraction": 0.5660377358490566,
+      "false_warning_episodes": 30,
+      "family_folds": [
+        {
+          "auprc": null,
+          "held_family": "asymmetric_route_collapse",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": null,
+          "held_family": "late_turn_reveal",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": null,
+          "held_family": "off_axis_size_growth",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": 0.25998719618267013,
+          "held_family": "opposed_gate_contraction",
+          "positive_rows": 64,
+          "rows": 3120
+        },
+        {
+          "auprc": null,
+          "held_family": "progressive_offset_closure",
+          "positive_rows": 0,
+          "rows": 2496
+        },
+        {
+          "auprc": 0.2704678512163297,
+          "held_family": "reverse_diagonal_chicane",
+          "positive_rows": 96,
+          "rows": 3120
+        },
+        {
+          "auprc": 0.32261642856811823,
+          "held_family": "staggered_slalom_constraint",
+          "positive_rows": 64,
+          "rows": 2496
+        },
+        {
+          "auprc": 0.21375575332092434,
+          "held_family": "three_stage_weave",
+          "positive_rows": 80,
+          "rows": 3120
+        }
+      ],
+      "oof_auprc": 0.1117139882158901,
+      "positive_family_macro_auprc": 0.2667068073220106,
+      "threshold_from_oof_development": 0.9686239243429187
+    }
+  },
+  "ml_selected": false,
+  "q7_authorized": false,
+  "real_robot_authorized": false,
+  "serious_adverse_families_vs_U0": [
+    "staggered_slalom_constraint"
+  ],
+  "strongest_development_method": "q6-g3-opportunity-persistent",
+  "strongest_method_vs_A0": {
+    "cells": 20,
+    "collision_delta_total": 0,
+    "danger_improved_tied_adverse": {
+      "adverse": 0,
+      "improved": 9,
+      "tied": 11
+    },
+    "mean_danger_steps_delta": -40.9,
+    "mean_min_clearance_delta_m": 0.019750035402185596,
+    "mean_progress_delta_m": -0.047867475718069104,
+    "median_timing_shift_steps": 0.0,
+    "planner_action_different_pairs": 9,
+    "receiver_information_different_pairs": 9,
+    "schedule_different_pairs": 9,
+    "wheel_command_different_pairs": 9
+  },
+  "strongest_method_vs_U0": {
+    "cells": 20,
+    "collision_delta_total": 0,
+    "danger_improved_tied_adverse": {
+      "adverse": 8,
+      "improved": 8,
+      "tied": 4
+    },
+    "mean_danger_steps_delta": -10.3,
+    "mean_min_clearance_delta_m": -0.0012367294690022249,
+    "mean_progress_delta_m": -0.015273343783213244,
+    "median_timing_shift_steps": 108.0,
+    "planner_action_different_pairs": 16,
+    "receiver_information_different_pairs": 20,
+    "schedule_different_pairs": 20,
+    "wheel_command_different_pairs": 16
+  },
+  "study_id": "cvc-q6-terminal-status-v1",
+  "terminal_reason": "No bounded rule or compact learned predictor met the non-adverse strongest-baseline and cross-family development gate."
+}

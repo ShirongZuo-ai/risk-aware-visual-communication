@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "m9a-step-log-v2",
+  "title": "M9-A dense simulator-step record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "protocol_version", "episode_id", "split", "scenario_family", "parameter_set_id", "seed", "timestep_index", "timestamp_s", "basic_timestep_s", "robot_state", "applied_command", "future_command_schedule", "obstacles", "robot_footprint", "contact", "provenance"],
+  "properties": {
+    "schema_version": {"const": "m9a-step-log-v2"},
+    "protocol_version": {"const": "m9a-p-v1"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "split": {"enum": ["pilot", "calibration", "formal"]},
+    "scenario_family": {"enum": ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"]},
+    "parameter_set_id": {"type": "string", "pattern": "^P0[1-6]$"},
+    "seed": {"type": "integer", "minimum": 0},
+    "timestep_index": {"type": "integer", "minimum": 0},
+    "timestamp_s": {"type": "number", "minimum": 0},
+    "basic_timestep_s": {"type": "number", "exclusiveMinimum": 0},
+    "robot_state": {"type": "object", "additionalProperties": false, "required": ["x_m", "y_m", "yaw_rad", "linear_velocity_m_s", "angular_velocity_rad_s"], "properties": {"x_m": {"type": "number"}, "y_m": {"type": "number"}, "yaw_rad": {"type": "number"}, "linear_velocity_m_s": {"type": "number"}, "angular_velocity_rad_s": {"type": "number"}}},
+    "applied_command": {"type": "object", "additionalProperties": false, "required": ["left_wheel_rad_s", "right_wheel_rad_s", "segment_id"], "properties": {"left_wheel_rad_s": {"type": "number"}, "right_wheel_rad_s": {"type": "number"}, "segment_id": {"type": "string"}}},
+    "future_command_schedule": {"type": "object", "additionalProperties": false, "required": ["available_at_s", "schedule_sha256", "segments"], "properties": {"available_at_s": {"type": "number"}, "schedule_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "segments": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["start_s", "end_s", "left_wheel_rad_s", "right_wheel_rad_s"], "properties": {"start_s": {"type": "number"}, "end_s": {"type": "number"}, "left_wheel_rad_s": {"type": "number"}, "right_wheel_rad_s": {"type": "number"}}}}}},
+    "obstacles": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["obstacle_id", "node_id", "kind", "min_x_m", "max_x_m", "min_y_m", "max_y_m"], "properties": {"obstacle_id": {"type": "string"}, "node_id": {"type": "integer"}, "kind": {"enum": ["obstacle", "wall"]}, "min_x_m": {"type": "number"}, "max_x_m": {"type": "number"}, "min_y_m": {"type": "number"}, "max_y_m": {"type": "number"}}}},
+    "robot_footprint": {"type": "object", "additionalProperties": false, "required": ["identity", "shape", "physical_radius_m", "predictor_uncertainty_corridor_radius_m"], "properties": {"identity": {"const": "webots-r2025a-epuck-collision-cylinder-v1"}, "shape": {"const": "circle"}, "physical_radius_m": {"const": 0.037}, "predictor_uncertainty_corridor_radius_m": {"const": 0.037592257}}},
+    "contact": {"type": "object", "additionalProperties": false, "required": ["api", "queried_robot_node_id", "include_descendants", "stream_available", "qualifying_collision", "points"], "properties": {"api": {"const": "Node.getContactPoints"}, "queried_robot_node_id": {"type": "integer"}, "include_descendants": {"const": true}, "stream_available": {"type": "boolean"}, "qualifying_collision": {"type": "boolean"}, "points": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["x_m", "y_m", "z_m", "counterpart_node_id", "counterpart_def", "counterpart_kind", "qualifies"], "properties": {"x_m": {"type": "number"}, "y_m": {"type": "number"}, "z_m": {"type": "number"}, "counterpart_node_id": {"type": ["integer", "null"]}, "counterpart_def": {"type": ["string", "null"]}, "counterpart_kind": {"enum": ["obstacle", "wall", "floor", "self", "other", "unknown"]}, "qualifies": {"type": "boolean"}}}}}},
+    "provenance": {"type": "object", "additionalProperties": false, "required": ["world_sha256", "config_sha256", "controller_sha256", "git_commit", "webots_version"], "properties": {"world_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "config_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "controller_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "git_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "webots_version": {"type": "string"}}}
+  }
+}

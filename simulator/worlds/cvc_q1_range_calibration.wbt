@@ -1,0 +1,25 @@
+#VRML_SIM R2025a utf8
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+WorldInfo { basicTimeStep 32 title "CVC-Q1 outcome-blind visual range calibration" }
+Viewpoint { position 0 0 2.2 orientation 0 0 1 0 }
+Background { skyColor [ 0.45 0.45 0.45 ] }
+DirectionalLight { direction -0.5 -0.5 -1 intensity 1.2 ambientIntensity 0.5 }
+RectangleArena { floorSize 2 2 wallHeight 0.04 }
+DEF ROBOT E-puck {
+  controller "cvc_q1_range_calibration"
+  supervisor TRUE
+  version "2"
+  camera_width 160
+  camera_height 120
+  camera_fieldOfView 0.84
+}
+DEF TARGET Solid {
+  translation 0 0 0.04
+  children [ Shape {
+    appearance PBRAppearance { baseColor 1 0 0 roughness 0.7 }
+    geometry Box { size 0.08 0.08 0.08 }
+  } ]
+  boundingObject Box { size 0.08 0.08 0.08 }
+  locked TRUE
+}

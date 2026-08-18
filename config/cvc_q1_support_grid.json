@@ -1,0 +1,50 @@
+{
+  "study_id": "cvc-q1-physical-support-grid-v1",
+  "development_only": true,
+  "formal": false,
+  "construction_boundary": "Geometry, goal, camera visibility, v2 fresh-vision feasibility, and robot dynamics only. No A1 or predictive communication outcomes.",
+  "duration_s": 10.0,
+  "physical_labels": {
+    "collision": "bilateral Webots contact",
+    "near_danger": "no collision and minimum clearance <= 0.12 m",
+    "safe": "no collision and minimum clearance > 0.12 m"
+  },
+  "scenarios": [
+    {"id": "q1-s01-straight-approach", "family": "straight_approach", "seed": 982001,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [{"id": "TARGET", "center": [0.08, 0.0], "size": [0.08, 0.08]}]},
+    {"id": "q1-s02-shallow-left", "family": "shallow_conflict", "seed": 982002,
+     "start": [-0.65, -0.02, 0.0], "goal": [0.65, 0.02],
+     "objects": [{"id": "TARGET", "center": [-0.02, 0.065], "size": [0.08, 0.08]}]},
+    {"id": "q1-s03-strong-right", "family": "strong_conflict", "seed": 982003,
+     "start": [-0.65, 0.02, 0.0], "goal": [0.65, -0.02],
+     "objects": [{"id": "TARGET", "center": [-0.18, -0.025], "size": [0.08, 0.08]}]},
+    {"id": "q1-s04-late-reveal-left", "family": "late_visual_reveal", "seed": 982004,
+     "start": [-0.65, -0.25, -0.15], "goal": [0.65, 0.20],
+     "objects": [{"id": "TARGET", "center": [-0.08, 0.18], "size": [0.08, 0.08]}]},
+    {"id": "q1-s05-obstacle-after-right-turn", "family": "obstacle_after_turn", "seed": 982005,
+     "start": [-0.65, 0.25, 0.15], "goal": [0.65, -0.20],
+     "objects": [{"id": "TARGET", "center": [-0.08, -0.18], "size": [0.08, 0.08]}]},
+    {"id": "q1-s06-narrow-passage", "family": "narrow_passage", "seed": 982006,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [
+       {"id": "TARGET_L", "center": [-0.02, 0.17], "size": [0.08, 0.08]},
+       {"id": "TARGET_R", "center": [-0.02, -0.17], "size": [0.08, 0.08]}
+     ]},
+    {"id": "q1-s07-subtle-offset", "family": "subtle_approach", "seed": 982007,
+     "start": [-0.65, -0.06, 0.03], "goal": [0.65, 0.02],
+     "objects": [{"id": "TARGET", "center": [0.02, 0.085], "size": [0.08, 0.08]}]},
+    {"id": "q1-s08-safe-turn-away", "family": "safe_turn_away", "seed": 982008,
+     "start": [-0.65, 0.18, -0.30], "goal": [0.65, -0.15],
+     "objects": [{"id": "TARGET", "center": [-0.02, 0.38], "size": [0.08, 0.08]}]},
+    {"id": "q1-s09-visual-distractor", "family": "distractor", "seed": 982009,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [
+       {"id": "RED_DISTRACTOR", "center": [-0.05, 0.28], "size": [0.08, 0.08], "physical": false},
+       {"id": "BLUE_ANCHOR", "center": [0.55, -0.60], "size": [0.08, 0.08], "color": [0, 0, 1]}
+     ]},
+    {"id": "q1-s10-command-transition", "family": "command_transition", "seed": 982010,
+     "start": [-0.65, -0.12, 0.42], "goal": [0.65, 0.05],
+     "objects": [{"id": "TARGET", "center": [-0.02, -0.09], "size": [0.08, 0.08]}]}
+  ]
+}

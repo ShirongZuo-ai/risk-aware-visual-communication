@@ -1,0 +1,148 @@
+{
+  "study_id": "cvc-q5-stage-a-blinded-support-v1",
+  "development_only": true,
+  "formal": false,
+  "precursor_blinded": true,
+  "construction_inputs": [
+    "static physical geometry",
+    "causal camera observations",
+    "frozen Q1 planner state",
+    "frozen Q2/Q3 Safety Decision Value"
+  ],
+  "forbidden_construction_inputs": [
+    "Q4 precursor activation",
+    "Q4 threshold values",
+    "Q4 precursor lead",
+    "navigation outcome comparison"
+  ],
+  "duration_s": 10.0,
+  "communication_mode": "U0",
+  "transmission_count": 3,
+  "support_gates": {
+    "new_positive_families_min": 3,
+    "accepted_onsets_per_positive_family_min": 4,
+    "accepted_onsets_total_min": 12,
+    "event_free_episode_total_min": 5,
+    "event_free_episode_per_positive_family_min": 1
+  },
+  "families": [
+    {
+      "id": "progressive_offset_closure",
+      "mechanism": "A curved goal path approaches a staggered near-side obstacle, progressively narrowing one side while leaving an outer arc.",
+      "cells": [
+        {"id":"q5-poc-e01","role":"event_candidate","seed":985101,"start":[-0.70,-0.16,0.08],"goal":[0.62,0.18],"objects":[{"id":"A","center":[-0.10,-0.015],"size":[0.08,0.10]},{"id":"B","center":[0.18,0.16],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-e02","role":"event_candidate","seed":985102,"start":[-0.70,-0.14,0.10],"goal":[0.62,0.20],"objects":[{"id":"A","center":[-0.08,0.000],"size":[0.08,0.10]},{"id":"B","center":[0.20,0.17],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-e03","role":"event_candidate","seed":985103,"start":[-0.70,-0.18,0.06],"goal":[0.62,0.16],"objects":[{"id":"A","center":[-0.12,-0.025],"size":[0.09,0.10]},{"id":"B","center":[0.16,0.15],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-e04","role":"event_candidate","seed":985104,"start":[-0.68,-0.15,0.12],"goal":[0.64,0.19],"objects":[{"id":"A","center":[-0.06,0.010],"size":[0.08,0.11]},{"id":"B","center":[0.22,0.18],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-e05","role":"event_candidate","seed":985105,"start":[-0.72,-0.17,0.09],"goal":[0.60,0.17],"objects":[{"id":"A","center":[-0.14,-0.005],"size":[0.08,0.12]},{"id":"B","center":[0.14,0.14],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-e06","role":"event_candidate","seed":985106,"start":[-0.69,-0.13,0.11],"goal":[0.63,0.21],"objects":[{"id":"A","center":[-0.04,0.025],"size":[0.09,0.10]},{"id":"B","center":[0.24,0.19],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-c01","role":"matched_control","seed":985107,"start":[-0.70,-0.16,0.08],"goal":[0.62,0.18],"objects":[{"id":"A","center":[-0.10,-0.34],"size":[0.08,0.10]},{"id":"B","center":[0.18,0.42],"size":[0.08,0.08]}]},
+        {"id":"q5-poc-c02","role":"matched_control","seed":985108,"start":[-0.70,-0.14,0.10],"goal":[0.62,0.20],"objects":[{"id":"A","center":[-0.08,-0.36],"size":[0.08,0.10]},{"id":"B","center":[0.20,0.44],"size":[0.08,0.08]}]}
+      ]
+    },
+    {
+      "id": "late_turn_reveal",
+      "mechanism": "The robot begins with an oblique heading; goal-directed turning gradually reveals an obstacle that intersects the newly selected arc.",
+      "cells": [
+        {"id":"q5-ltr-e01","role":"event_candidate","seed":985201,"start":[-0.68,-0.30,-0.05],"goal":[0.58,0.32],"objects":[{"id":"A","center":[-0.04,0.15],"size":[0.09,0.09]}]},
+        {"id":"q5-ltr-e02","role":"event_candidate","seed":985202,"start":[-0.70,-0.28,-0.08],"goal":[0.60,0.30],"objects":[{"id":"A","center":[-0.02,0.13],"size":[0.09,0.09]}]},
+        {"id":"q5-ltr-e03","role":"event_candidate","seed":985203,"start":[-0.66,-0.32,0.00],"goal":[0.56,0.34],"objects":[{"id":"A","center":[-0.08,0.17],"size":[0.10,0.08]}]},
+        {"id":"q5-ltr-e04","role":"event_candidate","seed":985204,"start":[-0.72,-0.27,-0.10],"goal":[0.62,0.28],"objects":[{"id":"A","center":[0.02,0.11],"size":[0.08,0.10]}]},
+        {"id":"q5-ltr-e05","role":"event_candidate","seed":985205,"start":[-0.69,-0.34,0.03],"goal":[0.57,0.36],"objects":[{"id":"A","center":[-0.10,0.19],"size":[0.09,0.09]}]},
+        {"id":"q5-ltr-e06","role":"event_candidate","seed":985206,"start":[-0.67,-0.26,-0.12],"goal":[0.61,0.27],"objects":[{"id":"A","center":[0.04,0.10],"size":[0.10,0.08]}]},
+        {"id":"q5-ltr-c01","role":"matched_control","seed":985207,"start":[-0.68,-0.30,-0.05],"goal":[0.58,0.32],"objects":[{"id":"A","center":[-0.04,-0.52],"size":[0.09,0.09]}]},
+        {"id":"q5-ltr-c02","role":"matched_control","seed":985208,"start":[-0.70,-0.28,-0.08],"goal":[0.60,0.30],"objects":[{"id":"A","center":[-0.02,-0.50],"size":[0.09,0.09]}]}
+      ]
+    },
+    {
+      "id": "asymmetric_route_collapse",
+      "mechanism": "Staggered obstacles preserve two route directions initially, then remove one branch while an asymmetric alternative remains.",
+      "cells": [
+        {"id":"q5-arc-e01","role":"event_candidate","seed":985301,"start":[-0.70,0.00,0.00],"goal":[0.64,0.12],"objects":[{"id":"A","center":[-0.12,0.035],"size":[0.08,0.10]},{"id":"B","center":[0.16,-0.16],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-e02","role":"event_candidate","seed":985302,"start":[-0.70,0.02,-0.01],"goal":[0.64,0.10],"objects":[{"id":"A","center":[-0.10,0.020],"size":[0.09,0.10]},{"id":"B","center":[0.18,-0.15],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-e03","role":"event_candidate","seed":985303,"start":[-0.70,-0.02,0.01],"goal":[0.64,0.14],"objects":[{"id":"A","center":[-0.14,0.050],"size":[0.08,0.11]},{"id":"B","center":[0.14,-0.17],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-e04","role":"event_candidate","seed":985304,"start":[-0.68,0.01,0.02],"goal":[0.66,0.11],"objects":[{"id":"A","center":[-0.08,0.030],"size":[0.10,0.09]},{"id":"B","center":[0.20,-0.14],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-e05","role":"event_candidate","seed":985305,"start":[-0.72,-0.01,-0.02],"goal":[0.62,0.13],"objects":[{"id":"A","center":[-0.16,0.045],"size":[0.09,0.10]},{"id":"B","center":[0.12,-0.18],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-e06","role":"event_candidate","seed":985306,"start":[-0.69,0.03,0.00],"goal":[0.65,0.09],"objects":[{"id":"A","center":[-0.06,0.015],"size":[0.08,0.12]},{"id":"B","center":[0.22,-0.13],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-c01","role":"matched_control","seed":985307,"start":[-0.70,0.00,0.00],"goal":[0.64,0.12],"objects":[{"id":"A","center":[-0.12,0.36],"size":[0.08,0.10]},{"id":"B","center":[0.16,-0.40],"size":[0.08,0.08]}]},
+        {"id":"q5-arc-c02","role":"matched_control","seed":985308,"start":[-0.70,0.02,-0.01],"goal":[0.64,0.10],"objects":[{"id":"A","center":[-0.10,0.38],"size":[0.09,0.10]},{"id":"B","center":[0.18,-0.38],"size":[0.08,0.08]}]}
+      ]
+    },
+    {
+      "id": "staggered_slalom_constraint",
+      "mechanism": "Two longitudinally staggered obstacles alternately constrain left- and right-turn candidate groups during a diagonal traverse.",
+      "cells": [
+        {"id":"q5-ssc-e01","role":"event_candidate","seed":985401,"start":[-0.72,-0.18,0.10],"goal":[0.62,0.18],"objects":[{"id":"A","center":[-0.18,-0.015],"size":[0.08,0.09]},{"id":"B","center":[0.12,0.055],"size":[0.08,0.09]}]},
+        {"id":"q5-ssc-e02","role":"event_candidate","seed":985402,"start":[-0.70,-0.16,0.08],"goal":[0.64,0.16],"objects":[{"id":"A","center":[-0.16,-0.025],"size":[0.09,0.09]},{"id":"B","center":[0.14,0.065],"size":[0.09,0.09]}]},
+        {"id":"q5-ssc-e03","role":"event_candidate","seed":985403,"start":[-0.74,-0.20,0.12],"goal":[0.60,0.20],"objects":[{"id":"A","center":[-0.20,-0.005],"size":[0.08,0.10]},{"id":"B","center":[0.10,0.045],"size":[0.08,0.10]}]},
+        {"id":"q5-ssc-e04","role":"event_candidate","seed":985404,"start":[-0.68,-0.14,0.06],"goal":[0.66,0.14],"objects":[{"id":"A","center":[-0.14,-0.035],"size":[0.10,0.08]},{"id":"B","center":[0.16,0.075],"size":[0.10,0.08]}]},
+        {"id":"q5-ssc-e05","role":"event_candidate","seed":985405,"start":[-0.71,-0.19,0.11],"goal":[0.63,0.19],"objects":[{"id":"A","center":[-0.17,0.000],"size":[0.09,0.10]},{"id":"B","center":[0.13,0.050],"size":[0.09,0.10]}]},
+        {"id":"q5-ssc-e06","role":"event_candidate","seed":985406,"start":[-0.69,-0.15,0.07],"goal":[0.65,0.15],"objects":[{"id":"A","center":[-0.15,-0.030],"size":[0.08,0.11]},{"id":"B","center":[0.15,0.070],"size":[0.08,0.11]}]},
+        {"id":"q5-ssc-c01","role":"matched_control","seed":985407,"start":[-0.72,-0.18,0.10],"goal":[0.62,0.18],"objects":[{"id":"A","center":[-0.18,-0.45],"size":[0.08,0.09]},{"id":"B","center":[0.12,0.48],"size":[0.08,0.09]}]},
+        {"id":"q5-ssc-c02","role":"matched_control","seed":985408,"start":[-0.70,-0.16,0.08],"goal":[0.64,0.16],"objects":[{"id":"A","center":[-0.16,-0.43],"size":[0.09,0.09]},{"id":"B","center":[0.14,0.46],"size":[0.09,0.09]}]}
+      ]
+    },
+    {
+      "id": "off_axis_size_growth",
+      "mechanism": "An oblique approach to a wider obstacle produces progressive apparent expansion and removes only the toward-obstacle action family.",
+      "cells": [
+        {"id":"q5-osg-e01","role":"event_candidate","seed":985501,"start":[-0.70,-0.10,0.04],"goal":[0.64,0.06],"objects":[{"id":"A","center":[-0.02,0.055],"size":[0.12,0.08]}]},
+        {"id":"q5-osg-e02","role":"event_candidate","seed":985502,"start":[-0.70,-0.08,0.03],"goal":[0.64,0.08],"objects":[{"id":"A","center":[0.00,0.070],"size":[0.13,0.08]}]},
+        {"id":"q5-osg-e03","role":"event_candidate","seed":985503,"start":[-0.70,-0.12,0.05],"goal":[0.64,0.04],"objects":[{"id":"A","center":[-0.04,0.040],"size":[0.11,0.09]}]},
+        {"id":"q5-osg-e04","role":"event_candidate","seed":985504,"start":[-0.68,-0.09,0.02],"goal":[0.66,0.07],"objects":[{"id":"A","center":[0.02,0.060],"size":[0.14,0.08]}]},
+        {"id":"q5-osg-e05","role":"event_candidate","seed":985505,"start":[-0.72,-0.11,0.06],"goal":[0.62,0.05],"objects":[{"id":"A","center":[-0.06,0.050],"size":[0.12,0.09]}]},
+        {"id":"q5-osg-e06","role":"event_candidate","seed":985506,"start":[-0.69,-0.07,0.01],"goal":[0.65,0.09],"objects":[{"id":"A","center":[0.04,0.075],"size":[0.13,0.09]}]},
+        {"id":"q5-osg-c01","role":"matched_control","seed":985507,"start":[-0.70,-0.10,0.04],"goal":[0.64,0.06],"objects":[{"id":"A","center":[-0.02,0.38],"size":[0.12,0.08]}]},
+        {"id":"q5-osg-c02","role":"matched_control","seed":985508,"start":[-0.70,-0.08,0.03],"goal":[0.64,0.08],"objects":[{"id":"A","center":[0.00,0.40],"size":[0.13,0.08]}]}
+      ]
+    },
+    {
+      "id": "three_stage_weave",
+      "mechanism": "Three alternating constraints create two successive route-choice contractions, unlike the two-obstacle slalom development family.",
+      "cells": [
+        {"id":"q5-tsw-e01","role":"event_candidate","seed":985601,"start":[-0.70,-0.16,0.08],"goal":[0.66,0.15],"objects":[{"id":"A","center":[-0.16,-0.025],"size":[0.09,0.09]},{"id":"B","center":[0.13,0.065],"size":[0.09,0.09]},{"id":"C","center":[0.38,-0.045],"size":[0.08,0.09]}]},
+        {"id":"q5-tsw-e02","role":"event_candidate","seed":985602,"start":[-0.69,-0.14,0.07],"goal":[0.67,0.14],"objects":[{"id":"A","center":[-0.14,-0.035],"size":[0.10,0.08]},{"id":"B","center":[0.16,0.075],"size":[0.10,0.08]},{"id":"C","center":[0.40,-0.035],"size":[0.09,0.08]}]},
+        {"id":"q5-tsw-e03","role":"event_candidate","seed":985603,"start":[-0.71,-0.15,0.09],"goal":[0.65,0.16],"objects":[{"id":"A","center":[-0.17,-0.030],"size":[0.08,0.11]},{"id":"B","center":[0.14,0.070],"size":[0.08,0.11]},{"id":"C","center":[0.36,-0.050],"size":[0.09,0.09]}]},
+        {"id":"q5-tsw-e04","role":"event_candidate","seed":985604,"start":[-0.68,-0.13,0.06],"goal":[0.68,0.13],"objects":[{"id":"A","center":[-0.13,-0.040],"size":[0.10,0.09]},{"id":"B","center":[0.17,0.080],"size":[0.10,0.09]},{"id":"C","center":[0.42,-0.030],"size":[0.08,0.10]}]},
+        {"id":"q5-tsw-e05","role":"event_candidate","seed":985605,"start":[-0.72,-0.17,0.10],"goal":[0.64,0.17],"objects":[{"id":"A","center":[-0.18,-0.020],"size":[0.09,0.10]},{"id":"B","center":[0.12,0.060],"size":[0.09,0.10]},{"id":"C","center":[0.35,-0.055],"size":[0.08,0.10]}]},
+        {"id":"q5-tsw-e06","role":"event_candidate","seed":985606,"start":[-0.67,-0.12,0.05],"goal":[0.69,0.12],"objects":[{"id":"A","center":[-0.12,-0.045],"size":[0.11,0.08]},{"id":"B","center":[0.18,0.085],"size":[0.11,0.08]},{"id":"C","center":[0.43,-0.025],"size":[0.09,0.09]}]},
+        {"id":"q5-tsw-e07","role":"event_candidate","seed":985607,"start":[-0.70,-0.18,0.11],"goal":[0.66,0.18],"objects":[{"id":"A","center":[-0.16,-0.010],"size":[0.10,0.10]},{"id":"B","center":[0.15,0.055],"size":[0.09,0.11]},{"id":"C","center":[0.39,-0.060],"size":[0.10,0.08]}]},
+        {"id":"q5-tsw-e08","role":"event_candidate","seed":985608,"start":[-0.69,-0.15,0.08],"goal":[0.67,0.16],"objects":[{"id":"A","center":[-0.15,-0.032],"size":[0.09,0.11]},{"id":"B","center":[0.15,0.072],"size":[0.09,0.11]},{"id":"C","center":[0.40,-0.040],"size":[0.09,0.10]}]},
+        {"id":"q5-tsw-c01","role":"matched_control","seed":985609,"start":[-0.70,-0.16,0.08],"goal":[0.66,0.15],"objects":[{"id":"A","center":[-0.16,-0.45],"size":[0.09,0.09]},{"id":"B","center":[0.13,0.47],"size":[0.09,0.09]},{"id":"C","center":[0.38,-0.43],"size":[0.08,0.09]}]},
+        {"id":"q5-tsw-c02","role":"matched_control","seed":985610,"start":[-0.69,-0.14,0.07],"goal":[0.67,0.14],"objects":[{"id":"A","center":[-0.14,-0.46],"size":[0.10,0.08]},{"id":"B","center":[0.16,0.48],"size":[0.10,0.08]},{"id":"C","center":[0.40,-0.44],"size":[0.09,0.08]}]}
+      ]
+    },
+    {
+      "id": "opposed_gate_contraction",
+      "mechanism": "Two offset gate posts progressively reduce the admissible steering fan while retaining multiple safe alternatives.",
+      "cells": [
+        {"id":"q5-ogc-e01","role":"event_candidate","seed":985701,"start":[-0.70,-0.15,0.08],"goal":[0.65,0.15],"objects":[{"id":"A","center":[-0.15,-0.030],"size":[0.09,0.11]},{"id":"B","center":[0.10,0.085],"size":[0.11,0.08]}]},
+        {"id":"q5-ogc-e02","role":"event_candidate","seed":985702,"start":[-0.68,-0.13,0.06],"goal":[0.67,0.13],"objects":[{"id":"A","center":[-0.13,-0.040],"size":[0.10,0.10]},{"id":"B","center":[0.12,0.090],"size":[0.10,0.09]}]},
+        {"id":"q5-ogc-e03","role":"event_candidate","seed":985703,"start":[-0.72,-0.17,0.10],"goal":[0.63,0.17],"objects":[{"id":"A","center":[-0.18,-0.020],"size":[0.10,0.10]},{"id":"B","center":[0.08,0.075],"size":[0.12,0.08]}]},
+        {"id":"q5-ogc-e04","role":"event_candidate","seed":985704,"start":[-0.67,-0.12,0.05],"goal":[0.68,0.12],"objects":[{"id":"A","center":[-0.11,-0.045],"size":[0.11,0.09]},{"id":"B","center":[0.14,0.095],"size":[0.10,0.10]}]},
+        {"id":"q5-ogc-e05","role":"event_candidate","seed":985705,"start":[-0.71,-0.16,0.09],"goal":[0.64,0.16],"objects":[{"id":"A","center":[-0.16,-0.025],"size":[0.11,0.09]},{"id":"B","center":[0.09,0.080],"size":[0.11,0.09]}]},
+        {"id":"q5-ogc-e06","role":"event_candidate","seed":985706,"start":[-0.69,-0.14,0.07],"goal":[0.66,0.14],"objects":[{"id":"A","center":[-0.14,-0.035],"size":[0.09,0.12]},{"id":"B","center":[0.11,0.088],"size":[0.12,0.08]}]},
+        {"id":"q5-ogc-e07","role":"event_candidate","seed":985707,"start":[-0.70,-0.18,0.11],"goal":[0.65,0.18],"objects":[{"id":"A","center":[-0.17,-0.015],"size":[0.10,0.11]},{"id":"B","center":[0.07,0.070],"size":[0.11,0.10]}]},
+        {"id":"q5-ogc-e08","role":"event_candidate","seed":985708,"start":[-0.66,-0.11,0.04],"goal":[0.69,0.11],"objects":[{"id":"A","center":[-0.10,-0.050],"size":[0.12,0.08]},{"id":"B","center":[0.15,0.100],"size":[0.09,0.11]}]},
+        {"id":"q5-ogc-c01","role":"matched_control","seed":985709,"start":[-0.70,-0.15,0.08],"goal":[0.65,0.15],"objects":[{"id":"A","center":[-0.15,-0.45],"size":[0.09,0.11]},{"id":"B","center":[0.10,0.47],"size":[0.11,0.08]}]},
+        {"id":"q5-ogc-c02","role":"matched_control","seed":985710,"start":[-0.68,-0.13,0.06],"goal":[0.67,0.13],"objects":[{"id":"A","center":[-0.13,-0.46],"size":[0.10,0.10]},{"id":"B","center":[0.12,0.48],"size":[0.10,0.09]}]}
+      ]
+    },
+    {
+      "id": "reverse_diagonal_chicane",
+      "mechanism": "A mirrored diagonal approach encounters right-then-left constraints, testing the opposite steering topology from the successful development slalom.",
+      "cells": [
+        {"id":"q5-rdc-e01","role":"event_candidate","seed":985801,"start":[-0.70,0.16,-0.08],"goal":[0.64,-0.16],"objects":[{"id":"A","center":[-0.16,0.025],"size":[0.09,0.09]},{"id":"B","center":[0.14,-0.065],"size":[0.09,0.09]}]},
+        {"id":"q5-rdc-e02","role":"event_candidate","seed":985802,"start":[-0.68,0.14,-0.06],"goal":[0.66,-0.14],"objects":[{"id":"A","center":[-0.14,0.035],"size":[0.10,0.08]},{"id":"B","center":[0.16,-0.075],"size":[0.10,0.08]}]},
+        {"id":"q5-rdc-e03","role":"event_candidate","seed":985803,"start":[-0.72,0.18,-0.10],"goal":[0.62,-0.18],"objects":[{"id":"A","center":[-0.18,0.020],"size":[0.09,0.10]},{"id":"B","center":[0.12,-0.060],"size":[0.09,0.10]}]},
+        {"id":"q5-rdc-e04","role":"event_candidate","seed":985804,"start":[-0.67,0.13,-0.05],"goal":[0.67,-0.13],"objects":[{"id":"A","center":[-0.12,0.040],"size":[0.11,0.08]},{"id":"B","center":[0.18,-0.080],"size":[0.11,0.08]}]},
+        {"id":"q5-rdc-e05","role":"event_candidate","seed":985805,"start":[-0.71,0.17,-0.09],"goal":[0.63,-0.17],"objects":[{"id":"A","center":[-0.17,0.015],"size":[0.08,0.11]},{"id":"B","center":[0.13,-0.055],"size":[0.08,0.11]}]},
+        {"id":"q5-rdc-e06","role":"event_candidate","seed":985806,"start":[-0.69,0.15,-0.07],"goal":[0.65,-0.15],"objects":[{"id":"A","center":[-0.15,0.030],"size":[0.10,0.10]},{"id":"B","center":[0.15,-0.070],"size":[0.10,0.10]}]},
+        {"id":"q5-rdc-e07","role":"event_candidate","seed":985807,"start":[-0.70,0.19,-0.11],"goal":[0.64,-0.19],"objects":[{"id":"A","center":[-0.16,0.010],"size":[0.10,0.11]},{"id":"B","center":[0.14,-0.050],"size":[0.09,0.12]}]},
+        {"id":"q5-rdc-e08","role":"event_candidate","seed":985808,"start":[-0.66,0.12,-0.04],"goal":[0.68,-0.12],"objects":[{"id":"A","center":[-0.11,0.045],"size":[0.11,0.09]},{"id":"B","center":[0.19,-0.085],"size":[0.10,0.09]}]},
+        {"id":"q5-rdc-c01","role":"matched_control","seed":985809,"start":[-0.70,0.16,-0.08],"goal":[0.64,-0.16],"objects":[{"id":"A","center":[-0.16,0.45],"size":[0.09,0.09]},{"id":"B","center":[0.14,-0.47],"size":[0.09,0.09]}]},
+        {"id":"q5-rdc-c02","role":"matched_control","seed":985810,"start":[-0.68,0.14,-0.06],"goal":[0.66,-0.14],"objects":[{"id":"A","center":[-0.14,0.46],"size":[0.10,0.08]},{"id":"B","center":[0.16,-0.48],"size":[0.10,0.08]}]}
+      ]
+    }
+  ]
+}

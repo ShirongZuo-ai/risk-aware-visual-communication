@@ -1,0 +1,38 @@
+{
+  "study_id": "cvc-q65-opportunity-value-pilot-v1",
+  "development_only": true,
+  "formal": false,
+  "duration_s": 10.0,
+  "total_steps": 312,
+  "communication": {"packet_count": 3, "packet_bytes": 24000, "episode_wire_bytes": 72000, "jpeg_quality": 45},
+  "intervention": {"candidate_start_step": 24, "candidate_end_step": 180, "candidate_ranks_per_cell": 2, "minimum_candidate_gap_steps": 16, "clock_fallback_steps": [80, 144], "fallback_step": 217, "reserve_step": 218},
+  "utility": {"near_boundary_m": 0.12, "danger_step_tolerance": 3, "clearance_tolerance_m": 0.001, "progress_guardrail_m": 0.05},
+  "support_gate": {"helpful_min": 6, "harmful_min": 6, "neutral_min": 6, "helpful_families_min": 3, "harmful_families_min": 3},
+  "families": [
+    {"id":"delayed_second_hazard","mechanism":"A mild early offset obstacle competes with a later tighter obstacle on the opposite side.","cells":[
+      {"id":"q65-dsh-01","seed":986501,"start":[-0.76,-0.15,0.08],"goal":[0.72,0.15],"objects":[{"id":"A","center":[-0.24,-0.01],"size":[0.07,0.08]},{"id":"B","center":[0.14,0.07],"size":[0.11,0.11]},{"id":"C","center":[0.43,-0.08],"size":[0.08,0.10]}]},
+      {"id":"q65-dsh-02","seed":986502,"start":[-0.74,-0.13,0.06],"goal":[0.70,0.17],"objects":[{"id":"A","center":[-0.20,-0.02],"size":[0.08,0.07]},{"id":"B","center":[0.17,0.085],"size":[0.12,0.10]},{"id":"C","center":[0.46,-0.065],"size":[0.09,0.09]}]},
+      {"id":"q65-dsh-03","seed":986503,"start":[-0.78,-0.17,0.10],"goal":[0.68,0.13],"objects":[{"id":"A","center":[-0.27,0.00],"size":[0.07,0.09]},{"id":"B","center":[0.11,0.055],"size":[0.10,0.12]},{"id":"C","center":[0.39,-0.095],"size":[0.08,0.11]}]}
+    ]},
+    {"id":"alternating_four_stage","mechanism":"Four alternating constraints create repeated competition for one adaptive packet.","cells":[
+      {"id":"q65-afs-01","seed":986511,"start":[-0.78,-0.17,0.09],"goal":[0.74,0.16],"objects":[{"id":"A","center":[-0.32,-0.035],"size":[0.08,0.09]},{"id":"B","center":[-0.02,0.075],"size":[0.09,0.10]},{"id":"C","center":[0.28,-0.055],"size":[0.09,0.10]},{"id":"D","center":[0.53,0.075],"size":[0.08,0.09]}]},
+      {"id":"q65-afs-02","seed":986512,"start":[-0.76,-0.15,0.07],"goal":[0.72,0.14],"objects":[{"id":"A","center":[-0.29,-0.045],"size":[0.09,0.08]},{"id":"B","center":[0.01,0.085],"size":[0.10,0.09]},{"id":"C","center":[0.31,-0.065],"size":[0.10,0.09]},{"id":"D","center":[0.56,0.065],"size":[0.09,0.08]}]},
+      {"id":"q65-afs-03","seed":986513,"start":[-0.80,-0.19,0.11],"goal":[0.70,0.18],"objects":[{"id":"A","center":[-0.35,-0.025],"size":[0.08,0.10]},{"id":"B","center":[-0.05,0.065],"size":[0.08,0.11]},{"id":"C","center":[0.25,-0.045],"size":[0.08,0.11]},{"id":"D","center":[0.50,0.085],"size":[0.08,0.10]}]}
+    ]},
+    {"id":"split_gate_then_chicane","mechanism":"An early broad gate is followed by a later asymmetric chicane.","cells":[
+      {"id":"q65-sgc-01","seed":986521,"start":[-0.76,0.00,0.00],"goal":[0.72,0.05],"objects":[{"id":"A","center":[-0.22,-0.16],"size":[0.08,0.12]},{"id":"B","center":[-0.22,0.17],"size":[0.08,0.12]},{"id":"C","center":[0.18,0.055],"size":[0.10,0.12]},{"id":"D","center":[0.45,-0.08],"size":[0.09,0.10]}]},
+      {"id":"q65-sgc-02","seed":986522,"start":[-0.74,0.02,-0.01],"goal":[0.70,0.07],"objects":[{"id":"A","center":[-0.19,-0.17],"size":[0.09,0.11]},{"id":"B","center":[-0.19,0.18],"size":[0.09,0.11]},{"id":"C","center":[0.21,0.07],"size":[0.11,0.11]},{"id":"D","center":[0.48,-0.065],"size":[0.10,0.09]}]},
+      {"id":"q65-sgc-03","seed":986523,"start":[-0.78,-0.02,0.01],"goal":[0.68,0.03],"objects":[{"id":"A","center":[-0.25,-0.15],"size":[0.08,0.13]},{"id":"B","center":[-0.25,0.16],"size":[0.08,0.13]},{"id":"C","center":[0.15,0.04],"size":[0.09,0.13]},{"id":"D","center":[0.42,-0.095],"size":[0.08,0.11]}]}
+    ]},
+    {"id":"narrow_exit_reveal","mechanism":"A turn around an initial obstacle reveals a narrow offset exit and later blocker.","cells":[
+      {"id":"q65-ner-01","seed":986531,"start":[-0.74,-0.28,-0.03],"goal":[0.68,0.30],"objects":[{"id":"A","center":[-0.20,0.02],"size":[0.11,0.11]},{"id":"B","center":[0.16,0.10],"size":[0.08,0.16]},{"id":"C","center":[0.43,0.24],"size":[0.10,0.10]}]},
+      {"id":"q65-ner-02","seed":986532,"start":[-0.76,-0.30,-0.05],"goal":[0.70,0.28],"objects":[{"id":"A","center":[-0.23,0.00],"size":[0.12,0.10]},{"id":"B","center":[0.13,0.085],"size":[0.09,0.17]},{"id":"C","center":[0.46,0.22],"size":[0.09,0.11]}]},
+      {"id":"q65-ner-03","seed":986533,"start":[-0.72,-0.26,-0.01],"goal":[0.66,0.32],"objects":[{"id":"A","center":[-0.17,0.04],"size":[0.10,0.12]},{"id":"B","center":[0.19,0.115],"size":[0.08,0.15]},{"id":"C","center":[0.40,0.26],"size":[0.11,0.09]}]}
+    ]},
+    {"id":"event_free_wide_controls","mechanism":"Matched-length routes with wide-offset objects test neutral and false-send behavior.","cells":[
+      {"id":"q65-efc-01","seed":986541,"start":[-0.76,-0.12,0.06],"goal":[0.72,0.14],"objects":[{"id":"A","center":[-0.20,-0.43],"size":[0.09,0.10]},{"id":"B","center":[0.18,0.46],"size":[0.10,0.09]},{"id":"C","center":[0.48,-0.42],"size":[0.09,0.09]}]},
+      {"id":"q65-efc-02","seed":986542,"start":[-0.74,0.12,-0.06],"goal":[0.70,-0.14],"objects":[{"id":"A","center":[-0.18,0.44],"size":[0.10,0.09]},{"id":"B","center":[0.20,-0.45],"size":[0.09,0.10]},{"id":"C","center":[0.50,0.43],"size":[0.09,0.09]}]},
+      {"id":"q65-efc-03","seed":986543,"start":[-0.78,0.00,0.00],"goal":[0.68,0.02],"objects":[{"id":"A","center":[-0.25,-0.48],"size":[0.08,0.08]},{"id":"B","center":[0.15,0.49],"size":[0.08,0.08]},{"id":"C","center":[0.52,-0.47],"size":[0.08,0.08]}]}
+    ]}
+  ]
+}

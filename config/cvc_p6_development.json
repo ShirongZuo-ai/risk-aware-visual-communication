@@ -1,0 +1,23 @@
+{
+  "development_only": true,
+  "formal": false,
+  "candidate_id": "coarse_12px",
+  "calibration_results_sha256": "02b0996eed001bf182d4456b90ada15a26ea1a8eb097305f33e96eabb5469eff",
+  "risk_threshold": 0.14,
+  "novelty_thresholds": {
+    "bearing": 0.15,
+    "proximity": 0.075,
+    "area_relative": 0.50,
+    "component_event": true
+  },
+  "deadline_steps": 96,
+  "reserve_step": 218,
+  "u0_schedule": [0, 109, 218],
+  "packet_count": 3,
+  "packet_bytes": 24000,
+  "episode_wire_bytes": 72000,
+  "jpeg_quality": 45,
+  "duration_s": 14.0,
+  "cruise_rad_s": 5.0,
+  "selection_boundary": "Frozen from signal-only calibration before P6 Webots navigation outcomes. No post-outcome retuning is permitted."
+}

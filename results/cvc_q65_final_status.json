@@ -1,0 +1,51 @@
+{
+  "study_id": "cvc-q65-terminal-status-v1",
+  "date": "2026-08-18",
+  "classification": "Q6.5-C_NO_METHOD_SELECTED",
+  "method_frozen": false,
+  "q7_opened": false,
+  "robustness_opened": false,
+  "formal_opened": false,
+  "real_robot_authorized": false,
+  "final_regression": {
+    "passed": 761,
+    "failed": 0,
+    "warnings": 264,
+    "duration_s": 361.03
+  },
+  "manuscript_candidate": {
+    "tex": "paper/main_submission_q65_negative.tex",
+    "pdf": "paper/main_submission_q65_negative.pdf",
+    "pages": 5,
+    "tex_sha256": "fecf91ad12ee35d6e4311ec0476120251f7bc39d3b06c7120a4aaaf34280833a",
+    "pdf_sha256": "62bfa6c868e59f749e65fe2c9ed8b0d49d903beb6491078304421fc23915873b"
+  },
+  "generation1": {
+    "opportunities": 30,
+    "labels": {"helpful": 13, "harmful": 7, "neutral": 10},
+    "corrected_logistic_lofo_auprc": 0.9106940293175108,
+    "scheduler_vs_u0": {"collision_delta": 0, "mean_danger_steps_delta": 1.7333333333333334, "mean_min_clearance_delta_m": -0.0014177627871715581, "improve_tie_adverse": [2, 9, 4]},
+    "scheduler_gate_pass": false
+  },
+  "generation2": {
+    "schedule_bank_episodes": 60,
+    "opportunities": 45,
+    "labels": {"helpful": 11, "harmful": 15, "neutral": 19},
+    "best_binary_lofo_auprc": 0.6417786532876046,
+    "best_binary_harmful_false_send_rate": 0.4,
+    "best_multiclass_helpful_auprc": 0.6279223227752639,
+    "best_multiclass_harmful_false_send_rate": 0.2,
+    "predictor_gate_pass": false
+  },
+  "terminal_reason": "The corrected adjacent-opportunity target was measurable but did not pass frozen cross-family predictability gates; further model or threshold search on the same development evidence would be outcome-driven.",
+  "artifact_sha256": {
+    "opportunity_manifest": "9864d0594de86883e3a88d5f8ea389c78f5b46a73c58ba64eeda46960586de8d",
+    "generation1_pairs": "c62ba1717f130bf1fe20f551958a1bda819fa5cb3eaf21a558168f759a351610",
+    "generation1_analysis": "e4ee262d4987b5be0eea7c13af4b024cc55b1db7379bf60ce3cc72c03a52b180",
+    "generation1_scheduler_matrix": "d6941d80576e928f42840c787d44dd81b396729b147e56b90ee82456594ed479",
+    "generation1_scheduler_analysis": "b4ae19a77438b1f82fc1533230baf5659f47733e220c2904f4f2b9ea5b0f18eb",
+    "generation2_schedule_bank": "838c43d19b2dca303dc4a4996b276709996fc8b1c77a0545da9e7609ecc040f5",
+    "generation2_binary_analysis": "61cd8f1f9b0e3d10c5bf3c58d86539e475fc0140993fad3e288a8cb9dc3dd58a",
+    "generation2_multiclass_analysis": "3f676ac787d3766b8cfe04b9c9e10683d374f79491469da7a840df81a7cd352b"
+  }
+}

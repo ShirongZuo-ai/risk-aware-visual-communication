@@ -1,0 +1,1093 @@
+{
+  "a0_a1_comparison_performed": false,
+  "all_gates_pass": true,
+  "anti_contamination": {
+    "all_attempts_retained": true,
+    "precursor_used_in_scenario_construction": false,
+    "stage_a_completed_before_unblinding": true
+  },
+  "causal_feature_dataset": {
+    "csv": "results/cvc_q5_analysis/causal_feature_dataset.csv",
+    "csv_sha256": "9084c34b135a4cf28e5cbffa855ca819e0422673e649846fbbfbea302108fcb4",
+    "evaluator_fields_included": false,
+    "jsonl": "results/cvc_q5_analysis/causal_feature_dataset.jsonl",
+    "jsonl_sha256": "875db3a5e0f60cf972d40d4ab277c4f2d6066feb677bcf16a340f6ff66f1339a",
+    "rows": 21840,
+    "split_hygiene": "family and episode identities retained; no train/test split or model fitting performed",
+    "unavailable_fields": {
+      "component_area_px": "not logged by frozen Q1 runtime",
+      "r1_risk": "not logged by frozen Q1 runtime"
+    }
+  },
+  "chart_contracts": {
+    "event_free": {
+      "data": "one event-free trace",
+      "family": "trend",
+      "question": "What activation occurs without accepted SafetyValue onset?",
+      "renderer": "Matplotlib PNG",
+      "takeaway": "Expose false activation on a complete event-free episode."
+    },
+    "false_activation": {
+      "data": "all samples and event-free episodes",
+      "family": "comparison",
+      "question": "Is aggregate and event-free activation sparse?",
+      "renderer": "Matplotlib PNG",
+      "takeaway": "Compare active time and false-episode activation to frozen gates."
+    },
+    "family_summary": {
+      "data": "all frozen families",
+      "family": "comparison",
+      "question": "Does coverage transfer across physical mechanisms?",
+      "renderer": "Matplotlib PNG",
+      "takeaway": "Compare coverage and covered-onset lead by family."
+    },
+    "persistence": {
+      "data": "all accepted onsets",
+      "family": "distribution",
+      "question": "Are precursor opportunities isolated or persistent?",
+      "renderer": "Matplotlib PNG",
+      "takeaway": "Show opportunity class and strict jitter robustness."
+    },
+    "representative_miss": {
+      "data": "one missed or weakest-covered onset",
+      "family": "trend",
+      "question": "Where does the rule miss or provide its weakest warning?",
+      "renderer": "Matplotlib PNG",
+      "takeaway": "Expose failure without retuning."
+    },
+    "representative_success": {
+      "data": "one frozen positive trace",
+      "family": "trend",
+      "question": "Does the frozen rule create a usable opportunity before an onset?",
+      "renderer": "Matplotlib PNG",
+      "takeaway": "Show exact level/slope conjunction and onset timing."
+    }
+  },
+  "conclusion_case": "CASE_A",
+  "development_only": true,
+  "figures": [
+    "figures/cvc_q5/representative_success.png",
+    "figures/cvc_q5/representative_miss_or_weakest.png",
+    "figures/cvc_q5/event_free_activation.png",
+    "figures/cvc_q5/per_family_coverage_lead.png",
+    "figures/cvc_q5/opportunity_persistence.png",
+    "figures/cvc_q5/active_time_false_activation.png"
+  ],
+  "formal": false,
+  "frozen_manifest_sha256": "5d1f4f6ff683937bdde6c2df1d61ec11a37b9f6bf199d3b3abc2999e3398616c",
+  "gate_results": {
+    "A_pooled_coverage": true,
+    "B_cross_family_coverage": true,
+    "C_median_lead": true,
+    "D_active_fraction": true,
+    "E_event_free_activation": true,
+    "F_usable_opportunity": true
+  },
+  "generalization_gates": {
+    "A_pooled_onset_coverage_min": 0.75,
+    "B_family_coverage_min": 0.5,
+    "B_positive_families_meeting_min": 3,
+    "C_median_lead_s_min": 0.25,
+    "D_active_fraction_max": 0.02,
+    "E_event_free_episode_activation_max": 0.25,
+    "F_covered_onsets_usable_opportunity_min": 0.5,
+    "usable_opportunity": "at least two consecutive active samples before onset"
+  },
+  "machine_learning_used": false,
+  "metrics": {
+    "accepted_onset_count": 19,
+    "active_fraction": 0.014652014652014652,
+    "active_samples": 320,
+    "covered_onsets": 16,
+    "covered_usable_count": 16,
+    "covered_usable_fraction": 1.0,
+    "episode_count": 70,
+    "event_free_activated_episodes": 11,
+    "event_free_episode_activation_fraction": 0.20754716981132076,
+    "event_free_episode_count": 53,
+    "event_free_family_summary": {
+      "asymmetric_route_collapse": {
+        "activated": 6,
+        "episodes": 8
+      },
+      "late_turn_reveal": {
+        "activated": 0,
+        "episodes": 8
+      },
+      "off_axis_size_growth": {
+        "activated": 0,
+        "episodes": 8
+      },
+      "opposed_gate_contraction": {
+        "activated": 2,
+        "episodes": 6
+      },
+      "progressive_offset_closure": {
+        "activated": 3,
+        "episodes": 8
+      },
+      "reverse_diagonal_chicane": {
+        "activated": 0,
+        "episodes": 5
+      },
+      "staggered_slalom_constraint": {
+        "activated": 0,
+        "episodes": 5
+      },
+      "three_stage_weave": {
+        "activated": 0,
+        "episodes": 5
+      }
+    },
+    "false_activation": {
+      "activations_per_event_free_episode": 0.2830188679245283,
+      "family_run_count": {
+        "asymmetric_route_collapse": 8,
+        "opposed_gate_contraction": 4,
+        "progressive_offset_closure": 3
+      },
+      "isolated_run_count": 3,
+      "longest_run_s": 0.384,
+      "persistent_run_count": 12,
+      "run_count": 15,
+      "run_duration_s": {
+        "count": 15,
+        "max": 0.384,
+        "mean": 0.17919999999999997,
+        "median": 0.192,
+        "min": 0.032,
+        "q25": 0.096,
+        "q75": 0.256
+      }
+    },
+    "jitter_robust_onset_counts": {
+      "plus_minus_1_step": 15,
+      "plus_minus_2_steps": 14,
+      "plus_minus_3_steps": 7
+    },
+    "lead_distribution_s": {
+      "count": 16,
+      "max": 1.344,
+      "mean": 0.648,
+      "median": 0.5760000000000001,
+      "min": 0.352,
+      "q25": 0.432,
+      "q75": 0.776
+    },
+    "lead_fraction_all_onsets": {
+      "ge_0_25_s": 0.8421052631578947,
+      "ge_0_50_s": 0.47368421052631576,
+      "ge_1_00_s": 0.10526315789473684
+    },
+    "lead_times_s": [
+      0.5760000000000001,
+      1.344,
+      0.608,
+      0.448,
+      0.352,
+      0.352,
+      0.448,
+      0.384,
+      0.864,
+      0.8,
+      0.384,
+      0.5760000000000001,
+      1.344,
+      0.448,
+      0.768,
+      0.672
+    ],
+    "median_lead_s": 0.5760000000000001,
+    "opportunity_classes": {
+      "intermittent": 1,
+      "missed": 3,
+      "stable": 15
+    },
+    "opportunity_width": {
+      "active_duration_s": {
+        "count": 16,
+        "max": 0.41600000000000004,
+        "mean": 0.248,
+        "median": 0.224,
+        "min": 0.064,
+        "q25": 0.16,
+        "q75": 0.336
+      },
+      "isolated_one_step_fraction_all_onsets": 0.0,
+      "last_activation_gap_s": {
+        "count": 16,
+        "max": 0.64,
+        "mean": 0.352,
+        "median": 0.352,
+        "min": 0.128,
+        "q25": 0.184,
+        "q75": 0.544
+      },
+      "longest_contiguous_run_s": {
+        "count": 16,
+        "max": 0.32,
+        "mean": 0.20400000000000001,
+        "median": 0.192,
+        "min": 0.064,
+        "q25": 0.16,
+        "q75": 0.232
+      },
+      "persistent_2_fraction_all_onsets": 0.8421052631578947,
+      "persistent_3_fraction_all_onsets": 0.7894736842105263
+    },
+    "per_family": {
+      "asymmetric_route_collapse": {
+        "active_fraction": 0.02123397435897436,
+        "coverage": 0.0,
+        "covered_onsets": 0,
+        "episode_count": 8,
+        "event_free_activated_episodes": 6,
+        "event_free_activation_fraction": 0.75,
+        "event_free_episodes": 8,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.0,
+          "plus_minus_2_steps": 0.0,
+          "plus_minus_3_steps": 0.0
+        },
+        "lead_distribution_s": {
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "q25": null,
+          "q75": null
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.0,
+          "ge_0_50_s": 0.0,
+          "ge_1_00_s": 0.0
+        },
+        "median_lead_s": null,
+        "onset_count": 0,
+        "opportunity_classes": {},
+        "safety_value_positive_episodes": 0,
+        "usable_covered_fraction": 0.0
+      },
+      "late_turn_reveal": {
+        "active_fraction": 0.0,
+        "coverage": 0.0,
+        "covered_onsets": 0,
+        "episode_count": 8,
+        "event_free_activated_episodes": 0,
+        "event_free_activation_fraction": 0.0,
+        "event_free_episodes": 8,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.0,
+          "plus_minus_2_steps": 0.0,
+          "plus_minus_3_steps": 0.0
+        },
+        "lead_distribution_s": {
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "q25": null,
+          "q75": null
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.0,
+          "ge_0_50_s": 0.0,
+          "ge_1_00_s": 0.0
+        },
+        "median_lead_s": null,
+        "onset_count": 0,
+        "opportunity_classes": {},
+        "safety_value_positive_episodes": 0,
+        "usable_covered_fraction": 0.0
+      },
+      "off_axis_size_growth": {
+        "active_fraction": 0.0,
+        "coverage": 0.0,
+        "covered_onsets": 0,
+        "episode_count": 8,
+        "event_free_activated_episodes": 0,
+        "event_free_activation_fraction": 0.0,
+        "event_free_episodes": 8,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.0,
+          "plus_minus_2_steps": 0.0,
+          "plus_minus_3_steps": 0.0
+        },
+        "lead_distribution_s": {
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "q25": null,
+          "q75": null
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.0,
+          "ge_0_50_s": 0.0,
+          "ge_1_00_s": 0.0
+        },
+        "median_lead_s": null,
+        "onset_count": 0,
+        "opportunity_classes": {},
+        "safety_value_positive_episodes": 0,
+        "usable_covered_fraction": 0.0
+      },
+      "opposed_gate_contraction": {
+        "active_fraction": 0.027564102564102563,
+        "coverage": 0.75,
+        "covered_onsets": 3,
+        "episode_count": 10,
+        "event_free_activated_episodes": 2,
+        "event_free_activation_fraction": 0.3333333333333333,
+        "event_free_episodes": 6,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.75,
+          "plus_minus_2_steps": 0.75,
+          "plus_minus_3_steps": 0.75
+        },
+        "lead_distribution_s": {
+          "count": 3,
+          "max": 0.864,
+          "mean": 0.6826666666666666,
+          "median": 0.8,
+          "min": 0.384,
+          "q25": 0.5920000000000001,
+          "q75": 0.8320000000000001
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.75,
+          "ge_0_50_s": 0.5,
+          "ge_1_00_s": 0.0
+        },
+        "median_lead_s": 0.8,
+        "onset_count": 4,
+        "opportunity_classes": {
+          "missed": 1,
+          "stable": 3
+        },
+        "safety_value_positive_episodes": 4,
+        "usable_covered_fraction": 1.0
+      },
+      "progressive_offset_closure": {
+        "active_fraction": 0.002003205128205128,
+        "coverage": 0.0,
+        "covered_onsets": 0,
+        "episode_count": 8,
+        "event_free_activated_episodes": 3,
+        "event_free_activation_fraction": 0.375,
+        "event_free_episodes": 8,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.0,
+          "plus_minus_2_steps": 0.0,
+          "plus_minus_3_steps": 0.0
+        },
+        "lead_distribution_s": {
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "q25": null,
+          "q75": null
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.0,
+          "ge_0_50_s": 0.0,
+          "ge_1_00_s": 0.0
+        },
+        "median_lead_s": null,
+        "onset_count": 0,
+        "opportunity_classes": {},
+        "safety_value_positive_episodes": 0,
+        "usable_covered_fraction": 0.0
+      },
+      "reverse_diagonal_chicane": {
+        "active_fraction": 0.01730769230769231,
+        "coverage": 0.8333333333333334,
+        "covered_onsets": 5,
+        "episode_count": 10,
+        "event_free_activated_episodes": 0,
+        "event_free_activation_fraction": 0.0,
+        "event_free_episodes": 5,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.8333333333333334,
+          "plus_minus_2_steps": 0.8333333333333334,
+          "plus_minus_3_steps": 0.16666666666666666
+        },
+        "lead_distribution_s": {
+          "count": 5,
+          "max": 1.344,
+          "mean": 0.7616,
+          "median": 0.672,
+          "min": 0.448,
+          "q25": 0.5760000000000001,
+          "q75": 0.768
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.8333333333333334,
+          "ge_0_50_s": 0.6666666666666666,
+          "ge_1_00_s": 0.16666666666666666
+        },
+        "median_lead_s": 0.672,
+        "onset_count": 6,
+        "opportunity_classes": {
+          "missed": 1,
+          "stable": 5
+        },
+        "safety_value_positive_episodes": 5,
+        "usable_covered_fraction": 1.0
+      },
+      "staggered_slalom_constraint": {
+        "active_fraction": 0.010416666666666666,
+        "coverage": 0.75,
+        "covered_onsets": 3,
+        "episode_count": 8,
+        "event_free_activated_episodes": 0,
+        "event_free_activation_fraction": 0.0,
+        "event_free_episodes": 5,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 0.5,
+          "plus_minus_2_steps": 0.5,
+          "plus_minus_3_steps": 0.0
+        },
+        "lead_distribution_s": {
+          "count": 3,
+          "max": 1.344,
+          "mean": 0.8426666666666667,
+          "median": 0.608,
+          "min": 0.5760000000000001,
+          "q25": 0.5920000000000001,
+          "q75": 0.976
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 0.75,
+          "ge_0_50_s": 0.75,
+          "ge_1_00_s": 0.25
+        },
+        "median_lead_s": 0.608,
+        "onset_count": 4,
+        "opportunity_classes": {
+          "intermittent": 1,
+          "missed": 1,
+          "stable": 2
+        },
+        "safety_value_positive_episodes": 3,
+        "usable_covered_fraction": 1.0
+      },
+      "three_stage_weave": {
+        "active_fraction": 0.03076923076923077,
+        "coverage": 1.0,
+        "covered_onsets": 5,
+        "episode_count": 10,
+        "event_free_activated_episodes": 0,
+        "event_free_activation_fraction": 0.0,
+        "event_free_episodes": 5,
+        "jitter_robust_fraction_all_onsets": {
+          "plus_minus_1_step": 1.0,
+          "plus_minus_2_steps": 0.8,
+          "plus_minus_3_steps": 0.6
+        },
+        "lead_distribution_s": {
+          "count": 5,
+          "max": 0.448,
+          "mean": 0.3968,
+          "median": 0.384,
+          "min": 0.352,
+          "q25": 0.352,
+          "q75": 0.448
+        },
+        "lead_fraction_all_onsets": {
+          "ge_0_25_s": 1.0,
+          "ge_0_50_s": 0.0,
+          "ge_1_00_s": 0.0
+        },
+        "median_lead_s": 0.384,
+        "onset_count": 5,
+        "opportunity_classes": {
+          "stable": 5
+        },
+        "safety_value_positive_episodes": 5,
+        "usable_covered_fraction": 1.0
+      }
+    },
+    "pooled_coverage": 0.8421052631578947,
+    "sample_count": 21840
+  },
+  "opportunities": [
+    {
+      "active_duration_s": 0.0,
+      "active_samples": 0,
+      "cell_id": "q5-ssc-e02",
+      "covered": false,
+      "family": "staggered_slalom_constraint",
+      "first_active_step": null,
+      "last_active_step": null,
+      "last_gap_s": null,
+      "lead_s": null,
+      "longest_run_s": 0.0,
+      "longest_run_samples": 0,
+      "onset_step": 172,
+      "opportunity_class": "missed",
+      "persistent_2_samples": false,
+      "persistent_3_samples": false,
+      "role": "event_candidate",
+      "run_count": 0,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": false,
+        "plus_minus_2_steps": false,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": false
+    },
+    {
+      "active_duration_s": 0.192,
+      "active_samples": 6,
+      "cell_id": "q5-ssc-e04",
+      "covered": true,
+      "family": "staggered_slalom_constraint",
+      "first_active_step": 144,
+      "last_active_step": 149,
+      "last_gap_s": 0.41600000000000004,
+      "lead_s": 0.5760000000000001,
+      "longest_run_s": 0.192,
+      "longest_run_samples": 6,
+      "onset_step": 162,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.384,
+      "active_samples": 12,
+      "cell_id": "q5-ssc-e04",
+      "covered": true,
+      "family": "staggered_slalom_constraint",
+      "first_active_step": 144,
+      "last_active_step": 169,
+      "last_gap_s": 0.544,
+      "lead_s": 1.344,
+      "longest_run_s": 0.192,
+      "longest_run_samples": 6,
+      "onset_step": 186,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 2,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.064,
+      "active_samples": 2,
+      "cell_id": "q5-ssc-e06",
+      "covered": true,
+      "family": "staggered_slalom_constraint",
+      "first_active_step": 146,
+      "last_active_step": 147,
+      "last_gap_s": 0.5760000000000001,
+      "lead_s": 0.608,
+      "longest_run_s": 0.064,
+      "longest_run_samples": 2,
+      "onset_step": 165,
+      "opportunity_class": "intermittent",
+      "persistent_2_samples": true,
+      "persistent_3_samples": false,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": false,
+        "plus_minus_2_steps": false,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.128,
+      "active_samples": 4,
+      "cell_id": "q5-tsw-e02",
+      "covered": true,
+      "family": "three_stage_weave",
+      "first_active_step": 147,
+      "last_active_step": 150,
+      "last_gap_s": 0.352,
+      "lead_s": 0.448,
+      "longest_run_s": 0.128,
+      "longest_run_samples": 4,
+      "onset_step": 161,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": false,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.16,
+      "active_samples": 5,
+      "cell_id": "q5-tsw-e03",
+      "covered": true,
+      "family": "three_stage_weave",
+      "first_active_step": 148,
+      "last_active_step": 152,
+      "last_gap_s": 0.224,
+      "lead_s": 0.352,
+      "longest_run_s": 0.16,
+      "longest_run_samples": 5,
+      "onset_step": 159,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.224,
+      "active_samples": 7,
+      "cell_id": "q5-tsw-e04",
+      "covered": true,
+      "family": "three_stage_weave",
+      "first_active_step": 147,
+      "last_active_step": 153,
+      "last_gap_s": 0.16,
+      "lead_s": 0.352,
+      "longest_run_s": 0.224,
+      "longest_run_samples": 7,
+      "onset_step": 158,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.32,
+      "active_samples": 10,
+      "cell_id": "q5-tsw-e06",
+      "covered": true,
+      "family": "three_stage_weave",
+      "first_active_step": 145,
+      "last_active_step": 154,
+      "last_gap_s": 0.16,
+      "lead_s": 0.448,
+      "longest_run_s": 0.32,
+      "longest_run_samples": 10,
+      "onset_step": 159,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.224,
+      "active_samples": 7,
+      "cell_id": "q5-tsw-e08",
+      "covered": true,
+      "family": "three_stage_weave",
+      "first_active_step": 146,
+      "last_active_step": 152,
+      "last_gap_s": 0.192,
+      "lead_s": 0.384,
+      "longest_run_s": 0.224,
+      "longest_run_samples": 7,
+      "onset_step": 158,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.41600000000000004,
+      "active_samples": 13,
+      "cell_id": "q5-ogc-e02",
+      "covered": true,
+      "family": "opposed_gate_contraction",
+      "first_active_step": 147,
+      "last_active_step": 163,
+      "last_gap_s": 0.352,
+      "lead_s": 0.864,
+      "longest_run_s": 0.28800000000000003,
+      "longest_run_samples": 9,
+      "onset_step": 174,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 2,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.0,
+      "active_samples": 0,
+      "cell_id": "q5-ogc-e05",
+      "covered": false,
+      "family": "opposed_gate_contraction",
+      "first_active_step": null,
+      "last_active_step": null,
+      "last_gap_s": null,
+      "lead_s": null,
+      "longest_run_s": 0.0,
+      "longest_run_samples": 0,
+      "onset_step": 165,
+      "opportunity_class": "missed",
+      "persistent_2_samples": false,
+      "persistent_3_samples": false,
+      "role": "event_candidate",
+      "run_count": 0,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": false,
+        "plus_minus_2_steps": false,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": false
+    },
+    {
+      "active_duration_s": 0.41600000000000004,
+      "active_samples": 13,
+      "cell_id": "q5-ogc-e06",
+      "covered": true,
+      "family": "opposed_gate_contraction",
+      "first_active_step": 149,
+      "last_active_step": 169,
+      "last_gap_s": 0.16,
+      "lead_s": 0.8,
+      "longest_run_s": 0.224,
+      "longest_run_samples": 7,
+      "onset_step": 174,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 3,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.28800000000000003,
+      "active_samples": 9,
+      "cell_id": "q5-ogc-e08",
+      "covered": true,
+      "family": "opposed_gate_contraction",
+      "first_active_step": 146,
+      "last_active_step": 154,
+      "last_gap_s": 0.128,
+      "lead_s": 0.384,
+      "longest_run_s": 0.28800000000000003,
+      "longest_run_samples": 9,
+      "onset_step": 158,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.0,
+      "active_samples": 0,
+      "cell_id": "q5-rdc-e01",
+      "covered": false,
+      "family": "reverse_diagonal_chicane",
+      "first_active_step": null,
+      "last_active_step": null,
+      "last_gap_s": null,
+      "lead_s": null,
+      "longest_run_s": 0.0,
+      "longest_run_samples": 0,
+      "onset_step": 172,
+      "opportunity_class": "missed",
+      "persistent_2_samples": false,
+      "persistent_3_samples": false,
+      "role": "event_candidate",
+      "run_count": 0,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": false,
+        "plus_minus_2_steps": false,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": false
+    },
+    {
+      "active_duration_s": 0.192,
+      "active_samples": 6,
+      "cell_id": "q5-rdc-e02",
+      "covered": true,
+      "family": "reverse_diagonal_chicane",
+      "first_active_step": 144,
+      "last_active_step": 149,
+      "last_gap_s": 0.41600000000000004,
+      "lead_s": 0.5760000000000001,
+      "longest_run_s": 0.192,
+      "longest_run_samples": 6,
+      "onset_step": 162,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.384,
+      "active_samples": 12,
+      "cell_id": "q5-rdc-e02",
+      "covered": true,
+      "family": "reverse_diagonal_chicane",
+      "first_active_step": 144,
+      "last_active_step": 169,
+      "last_gap_s": 0.544,
+      "lead_s": 1.344,
+      "longest_run_s": 0.192,
+      "longest_run_samples": 6,
+      "onset_step": 186,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 2,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.256,
+      "active_samples": 8,
+      "cell_id": "q5-rdc-e04",
+      "covered": true,
+      "family": "reverse_diagonal_chicane",
+      "first_active_step": 145,
+      "last_active_step": 152,
+      "last_gap_s": 0.224,
+      "lead_s": 0.448,
+      "longest_run_s": 0.256,
+      "longest_run_samples": 8,
+      "onset_step": 159,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": true
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.16,
+      "active_samples": 5,
+      "cell_id": "q5-rdc-e06",
+      "covered": true,
+      "family": "reverse_diagonal_chicane",
+      "first_active_step": 142,
+      "last_active_step": 146,
+      "last_gap_s": 0.64,
+      "lead_s": 0.768,
+      "longest_run_s": 0.16,
+      "longest_run_samples": 5,
+      "onset_step": 166,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    },
+    {
+      "active_duration_s": 0.16,
+      "active_samples": 5,
+      "cell_id": "q5-rdc-e08",
+      "covered": true,
+      "family": "reverse_diagonal_chicane",
+      "first_active_step": 144,
+      "last_active_step": 148,
+      "last_gap_s": 0.544,
+      "lead_s": 0.672,
+      "longest_run_s": 0.16,
+      "longest_run_samples": 5,
+      "onset_step": 165,
+      "opportunity_class": "stable",
+      "persistent_2_samples": true,
+      "persistent_3_samples": true,
+      "role": "event_candidate",
+      "run_count": 1,
+      "strict_jitter_robustness": {
+        "plus_minus_1_step": true,
+        "plus_minus_2_steps": true,
+        "plus_minus_3_steps": false
+      },
+      "usable_opportunity": true
+    }
+  ],
+  "q4_analysis_sha256": "9f4ddaa2e65bca4410e4f0648a0818677eb46cd0f5773bf83cf5ee998a7f9485",
+  "q4_implementation_sha256": "c58905f6de70757d540eaaa21cbcacf440bb72e3fc43ec2677bb7a4ee6ce668f",
+  "rule": {
+    "changed_or_refit": false,
+    "exact": "soft_feasibility_mass <= 0.6543448254639964 AND OLS-8 slope < -0.11876628431105299 /s",
+    "level_threshold": 0.6543448254639964,
+    "method": "ols",
+    "slope_threshold_magnitude_per_s": 0.11876628431105299,
+    "window_samples": 8
+  },
+  "runtime": {
+    "corpus_analysis_s": 14.22419280000031,
+    "online_composite_profile": {
+      "deadline_misses_32ms": 0,
+      "max_ms": 0.5781,
+      "mean_ms": 0.1257595,
+      "p95_ms": 0.22027499999999994,
+      "repetitions": 1000
+    },
+    "samples_per_s": 1535.4122590351506
+  },
+  "scheduler_or_policy_integration_performed": false,
+  "study_id": "cvc-q5-event-rich-precursor-qualification-v1",
+  "support": {
+    "family_support": {
+      "asymmetric_route_collapse": {
+        "accepted_onsets": 0,
+        "attempted_cells": 8,
+        "candidate_positive_episodes": 0,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 8,
+        "positive_episodes": 0
+      },
+      "late_turn_reveal": {
+        "accepted_onsets": 0,
+        "attempted_cells": 8,
+        "candidate_positive_episodes": 0,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 8,
+        "positive_episodes": 0
+      },
+      "off_axis_size_growth": {
+        "accepted_onsets": 0,
+        "attempted_cells": 8,
+        "candidate_positive_episodes": 0,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 8,
+        "positive_episodes": 0
+      },
+      "opposed_gate_contraction": {
+        "accepted_onsets": 4,
+        "attempted_cells": 10,
+        "candidate_positive_episodes": 4,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 6,
+        "positive_episodes": 4
+      },
+      "progressive_offset_closure": {
+        "accepted_onsets": 0,
+        "attempted_cells": 8,
+        "candidate_positive_episodes": 0,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 8,
+        "positive_episodes": 0
+      },
+      "reverse_diagonal_chicane": {
+        "accepted_onsets": 6,
+        "attempted_cells": 10,
+        "candidate_positive_episodes": 5,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 5,
+        "positive_episodes": 5
+      },
+      "staggered_slalom_constraint": {
+        "accepted_onsets": 4,
+        "attempted_cells": 8,
+        "candidate_positive_episodes": 3,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 5,
+        "positive_episodes": 3
+      },
+      "three_stage_weave": {
+        "accepted_onsets": 5,
+        "attempted_cells": 10,
+        "candidate_positive_episodes": 5,
+        "control_positive_episodes": 0,
+        "event_free_episodes": 5,
+        "positive_episodes": 5
+      }
+    },
+    "positive_families": [
+      "staggered_slalom_constraint",
+      "three_stage_weave",
+      "opposed_gate_contraction",
+      "reverse_diagonal_chicane"
+    ]
+  }
+}
