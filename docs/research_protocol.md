@@ -120,3 +120,77 @@ All nine gates in `docs/results/m8_a_proxy_validation_rules.json` are conjunctiv
 The proposed versioned corpus design has disjoint calibration/development/formal seed families `810xxx`, `820xxx`, and `830xxx`. It covers eight critical scenes spanning straight/turning, near/far, left/right, and full/partial visibility, plus two low-risk generalization scenes. The proposed matrix contains 28 calibration, 40 development, and 40 formal episodes. It is a design artifact, not a launch manifest. Every future split requires a separately approved immutable manifest/lock and geometry checks before launch; no post-outcome replacement is permitted.
 
 M8-A does not validate either proxy, implement an allocator, create a corpus, or support perception, navigation, collision, or safety claims.
+
+## M9-A-P predictive future-danger validation protocol (2026-08-13)
+
+M9-B is a separate confirmatory replication defined in `docs/m9b_confirmatory_preregistration.md`. It retains only R1-R0 as primary, uses distinct `94/95/96xxxx` namespaces and 240 distinct Formal geometry/schedule cells, and cannot access Formal without a new sealed contract and authorization. M9-A remains immutable.
+
+M8 is paused while M9-A tests the missing causal bridge between predicted future motion and independently observed future danger. Existing M5E/M6/M7 data are ineligible because they contain only four actual-state snapshots per episode at gaps greater than 1.18 s and no validated dense contact stream.
+
+The protocol-only M9-A-P stage is frozen in `docs/m9a_p_future_danger_protocol.md`. It defines disjoint pilot/calibration/formal partitions, eight danger-rich static-AABB scenario families, dense 0.032 s actual-state/contact logging, physical-contact collision truth, calibration-only near-danger and warning thresholds, exact nominal 0.5/1.0/2.0 s horizons, separate actual-future labels, frozen R0/R1/R2 conditions, episode-level inference, minimum-support rules, exclusions, and formal-access protection. It authorizes no Webots launch, dataset, result, or C2/C3 conclusion.
+
+M9-A-R independently reviewed this protocol and returned `PASS WITH REQUIRED AMENDMENTS`. The amended primary tests are 2.0 s danger AUPRC using negative predicted physical clearance for paired R1-R0 (C2) and R2-R1 (C3), each requiring an absolute improvement of at least 0.05 and a paired episode-stratified 95% interval lower bound above zero. Secondary metrics cannot rescue a failed claim. Literal finite scenario grids, seed mapping, implementation review, and explicit launch approval remain required before pilot execution.
+
+## CVC-P5 held-versus-current timing diagnostic (2026-08-14)
+
+CVC-P5 is a development-only mechanism diagnostic over the unchanged six P4 scenarios and A0/A1 policies. At every 32 ms step it compares the receiver's pre-decision decoded HELD frame with a shadow CURRENT frame processed through the same frozen quality-45 exact-24,000-byte JPEG packet, decode, detector, and controller path. Shadow packets are never charged and evaluator geometry is unavailable to either branch.
+
+Visual novelty retains decoded pixel MAE/RMSE, `1-SSIM`, and a threshold-10 changed-pixel fraction. Perception novelty retains existence, selected-component bearing/proximity/confidence, centroid, bounding-box, and component-count differences plus an equal-scale L2 diagnostic. Control sensitivity is the Euclidean left/right-wheel command difference, with signed wheel, speed, and steering changes retained separately. These layers may not be combined into an allocator score during P5.
+
+Outcome-independent timing uses each signal's cumulative 25/50/75% mass, peaks, concentration, and continuous cross-correlation. A trigger before q25 is classified `before`, q25 through q75 as `during`, and after q75 as `after`. Navigation outcomes enter only the later trade-off diagnosis. P5 authorizes no new allocator, no parameter sweep, and no C4/C5 Formal execution.
+
+## CVC-P6 risk-arm/task-novelty-spend development protocol (2026-08-15)
+
+CVC-P6 v1 separates predictive risk relevance from current observation value. R0/A0 and R1/A1 share one state machine: risk crossing 0.14 changes `NORMAL -> ARMED` without itself requiring transmission; an outcome-blind decoded HELD-versus-CURRENT perception event changes `ARMED -> SPENT`; one fixed reserve at step 218 changes the state to `RESERVE`. U0 remains fixed at steps 0/109/218. All methods send three exact 24,000-byte packets.
+
+The frozen event is bearing change above 0.15, proximity change above 0.075, relative selected-component area change above 0.50, or component appearance/disappearance. The ARM deadline is 96 steps and an unarmed adaptive fallback occurs at step 217. These values were selected from a finite signal-only calibration before P6 Webots outcomes. Control sensitivity remains evaluation-only; evaluator geometry, future frames, clearance, collision, progress, and success are forbidden sender/controller inputs.
+
+P6 is development-only. Its first six-scenario comparison is terminal for the frozen configuration: no result-driven parameter repair is permitted, and no C4/C5 Formal protocol or authority follows automatically from any P6 outcome.
+
+## CVC-P7 safety-value discrimination development protocol (2026-08-15)
+
+CVC-P7 preserves P6 v1 exactly and separates sender-visible candidate cues from evaluator-only physical relevance. Sender diagnostics use only decoded held/current perception and the frozen visual controller: bearing convergence, proximity/area/bbox growth, component events, central-corridor overlap, image age, and differential-drive `delta_v`/`delta_abs_turn`/turn direction. Clearance, contact, future physical windows, category, trajectory, progress, and outcomes are evaluation-only and cannot affect ARM, SPEND, receive, perception, or control.
+
+The outcome-independent physical reference is contact or clearance <=0.12 m in the next 63 steps (2.016 s), restricted to steps no later than minimum clearance. The frozen suite contains three deterministic cells in each novelty x intended-safety category A/B/C/D and must not be repaired, replaced, or reclassified after U0/A0/A1 outcomes. All policies retain three exact 24,000-byte packets, the frozen P6 novelty thresholds, deadline, reserve, JPEG quality, detector, and controller.
+
+P7 is diagnostic only: feature rankings require positive physical-window support; no weighted SafetyVoI, learned allocator, P8 implementation, or C4/C5 Formal authorization follows from P7. When support is absent, candidate discrimination and safety lead are reported not estimable rather than recovered by changing the physical threshold or scenarios.
+
+## CVC-Q1 safety-aware local-planning development protocol (2026-08-15)
+
+CVC-Q1 replaces component-centering with a deterministic safety-first local planner. Fifteen commands cross speeds `{0,0.045,0.08}` m/s and turns `{-1.6,-0.8,0,0.8,1.6}` rad/s. M2-compatible 1.5 s rollouts use 0.1 s steps. Conservative visual clearance below 0.025 m is hard-unsafe; at least 0.075 m is preferred-safe; progress is considered only after feasibility. Near-obstacle speed is capped at 0.045 m/s and no hard-safe candidate yields stop.
+
+Runtime inputs are decoded imagery, deterministic detections, outcome-blind range calibration, known dimensions, causal command odometry/history, causal static-obstacle memory, and goal bearing. Webots geometry, pose, contact, clearance, labels, and future outcomes are evaluator-only after action selection.
+
+The 10-cell support grid was frozen after fresh-vision feasibility and before U0 outcomes. Collision is bilateral contact; near is no contact with clearance <=0.12 m; safe is no contact above 0.12 m. The neutral sweep uses exact 24,000-byte packets at `{1,2,3,6,12,24,48}` uniform transmissions. HELD/CURRENT shadow replay is diagnostic only and does not drive Q1 control.
+
+Q1 terminates at development classification. It authorizes no A0/A1 run, predictive allocator, C4/C5 Formal, ML, or post-outcome scenario replacement.
+
+## CVC-Q2 Risk-ARM + Safety-Decision-Value-SPEND development protocol (2026-08-15)
+
+CVC-Q2 is the single frozen development comparison defined by `docs/cvc_q2_development_protocol.md` and `config/cvc_q2_development.json`. It preserves the Q1 planner, perception, memory, ten cells, physical labels, and exact 24,000-byte packet. U0 sends uniformly; A0 and A1 use the same threshold, value event, 47-step deadline, fallback, and reserve, differing only in causal R0 versus R1 ARM. HELD and hypothetical CURRENT planning are sender-side counterfactuals; evaluator pose, geometry, clearance, contact, labels, and outcomes remain unavailable until after actuation.
+
+The pre-outcome manifest fixes a three-packet budget and the transparent three-priority Safety Decision Value hierarchy. The terminal run produced zero value-triggered packets: all 20 adaptive packets used the ARM deadline or unarmed fallback, even though 113 value-event timesteps appeared later. This is `CASE D`; no outcome-driven timing repair, ML model, expanded suite, C4/C5 Formal study, or claim of predictive communication safety is authorized.
+
+## CVC-Q3 temporal-repair development protocol (2026-08-16)
+
+CVC-Q3 preserves every Q1/Q2 scientific component and repairs only temporal eligibility. A bounded 63-step Safety Value latch can wait before/after ARM; one adaptive token remains eligible until value or step-295 fallback; a separate final reserve is fixed at step 311. Every policy retains exactly three 24,000-byte packets. The full pre-outcome definition and hashes are in `docs/cvc_q3_development_protocol.md` and `results/cvc_q3_readiness/manifest.json`.
+
+The terminal run produced two same-step value-triggered sends, proving the local `SafetyValue -> SEND -> safe-plan/control change` link. It failed the frozen meaningful-frequency gate: 2/20 adaptive packets rather than at least 3, and fallback caused 4/6 risk-armed packets. A0/A1 schedules and outcomes were identical. Q3 is `CASE D`; no further timing adjustment, broader navigation validation, ML, or Formal study is authorized by this result.
+
+## CVC-Q4 safety-decision precursor diagnostic (2026-08-16)
+
+CVC-Q4 is offline, development-only, and does not implement a communication allocator. Q1 stable/no-change windows define one-sided 1% normal-variation tails. Q2/Q3 future Safety Decision Value onsets are evaluation-only and never enter causal signal calculation. The tested decision-space signals are the CURRENT margin of the HELD-selected action, the best-current safety-margin gap, safe fraction, positive safety slack, soft feasibility mass, and lower-quartile candidate margin. Causal OLS, Theil–Sen, and median-adjacent trends use only past-through-current 8/12/16/20-sample windows.
+
+The terminal Q4 result is `CASE C`. A stable-Q1 q01 soft-feasibility level plus abnormal negative OLS-8 slope covers 8/8 observed onsets, but positive support is limited to two scenario families and 10/53 event-free episodes activate. This diagnostic does not authorize scheduler integration, ML, broader navigation evaluation, or Formal. The only recommended next step is a separate event-rich, no-scheduler support qualification of the frozen rule.
+
+## CVC-Q5 event-rich precursor qualification (2026-08-16)
+
+CVC-Q5 separates precursor-blinded physical support development from frozen-rule evaluation. Stage A may use only causal camera/Q1 held-current planner states, physical behavior, and frozen Safety Decision Value; it must preserve every attempted cell and freeze the complete corpus before accessing Q4 outputs. The exact rule is soft-feasibility mass <=0.6543448254639964 and causal OLS-8 slope <-0.11876628431105299/s. Generalization gates are 75% pooled coverage, 50% coverage in at least three positive families, 0.25 s median lead, 2% active time, 25% event-free episode activation, and usable multi-sample opportunity for at least half of covered onsets. Q5 remains development-only and cannot itself test communication or navigation benefit.
+
+## CVC-Q6 terminal development protocol and boundary (2026-08-16)
+
+Q6 preserves the exact Q5 rule, the causal Q1 perception/planner stack, evaluator separation, JPEG/container path, 10 s/312-step horizon, and three 24,000-byte packets. U0 sends at steps 0/109/218. A0 retains current-clearance semantics. A1 variants may change only causal scheduler eligibility; the step-218 token remains protected and step-217 is the late fallback. The physical danger boundary remains clearance <=0.12 m or bilateral contact.
+
+Development selection requires the full `SEND -> decoded image -> planner/control -> physical safety` chain and non-adverse safety relative to both A0 and the strongest U0 baseline, including no serious adverse family. Frames are mechanistic observations; the physical scenario cell is the comparison unit. Progress/completion cannot rescue adverse safety.
+
+The terminal generation uses two consecutive exact-precursor samples to spend. It is not frozen for downstream use: it improved safety versus A0 but was mixed versus U0 and adverse in staggered slalom. The grouped learned diagnostic also failed its false-warning burden. Q6 is therefore `Q6-C`. Q7 may not be created or consumed until a new method is developed on genuinely new development evidence, frozen under a new identity, and satisfies this selection boundary. Formal and real-robot execution remain unauthorized.

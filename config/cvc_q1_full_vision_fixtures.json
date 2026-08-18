@@ -1,0 +1,34 @@
+{
+  "study_id": "cvc-q1-full-vision-fixtures-v1",
+  "development_only": true,
+  "formal": false,
+  "duration_s": 10.0,
+  "fixtures": [
+    {"id": "q1-f01-no-obstacle", "semantic": "no_obstacle", "seed": 981001,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0], "objects": []},
+    {"id": "q1-f02-obstacle-left", "semantic": "obstacle_left", "seed": 981002,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [{"id": "TARGET", "center": [-0.10, 0.045], "size": [0.08, 0.08]}]},
+    {"id": "q1-f03-obstacle-right", "semantic": "obstacle_right", "seed": 981003,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [{"id": "TARGET", "center": [-0.10, -0.045], "size": [0.08, 0.08]}]},
+    {"id": "q1-f04-center-far", "semantic": "center_far", "seed": 981004,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [{"id": "TARGET", "center": [0.12, 0.0], "size": [0.08, 0.08]}]},
+    {"id": "q1-f05-center-near", "semantic": "center_near", "seed": 981005,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [{"id": "TARGET", "center": [-0.34, 0.0], "size": [0.08, 0.08]}]},
+    {"id": "q1-f06-turn-toward", "semantic": "turn_toward_obstacle", "seed": 981006,
+     "start": [-0.65, -0.18, 0.28], "goal": [0.65, 0.08],
+     "objects": [{"id": "TARGET", "center": [-0.05, 0.02], "size": [0.08, 0.08]}]},
+    {"id": "q1-f07-turn-away", "semantic": "turn_away_from_obstacle", "seed": 981007,
+     "start": [-0.65, 0.18, -0.28], "goal": [0.65, -0.08],
+     "objects": [{"id": "TARGET", "center": [-0.05, 0.34], "size": [0.08, 0.08]}]},
+    {"id": "q1-f08-narrow-passage", "semantic": "narrow_feasible_passage", "seed": 981008,
+     "start": [-0.65, 0.0, 0.0], "goal": [0.65, 0.0],
+     "objects": [
+       {"id": "TARGET_L", "center": [-0.02, 0.18], "size": [0.08, 0.08]},
+       {"id": "TARGET_R", "center": [-0.02, -0.18], "size": [0.08, 0.08]}
+     ]}
+  ]
+}

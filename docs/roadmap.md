@@ -324,3 +324,131 @@ Acceptance: **NO-GO**. The matched-floor design fixes byte fairness and reconstr
 - Freeze one allocator and a separate `830xxx` formal manifest before data generation.
 - Use episode-level, scene-stratified inference and retain null, adverse, and undefined outcomes.
 - No formal corpus is authorized by this roadmap entry.
+
+## Milestone 9 - Predictive future-danger validation
+
+### M9-B - Independent confirmatory replication (protocol hard stop)
+
+- [x] Freeze independent identity, primary R1-R0 claim, support margins, physical construction bands, inference, and seed namespaces.
+- [ ] Implement and validate distinct-cell Pilot and Calibration grids without predictor-guided construction.
+- [ ] Freeze the literal 240-cell Formal manifest and complete readiness contract.
+- [x] Obtain and consume separate one-shot Formal authorization.
+
+Formal completion update: 240/240 episodes completed with full support and zero exclusions. C2 replication PASS; R2 remains secondary.
+
+### Closed-loop predictive communication engineering
+
+- [x] Define U0/A0/A1, exact matched-cost accounting, causal information boundaries, and a decoded-image control loop.
+- [x] Preserve nominal 1-D scaffold failures as engineering-only evidence.
+- [x] Demonstrate actual camera/JPEG/container/decoded-perception Webots control under exact paired bytes.
+- [x] Pass HIGH/MEDIUM/LOW communication-relevance sanity.
+- [x] Run matched-cost U0/A0/A1 development comparison and retain the null result.
+- [x] Complete CVC-P2 non-ceiling development and preserve its R0/R1 allocation-collapse negative.
+- [x] Complete CVC-P3 actuation qualification: prediction lead converts to timing, but repeated triggers exhaust budget and do not improve navigation.
+- [x] Complete CVC-P4 protected-reserve development: starvation is fixed, but predictive timing remains clearance/pre-danger-age adverse.
+- [x] Complete CVC-P5 held-versus-current timing diagnosis: all six R1 triggers precede visual/perception/control q25, and all six control peaks follow the A1 adaptive send.
+- [x] Freeze and execute one CVC-P6 risk-arm/task-novelty-spend candidate outcome-blindly; retain its Case-A completion benefit and adverse clearance trade-off without retuning.
+- [x] Complete CVC-P7 safety-value discrimination with P6 v1 unchanged: explain the historical centering/progress versus clearance mechanism, freeze and execute a balanced 12-cell suite, and preserve the zero-danger-window support failure as bounded Case D.
+- [ ] Before any P8 allocator, separately authorize physical-support qualification with an avoidance-capable controller and outcome-independent danger cells; do not tune communication from P7 outcomes.
+- [ ] Freeze any C4/C5 confirmatory protocol before scientific execution.
+
+### M9-A-FR - Formal readiness and evaluation (complete; insufficient support)
+
+- [x] Freeze and hash 144 outcome-free Formal identities and the analysis contract.
+- [x] Derive warning thresholds from Calibration only and perform one-shot authorization.
+- [x] Generate all 144 episodes without replacement and run the locked analysis.
+- [x] Preserve the F6 near-miss support failure and mark C2/C3 `insufficient_support`.
+
+Acceptance: engineering execution is complete; scientific support is insufficient because F6 has 3 rather than 4 near-miss episodes. The next priority is independent evidence review, not augmentation.
+
+### M9-A-P - Danger-rich dataset protocol (complete; protocol only)
+
+- [x] Record why sparse M5E/M6/M7 snapshots cannot independently label future danger.
+- [x] Define disjoint pilot, calibration, and sealed formal partitions.
+- [x] Specify eight parameterized collision/near-miss/safe scenario families and support targets.
+- [x] Freeze dense log and dataset-manifest schemas, exact nominal horizon semantics, contact truth, near-danger calibration, R0/R1/R2, warning/event rules, inference, exclusions, and pilot acceptance.
+- [x] Record initial source-backed literature positioning without claiming novelty.
+- [ ] Implement the M9-A runtime, labeler, validators, or manifests.
+- [ ] Launch Webots or generate pilot, calibration, or formal data.
+
+Acceptance: protocol artifacts are internally consistent and machine-readable schemas parse; M2-M8 evidence is unchanged; no simulator process or dataset is created. Next priority is independent protocol review followed, only if approved, by implementation and pilot engineering. Calibration and formal generation remain unauthorized.
+
+### M9-A-R - Independent protocol review (complete with amendments)
+
+- [x] Review all M9-A-P artifacts against frozen M2/M3 semantics.
+- [x] Remove best-signal/horizon/metric outcome-selection freedom with two primary AUPRC contrasts.
+- [x] Freeze `d_near`, contact, horizon, warning, event, support, exclusion, and sealing rules precisely.
+- [x] Strengthen machine-readable schemas and record literature threat classes.
+- [ ] Materialize literal finite scenario grids and deterministic seed mapping.
+- [ ] Implement or launch the pilot.
+
+Verdict: **PASS WITH REQUIRED AMENDMENTS**, with the amendments applied. Pilot implementation/execution remains unauthorized until literal scenario authorities and a separately reviewed implementation satisfy the checklist in `docs/m9a_r_independent_protocol_review.md`.
+
+## CVC-Q1 - Safety-aware local planning and physical support
+
+- [x] Audit M2 timing/dynamics and freeze the 15-command, 1.5 s safety-first planner.
+- [x] Calibrate deterministic visual range without navigation outcomes.
+- [x] Preserve failed v1 and pass the repaired v2 fresh/full-vision gate.
+- [x] Qualify and freeze 10 physical cells before communication outcomes.
+- [x] Run 70 exact-byte neutral U0 episodes and decision-level diagnostics.
+- [x] Classify development `CASE A`: avoidance and physical support qualified.
+- [x] Separately preregister Risk-ARM + Safety-Decision-Value-SPEND without modifying Q1.
+
+## CVC-Q2 - Risk-ARM + Safety-Decision-Value-SPEND
+
+- [x] Freeze the transparent event hierarchy, common R0/R1 ARM rule, deadline, reserve, three-packet exact-cost operating point, and terminal criteria before outcomes.
+- [x] Pass the outcome-blind eight-gate offline qualification and preserve the distractor/narrow-passage counterexamples.
+- [x] Execute exactly one paired ten-cell U0/A0/A1 Webots matrix with exact bytes and receiver-mirror checks.
+- [x] Classify `CASE D`: 0/20 adaptive packets were value-triggered; all used deadline/fallback.
+- [x] Preserve causal traces, strict analysis, figures, pre-outcome hashes, and protected historical evidence.
+- [x] Authorize and freeze a protocol-only temporal repair using a value-triggerable protected token and bounded value window, with Q1 and all risk/value thresholds fixed.
+
+## CVC-Q3 - Temporal repair for Safety-Value communication
+
+- [x] Diagnose Q2 timing without evaluator outcomes and audit detector/planner/value/scheduler runtime.
+- [x] Compare five causal repair families on frozen Q2 traces and select one bounded late-token scheduler outcome-blindly.
+- [x] Freeze the 63-step latch, step-295 fallback, step-311 reserve, exact three-packet budget, ten-cell grid, and terminal criteria.
+- [x] Execute 30/30 U0/A0/A1 Webots episodes with exact cost and sender-mirror integrity.
+- [x] Preserve two real same-step Safety-Value sends but classify `CASE D` because only 2/20 packets were value-triggered and fallback dominated risk-armed episodes.
+- [x] Preserve seven causal/runtime/safety figures and protected Q1/Q2/M9/P7 evidence.
+- [ ] Next priority: separately authorize a mechanism-only schedule-robust Safety Value support study. Do not retune Q3 timing, train ML, or open Formal.
+
+## CVC-Q4 - Safety-decision precursor / gradient diagnostic
+
+- [x] Recover 10 Q1 calibration traces and 60 fixed Q2/Q3 evaluation traces without Webots replay.
+- [x] Implement `M_stale`, best-current gap, four safe-set contraction representations, three causal estimators, and four history windows.
+- [x] Derive strictly non-zero one-sided thresholds from stable/no-change Q1 variation only.
+- [x] Evaluate event coverage, lead, false activation, future windows, scenario support, reliability, and runtime.
+- [x] Preserve failed candidates and five visually inspected static figures.
+- [x] Classify `CASE C`: the soft-feasibility q01 level-plus-slope rule covers 8/8 onsets but remains limited to two positive families and fires in 10/53 event-free episodes.
+- [ ] Next priority: separately authorize event-rich, no-scheduler support qualification across at least three additional Safety-Value-positive families. Do not implement a scheduler, ML, or Formal.
+## CVC-Q5 - Event-rich cross-scenario precursor qualification
+
+- **Status:** Complete as development-only CASE A.
+- **Result:** Blinded support produced 19 accepted onsets across four new positive families; the manifest was frozen before applying the unchanged Q4 rule. All six generalization gates passed.
+- **Boundary:** No scheduler integration, A0/A1 comparison, ML, C4/C5 Formal, commit, or push.
+- **Next:** A separately authorized protocol-only precursor-actuated scheduler study with exact matched bytes and frozen Q4 semantics.
+
+## CVC-Q6 - Precursor-actuated closed-loop scheduler
+
+- [x] Freeze and execute the hard-ARM/value-confirmed generation at exactly 72 kB/episode.
+- [x] Diagnose live ARM bootstrap starvation and preserve the complete negative matrix.
+- [x] Freeze and execute opportunity-plus-SafetyValue generation 2 without changing precursor thresholds, planner, codec, budget, or cells.
+- [x] Freeze and execute final two-sample persistent generation 3 against sealed controls.
+- [x] Audit send, decoded-image, planner/control, physical safety, family heterogeneity, progress, fallback, and runtime links.
+- [x] Run grouped compact logistic/tree ML qualification after escalation criteria were met; reject integration for excessive false warnings.
+- [x] Classify Q6-C, preserve the development ledger, master report, verified figure, hashes, and 193-test regression.
+- [ ] Q7 remains blocked: no complete method satisfies non-adverse safety versus the strongest U0 baseline across families.
+- [ ] Formal and real-robot execution remain blocked behind a future new-development method and independent Q7 pass.
+
+## CVC-Q6.5 - Communication Opportunity Value
+
+- [x] Freeze a direct paired SEND-now/HOLD intervention and safety-first utility target.
+- [x] Generate positive, harmful, and neutral support across new physical families with exact 72-kB cost.
+- [x] Preserve and repair the sender-risk/runtime-risk feature-interface mismatch before scheduler evidence.
+- [x] Reject generation-1 scheduler against strongest U0 under the pre-outcome gate.
+- [x] Freeze and execute the adjacent-opportunity target repair with four fixed schedules per cell.
+- [x] Evaluate bounded binary and safety-asymmetric multiclass interpretable models by leave-family-out validation.
+- [x] Close as Q6.5-C: corrected utility is not safely predictable across families; no method selected.
+- [ ] Q7 remains unopened because no method was frozen.
+- [ ] Budget robustness, ablation, scheduler Formal, and real-robot work remain blocked.

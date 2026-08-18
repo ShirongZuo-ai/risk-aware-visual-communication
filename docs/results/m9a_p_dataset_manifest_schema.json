@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "m9a-dataset-manifest-v1",
+  "title": "M9-A dataset manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "protocol_version", "protocol_sha256", "dataset_version", "generation_date_utc", "git_commit", "webots_version", "basic_timestep_s", "robot_footprint", "split", "seed_namespace", "formal_access_state", "formal_access_ledger_path", "calibration_artifact_sha256", "episodes"],
+  "properties": {
+    "schema_version": {"const": "m9a-dataset-manifest-v1"},
+    "protocol_version": {"type": "string", "minLength": 1},
+    "protocol_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dataset_version": {"type": "string", "minLength": 1},
+    "generation_date_utc": {"type": ["string", "null"], "format": "date-time"},
+    "git_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "webots_version": {"type": "string"},
+    "basic_timestep_s": {"type": "number", "exclusiveMinimum": 0},
+    "robot_footprint": {"type": "object", "additionalProperties": false, "required": ["identity", "shape", "physical_radius_m", "predictor_uncertainty_corridor_radius_m"], "properties": {"identity": {"const": "webots-r2025a-epuck-collision-cylinder-v1"}, "shape": {"const": "circle"}, "physical_radius_m": {"const": 0.037}, "predictor_uncertainty_corridor_radius_m": {"const": 0.037592257}}},
+    "split": {"enum": ["pilot", "calibration", "formal"]},
+    "seed_namespace": {"enum": ["91xxxx", "92xxxx", "93xxxx"]},
+    "formal_access_state": {"enum": ["not_applicable", "sealed", "authorized_once", "evaluated"]},
+    "formal_access_ledger_path": {"type": ["string", "null"]},
+    "calibration_artifact_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "episodes": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["episode_id", "scenario_family", "intended_role", "seed", "start_state", "command_parameters", "obstacle_parameters", "log_path", "contact_log_available", "completion_status", "exclusion_code", "exclusion_reason", "log_sha256"], "properties": {
+      "episode_id": {"type": "string", "minLength": 1},
+      "scenario_family": {"enum": ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"]},
+      "intended_role": {"enum": ["collision", "near_miss", "matched_safe", "safe_near_boundary", "safe_mid", "safe_far"]},
+      "seed": {"type": "integer", "minimum": 0},
+      "start_state": {"type": "object"},
+      "command_parameters": {"type": "object"},
+      "obstacle_parameters": {"type": "array", "items": {"type": "object"}},
+      "log_path": {"type": ["string", "null"]},
+      "contact_log_available": {"type": ["boolean", "null"]},
+      "completion_status": {"enum": ["planned", "complete", "technical_failure", "excluded"]},
+      "exclusion_reason": {"type": ["string", "null"]},
+      "exclusion_code": {"enum": [null, "SIMULATOR_CRASH", "PROCESS_FAILURE", "INCOMPLETE_LOG", "NONMONOTONIC_TIME", "CORRUPT_ARTIFACT", "HASH_MISMATCH", "MISSING_CONTACT_STREAM", "CONTACT_VALIDATION_FAILURE", "INVALID_GEOMETRY", "UNDECLARED_GEOMETRY_CHANGE", "MISSING_PREDICTOR_INPUT", "MISSING_COMMAND_SCHEDULE", "COORDINATE_UNIT_MISMATCH", "DUPLICATE_IDENTITY", "TECHNICAL_CONTEXT_SHORTFALL"]},
+      "log_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+    }}}
+  }
+}

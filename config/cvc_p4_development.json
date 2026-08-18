@@ -1,0 +1,30 @@
+{
+  "development_only": true,
+  "formal": false,
+  "threshold": 0.14,
+  "transmissions": 3,
+  "packet_bytes": 24000,
+  "episode_wire_bytes": 72000,
+  "jpeg_quality": 45,
+  "duration_s": 14.0,
+  "cruise_rad_s": 5.0,
+  "reserve_candidates": [
+    {"id": "fixed_late_050", "family": "fixed_late", "late_fraction": 0.50},
+    {"id": "fixed_late_667", "family": "fixed_late", "late_fraction": 0.667},
+    {"id": "fixed_late_750", "family": "fixed_late", "late_fraction": 0.75},
+    {"id": "release_050_750", "family": "release_time", "release_fraction": 0.50, "fallback_fraction": 0.75},
+    {"id": "release_667_875", "family": "release_time", "release_fraction": 0.667, "fallback_fraction": 0.875},
+    {"id": "separation_128", "family": "minimum_separation", "separation_steps": 128},
+    {"id": "separation_192", "family": "minimum_separation", "separation_steps": 192},
+    {"id": "fixed_final", "family": "fixed_final", "late_fraction": 1.0}
+  ],
+  "qualification_gate": {
+    "required_positive_lead_conversion_fraction": 1.0,
+    "required_schedule_difference_fraction": 1.0,
+    "minimum_exhaustion_fraction": 0.5,
+    "require_exact_cost": true,
+    "require_structurally_protected_reserve": true,
+    "rationale": "P4 must preserve all supported R1 timing lead, make complete early exhaustion impossible, and match exact cost without using navigation outcomes."
+  },
+  "selection_rule": "Among passing candidates, first prefer a shared risk-independent reserve so A0/A1 differ only in the middle packet. Then minimize the worst implied image age over all R0/R1 source schedules, prefer the simpler family, and choose the earliest listed identity only as a deterministic final tie break."
+}

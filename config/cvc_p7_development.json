@@ -1,0 +1,140 @@
+{
+  "study_id": "cvc-p7-safety-value-discrimination-v1",
+  "development_only": true,
+  "formal": false,
+  "frozen_p6_baseline": {
+    "config": "config/cvc_p6_development.json",
+    "allocator": "communication/cvc_p6_allocator.py",
+    "perception_controller": "communication/cvc_p2_perception.py",
+    "packet_count": 3,
+    "packet_bytes": 24000,
+    "episode_wire_bytes": 72000
+  },
+  "construction_rule": "Twelve deterministic physical cells were specified from geometry, camera observability, and intended novelty/safety category only. Comparative U0/A0/A1 outcomes were forbidden before freezing this file and its manifest.",
+  "physical_safety_window": {
+    "clearance_threshold_m": 0.12,
+    "future_horizon_steps": 63,
+    "justification": "A fixed 2.016 s evaluator-only preview to a 0.12 m clearance boundary; at 5 rad/s and 0.0205 m wheel radius this boundary is about 1.17 s of nominal cruise travel. It is not selected from P7 feature discrimination."
+  },
+  "diagnostic_thresholds": {
+    "slowdown_m_s": 0.005,
+    "increased_turn_rad_s": 0.10,
+    "progress_m_s": 0.005,
+    "forward_corridor_fraction": 0.30
+  },
+  "classification_contract": {
+    "usable_window_min_cells": 4,
+    "usable_window_min_fraction_with_10_step_lead": 0.75,
+    "simple_feature_auprc": 0.80,
+    "multivariate_grouped_auprc": 0.80,
+    "representation_failure_auprc": 0.65,
+    "note": "Thresholds classify development evidence only and cannot authorize P8 or Formal."
+  },
+  "duration_s": 14.0,
+  "seed_semantics": "Identity-only deterministic seeds; the current Webots scenes contain no random process.",
+  "categories": {
+    "A": {"novelty": "low", "safety_relevance": "low", "purpose": "stable baseline"},
+    "B": {"novelty": "high", "safety_relevance": "low", "purpose": "harmless visual distractor"},
+    "C": {"novelty": "low_or_subtle", "safety_relevance": "high", "purpose": "gradual narrow-clearance conflict"},
+    "D": {"novelty": "high", "safety_relevance": "high", "purpose": "late or strong conflict reveal"}
+  },
+  "scenarios": [
+    {
+      "id": "p7-a01-stable-clear",
+      "category": "A",
+      "seed": 971001,
+      "start": [-0.72, 0.00, 0.00],
+      "objects": [{"id": "BLUE_ANCHOR", "center": [0.55, 0.62], "size": [0.08, 0.08], "color": [0, 0, 1]}]
+    },
+    {
+      "id": "p7-a02-stable-left",
+      "category": "A",
+      "seed": 971002,
+      "start": [-0.72, -0.06, 0.02],
+      "objects": [{"id": "BLUE_ANCHOR", "center": [0.48, 0.66], "size": [0.10, 0.08], "color": [0, 0, 1]}]
+    },
+    {
+      "id": "p7-a03-stable-right",
+      "category": "A",
+      "seed": 971003,
+      "start": [-0.72, 0.06, -0.02],
+      "objects": [{"id": "BLUE_ANCHOR", "center": [0.48, -0.66], "size": [0.10, 0.08], "color": [0, 0, 1]}]
+    },
+    {
+      "id": "p7-b01-lateral-distractor-left",
+      "category": "B",
+      "seed": 972001,
+      "start": [-0.72, 0.00, 0.00],
+      "objects": [
+        {"id": "RED_DISTRACTOR", "center": [-0.02, 0.27], "size": [0.08, 0.10], "physical": false},
+        {"id": "BLUE_ANCHOR", "center": [0.58, -0.62], "size": [0.08, 0.08], "color": [0, 0, 1]}
+      ]
+    },
+    {
+      "id": "p7-b02-lateral-distractor-right",
+      "category": "B",
+      "seed": 972002,
+      "start": [-0.72, 0.00, 0.00],
+      "objects": [
+        {"id": "RED_DISTRACTOR", "center": [-0.02, -0.27], "size": [0.08, 0.10], "physical": false},
+        {"id": "BLUE_ANCHOR", "center": [0.58, 0.62], "size": [0.08, 0.08], "color": [0, 0, 1]}
+      ]
+    },
+    {
+      "id": "p7-b03-two-harmless-components",
+      "category": "B",
+      "seed": 972003,
+      "start": [-0.72, 0.00, 0.00],
+      "objects": [
+        {"id": "RED_DISTRACTOR_L", "center": [-0.02, 0.28], "size": [0.06, 0.07], "physical": false},
+        {"id": "RED_DISTRACTOR_R", "center": [0.10, -0.30], "size": [0.05, 0.06], "physical": false},
+        {"id": "BLUE_ANCHOR", "center": [0.60, 0.64], "size": [0.08, 0.08], "color": [0, 0, 1]}
+      ]
+    },
+    {
+      "id": "p7-c01-subtle-narrow-center",
+      "category": "C",
+      "seed": 973001,
+      "start": [-0.72, -0.02, 0.00],
+      "objects": [{"id": "TARGET", "center": [0.08, 0.01], "size": [0.035, 0.030]}]
+    },
+    {
+      "id": "p7-c02-subtle-narrow-left",
+      "category": "C",
+      "seed": 973002,
+      "start": [-0.72, -0.02, 0.00],
+      "objects": [{"id": "TARGET", "center": [0.06, 0.035], "size": [0.040, 0.028]}]
+    },
+    {
+      "id": "p7-c03-subtle-narrow-right",
+      "category": "C",
+      "seed": 973003,
+      "start": [-0.72, 0.02, 0.00],
+      "objects": [{"id": "TARGET", "center": [0.06, -0.035], "size": [0.040, 0.028]}]
+    },
+    {
+      "id": "p7-d01-late-conflict-left",
+      "category": "D",
+      "seed": 974001,
+      "start": [-0.68, -0.25, 0.42],
+      "objects": [{"id": "TARGET", "center": [0.02, 0.01], "size": [0.045, 0.035]}]
+    },
+    {
+      "id": "p7-d02-late-conflict-right",
+      "category": "D",
+      "seed": 974002,
+      "start": [-0.68, 0.25, -0.42],
+      "objects": [{"id": "TARGET", "center": [0.02, -0.01], "size": [0.045, 0.035]}]
+    },
+    {
+      "id": "p7-d03-turn-into-conflict",
+      "category": "D",
+      "seed": 974003,
+      "start": [-0.68, -0.18, 0.30],
+      "objects": [
+        {"id": "TARGET", "center": [0.02, 0.015], "size": [0.040, 0.032]},
+        {"id": "RED_DISTRACTOR", "center": [-0.08, -0.30], "size": [0.045, 0.045], "physical": false}
+      ]
+    }
+  ]
+}

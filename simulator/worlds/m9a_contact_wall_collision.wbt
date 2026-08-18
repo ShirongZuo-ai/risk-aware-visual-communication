@@ -1,0 +1,13 @@
+#VRML_SIM R2025a utf8
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+WorldInfo { basicTimeStep 32 title "M9-A wall contact fixture - prepared, unrun" }
+DEF M9A_ARENA RectangleArena { floorSize 0.45 0.45 wallHeight 0.06 }
+DEF M9A_WALL Solid {
+  translation 0.20 0 0.03
+  children [ Shape { geometry Box { size 0.02 0.30 0.06 } } ]
+  name "M9-A eligible east wall"
+  boundingObject Box { size 0.02 0.30 0.06 }
+  locked TRUE
+}
+DEF ROBOT E-puck { translation 0.10 0 0 controller "m9a_contact_validation" customData "wall_collision" supervisor TRUE version "2" }

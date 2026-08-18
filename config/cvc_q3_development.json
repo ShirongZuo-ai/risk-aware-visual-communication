@@ -1,0 +1,74 @@
+{
+  "study_id": "cvc-q3-temporal-repair-v1",
+  "development_only": true,
+  "formal": false,
+  "q1_support_grid": "config/cvc_q1_support_grid.json",
+  "q1_planner_config": "config/cvc_q1_planner_v2.json",
+  "duration_s": 10.0,
+  "total_steps": 312,
+  "policies": ["U0", "A0", "A1"],
+  "risk": {
+    "threshold": 0.14,
+    "A0": "unchanged Q2 causal R0",
+    "A1": "unchanged Q2 causal R1",
+    "crossing": "previous risk < 0.14 <= current risk",
+    "separate_thresholds_forbidden": true
+  },
+  "safety_decision_value": {
+    "implementation": "unchanged communication/cvc_q2_allocator.py",
+    "safe_set_contraction_fraction": 0.3333333333333333,
+    "matched_margin_deterioration_m": 0.01,
+    "numerical_tolerance": 1e-9
+  },
+  "scheduler": {
+    "implementation": "bounded_latch_late_token",
+    "validity_steps": 63,
+    "validity_s": 2.016,
+    "fallback_step": 295,
+    "fallback_time_s": 9.44,
+    "reserve_step": 311,
+    "reserve_time_s": 9.952,
+    "u0_schedule": [0, 156, 311],
+    "startup_step": 0,
+    "one_shot_adaptive_spend": true,
+    "future_debt_allowed": false
+  },
+  "communication": {
+    "packet_count": 3,
+    "packet_bytes": 24000,
+    "episode_wire_bytes": 72000,
+    "jpeg_quality": 45,
+    "complete_packet_accounting": true
+  },
+  "mechanism_gate": {
+    "minimum_value_triggered_packets": 3,
+    "minimum_value_triggered_fraction_all_adaptive": 0.15,
+    "minimum_value_triggered_packets_each_adaptive_policy": 1,
+    "fallback_not_dominant_scope": "risk-armed episodes",
+    "maximum_fallback_fraction_risk_armed": 0.5,
+    "minimum_capture_fraction_of_observed_eligible_value_episodes": 1.0,
+    "maximum_value_to_spend_delay_steps": 0,
+    "reserve_integrity_required": true,
+    "exact_cost_required": true,
+    "identical_a0_a1_scheduler_required": true,
+    "basis": "Q2 has exactly three value-supported and six risk-armed adaptive traces. The gate requires all supported opportunities, both policies, and value at least tying fallback among risk-armed episodes; mandatory unarmed fallback remains reported separately."
+  },
+  "physical_labels": {
+    "collision": "unchanged bilateral Webots contact",
+    "near": "no collision and episode minimum clearance <= 0.12 m",
+    "safe": "no collision and episode minimum clearance > 0.12 m"
+  },
+  "safety_paths": {
+    "path_1": "A1 has at least one fewer collision+near episode than both A0 and U0, median minimum clearance is no more than 0.005 m worse than either, and task successes are at most one below the best comparator",
+    "path_2": "A1 danger is no worse than both, median and suite-minimum clearance each exceed both by at least 0.01 m, and task successes are at most one below the best comparator",
+    "tie": "A1 collision and danger counts equal both comparators and median minimum clearance differs from each by less than 0.01 m"
+  },
+  "classification": {
+    "CASE_E": "runtime profile classifies computation latency",
+    "CASE_D": "prospective mechanism gate fails",
+    "CASE_A": "mechanism passes and either frozen safety path passes",
+    "CASE_B": "mechanism passes and frozen safety tie passes",
+    "CASE_C": "mechanism passes but neither safety path nor tie passes"
+  },
+  "selection_boundary": "Chosen from Q2 ARM/value/packet timing and runtime only. No evaluator, collision, clearance, completion, progress, or comparative navigation outcome selected this scheduler."
+}

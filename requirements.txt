@@ -5,3 +5,5 @@ matplotlib>=3.8,<4
 Pillow==12.3.0
 scikit-image==0.26.0
 cryptography>=43,<46
+scikit-learn==1.7.2
+scipy==1.16.3

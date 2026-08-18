@@ -1,0 +1,8 @@
+#VRML_SIM R2025a utf8
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/WoodenBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+WorldInfo { basicTimeStep 32 title "M9-A obstacle contact fixture - prepared, unrun" }
+DEF M9A_ARENA RectangleArena { floorSize 1 1 wallHeight 0.04 }
+DEF M9A_OBSTACLE WoodenBox { translation 0.16 0 0.03 size 0.04 0.08 0.06 locked TRUE }
+DEF ROBOT E-puck { translation 0 0 0 controller "m9a_contact_validation" customData "obstacle_collision" supervisor TRUE version "2" }

@@ -1,0 +1,12 @@
+{
+  "schema_version": "m9b-seed-map-v1",
+  "study": "m9b-confirmatory-v1",
+  "namespaces": {"pilot": 940000, "calibration": 950000, "formal": 960000},
+  "formula": "base + family_index_zero_based * 1000 + distinct_cell_index * 10 + reproducibility_replicate",
+  "constraints": [
+    "no seed may occur in M9-A",
+    "formal inferential cells use reproducibility_replicate 0",
+    "identical reruns never count as independent support",
+    "all generated seeds must be collision-checked"
+  ]
+}

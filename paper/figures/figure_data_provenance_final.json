@@ -1,0 +1,470 @@
+{
+  "figure_1": {
+    "kind": "conceptual schematic",
+    "numeric_labels": {
+      "episode_wire_bytes": 72000
+    },
+    "sources": [
+      "docs/research_protocol.md",
+      "docs/cvc_q65_communication_opportunity_value_report.md",
+      "results/cvc_q6_final_status.json",
+      "results/cvc_q65_final_status.json"
+    ]
+  },
+  "figure_2": {
+    "future_danger": {
+      "auprc": {
+        "R0": 0.9063111357271314,
+        "R1": 0.9937300449778934,
+        "R2": 0.9997777010629078
+      },
+      "excluded_episodes": 0,
+      "primary_R1_minus_R0": {
+        "ci95": {
+          "lower": 0.07718078476424133,
+          "upper": 0.09853406543813094,
+          "valid_replicates": 10000
+        },
+        "decision": "PASS",
+        "delta": 0.08741890925076201
+      },
+      "source": "results/m9b_formal/formal_results.json",
+      "valid_episodes": 240
+    },
+    "motion_prediction": {
+      "ade_m": {
+        "command_conditioned": [
+          6.398e-06,
+          1.3655e-05
+        ],
+        "state_only": [
+          0.000120561,
+          0.000715992
+        ]
+      },
+      "filter": "category=all_stable; horizons=0.5,2.0 s",
+      "source": "results/m2_trajectory/summary_metrics.csv"
+    },
+    "safety_value_precursor": {
+      "aggregate": {
+        "covered": 16,
+        "lead_iqr_s": [
+          0.432,
+          0.776
+        ],
+        "median_lead_s": 0.5760000000000001,
+        "onsets": 19,
+        "rule_changed_or_refit": false
+      },
+      "per_family": {
+        "opposed_gate_contraction": {
+          "active_fraction": 0.027564102564102563,
+          "coverage": 0.75,
+          "covered_onsets": 3,
+          "episode_count": 10,
+          "event_free_activated_episodes": 2,
+          "event_free_activation_fraction": 0.3333333333333333,
+          "event_free_episodes": 6,
+          "jitter_robust_fraction_all_onsets": {
+            "plus_minus_1_step": 0.75,
+            "plus_minus_2_steps": 0.75,
+            "plus_minus_3_steps": 0.75
+          },
+          "lead_distribution_s": {
+            "count": 3,
+            "max": 0.864,
+            "mean": 0.6826666666666666,
+            "median": 0.8,
+            "min": 0.384,
+            "q25": 0.5920000000000001,
+            "q75": 0.8320000000000001
+          },
+          "lead_fraction_all_onsets": {
+            "ge_0_25_s": 0.75,
+            "ge_0_50_s": 0.5,
+            "ge_1_00_s": 0.0
+          },
+          "median_lead_s": 0.8,
+          "onset_count": 4,
+          "opportunity_classes": {
+            "missed": 1,
+            "stable": 3
+          },
+          "safety_value_positive_episodes": 4,
+          "usable_covered_fraction": 1.0
+        },
+        "reverse_diagonal_chicane": {
+          "active_fraction": 0.01730769230769231,
+          "coverage": 0.8333333333333334,
+          "covered_onsets": 5,
+          "episode_count": 10,
+          "event_free_activated_episodes": 0,
+          "event_free_activation_fraction": 0.0,
+          "event_free_episodes": 5,
+          "jitter_robust_fraction_all_onsets": {
+            "plus_minus_1_step": 0.8333333333333334,
+            "plus_minus_2_steps": 0.8333333333333334,
+            "plus_minus_3_steps": 0.16666666666666666
+          },
+          "lead_distribution_s": {
+            "count": 5,
+            "max": 1.344,
+            "mean": 0.7616,
+            "median": 0.672,
+            "min": 0.448,
+            "q25": 0.5760000000000001,
+            "q75": 0.768
+          },
+          "lead_fraction_all_onsets": {
+            "ge_0_25_s": 0.8333333333333334,
+            "ge_0_50_s": 0.6666666666666666,
+            "ge_1_00_s": 0.16666666666666666
+          },
+          "median_lead_s": 0.672,
+          "onset_count": 6,
+          "opportunity_classes": {
+            "missed": 1,
+            "stable": 5
+          },
+          "safety_value_positive_episodes": 5,
+          "usable_covered_fraction": 1.0
+        },
+        "staggered_slalom_constraint": {
+          "active_fraction": 0.010416666666666666,
+          "coverage": 0.75,
+          "covered_onsets": 3,
+          "episode_count": 8,
+          "event_free_activated_episodes": 0,
+          "event_free_activation_fraction": 0.0,
+          "event_free_episodes": 5,
+          "jitter_robust_fraction_all_onsets": {
+            "plus_minus_1_step": 0.5,
+            "plus_minus_2_steps": 0.5,
+            "plus_minus_3_steps": 0.0
+          },
+          "lead_distribution_s": {
+            "count": 3,
+            "max": 1.344,
+            "mean": 0.8426666666666667,
+            "median": 0.608,
+            "min": 0.5760000000000001,
+            "q25": 0.5920000000000001,
+            "q75": 0.976
+          },
+          "lead_fraction_all_onsets": {
+            "ge_0_25_s": 0.75,
+            "ge_0_50_s": 0.75,
+            "ge_1_00_s": 0.25
+          },
+          "median_lead_s": 0.608,
+          "onset_count": 4,
+          "opportunity_classes": {
+            "intermittent": 1,
+            "missed": 1,
+            "stable": 2
+          },
+          "safety_value_positive_episodes": 3,
+          "usable_covered_fraction": 1.0
+        },
+        "three_stage_weave": {
+          "active_fraction": 0.03076923076923077,
+          "coverage": 1.0,
+          "covered_onsets": 5,
+          "episode_count": 10,
+          "event_free_activated_episodes": 0,
+          "event_free_activation_fraction": 0.0,
+          "event_free_episodes": 5,
+          "jitter_robust_fraction_all_onsets": {
+            "plus_minus_1_step": 1.0,
+            "plus_minus_2_steps": 0.8,
+            "plus_minus_3_steps": 0.6
+          },
+          "lead_distribution_s": {
+            "count": 5,
+            "max": 0.448,
+            "mean": 0.3968,
+            "median": 0.384,
+            "min": 0.352,
+            "q25": 0.352,
+            "q75": 0.448
+          },
+          "lead_fraction_all_onsets": {
+            "ge_0_25_s": 1.0,
+            "ge_0_50_s": 0.0,
+            "ge_1_00_s": 0.0
+          },
+          "median_lead_s": 0.384,
+          "onset_count": 5,
+          "opportunity_classes": {
+            "stable": 5
+          },
+          "safety_value_positive_episodes": 5,
+          "usable_covered_fraction": 1.0
+        }
+      },
+      "positive_families": [
+        "staggered_slalom_constraint",
+        "three_stage_weave",
+        "opposed_gate_contraction",
+        "reverse_diagonal_chicane"
+      ],
+      "source": "results/cvc_q5_analysis/analysis.json"
+    }
+  },
+  "figure_3": {
+    "q65_timing_reversal": {
+      "cell_id": "q65-afs-01",
+      "reason_for_inclusion": "compact mechanism panel; replaces no main quantitative panel and shows adjacent-opportunity non-monotonicity",
+      "records": [
+        {
+          "cell_id": "q65-afs-01",
+          "family": "alternating_four_stage",
+          "features": {
+            "action_changed": 0.0,
+            "current_safe_count": 15.0,
+            "current_selected_margin": 0.08977592308624377,
+            "held_action_margin_in_current": 0.08977592308624377,
+            "held_current_margin_gap": -0.015589402261804969,
+            "held_image_age_s": 2.56,
+            "held_safe_count": 15.0,
+            "held_selected_margin": 0.10536532534804874,
+            "precursor_active": 0.0,
+            "precursor_fraction_8": 0.0,
+            "r0": -0.15458736480091956,
+            "r1": -0.06856581876987625,
+            "r1_delta_1": -1.9972129620154933e-05,
+            "r1_range_8": 0.007752649564434305,
+            "r1_slope_8": 0.03873622539227827,
+            "recent_action_change_fraction": 0.0,
+            "recent_wheel_change_fraction": 0.0,
+            "safe_set_changed": 0.0,
+            "safe_set_fraction": 1.0,
+            "safety_value_triggered": 0.0,
+            "soft_feasibility_mass": 0.8378595451290521,
+            "soft_mass_delta_1": 1.1802477153266544e-05,
+            "steps_to_fallback_fraction": 0.631336405529954
+          },
+          "label": "neutral",
+          "next_step": 109,
+          "opportunity_id": "q65-afs-01__t80",
+          "step": 80,
+          "utility": {
+            "basis": "indifference_band",
+            "collision_delta": 0,
+            "danger_steps_delta": 0,
+            "goal_progress_delta_m": 0.029420893855485852,
+            "label": "neutral",
+            "min_clearance_delta_m": 0.0008686602283831113,
+            "task_adverse": false
+          }
+        },
+        {
+          "cell_id": "q65-afs-01",
+          "family": "alternating_four_stage",
+          "features": {
+            "action_changed": 0.0,
+            "current_safe_count": 13.0,
+            "current_selected_margin": 0.07904829507542319,
+            "held_action_margin_in_current": 0.07904829507542319,
+            "held_current_margin_gap": -0.014561329705761294,
+            "held_image_age_s": 3.488,
+            "held_safe_count": 14.0,
+            "held_selected_margin": 0.09360962478118448,
+            "precursor_active": 0.0,
+            "precursor_fraction_8": 0.0,
+            "r0": -0.11651517565126013,
+            "r1": -0.07904547508105467,
+            "r1_delta_1": -0.0006218047186040132,
+            "r1_range_8": 0.04393725305946521,
+            "r1_slope_8": -0.17386205083667847,
+            "recent_action_change_fraction": 0.2857142857142857,
+            "recent_wheel_change_fraction": 0.2857142857142857,
+            "safe_set_changed": 1.0,
+            "safe_set_fraction": 0.9285714285714286,
+            "safety_value_triggered": 0.0,
+            "soft_feasibility_mass": 0.7230861148443547,
+            "soft_mass_delta_1": 0.0002779588785758458,
+            "steps_to_fallback_fraction": 0.4976958525345622
+          },
+          "label": "helpful",
+          "next_step": 144,
+          "opportunity_id": "q65-afs-01__t109",
+          "step": 109,
+          "utility": {
+            "basis": "danger_steps",
+            "collision_delta": 0,
+            "danger_steps_delta": -122,
+            "goal_progress_delta_m": -0.1552315771570928,
+            "label": "helpful",
+            "min_clearance_delta_m": 0.06646570971055218,
+            "task_adverse": true
+          }
+        },
+        {
+          "cell_id": "q65-afs-01",
+          "family": "alternating_four_stage",
+          "features": {
+            "action_changed": 1.0,
+            "current_safe_count": 15.0,
+            "current_selected_margin": 1.0,
+            "held_action_margin_in_current": 1.0,
+            "held_current_margin_gap": 0.9236006626712513,
+            "held_image_age_s": 4.608,
+            "held_safe_count": 13.0,
+            "held_selected_margin": 0.0763993373287487,
+            "precursor_active": 0.0,
+            "precursor_fraction_8": 0.0,
+            "r0": -10.0,
+            "r1": -10.0,
+            "r1_delta_1": 0.0,
+            "r1_range_8": 0.0,
+            "r1_slope_8": 7.405267511740541e-15,
+            "recent_action_change_fraction": 0.2857142857142857,
+            "recent_wheel_change_fraction": 0.2857142857142857,
+            "safe_set_changed": 1.0,
+            "safe_set_fraction": 1.1538461538461537,
+            "safety_value_triggered": 0.0,
+            "soft_feasibility_mass": 1.0,
+            "soft_mass_delta_1": 0.0,
+            "steps_to_fallback_fraction": 0.33640552995391704
+          },
+          "label": "harmful",
+          "next_step": 217,
+          "opportunity_id": "q65-afs-01__t144",
+          "step": 144,
+          "utility": {
+            "basis": "danger_steps",
+            "collision_delta": 0,
+            "danger_steps_delta": 26,
+            "goal_progress_delta_m": 0.10487171885079316,
+            "label": "harmful",
+            "min_clearance_delta_m": -0.046195616606909906,
+            "task_adverse": false
+          }
+        }
+      ],
+      "source": "results/cvc_q65_development/generation2_schedule_bank/analysis.json"
+    },
+    "q6_family_effects": {
+      "comparison": "scheduler minus U0",
+      "families": {
+        "opposed_gate_contraction": {
+          "cells": 5,
+          "collision_delta_total": 0,
+          "danger_improved_tied_adverse": {
+            "adverse": 2,
+            "improved": 2,
+            "tied": 1
+          },
+          "mean_danger_steps_delta": -20.8,
+          "mean_min_clearance_delta_m": 0.003329769299379831,
+          "mean_progress_delta_m": -0.02827593242367219,
+          "median_timing_shift_steps": 41,
+          "planner_action_different_pairs": 4,
+          "receiver_information_different_pairs": 5,
+          "schedule_different_pairs": 5,
+          "wheel_command_different_pairs": 4
+        },
+        "reverse_diagonal_chicane": {
+          "cells": 5,
+          "collision_delta_total": 0,
+          "danger_improved_tied_adverse": {
+            "adverse": 2,
+            "improved": 2,
+            "tied": 1
+          },
+          "mean_danger_steps_delta": -8.4,
+          "mean_min_clearance_delta_m": -0.0038639707382821077,
+          "mean_progress_delta_m": -0.009711032615459313,
+          "median_timing_shift_steps": 108,
+          "planner_action_different_pairs": 4,
+          "receiver_information_different_pairs": 5,
+          "schedule_different_pairs": 5,
+          "wheel_command_different_pairs": 4
+        },
+        "staggered_slalom_constraint": {
+          "cells": 5,
+          "collision_delta_total": 0,
+          "danger_improved_tied_adverse": {
+            "adverse": 3,
+            "improved": 1,
+            "tied": 1
+          },
+          "mean_danger_steps_delta": 26.2,
+          "mean_min_clearance_delta_m": -0.014040494019592236,
+          "mean_progress_delta_m": 0.011951122831527949,
+          "median_timing_shift_steps": 108,
+          "planner_action_different_pairs": 4,
+          "receiver_information_different_pairs": 5,
+          "schedule_different_pairs": 5,
+          "wheel_command_different_pairs": 4
+        },
+        "three_stage_weave": {
+          "cells": 5,
+          "collision_delta_total": 0,
+          "danger_improved_tied_adverse": {
+            "adverse": 1,
+            "improved": 3,
+            "tied": 1
+          },
+          "mean_danger_steps_delta": -38.2,
+          "mean_min_clearance_delta_m": 0.009627777582485614,
+          "mean_progress_delta_m": -0.03505753292524942,
+          "median_timing_shift_steps": 40,
+          "planner_action_different_pairs": 4,
+          "receiver_information_different_pairs": 5,
+          "schedule_different_pairs": 5,
+          "wheel_command_different_pairs": 4
+        }
+      },
+      "pooled": {
+        "cells": 20,
+        "collision_delta_total": 0,
+        "danger_improved_tied_adverse": {
+          "adverse": 8,
+          "improved": 8,
+          "tied": 4
+        },
+        "mean_danger_steps_delta": -10.3,
+        "mean_min_clearance_delta_m": -0.0012367294690022249,
+        "mean_progress_delta_m": -0.015273343783213244,
+        "median_timing_shift_steps": 108.0,
+        "planner_action_different_pairs": 16,
+        "receiver_information_different_pairs": 20,
+        "schedule_different_pairs": 20,
+        "wheel_command_different_pairs": 16
+      },
+      "source": "results/cvc_q6_analysis/q6-g3-opportunity-persistent.json",
+      "wire_bytes_per_episode": 72000
+    }
+  },
+  "schema_version": "submission-figure-provenance-v1",
+  "scope": "plotting-only; no experiment or result recomputation",
+  "style_contract": {
+    "editable_export": "SVG with text preserved",
+    "final_width_in": 7.16,
+    "font_fallback": [
+      "Arial",
+      "Helvetica",
+      "DejaVu Sans"
+    ],
+    "minimum_text_pt": 7.0,
+    "non_color_channels": [
+      "bar edge",
+      "marker shape",
+      "hatch",
+      "sign",
+      "zero reference",
+      "direction label"
+    ],
+    "primary_export": "vector PDF",
+    "review_export": "600 dpi PNG",
+    "semantic_palette": {
+      "adverse_physical_effect": "#B64342",
+      "current_or_baseline": "#707B84",
+      "future_prediction_R1": "#0F4D92",
+      "positive_physical_effect_or_secondary": "#3D8653",
+      "safety_value_or_precursor": "#B56B00"
+    }
+  }
+}

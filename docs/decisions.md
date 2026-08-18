@@ -1,5 +1,67 @@
 # Decision log
 
+## 2026-08-14 - CVC-P4 removes starvation but rejects confirmatory escalation
+
+- **Decision:** Select the outcome-blind fixed-late reserve at step 218. U0 is 0/109/218; A0/A1 share startup and reserve, and only the threshold-0.14 middle packet timing differs.
+- **Evidence:** All 18 Webots episodes reconcile to three 24,000-byte packets and 72,000 bytes; every policy exhausts at step 218. P3 premature exhaustion is structurally impossible.
+- **Decision:** Classify P4 as Case C. A1 improves completion (4/6 versus 1/6) but loses clearance in 4/6, reduces mean clearance by 0.1620 m, creates the only danger-threshold episode, and worsens pre-danger image age in four pairs.
+- **Rejected:** Calling completion gains a stable safety advantage, opening C4/C5, moving the reserve after outcomes, redesigning scenarios, or continuing threshold/reserve tuning until A1 wins.
+- **Next priority:** Freeze a development-only receiver-relevant visual novelty/control-sensitivity timing diagnostic to determine whether early risk warnings coincide with useful new information.
+
+## 2026-08-14 - CVC-P3 converts prediction lead but does not justify confirmation
+
+- **Decision:** Qualify the frozen threshold-0.14, three-packet mechanism as a temporal actuator. On 18 distinct sender-only P2 risk streams it converts all finite positive leads, with median 26 steps and exact 72,000-byte equality; the same result holds at four and six packets.
+- **Decision:** Use a compact complete-frame JPEG envelope for P3 because the prior 48-tile codec cannot physically fit the fixed-cost 12/18/24 kB opportunities. All policies share quality 45, metadata, padding, receiver hold, and total cost.
+- **Evidence:** In 18 Webots development episodes A1's earlier packets change decoded perception, wheel commands, and trajectory in every A0/A1 pair, but A1 has 3/6 collisions, 2/6 successes, and 1/6 clearance wins versus A0's 2/6 collisions, 1/6 successes, and 5/6 clearance wins.
+- **Decision:** Classify predictive risk as actionable without demonstrated task value. Preserve the adverse repeated-trigger/token-exhaustion mechanism; do not tune until A1 wins or alter scenarios.
+- **Rejected:** Opening C4/C5 Formal, claiming spatial actionability, treating the isolated `late_appearance` improvement as general benefit, or overwriting CVC-P2.
+- **Next priority:** If separately authorized, freeze a development-only single-spend or reserved-token allocator that guarantees one late packet using only risk/time/budget, then retest the same scenarios. No confirmatory study is currently justified.
+
+## 2026-08-14 - M9-B confirms C2; CVC-P1 remains development-only
+
+- Accept the preregistered M9-B C2 replication as PASS: effect `0.087419` and CI lower bound `0.077181` satisfy the frozen practical and uncertainty criteria with full support.
+- Retain R2-R1 as secondary: delta `0.006048` remains far below the `0.05` practical threshold.
+- Treat CVC-P1 as a functional visual closed-loop engineering baseline, not C4/C5 evidence. Communication relevance passes, but matched U0/A0/A1 safety results are null.
+
+## 2026-08-13 - M9-A-FR primary claims remain unsupported
+
+- Preserve the complete 144-episode corpus without augmentation, replacement, or Calibration pooling.
+- Apply the support gate before primary interpretation: F6 has three near misses versus four required, so C2/C3 are `insufficient_support`.
+- Retain the descriptive result: state-only prediction improves danger discrimination over current state, while command conditioning adds only `0.002950` AUPRC, below the frozen `0.05` practical floor.
+
+## 2026-08-13 - M9-A physical footprint and calibration freeze
+
+- **Decision:** M9 physical labels use the R2025a e-puck root collision-cylinder radius `0.037 m`, not axle half-length `0.026 m` and not predictor uncertainty radius `0.037592257 m`.
+- **Reason:** The version-pinned PROTO specifies the cylinder; runtime validation removes the prior 9-11 mm systematic discrepancy.
+- **Decision:** Accept scenario grid v7 after preserving failed Pilot grids v2-v6. Placement uses obstacle-free command traces and fixed physical-clearance targets only.
+- **Decision:** Freeze `d_near=0.013 m`, the smallest preregistered candidate satisfying calibration support and safe-contamination constraints.
+- **Impact:** Pilot and calibration are complete. Formal generation/evaluation remains prohibited pending explicit review.
+
+## 2026-08-13 - M9-A-I2-V2 bilateral finding
+
+- **Decision:** Accept dual-sided contact-point matching as operationally confirmed, but retain the overall validation verdict as FAIL.
+- **Evidence:** Intended obstacle and wall contacts produced exact paired coordinates and one event in both repetitions. However, the designed safe close pass also produced 21 exact bilateral obstacle-contact frames in both runs despite `+0.011000014 m` simplified clearance.
+- **Impact:** Do not weaken contact truth, tune `epsilon_contact`, or reinterpret the safe fixture. Pilot remains unauthorized pending a separately reviewed physical-footprint and fixture-geometry correction.
+
+## 2026-08-13 - M9-A-I2R dual-sided pairing repair
+
+- **Decision:** Reject `ContactPoint.node_id == counterpart root ID` as authoritative and use dual-sided world-coordinate point matching at `epsilon_contact=1e-6 m`.
+- **Reason:** Failed I2 runtime evidence and installed R2025a bindings expose an associated node ID but do not support the assumed counterpart-root meaning. The tolerance is a pre-rerun engineering precision allowance, not outcome tuning.
+- **Decision:** Eligible roots are frozen in scenario configuration; all simultaneous matches are retained, and multi-root scientific contacts receive `CONTACT_VALIDATION_FAILURE`.
+- **Decision:** Fixture-validation artifacts use dedicated engineering schemas and are rejected by scientific evaluators.
+
+## 2026-08-13 - M9-A-I2 fail-closed contact finding
+
+- **Decision:** Do not infer intended obstacle/wall collision from positive raw contact counts or geometric proximity when Webots counterpart identity does not match the manifest-declared node.
+- **Reason:** In all four authorized positive-fixture runs, contact records identified robot descendant/body nodes rather than the obstacle/wall root. Physical contact was evident, but the frozen identity filter could not validate its counterpart.
+- **Impact:** Pilot remains unauthorized. A reviewed adapter must establish R2025a counterpart semantics (potentially by querying declared environment nodes or resolving both sides of descendant contacts), and fixture-only schema support must be added before any further Webots authorization.
+
+## 2026-08-13 - M9-A-I1 finite identities
+
+- **Decision:** Freeze six literal cells per F1-F8 and one/two/three replicates for pilot/calibration/formal (48/96/144 identities).
+- **Decision:** Map seeds as split base plus `1000*family + 10*parameter + replicate`, with bases 910000/920000/930000.
+- **Decision:** Keep raw contact observations, declared-counterpart filtering, and validated collision events as separate types; predictive quantities cannot enter physical labels.
+
 ## 2026-07-24 - M6-A v2 controller failure evidence
 
 - **Decision:** Persist controller failures as canonical `m6a-v2-episode-runtime-failure-v2` records with a stable operation stage, last completed lifecycle state, original exception type, redacted actionable message, basename/function/line frames, runtime identity, transition history, producer identity, and digest. Reload verifies canonical bytes, schema, semantics, transitions, frames, and digest; the same structured payload is emitted to controller stderr.
@@ -434,3 +496,135 @@ The exhausted v2 authority remains immutable. The final formal study uses a sepa
 - **Decision:** Propose disjoint `810xxx` calibration, `820xxx` development, and `830xxx` formal identities across eight eligibility-rich critical scenes and two low-risk generalization scenes. The proposal is not a manifest or launch approval.
 - **Rejected:** Further tuning on the M7 v1 corpus, selecting the least-negative M7 v2 candidate, choosing a proxy because it favors a baseline, weakening scene-balance or byte gates, imputing undefined TCOBR, implementing an allocator before proxy qualification, or generating a formal corpus now.
 - **Impact:** M8 proceeds measurement-first. Failure of either a proxy's prerequisite or any common gate is retained as `NO-GO`; data generation and allocator development require later, separately reviewed stages.
+
+## 2026-08-13 - Pause M8 and preregister M9-A future-danger validation
+
+- **Decision:** Pause M8 after B0 and insert M9-A as a falsifiable validation of whether predicted future motion forecasts independently observed danger better than current-state clearance. Do not reinterpret M3 heuristic risk or M5-M7 offline outcomes as future-danger evidence.
+- **Decision:** Use disjoint pilot/calibration/formal partitions; dense basic-timestep actual motion; Supervisor contact observations validated in pilot; physical 0.026 m robot radius for labels; and exact nominal 0.5/1.0/2.0 s horizons with boundary interpolation. Keep the uncertainty-inflated 0.037592257 m M3 corridor predictor-side only.
+- **Decision:** Calibrate `d_near` and matched false-warning operating points without formal access. Compare raw R0/R1/R2 signals and resample episodes within family. Formal support failure is reported as insufficient data, not repaired with calibration observations.
+- **Rejected:** Reusing sparse M5E/M6/M7 snapshots as ground truth, selecting thresholds from formal outcomes, forcing command-transition geometry to favor R2, using predicted TTCf as collision truth, or launching any split from this protocol-only stage.
+- **Impact:** `docs/m9a_p_future_danger_protocol.md` and its schemas become the review basis for a later implementation/pilot. C2 and C3 remain pending; communication development remains paused.
+
+## 2026-08-13 - Amend M9-A after independent readiness review
+
+- **Decision:** Use exactly two primary claim tests: 2.0 s danger AUPRC from negative predicted physical clearance, R1-R0 for C2 and R2-R1 for C3. Require difference at least 0.05 and paired 95% interval lower bound above zero; secondary endpoints cannot rescue failure.
+- **Decision:** Freeze finite physical `d_near` candidates, calibration selection, safe-exposure false-warning rules, event grouping, family-specific support, closed exclusion codes, and digest/ledger-based one-shot formal access as specified in the amended protocol.
+- **Decision:** Freeze literal scenario grids and seed mapping before pilot generation; pilot failure may trigger reviewed version replacement but cannot filter formal identities.
+- **Rejected:** Best-performing signal/horizon selection, pooled-frame inference, documentation-only formal sealing, role-based formal replacement, or treating protocol readiness as launch approval.
+- **Impact:** M9-A-P passes protocol review with amendments. Pilot implementation and all Webots execution remain unauthorized pending the incomplete checklist in `docs/m9a_r_independent_protocol_review.md`.
+
+## 2026-08-14 - Retain CVC-P2 as a negative development result and stop before Formal
+
+- **Decision:** Select two exact 36,000-byte packets as the CVC-P2 candidate regime using U0 physical outcomes only: collision or clearance below 0.12 m, mixed across scenarios, and at least two temporal opportunities.
+- **Evidence:** The U0 sweep moves from 0/6 physical failures at three packets to 1/6 at two packets and 1/6 with an actual collision at one packet. The 42-episode matched matrix reconciles to exactly 72,000 bytes per episode.
+- **Decision:** Retain the corrected R0/R1 result as negative. R1 warning lead exists but produces identical T/S/TS decisions in all 18 pairs; T and TS are adverse, with 1/6 collisions and 0/6 task successes versus U0's 0/6 and 3/6.
+- **Rejected:** Treating warning lead alone as communication benefit, tuning decision thresholds until R1 wins, hiding the startup-initialization failure, or opening C4/C5 Formal without an actuating candidate.
+- **Impact:** Preserve all CVC-P2 failures and corrected traces. Any next stage must be a new development-only allocator qualification with a pre-Webots R0/R1 actuation gate; C4/C5 remain unopened.
+
+## 2026-08-14 - Support the P4 temporal-misalignment mechanism after CVC-P5
+
+- **Decision:** Retain CVC-P4 unchanged as Case C and accept H_P5 only as a development mechanism in the controlled red-component Webots stack. In all six A1 episodes, R1 precedes the cumulative 25% onset of visual, perception, and control novelty; all six control peaks occur after the adaptive token is spent.
+- **Evidence:** Median R1-before-R0 lead is 38 steps, while median R1-to-control-q25 and R1-to-control-peak gaps are 117.5 and 142 steps. Median control sensitivity is 0.1601 rad/s at A1's send versus 1.2432 rad/s at A0's later actual send. Twelve diagnostic replays exactly reproduce P4 at 72,000 charged bytes with zero charged shadow bytes.
+- **Decision:** Separate physical-danger prediction from communication spending. The next candidate may let R1 arm a causal window, but spending must wait for sender-available safety-relevant visual/perception/control novelty and retain a deadline plus protected reserve.
+- **Rejected:** Treating all visual novelty as communication value, using clearance/outcomes to tune an onset threshold, implementing a new allocator inside P5, another risk/reserve/packet sweep, or opening C4/C5 Formal.
+- **Impact:** CVC-P6, if authorized, must first freeze one signal-only arm/spend candidate and prove timing actuation, causal inputs, exact bytes, and post-pass guarding offline. P5 itself supports no superiority or safety claim.
+
+## 2026-08-15 - Retain CVC-P6 as Case A with an explicit safety limitation
+
+- **Decision:** Freeze and retain the single `coarse_12px` P6 configuration selected without navigation outcomes: R0/R1 ARM at 0.14; bearing/proximity/relative-area novelty thresholds 0.15/0.075/0.50 plus component events; 96-step deadline; step-218 reserve; exact 72,000 bytes.
+- **Evidence:** Offline qualification passed all mechanistic gates. In the frozen Webots comparison, A1 delayed spending and moved closer to perception/control q25 in 4/6 cases; three A0/A1 schedules collapsed exactly. U0/A0/A1 task successes were 1/1/4 with zero collisions, but every schedule-different A1 pair lost clearance.
+- **Decision:** Classify P6 as **CASE A - Mechanism + task benefit** for completion/progress only. Do not interpret it as safety benefit: A1 mean minimum clearance is 0.261445 m versus A0 0.413892 m.
+- **Rejected:** Post-outcome threshold/deadline/reserve tuning, combining completion and clearance into one score, treating zero collisions as proof of safety, learned novelty/control triggering in P6, and opening C4/C5.
+- **Impact:** Retain P6 v1 unchanged as a development baseline. A separate broader P7 study may examine safety-relevant novelty discrimination using new outcome-independent scenarios; confirmatory testing remains unjustified.
+
+## 2026-08-15 - Retain CVC-P7 as support-bounded Case D and do not implement P8
+
+- **Decision:** Preserve the frozen 12-cell, 3-per-category P7 suite and its evaluator-only 0.12 m/63-step safety-window rule. Do not move, replace, delete, or retrospectively reclassify cells after the unchanged P6 U0/A0/A1 comparison.
+- **Evidence:** Historical P6 schedule-different traces show that every earlier A1 update turns toward the red component, reduces absolute turning versus the stale A0 command, improves progress, and loses clearance. P7 completed 36/36 exact-cost runs, but zero runs crossed 0.12 m; high-novelty harmless B cells nevertheless armed at step 1 and spent at step 3.
+- **Decision:** Classify P7 as **CASE D - no usable communication safety window demonstrated**, explicitly because positive physical-window support is absent. Treat feature AUPRC and safety lead as not estimable, not zero.
+- **Rejected:** Relaxing the frozen physical threshold, editing or adding outcome-selected cells, calling slowdown/centering safety-protective without physical support, training a diagnostic model on all-negative labels, implementing P8, or opening C4/C5 Formal.
+- **Impact:** The next experimental priority is separately authorized physical-support qualification with an avoidance-capable controller. P7 justifies neither rule-based nor learned Safety-VoI selection.
+
+## 2026-08-15 - CVC-Q1 safety-task decisions
+
+- Replaced component-centering with a 15-action, 1.5 s command-conditioned planner using safety feasibility before progress.
+- Selected outcome-blind inverse-height ranging with a 0.0554147 m uncertainty bound. Preserved failed v1; v2 adds a 0.045 m/s near cap and 125-step causal static-obstacle memory.
+- Froze 10 cells after HIGH feasibility and before U0 outcomes, retaining bilateral contact and the 0.12 m near boundary.
+- Classified Q1 as bounded development `CASE A`: frozen near support, within-cell clearance variation, and interpretable held/current safe-decision changes exist despite zero collisions and a non-monotone budget response.
+- The result authorizes design only of a separate Risk-ARM + Safety-Decision-Value-SPEND study. It does not authorize A0/A1, C4/C5 Formal, ML, or outcome-driven grid repair.
+
+## 2026-08-15 - Retain CVC-Q2 as terminal Case D
+
+- **Decision:** Retain the pre-outcome three-packet Q2 protocol and its transparent Safety Decision Value hierarchy without post-outcome timing or threshold repair.
+- **Evidence:** All 30 paired runs reconciled to 72,000 wire bytes and matched the sender mirror, but 0/20 adaptive packets were value-triggered. All used deadline or fallback; 113 value-event timesteps occurred only after the token was already spent. U0/A0/A1 danger counts were 3/5/5 and collisions 0/2/0.
+- **Decision:** Classify Q2 as **CASE D - Safety Decision Value trigger is inadequate**. Earlier R1 ARM in three cells and elimination of A0's two contacts do not validate a causal risk-to-value-to-spend safety mechanism.
+- **Rejected:** Retrospective deadline/reserve changes, scenario or threshold repair, safety claims from the A0/A1 collision difference, ML, broader development, or C4/C5 Formal.
+- **Impact:** The only recommended next hypothesis is a separately frozen temporal repair in which protected capacity remains value-triggerable or value persists across an explicit window. Q1 and the existing risk/value thresholds remain fixed.
+
+## 2026-08-16 - Retain CVC-Q3 as terminal Case D despite local Safety-Value actuation
+
+- **Decision:** Retain the frozen 63-step bounded latch, step-295 late fallback, and step-311 protected reserve without outcome-driven repair.
+- **Evidence:** Two straight-approach packets were genuinely caused by priority-1 Safety Value on the same step, changing the receiver from moving-turn to stop-turn. However, only 2/20 adaptive packets were value-triggered and fallback caused 4/6 risk-armed packets; the frozen meaningful-frequency gate fails. A0/A1 schedules and outcomes were identical.
+- **Decision:** Classify Q3 as **CASE D - temporal repair fails the meaningful-frequency gate**. Treat the two sends as local causal actuation, not validation of predictive communication safety.
+- **Latency decision:** Preserve the pre-outcome logical-timing classification. Every requested component had zero 32 ms misses; the prospective summed path had 99/9,360 occasional overruns, which are reported as an operational caveat rather than the hundred-step mechanism failure or Case E.
+- **Rejected:** Retuning fallback/window duration, replacing cells, using tied safety outcomes to rescue the mechanism, training ML, broader navigation validation, or opening C4/C5 Formal.
+- **Impact:** The next experiment, if authorized, is a schedule-robust Safety Value support study with fixed Q1/Q2/Q3 mechanisms and outcome-independent cells—not another temporal sweep.
+
+## 2026-08-16 - Retain CVC-Q4 as Case C despite full observed-event coverage
+
+- **Decision:** Define `M_stale` as the CURRENT conservative margin of the receiver-HELD selected action and `G` as the maximum CURRENT hard-feasible margin minus `M_stale`. Use the frozen 0.025/0.075 m safety band to define candidate-space slack and soft feasibility.
+- **Decision:** Retain OLS over Theil–Sen and median-adjacent as the simplest causal estimator when its 8-sample result has equal chosen-rule coverage/lead. Use the 0.224 s past-through-current window and stable-Q1 one-sided 1% tails.
+- **Evidence:** `M_stale` slope covers only 2/8 onsets and `G` slope only 1/8. Soft-feasibility contraction covers 8/8 but is too permissive. Adding the outcome-independent stable-Q1 q01 level retains 8/8, median 0.480 s lead, 0.593% false steps, and 18.9% event-free episode activation.
+- **Decision:** Classify Q4 as **CASE C - weak / scenario-limited precursor**, because all positive onsets come from only straight-approach and narrow-passage families. Do not treat duplicated Q2/Q3 executions as cross-family validation.
+- **Rejected:** scheduler integration, a new A0/A1 comparison, outcome-selected thresholds, weighted formula search, ML, navigation claims, C4/C5 Formal, or alteration of protected Q1/Q2/Q3/M9 evidence.
+- **Impact:** A future scheduler experiment is not yet justified. The next priority is event-rich, no-scheduler support qualification of the frozen soft-feasibility q01 level-plus-slope rule across at least three additional positive families.
+
+## 2026-08-16 - Qualify the frozen Q4 precursor across CVC-Q5 families
+
+- **Decision:** Preserve all 70 blinded Stage-A cells and retain the exact Q4 soft-feasibility q01 plus OLS-8 rule without refitting. The support gate passed with 19 onsets across four positive families before unblinding.
+- **Evidence:** The frozen rule covered 16/19 onsets, achieved 0.576 s median lead, used 1.465% active time, activated in 11/53 event-free episodes, and produced a usable multi-sample opportunity for all 16 covered onsets. Every positive family exceeded 50% coverage and all six frozen gates passed.
+- **Decision:** Classify Q5 as **CASE A — cross-scenario precursor qualified**, bounded to mechanism qualification. Scheduler integration is now a justified next experiment, not a result already demonstrated.
+- **Rejected:** Precursor-guided scenario selection, threshold/window/estimator changes, deleting four negative families, A0/A1 execution, navigation-benefit claims, ML fitting, or Formal access.
+- **Impact:** A learned precursor is not the immediate priority. Any next work must separately freeze a matched-byte causal scheduler protocol using the unchanged precursor.
+
+## 2026-08-16 - Close CVC-Q6 as Q6-C; do not consume Q7 or open Formal
+
+- **Decision:** Reject generation 1 after hard R1 ARM produced zero armed A1 episodes and complete fallback equivalence with A0. Treat this as F7/F6 bootstrap starvation, not precursor invalidation.
+- **Decision:** Reject generation 2 despite one complete beneficial causal chain because only 1/20 cells intervened and the method remained broadly adverse versus U0.
+- **Decision:** Retain generation 3 as the strongest development candidate but do not select or freeze it. It improves safety versus A0, yet versus U0 has slightly lower mean minimum clearance and a serious staggered-slalom adverse family, while also reducing progress.
+- **ML decision:** A compact grouped diagnostic was justified by family-dependent timing ambiguity. Do not integrate it: logistic/tree false-warning episode fractions (56.6%/83.0%) exceed the frozen rule (20.8%), and 19 onsets do not support larger temporal models.
+- **Evidence:** All executed episodes reconcile to exactly 72,000 wire bytes, the full image-to-planner-to-physical chain is demonstrated on intervention cells, 193 regressions pass, and protected M9 hashes remain exact.
+- **Rejected:** threshold tuning on consumed Q5/Q6 cells, a fourth rule generation, larger ML on 19 onsets, calling generation 3 independently validated, creating Q7 without a selected method, Formal execution, or real hardware.
+- **Impact:** Terminal classification is **Q6-C**. Q7 and Formal remain unopened. The next legitimate priority requires genuinely new development evidence and a new method identity.
+
+## 2026-08-18 - Close CVC-Q6.5 after bounded opportunity-value search
+
+- **Decision:** Preserve generation 1 as a rejected target/scheduler pair. Its fallback-relative utility was predictable but did not optimize strongest U0.
+- **Decision:** Treat adjacent opportunities (80, 109, 144, 217) as the correct finite-budget counterfactual for generation 2; preserve all helpful, harmful, and neutral cases.
+- **Decision:** Reject binary and three-class interpretable predictors because none passed the frozen leave-family-out predictability gate. Do not add neural models or tune thresholds on the same 45 opportunities.
+- **Decision:** Freeze no scheduler and do not consume Q7, robustness, ablation, Formal, or real-robot evidence.
+- **Impact:** The paper may claim that communication action utility is measurable and distinct, but not that it is predictably solved or that risk-aware scheduling beats U0.
+
+## 2026-08-18 - Adopt one final submission-figure visual contract
+
+- **Decision:** Use one semantic palette across the final manuscript figures: gray for current/reference/baseline, blue for future prediction and R1, green for positive physical effects or supportive secondary results, red for adverse physical effects, and amber for Safety Value/precursor concepts. Pair color with signs, edges, markers, hatching, zero lines, and direction labels.
+- **Decision:** Preserve the scientific structure of Figure 1, rebuild Figures 2 and 3 from authoritative machine artifacts, and integrate one compact Q6.5 adjacent-opportunity reversal panel into Figure 3 rather than add a fourth main figure.
+- **Decision:** Treat vector PDF as the submission master, SVG as the editable master, and 600-dpi PNG as review-only. Enforce a 7-pt minimum displayed figure font and programmatic canvas/box-bound checks.
+- **Evidence:** The final five-page candidate has no visual overlap or clipping, no LaTeX overfull boxes or unresolved references, embedded/subset fonts, no raster image objects in the final figure PDFs, and interpretable grayscale renders. Exact provenance is recorded in `paper/figures/figure_data_provenance_final.json` and the full audit in `docs/manuscript_figure_finalization_report.md`.
+- **Impact:** `paper/main_submission_figures_final.tex` is the recommended author-review candidate; historical figures and manuscript candidates remain preserved. This plotting decision changes no experiment, result, claim boundary, or Q6/Q6.5 readiness status.
+
+## 2026-08-18 - Preserve the external-review revision as a separate candidate
+
+- **Decision:** Apply only critique items supported by the authoritative manuscript and research artifacts: concrete motivation, comparative literature positioning, threshold provenance, and bounded Q6.5 opportunity-cost interpretation.
+- **Decision:** Keep `paper/main_submission_review_revision.*` separate from `main_submission_figures_final` and `paper/IROS_submission_final/` until author approval.
+- **Rejected:** Unverified typo/CI corrections, inflated framing of the negative result, and a new plot derived from narrative-only examples.
+- **Evidence:** The revised five-page PDF builds with 11 references, no overfull or unresolved-reference warnings, and no visible clipping or overlap. The prior source and bibliography hashes still match their copies in the standalone final package.
+- **Impact:** This is a review candidate, not an automatic replacement of the preserved submission baseline; it changes no experiment or claim boundary.
+
+## 2026-08-18 - Freeze the Git checkpoint storage boundary
+
+- **Decision:** Version the accumulated research implementation, tests, protocols, lightweight grids/status evidence, publication figures, manuscript sources, and the self-contained author-review package as one coherent checkpoint.
+- **Decision:** Keep large/reproducible run trees under the existing top-level `results/` policy, and exclude the 52 MiB M6A pilot RGB/step corpus, temporary QA renders/builds, LaTeX auxiliaries, Python caches, and ZIP archives.
+- **Decision:** Preserve the two small terminal-status files `results/cvc_q6_final_status.json` and `results/cvc_q65_final_status.json` despite the general result-output ignore rule, because they record the bounded terminal scientific decisions rather than raw experiment output.
+- **Evidence:** Frozen artifact hashes pass, the standalone delivery manifest passes, the full offline suite reports 761 passed, both manuscript sources build to five pages in isolated copies, and staged-file size/secret scans pass.
+- **Impact:** A clean GitHub checkpoint can be reviewed without publishing bulky raw data or weakening the Q6/Q6.5 negative-result boundaries.

@@ -1,0 +1,86 @@
+{
+  "study_id": "cvc-q6-precursor-scheduler-development-v1",
+  "development_only": true,
+  "formal": false,
+  "source_scenarios": "config/cvc_q5_stage_a.json",
+  "consumed_q5_positive_families": [
+    "staggered_slalom_constraint",
+    "three_stage_weave",
+    "opposed_gate_contraction",
+    "reverse_diagonal_chicane"
+  ],
+  "screening_selection": "first four event_candidate cells and first matched_control per family in literal Q5 order",
+  "screening_cells_per_family": 5,
+  "policies": ["U0", "A0", "A1"],
+  "duration_s": 10.0,
+  "total_steps": 312,
+  "planner_config": "config/cvc_q1_planner_v2.json",
+  "communication": {
+    "packet_count": 3,
+    "packet_bytes": 24000,
+    "episode_wire_bytes": 72000,
+    "jpeg_quality": 45,
+    "u0_schedule": [0, 109, 218]
+  },
+  "risk": {
+    "A0": "visual conservative current clearance R0",
+    "A1": "2.0 s state-only constant-twist clearance R1 from current causal visual obstacles and held selected command",
+    "score": "negative conservative clearance",
+    "threshold": -0.010434420641870626,
+    "debounce_steps": 3,
+    "source": "frozen M9-B Calibration warning decision",
+    "evaluator_geometry_used": false
+  },
+  "precursor": {
+    "soft_feasibility_mass_max": 0.6543448254639964,
+    "ols8_slope_strict_max_per_s": -0.11876628431105299,
+    "window_samples": 8,
+    "step_s": 0.032,
+    "implementation": "evaluation/cvc_q4_precursor.py",
+    "refit_forbidden": true
+  },
+  "scheduler_common": {
+    "prepare_validity_steps": 25,
+    "prepare_validity_s": 0.8,
+    "fallback_step": 217,
+    "reserve_step": 218,
+    "startup_step": 0,
+    "protected_reserve": true,
+    "future_debt_allowed": false
+  },
+  "bounded_variants": [
+    {
+      "id": "q6-v1-value-confirmed",
+      "variant": "value_confirmed",
+      "parent": null,
+      "hypothesis": "R0/R1 ARM plus a Q5 precursor latch preserves the scarce adaptive token until discrete SafetyValue confirms current information value."
+    },
+    {
+      "id": "q6-v2-persistent-precursor",
+      "variant": "persistent_precursor",
+      "parent": "q6-v1-value-confirmed",
+      "hypothesis": "Two consecutive frozen-precursor samples act earlier than discrete SafetyValue while rejecting isolated activation."
+    },
+    {
+      "id": "q6-v3-safe-set-contraction",
+      "variant": "safe_set_contraction",
+      "parent": "q6-v1-value-confirmed",
+      "hypothesis": "Within a prepared window, any causal current-vs-held safe-set contraction is a near-value confirmation that can spend before the discrete hierarchy fires."
+    }
+  ],
+  "initial_variant": "q6-v1-value-confirmed",
+  "physical_labels": {
+    "collision": "bilateral Webots contact",
+    "near": "no collision and episode minimum clearance <= 0.12 m",
+    "safe": "no collision and episode minimum clearance > 0.12 m"
+  },
+  "selection_order": [
+    "full causal chain and physical safety",
+    "no serious adverse family",
+    "planner/control conversion",
+    "decoded information timing",
+    "schedule actionability",
+    "false activation and fallback burden"
+  ],
+  "independent_validation_eligible": false
+}

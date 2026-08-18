@@ -1,0 +1,37 @@
+{
+  "study_id": "cvc-q1-safety-aware-local-planning-v1",
+  "development_only": true,
+  "formal": false,
+  "planner": {
+    "horizon_s": 1.5,
+    "rollout_step_s": 0.1,
+    "robot_radius_m": 0.037,
+    "hard_clearance_m": 0.025,
+    "preferred_clearance_m": 0.075,
+    "action_linear_m_s": [0.0, 0.045, 0.08],
+    "action_angular_rad_s": [-1.6, -0.8, 0.0, 0.8, 1.6],
+    "selection": "reject hard-unsafe; among moving preferred-safe maximize goal progress; if only hard-safe maximize conservative margin before progress; if none hard-safe stop"
+  },
+  "visual_geometry": {
+    "model": "range_m = coefficient / bbox_height_px + intercept",
+    "inverse_height_coefficient_m_px": 14.990924477678362,
+    "intercept_m": 0.049050871946108396,
+    "uncertainty_bound_m": 0.05541468933055973,
+    "known_obstacle_radius_m": 0.04,
+    "camera_horizontal_fov_rad": 0.84,
+    "calibration_results_sha256": "c84129aec7efa4fde30f8d53677e5d5443f8cf8fc87f9a8f67f12d15842e4b35"
+  },
+  "communication": {
+    "jpeg_quality": 45,
+    "packet_bytes": 24000
+  },
+  "full_vision_gate": {
+    "all_collision_free": true,
+    "all_avoidance_directions_correct": true,
+    "no_obstacle_progress_m": 0.5,
+    "center_near_initial_max_linear_m_s": 0.045,
+    "feasible_scene_minimum_clearance_m": 0.025,
+    "deterministic_replay": true,
+    "no_hidden_geometry": true
+  }
+}

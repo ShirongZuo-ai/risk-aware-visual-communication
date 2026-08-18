@@ -1,0 +1,6 @@
+#VRML_SIM R2025a utf8
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+WorldInfo { basicTimeStep 32 title "M9-A pilot runner" }
+RectangleArena { floorSize 1.5 1.5 wallHeight 0.04 }
+DEF ROBOT E-puck { controller "m9a_pilot_runner" supervisor TRUE version "2" }

@@ -1,0 +1,37 @@
+{
+  "development_only": true,
+  "frozen_before_adaptive_runs": true,
+  "packet_bytes": 36000,
+  "duration_s": 14.0,
+  "cruise_rad_s": 5.0,
+  "u0_sweep_transmissions": [88, 44, 22, 11, 6, 3, 2, 1],
+  "scenarios": {
+    "center_large": {
+      "start": [-0.72, 0.0, 0.0],
+      "objects": [{"id": "TARGET", "center": [0.18, 0.0], "size": [0.12, 0.12]}]
+    },
+    "left_offset": {
+      "start": [-0.72, -0.03, 0.0],
+      "objects": [{"id": "TARGET", "center": [0.12, 0.10], "size": [0.10, 0.10]}]
+    },
+    "right_offset": {
+      "start": [-0.72, 0.03, 0.0],
+      "objects": [{"id": "TARGET", "center": [0.12, -0.10], "size": [0.10, 0.10]}]
+    },
+    "angled_toward": {
+      "start": [-0.68, -0.22, 0.30],
+      "objects": [{"id": "TARGET", "center": [0.12, 0.04], "size": [0.11, 0.11]}]
+    },
+    "late_appearance": {
+      "start": [-0.68, -0.24, 0.42],
+      "objects": [{"id": "TARGET", "center": [0.02, 0.12], "size": [0.10, 0.10]}]
+    },
+    "two_component": {
+      "start": [-0.72, 0.0, 0.0],
+      "objects": [
+        {"id": "TARGET", "center": [0.14, 0.04], "size": [0.10, 0.10]},
+        {"id": "RED_DISTRACTOR", "center": [-0.02, -0.29], "size": [0.06, 0.06], "physical": false}
+      ]
+    }
+  }
+}

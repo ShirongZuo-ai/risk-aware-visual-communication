@@ -1,0 +1,26 @@
+{
+  "study_id": "cvc-q6-generation2-opportunity-confirmed-v1",
+  "development_only": true,
+  "formal": false,
+  "parent_study": "cvc-q6-precursor-scheduler-development-v1",
+  "source_scenarios": "config/cvc_q5_stage_a.json",
+  "consumed_q5_positive_families": [
+    "staggered_slalom_constraint",
+    "three_stage_weave",
+    "opposed_gate_contraction",
+    "reverse_diagonal_chicane"
+  ],
+  "screening_selection": "same 20 consumed development cells as Q6 generation 1",
+  "policies": ["U0", "A0", "A1"],
+  "duration_s": 10.0,
+  "total_steps": 312,
+  "planner_config": "config/cvc_q1_planner_v2.json",
+  "communication": {"packet_count": 3, "packet_bytes": 24000, "episode_wire_bytes": 72000, "jpeg_quality": 45, "u0_schedule": [0, 109, 218]},
+  "risk": {"threshold": -0.010434420641870626, "debounce_steps": 3, "role": "logged diagnostic, not a hard spend prerequisite", "evaluator_geometry_used": false},
+  "precursor": {"soft_feasibility_mass_max": 0.6543448254639964, "ols8_slope_strict_max_per_s": -0.11876628431105299, "window_samples": 8, "refit_forbidden": true},
+  "scheduler": {"A0_variant": "value_confirmed", "A1_variant": "opportunity_confirmed", "prepare_validity_steps": 25, "fallback_step": 217, "reserve_step": 218, "startup_step": 0, "protected_reserve": true, "future_debt_allowed": false},
+  "method_id": "q6-g2-opportunity-confirmed",
+  "change_from_parent": "Remove only the hard R1 ARM conjunction from PREPARE eligibility; retain Q5 PREPARE, discrete SafetyValue SPEND, fallback, reserve, codec, planner, cells, and exact cost.",
+  "selection_rule": "Full causal chain versus A0 and credible non-adverse safety relative to strongest U0 comparator; otherwise terminal Q6-C unless a final packet-granularity mechanism is directly evidenced.",
+  "independent_validation_eligible": false
+}
