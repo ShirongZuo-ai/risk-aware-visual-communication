@@ -2,7 +2,15 @@
 
 An interpretable Webots research platform for studying how predicted robot motion can guide visual communication under strict byte budgets. The repository now spans synchronized simulation evidence, trajectory and risk modeling, camera-space allocation, matched-byte compression, trusted lifecycle evidence, and preregistered episode-level analysis.
 
-The central research question is: **when visual communication is byte-constrained, does knowledge of a robot's predefined future command improve which image regions receive quality?** The completed M6 study provides a rigorous negative baseline for that question, while the broader project establishes a reusable end-to-end evaluation capability.
+The project asks whether predictive information improves the timing or spatial allocation of byte-constrained visual communication for robot navigation. M6 evaluated spatial allocation. Later studies tested future-danger prediction and closed-loop send timing.
+
+## Research results at a glance
+
+- **Future-danger prediction passed its confirmatory test.** In 240 simulator cells, M9-B's 2 s state rollout increased macro-AUPRC by **0.0874** over current clearance (paired 95% CI **[0.0772, 0.0985]**).
+- **The matched-byte policy studies produced mixed results.** M6's amended gate failed, and CVC-P2's risk inputs led to identical paired decisions. Later Q6 timing changes reached the controller, with helpful and adverse physical effects.
+- **The safety-gated Q6AD pilot passed its Train-only rule.** On 511 surfaces at 72,000 bytes each, it reduced mean danger steps from **115.81 to 80.13** with **0 observed collisions in both arms**. The one-sided 95% upper collision bound for the gated arm was **0.585%**. The later Selection sequence stopped at the verifier before outcome opening.
+
+[Study results, limitations, and continuation steps](docs/research/RESEARCH_RESULTS.md) · [Machine-readable aggregate results](docs/research/research-aggregates.json)
 
 ![M1-M6 verified capability evolution](docs/figures/m6_capability_evolution.png)
 
@@ -116,7 +124,7 @@ Further limitations:
 
 The project contributes an interpretable mapping from predicted robot-motion risk to visual priority, strict method-specific input boundaries, byte-fair reconstruction evidence, and a preregistered evaluation that preserves null, adverse, and undefined results. It does **not** establish a state-of-the-art allocator, calibrated collision probability, or improved robot safety.
 
-The next milestone is **budget-conditioned visual value of information**: combine risk, visible coverage, downstream task utility, and actual incremental bytes. It requires new disjoint, eligibility-rich data and deterministic oracle/greedy baselines before any learned policy. See the [Risk-VoI experiment plan](docs/m6_risk_voi_experiment_plan.md).
+The [Risk-VoI experiment plan](docs/m6_risk_voi_experiment_plan.md) records the direction established after M6. The current continuation gate is to resolve the Selection post-verifier failure and independently verify the repaired evaluation path. See the [research continuation notes](docs/research/RESEARCH_RESULTS.md#resume-the-study).
 
 ## Reproducibility
 
